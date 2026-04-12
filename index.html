@@ -196,14 +196,15 @@
     }
     .n-item:hover { color: var(--fg); }
     .n-btn {
-      font-family: var(--mono); font-size: .7rem;
+      font-family: var(--mono); font-size: .72rem;
       letter-spacing: .2em; text-transform: uppercase;
-      color: var(--gold); text-decoration: none;
-      border: 1px solid rgba(196,162,98,.35);
+      color: var(--fg); text-decoration: none;
+      border: 1px solid rgba(196,162,98,.32);
+      background: rgba(196,162,98,.04);
       padding: 14px 32px; border-radius: 100px;
-      transition: background .3s, color .3s, border-color .3s;
+      transition: border-color .38s, background .38s, color .38s;
     }
-    .n-btn:hover { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+    .n-btn:hover { border-color: rgba(196,162,98,.65); background: rgba(196,162,98,.09); color: var(--fg); }
     .n-social {
       display: inline-flex; align-items: center; gap: 8px;
       font-family: var(--mono); font-size: .64rem;
@@ -1288,6 +1289,21 @@
     }
     .tr-card:hover .tr-card-hint { opacity: 1; }
 
+    /* Skeleton loading cards */
+    .tr-card-skeleton { pointer-events: none; gap: 14px; justify-content: center; }
+    .tr-sk-line {
+      height: 12px; border-radius: 6px;
+      background: linear-gradient(90deg, var(--bg2) 25%, rgba(255,255,255,.04) 50%, var(--bg2) 75%);
+      background-size: 200% 100%;
+      animation: sk-shimmer 1.6s infinite;
+    }
+    .tr-sk-w40 { width: 40%; } .tr-sk-w45 { width: 45%; }
+    .tr-sk-w50 { width: 50%; } .tr-sk-w55 { width: 55%; }
+    .tr-sk-w60 { width: 60%; } .tr-sk-w70 { width: 70%; }
+    .tr-sk-w75 { width: 75%; } .tr-sk-w80 { width: 80%; }
+    .tr-sk-w90 { width: 90%; }
+    @keyframes sk-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
     /* Review expand modal */
     #rv-modal {
       position: fixed; inset: 0; z-index: 999998;
@@ -1634,7 +1650,7 @@
       </svg>
       <span>Facebook</span>
     </a>
-    <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F" target="_blank" rel="noopener" class="n-btn">Book a Session</a>
+    <a href="#book" class="n-btn">Book a Session</a>
   </div>
 </nav>
 
@@ -1751,79 +1767,11 @@
   <div class="tr-carousel-wrap" id="trcwrap">
     <div class="tr-carousel" id="trcarousel">
 
-      <div class="tr-card" data-q="Genuinely talented and easy to talk to. The studio is calm and clean, and the work Emmy does is unlike anything else I've seen locally. She took the time to actually understand what I wanted. Won't go anywhere else." data-author="— Sarah M. · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="https://i.pravatar.cc/48?img=5" alt="Sarah M." loading="lazy"></div>
-        <p class="tr-card-q">"Genuinely talented and easy to talk to. The studio is calm and clean — the work is unlike anything else I've seen locally."</p>
-        <div class="tr-card-author">— Sarah M. · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-
-      <div class="tr-card" data-q="Really relaxed experience from start to finish. Emmy listened, brought her own ideas without pushing them, and the result was better than I expected. Precise, delicate, healed perfectly." data-author="— Jamie T. · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <p class="tr-card-q">"Really relaxed experience from start to finish. Emmy listened, brought her own ideas without pushing them, and the result was better than I expected."</p>
-        <div class="tr-card-author">— Jamie T. · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-
-      <div class="tr-card" data-q="Nice studio, good people, and the fine line work is genuinely exceptional. Emmy's space at Sainthood feels calm and considered — nothing rushed. I get asked about my piece regularly. Worth it." data-author="— Chloe R. · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="https://i.pravatar.cc/48?img=9" alt="Chloe R." loading="lazy"></div>
-        <p class="tr-card-q">"Nice studio, good people, and the fine line work is genuinely exceptional. I get asked about my piece regularly. Worth it."</p>
-        <div class="tr-card-author">— Chloe R. · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-
-      <div class="tr-card" data-q="The best tattooist I've sat with. My portrait piece is more lifelike than I thought was possible at this scale. The consultation, stencil, aftercare advice — every part of it was done properly. No complaints." data-author="— Dan W. · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <p class="tr-card-q">"The best tattooist I've sat with. My portrait piece is more lifelike than I thought possible. Every part of it done properly."</p>
-        <div class="tr-card-author">— Dan W. · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-
-      <div class="tr-card" data-q="Booked for a small fine line piece. She took a rough idea and made something I actually couldn't have visualised on my own. I look at it every day. Couldn't recommend her more." data-author="— Amelia J. · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="https://i.pravatar.cc/48?img=47" alt="Amelia J." loading="lazy"></div>
-        <p class="tr-card-q">"She took a rough idea and made something I couldn't have visualised on my own. I look at it every day."</p>
-        <div class="tr-card-author">— Amelia J. · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-
-      <div class="tr-card" data-q="My first tattoo. Emmy was clear about everything, checked in throughout, and never made me feel rushed. The result was delicate and precise — exactly what I'd described, done better than I imagined." data-author="— Lily H. · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <p class="tr-card-q">"My first tattoo. Emmy was clear about everything and never rushed me. The result was exactly what I described, done better than I imagined."</p>
-        <div class="tr-card-author">— Lily H. · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-
-      <div class="tr-card" data-q="The precision is hard to explain until you see it up close. My botanical piece healed cleanly and the linework is still crisp. The studio is calm — it all makes for a genuinely good experience." data-author="— Kate S. · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="https://i.pravatar.cc/48?img=32" alt="Kate S." loading="lazy"></div>
-        <p class="tr-card-q">"The precision is hard to explain until you see it up close. My botanical piece healed cleanly and the linework is still crisp."</p>
-        <div class="tr-card-author">— Kate S. · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-
-      <div class="tr-card" data-q="Drove from Leeds after seeing her work online. Studio is clean and calm, no fuss. The actual skill level is something else — she can work from a vague brief and land exactly what you meant. Worth the trip." data-author="— Marcus B. · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <p class="tr-card-q">"Drove from Leeds. Studio is clean and calm, no fuss. She can work from a vague brief and land exactly what you meant. Worth the trip."</p>
-        <div class="tr-card-author">— Marcus B. · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-
-      <div class="tr-card" data-q="Third piece with Emmy. She remembers what you liked last time, and each session feels like a progression rather than a repeat. The consultations are genuinely useful — she asks the right things. Best fine line work in the North, as far as I'm concerned." data-author="— Olivia P. · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <p class="tr-card-q">"Third piece with Emmy. Each session feels like a progression. The consultations are genuinely useful — she asks the right things."</p>
-        <div class="tr-card-author">— Olivia P. · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-
-      <div class="tr-card" data-q="My watercolour-style piece healed cleanly — no fading, no blurring. Still looks fresh. I've recommended Emmy to everyone who's asked about it, and people ask about it a lot." data-author="— Rachel G. · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <p class="tr-card-q">"My watercolour-style piece healed cleanly — no fading, no blurring. Still looks fresh. People ask about it a lot."</p>
-        <div class="tr-card-author">— Rachel G. · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
+      <div class="tr-card tr-card-skeleton"><div class="tr-sk-line tr-sk-w60"></div><div class="tr-sk-line tr-sk-w90"></div><div class="tr-sk-line tr-sk-w75"></div><div class="tr-sk-line tr-sk-w40"></div></div>
+      <div class="tr-card tr-card-skeleton"><div class="tr-sk-line tr-sk-w90"></div><div class="tr-sk-line tr-sk-w60"></div><div class="tr-sk-line tr-sk-w80"></div><div class="tr-sk-line tr-sk-w50"></div></div>
+      <div class="tr-card tr-card-skeleton"><div class="tr-sk-line tr-sk-w75"></div><div class="tr-sk-line tr-sk-w90"></div><div class="tr-sk-line tr-sk-w55"></div><div class="tr-sk-line tr-sk-w40"></div></div>
+      <div class="tr-card tr-card-skeleton"><div class="tr-sk-line tr-sk-w60"></div><div class="tr-sk-line tr-sk-w80"></div><div class="tr-sk-line tr-sk-w90"></div><div class="tr-sk-line tr-sk-w45"></div></div>
+      <div class="tr-card tr-card-skeleton"><div class="tr-sk-line tr-sk-w80"></div><div class="tr-sk-line tr-sk-w55"></div><div class="tr-sk-line tr-sk-w70"></div><div class="tr-sk-line tr-sk-w40"></div></div>
 
     </div>
   </div>
@@ -2997,7 +2945,7 @@
 <!-- e.g. https://emmy-reviews.YOUR-SUBDOMAIN.workers.dev                     -->
 <script>
 (function() {
-  const WORKER_URL = 'https://emmy-reviews.YOUR-SUBDOMAIN.workers.dev';
+  const WORKER_URL = 'https://emmy-reviews.emmalenetattoo.workers.dev';
 
   function buildCard(r) {
     const card = document.createElement('div');
