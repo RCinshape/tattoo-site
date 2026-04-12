@@ -399,8 +399,8 @@
       width: max-content; will-change: transform;
     }
     .wc {
-      width: clamp(260px,34vw,440px);
-      height: clamp(260px,34vw,440px); /* square — fits 512×512 thumbnails with no crop */
+      width: clamp(220px,26vw,360px);
+      aspect-ratio: 2/3; /* matches 1119×1699 portrait crop — zero cropping */
       border-radius: var(--r);
       border: 1px solid var(--border);
       overflow: hidden; position: relative;
@@ -420,6 +420,21 @@
       filter: brightness(.9) saturate(.75);
     }
     .wc:hover .wc-img { filter: brightness(1) saturate(.9); transform: scale(1.05); }
+
+    /* Placeholder card — shown while waiting for photos */
+    .wc:not(:has(.wc-img)) {
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent, transparent 18px,
+        rgba(237,232,223,.025) 18px, rgba(237,232,223,.025) 19px
+      );
+      cursor: default;
+    }
+    .wc:not(:has(.wc-img)) .wc-view {
+      transform: translate(-50%,-50%) scale(1);
+      font-size: 1.4rem; color: var(--dim);
+      border-color: var(--border);
+    }
 
     /* Shine */
     .wc::after {
@@ -513,7 +528,7 @@
       .w-head { padding: 0 24px 36px; flex-direction: column; align-items: flex-start; gap: 20px; }
       .w-hint { text-align: left; }
       .w-track { padding: 0 24px 44px; gap: 12px; }
-      .wc { width: 73vw; height: 73vw; } /* square on mobile too */
+      .wc { width: 68vw; aspect-ratio: 2/3; }
       .w-gal { overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; scrollbar-width: none; }
       .w-gal::-webkit-scrollbar { display: none; }
       .wc { scroll-snap-align: start; }
@@ -1701,55 +1716,47 @@
   <div class="w-gal">
     <div class="w-track" id="wtrack">
 
-      <!-- data-full = full-res image shown in lightbox; src = square thumbnail crop -->
-      <!-- Replace src with your cropped square thumbnails once ready               -->
-      <article class="wc" aria-label="Work 1" data-full="pictures/7.jpg">
-        <img class="wc-img" src="pictures/7.jpg" alt="Emmy Tattoo — piece 1" loading="eager">
+      <!-- WORKFLOW: src = 2:3 portrait crop (1200×1800px recommended)   -->
+      <!--           data-full = original hi-res (lightbox uses this)    -->
+      <!--           Placeholder cards keep layout while you add photos   -->
+
+      <!-- ✓ Test photo -->
+      <article class="wc" aria-label="Work 1" data-full="pictures/2cropped..jpg">
+        <img class="wc-img" src="pictures/2cropped..jpg" alt="Emmy Tattoo — piece 1" loading="eager">
         <div class="wc-num">01</div>
         <div class="wc-view">→</div>
         <div class="wc-lbl"><div class="wc-title">No. 01</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 2" data-full="pictures/2.jpg">
-        <img class="wc-img" src="pictures/2.jpg" alt="Emmy Tattoo — piece 2" loading="lazy">
+      <!-- ○ Add your photos below — replace src + data-full -->
+      <article class="wc" aria-label="Work 2" data-full="">
         <div class="wc-num">02</div>
-        <div class="wc-view">→</div>
-        <div class="wc-lbl"><div class="wc-title">No. 02</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-view">+</div>
+        <div class="wc-lbl"><div class="wc-title">Coming soon</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 3" data-full="pictures/3.jpg">
-        <img class="wc-img" src="pictures/3.jpg" alt="Emmy Tattoo — piece 3" loading="lazy">
+      <article class="wc" aria-label="Work 3" data-full="">
         <div class="wc-num">03</div>
-        <div class="wc-view">→</div>
-        <div class="wc-lbl"><div class="wc-title">No. 03</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-view">+</div>
+        <div class="wc-lbl"><div class="wc-title">Coming soon</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 4" data-full="pictures/4.jpg">
-        <img class="wc-img" src="pictures/4.jpg" alt="Emmy Tattoo — piece 4" loading="lazy">
+      <article class="wc" aria-label="Work 4" data-full="">
         <div class="wc-num">04</div>
-        <div class="wc-view">→</div>
-        <div class="wc-lbl"><div class="wc-title">No. 04</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-view">+</div>
+        <div class="wc-lbl"><div class="wc-title">Coming soon</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 5" data-full="pictures/5.jpg">
-        <img class="wc-img" src="pictures/5.jpg" alt="Emmy Tattoo — piece 5" loading="lazy">
+      <article class="wc" aria-label="Work 5" data-full="">
         <div class="wc-num">05</div>
-        <div class="wc-view">→</div>
-        <div class="wc-lbl"><div class="wc-title">No. 05</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-view">+</div>
+        <div class="wc-lbl"><div class="wc-title">Coming soon</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 6" data-full="pictures/6.jpg">
-        <img class="wc-img" src="pictures/6.jpg" alt="Emmy Tattoo — piece 6" loading="lazy">
+      <article class="wc" aria-label="Work 6" data-full="">
         <div class="wc-num">06</div>
-        <div class="wc-view">→</div>
-        <div class="wc-lbl"><div class="wc-title">No. 06</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
-      </article>
-
-      <article class="wc" aria-label="Work 7" data-full="pictures/8.jpg">
-        <img class="wc-img" src="pictures/8.jpg" alt="Emmy Tattoo — piece 7" loading="lazy">
-        <div class="wc-num">07</div>
-        <div class="wc-view">→</div>
-        <div class="wc-lbl"><div class="wc-title">No. 07</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-view">+</div>
+        <div class="wc-lbl"><div class="wc-title">Coming soon</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
     </div>
@@ -2564,11 +2571,11 @@
         lenis.start();
       }
 
-      /* Click fires only when drag < 6px */
+      /* Click fires only when drag < 6px and card has a photo */
       track.addEventListener('click', e => {
         if (dragDist > 6) return;
         const card = e.target.closest('.wc');
-        if (card) openLightbox(card);
+        if (card && card.querySelector('.wc-img')) openLightbox(card);
       });
       galModalBg.addEventListener('click', closeLightbox);
       galClose.addEventListener('click', closeLightbox);
