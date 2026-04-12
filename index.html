@@ -2948,64 +2948,65 @@
   const WORKER_URL = 'https://emmy-reviews.emmalenetattoo.workers.dev';
 
   function buildCard(r) {
-    const card = document.createElement('div');
-    card.className = 'tr-card';
-    const full  = (r.text || '').trim();
+    const name  = r.authorAttribution?.displayName || 'Google Reviewer';
+    const photo = r.authorAttribution?.photoUri || '';
+    const full  = r.text?.text || '';
     const short = full.length > 180 ? full.slice(0, 180) + '\u2026' : full;
+
+    const card = document.createElement('div');
+    card.className      = 'tr-card';
     card.dataset.q      = full;
-    card.dataset.author = '\u2014 ' + r.author_name + ' \u00b7 Google Review';
+    card.dataset.author = '\u2014 ' + name + ' \u00b7 Google Review';
 
     const stars = document.createElement('div');
     stars.className   = 'tr-card-stars';
     stars.textContent = '\u2605'.repeat(r.rating) + '\u2606'.repeat(5 - r.rating);
+    card.appendChild(stars);
+
+    if (photo) {
+      const wrap = document.createElement('div');
+      wrap.className = 'tr-card-photo';
+      const img = document.createElement('img');
+      img.src = photo; img.alt = name; img.loading = 'lazy';
+      wrap.appendChild(img);
+      card.appendChild(wrap);
+    }
 
     const q = document.createElement('p');
     q.className   = 'tr-card-q';
     q.textContent = '\u201c' + short + '\u201d';
+    card.appendChild(q);
 
     const auth = document.createElement('div');
     auth.className   = 'tr-card-author';
-    auth.textContent = '\u2014 ' + r.author_name + ' \u00b7 Google Review';
+    auth.textContent = '\u2014 ' + name + ' \u00b7 Google Review';
+    card.appendChild(auth);
 
     const hint = document.createElement('div');
     hint.className   = 'tr-card-hint';
     hint.textContent = 'Read full review \u2192';
-
-    card.appendChild(stars);
-
-    if (r.profile_photo_url) {
-      const photo = document.createElement('div');
-      photo.className = 'tr-card-photo';
-      const img = document.createElement('img');
-      img.src     = r.profile_photo_url;
-      img.alt     = r.author_name;
-      img.loading = 'lazy';
-      photo.appendChild(img);
-      card.appendChild(photo);
-    }
-
-    card.appendChild(q);
-    card.appendChild(auth);
     card.appendChild(hint);
+
     return card;
   }
 
   fetch(WORKER_URL)
     .then(function(res) { return res.json(); })
     .then(function(data) {
+      if (data.error) { console.error('[Reviews] Worker error:', data.error); return; }
       if (data.rating) {
         var scoreEl = document.querySelector('.tr-big-score');
         if (scoreEl) scoreEl.textContent = data.rating.toFixed(1);
       }
-      if (data.user_ratings_total) {
+      if (data.userRatingCount) {
         var platEl = document.querySelector('.tr-platform');
-        if (platEl) platEl.textContent = data.user_ratings_total + ' Google Reviews';
+        if (platEl) platEl.textContent = data.userRatingCount + ' Google Reviews';
       }
       if (data.reviews && data.reviews.length && window.__refreshReviews) {
         window.__refreshReviews(data.reviews.map(buildCard));
       }
     })
-    .catch(function() { /* silently keep placeholder cards on error */ });
+    .catch(function(err) { console.error('[Reviews] Fetch failed:', err); });
 })();
 </script>
 </body>
