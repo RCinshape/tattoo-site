@@ -1230,6 +1230,7 @@
     .tr-carousel-wrap {
       overflow: hidden; cursor: grab;
       padding-bottom: 8px;
+      touch-action: pan-y;
     }
     .tr-carousel-wrap.tr-dragging { cursor: grabbing; }
     .tr-carousel {
@@ -1482,6 +1483,39 @@
     }
 
     /* ══════════════════════════════════════════
+       FAQ
+    ══════════════════════════════════════════ */
+    #faq { padding: 0 var(--pad) 100px; border-top: 1px solid var(--border); }
+    .faq-hd { margin-bottom: 48px; }
+    .faq-h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.9rem,4.5vw,3.8rem);
+      font-weight: 300; letter-spacing: -.02em; line-height: 1;
+    }
+    .faq-h2 em { font-style: italic; color: var(--gold); }
+    .fq-list { list-style: none; }
+
+    /* FAQ row — mirrors .ei visually, GSAP-animated */
+    .fq-row {
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; gap: 0;
+      flex-wrap: wrap;
+      min-height: 108px; padding: 30px 0;
+      border-top: 1px solid var(--border);
+      opacity: 0; cursor: pointer;
+    }
+    .fq-row:last-child { border-bottom: 1px solid var(--border); }
+    /* FAQ expand: text only, no image column */
+    .fq-row .ei-expand-inner { grid-template-columns: 1fr; padding-left: 0; max-width: 680px; }
+
+    @media (max-width: 768px) {
+      #faq { padding: 0 24px 80px; }
+      .fq-row { min-height: 80px; padding: 22px 0; }
+      .fq-row .ei-bg-n { font-size: 4.5rem; }
+      .fq-row .ei-name { font-size: clamp(1.2rem,5vw,2rem); }
+    }
+
+    /* ══════════════════════════════════════════
        AFTERCARE
     ══════════════════════════════════════════ */
     #aftercare {
@@ -1730,7 +1764,7 @@
 <!-- ════ HERO ════ -->
 <section id="hero">
   <div class="hero-bg-photo" aria-hidden="true">
-    <img src="pictures/BANNER.png" alt="" loading="eager">
+    <img src="pictures/BANNER.jpg" alt="" loading="eager">
   </div>
   <canvas id="hcvs" aria-hidden="true"></canvas>
   <div class="h-vign" aria-hidden="true"></div>
@@ -2131,6 +2165,134 @@
   </div>
 </section>
 
+<!-- ════ FAQ ════ -->
+<section id="faq">
+  <div class="faq-hd">
+    <div class="s-label">FAQ</div>
+    <h2 class="faq-h2"><span class="tl"><span class="tl-i">Common <em>Questions</em></span></span></h2>
+  </div>
+  <ul class="fq-list">
+
+    <li class="fq-row">
+      <div class="ei-nw"><span class="ei-name">How much does a tattoo cost?</span></div>
+      <span class="ei-desc">Pricing · quotes · deposits</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-bg-n" aria-hidden="true">01</div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">Pricing depends on size, complexity, and placement. Small pieces start from £80. Custom and larger work is quoted after a free consultation — message via WhatsApp or Instagram and Emmy will give you an honest estimate before anything is agreed.</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="fq-row">
+      <div class="ei-nw"><span class="ei-name">Do you do walk-ins?</span></div>
+      <span class="ei-desc">Appointments · booking · availability</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-bg-n" aria-hidden="true">02</div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">Walk-ins are welcome when there's availability — but they're not guaranteed, so it's always worth checking first. If you're nearby, give it a try. To be safe and avoid a wasted trip, a quick message before you head over is the best move.</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="fq-row">
+      <div class="ei-nw"><span class="ei-name">How do I prepare for my session?</span></div>
+      <span class="ei-desc">Preparation · day-of · what to bring</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-bg-n" aria-hidden="true">03</div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">Eat a proper meal beforehand and stay well hydrated — your body handles it better than you'd think when it's fuelled properly. Wear clothing that gives easy access to the area being tattooed. Avoid alcohol for at least 24 hours before the appointment.</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="fq-row">
+      <div class="ei-nw"><span class="ei-name">Can I bring my own design?</span></div>
+      <span class="ei-desc">Custom work · references · process</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-bg-n" aria-hidden="true">04</div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">Absolutely. Bring references, sketches, a mood board, or just a description and a feeling. The design is built collaboratively from scratch — nothing is pre-drawn, nothing is recycled. Every piece starts as a blank page and ends as something made entirely for you.</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="fq-row">
+      <div class="ei-nw"><span class="ei-name">Does it hurt?</span></div>
+      <span class="ei-desc">Pain · tolerance · placement</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-bg-n" aria-hidden="true">05</div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">Honestly — yes, but it's manageable for most people. Most describe it as uncomfortable rather than unbearable, and you adjust to it quickly. Placement matters more than individual pain tolerance: ribs, spine, and feet hurt more; outer arm and thigh hurt less. Emmy will talk you through it on the day.</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="fq-row">
+      <div class="ei-nw"><span class="ei-name">Can I see the design before the day?</span></div>
+      <span class="ei-desc">Design approval · revisions · process</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-bg-n" aria-hidden="true">06</div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">Yes. Designs are shared before the session so there's time to review and adjust. Nothing gets tattooed without your full approval — if something isn't right, it gets changed. The goal is that you sit down on the day already certain about what you're getting.</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="fq-row">
+      <div class="ei-nw"><span class="ei-name">What should I know before my first tattoo?</span></div>
+      <span class="ei-desc">First time · expectations · nerves</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-bg-n" aria-hidden="true">07</div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">It's normal to be nervous — everyone is the first time. The process is slower and more considered than most people expect. Emmy will walk you through every step. Take your time choosing the design and placement; this is permanent, so there's no rush to book. If something feels off about the design during the session, say so — nothing gets tattooed without your full sign-off.</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="fq-row">
+      <div class="ei-nw"><span class="ei-name">What should I know before my appointment?</span></div>
+      <span class="ei-desc">Preparation · health · what to avoid</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-bg-n" aria-hidden="true">08</div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">Eat a proper meal and stay well hydrated before you arrive. Avoid alcohol for at least 24 hours beforehand — it thins the blood and makes the skin harder to work with. Don't take aspirin or ibuprofen unless medically necessary for the same reason. Do not book if you are pregnant or breastfeeding. Wear (or bring) clothing that gives easy access to the area being tattooed. If you are on blood thinners, have a skin condition affecting the area, or have any other health concerns, let Emmy know in advance so she can advise properly.</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="fq-row">
+      <div class="ei-nw"><span class="ei-name">What's the minimum age?</span></div>
+      <span class="ei-desc">Age · ID · legal</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-bg-n" aria-hidden="true">09</div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">18, strictly. No exceptions regardless of parental consent. Valid photo ID is required at the appointment — if you can't prove your age on the day, the session cannot go ahead.</p>
+        </div>
+      </div>
+    </li>
+
+  </ul>
+</section>
+
 <!-- ════ AFTERCARE ════ -->
 <section id="aftercare">
   <div class="ac-hd">
@@ -2367,7 +2529,7 @@
     document.addEventListener('mousedown', () => sclT = .82);
     document.addEventListener('mouseup',   () => sclT = 1);
 
-    document.querySelectorAll('a,.wc,.ei,button').forEach(el => {
+    document.querySelectorAll('a,.wc,.ei,.fq-row,button').forEach(el => {
       el.addEventListener('mouseenter', () => { cr.classList.add('h');    crHW = 38; });
       el.addEventListener('mouseleave', () => { cr.classList.remove('h'); crHW = 19; });
     });
@@ -2756,15 +2918,32 @@
       { opacity: 1, y: 0, stagger: .09, duration: .85, ease: 'power3.out',
         scrollTrigger: { trigger: '.exp-list', start: 'top 82%' } }
     );
-    // Title clip-in from left, staggered slightly after the row
-    gsap.fromTo('.ei-name',
+    // Title clip-in from left — scoped to expertise list only
+    gsap.fromTo('.exp-list .ei-name',
       { clipPath: 'inset(0 100% 0 0)' },
       { clipPath: 'inset(0 0% 0 0)', stagger: .1, duration: 1.1, ease: 'expo.out',
         scrollTrigger: { trigger: '.exp-list', start: 'top 82%' } }
     );
+    // FAQ rows scroll-in
+    gsap.fromTo('.fq-row',
+      { opacity: 0, y: 28 },
+      { opacity: 1, y: 0, stagger: .09, duration: .85, ease: 'power3.out',
+        scrollTrigger: { trigger: '.fq-list', start: 'top 82%' } }
+    );
+    gsap.fromTo('.fq-list .ei-name',
+      { clipPath: 'inset(0 100% 0 0)' },
+      { clipPath: 'inset(0 0% 0 0)', stagger: .1, duration: 1.1, ease: 'expo.out',
+        scrollTrigger: { trigger: '.fq-list', start: 'top 82%' } }
+    );
+    // FAQ heading
+    gsap.fromTo('.faq-h2 .tl-i',
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out',
+        scrollTrigger: { trigger: '#faq', start: 'top 84%' } }
+    );
 
-    /* ── Expertise expand accordion ── */
-    document.querySelectorAll('.ei').forEach(row => {
+    /* ── Accordion (expertise + FAQ) ── */
+    document.querySelectorAll('.ei, .fq-row').forEach(row => {
       const panel = row.querySelector('.ei-expand');
       const arr   = row.querySelector('.ei-arr');
       if (!panel || !arr) return;
@@ -2797,8 +2976,8 @@
       });
     });
 
-    /* ── Expertise — iOS-spring hover (GSAP elastic, no CSS transitions) ── */
-    document.querySelectorAll('.ei').forEach(row => {
+    /* ── iOS-spring hover (expertise + FAQ) ── */
+    document.querySelectorAll('.ei, .fq-row').forEach(row => {
       const name  = row.querySelector('.ei-name');
       const arr   = row.querySelector('.ei-arr');
       const rule  = row.querySelector('.ei-rule');
@@ -3072,9 +3251,12 @@
     const mback  = modal.querySelector('.rvm-back');
     const mclose = modal.querySelector('.rvm-close');
 
-    carousel.addEventListener('click', e => {
+    /* Use wrap (not carousel) so setPointerCapture doesn't swallow the target */
+    wrap.addEventListener('click', e => {
       if (dragDist > 6) return;
-      const card = e.target.closest('.tr-card');
+      /* composedPath() finds the real clicked element even when pointer capture
+         redirects e.target to wrap */
+      const card = e.composedPath().find(el => el.classList?.contains('tr-card'));
       if (!card || !card.dataset.q) return;
       mq.textContent    = '\u201c' + card.dataset.q + '\u201d';
       mauth.textContent = card.dataset.author;
