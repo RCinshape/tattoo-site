@@ -630,60 +630,16 @@
       font-size: clamp(5.5rem,11vw,9.5rem);
       color: var(--gold); opacity: .045; line-height: 1;
       pointer-events: none; user-select: none;
-      transition: opacity .6s;
-    }
-    .ei:hover .ei-bg-n { opacity: .1; }
-
-    /* Tilde → pipe container */
-    .ei-n {
-      font-family: var(--serif); font-size: 1.5rem;
-      font-weight: 300; font-style: italic;
-      min-width: 44px; flex-shrink: 0;
-      position: relative; z-index: 1;
-      line-height: 1;
-      display: flex; align-items: center; justify-content: center;
-      transition: transform .45s var(--out);
-    }
-    .ei:hover .ei-n { transform: translateX(8px); }
-
-    /* ~ stays — nudges right into the pipe on hover */
-    .ei-n-tilde {
-      display: block; color: rgba(196,162,98,.35);
-      transition: color .3s, transform .48s var(--sp);
-      transform-origin: center;
-    }
-    .ei:hover .ei-n-tilde {
-      color: rgba(196,162,98,.85);
-      /* spring nudge: overshoots ~7px then settles at 5px — physical bump feel */
-      transform: translateX(5px) scaleX(.88);
     }
 
-    /* | pipe — springs up at the exact spot the tilde nudges into */
-    .ei-n-pipe {
-      position: absolute; top: 50%; left: calc(50% + 9px);
-      transform: translate(-50%, -50%) scaleY(0);
-      transform-origin: center;
-      width: 1.5px; height: 1.1em;
-      background: rgba(196,162,98,.78);
-      border-radius: 2px; opacity: 0;
-      transition: transform .5s var(--sp), opacity .15s;
+    /* Gold accent bar — springs in from top on hover, GSAP-owned */
+    .ei-accent {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 2px; background: var(--gold);
+      border-radius: 0 2px 2px 0;
+      transform-origin: top; transform: scaleY(0); opacity: 0;
+      pointer-events: none; z-index: 2;
     }
-    .ei:hover .ei-n-pipe {
-      transform: translate(-50%, -50%) scaleY(1);
-      opacity: 1;
-    }
-
-    /* Gold line extending from pipe toward the skill name */
-    .ei-n::after {
-      content: '';
-      position: absolute; top: 50%; left: 100%;
-      height: 1px; width: 0;
-      background: linear-gradient(90deg, var(--gold), transparent);
-      opacity: .6; transform: translateY(-50%);
-      transition: width .5s var(--out);
-      pointer-events: none;
-    }
-    .ei:hover .ei-n::after { width: 22px; }
 
     /* Abstract skill icon */
     .ei-icon {
@@ -702,10 +658,7 @@
       font-size: clamp(2rem, 4.2vw, 3.8rem);
       font-weight: 300; font-style: italic;
       color: var(--fg); line-height: 1;
-      transition: color .35s, transform .45s var(--out);
-      will-change: transform;
     }
-    .ei:hover .ei-name { color: var(--gold); transform: translateX(10px); }
 
     /* Description tags */
     .ei-desc {
@@ -722,9 +675,7 @@
       font-size: 1rem; color: var(--dim);
       margin-left: 22px; position: relative; z-index: 1;
       display: inline-block;
-      transition: color .35s;
     }
-    .ei:hover .ei-arr { color: var(--gold); }
     .ei.open .ei-arr { color: var(--gold); }
 
     /* Expand panel */
@@ -758,13 +709,11 @@
       .ei-expand-img { aspect-ratio: 16/9; }
     }
 
-    /* Animated bottom rule */
+    /* Animated bottom rule — GSAP-owned */
     .ei-rule {
       position: absolute; bottom: -1px; left: 0;
       height: 1px; width: 0; background: var(--gold);
-      transition: width .65s var(--out);
     }
-    .ei:hover .ei-rule { width: 100%; }
 
     @media (max-width: 768px) {
       #exp { padding: 0 24px 80px; }
@@ -1533,6 +1482,91 @@
     }
 
     /* ══════════════════════════════════════════
+       AFTERCARE
+    ══════════════════════════════════════════ */
+    #aftercare {
+      padding: 80px var(--pad) 100px;
+      border-top: 1px solid var(--border);
+    }
+    .ac-hd {
+      max-width: 680px; margin-bottom: 64px;
+    }
+    .ac-h2 {
+      font-family: var(--serif);
+      font-size: clamp(2rem,4.5vw,3.8rem);
+      font-weight: 300; letter-spacing: -.02em; line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .ac-h2 em { font-style: italic; color: var(--gold); }
+    .ac-sub {
+      font-family: var(--sans); font-size: 1rem;
+      color: var(--fg2); line-height: 1.8; max-width: 520px;
+    }
+    .ac-phases {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .ac-phase {
+      padding: 40px 40px 40px 0;
+      border-left: 1px solid var(--border);
+      padding-left: 40px;
+    }
+    .ac-phase:first-child { border-left: none; padding-left: 0; }
+    .ac-phase-tag {
+      font-family: var(--mono); font-size: .68rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 14px; display: block;
+    }
+    .ac-phase-title {
+      font-family: var(--serif); font-size: 1.45rem;
+      font-weight: 300; font-style: italic;
+      line-height: 1.2; margin-bottom: 20px;
+      color: var(--fg);
+    }
+    .ac-phase-list {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .ac-phase-list li {
+      font-family: var(--sans); font-size: .9rem;
+      color: var(--fg2); line-height: 1.7;
+      padding-left: 18px; position: relative;
+    }
+    .ac-phase-list li::before {
+      content: '—';
+      position: absolute; left: 0;
+      color: var(--gold); opacity: .55;
+      font-size: .85rem;
+    }
+    .ac-note {
+      margin-top: 56px;
+      padding: 28px 32px;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      display: flex; align-items: flex-start; gap: 20px;
+      max-width: 680px;
+    }
+    .ac-note-icon {
+      color: var(--gold); flex-shrink: 0; opacity: .8;
+      margin-top: 2px;
+    }
+    .ac-note-text {
+      font-family: var(--sans); font-size: .95rem;
+      color: var(--fg2); line-height: 1.8;
+    }
+    .ac-note-text strong { color: var(--fg); font-weight: 400; }
+    @media (max-width: 768px) {
+      #aftercare { padding: 60px 24px 80px; }
+      .ac-phases { grid-template-columns: 1fr; }
+      .ac-phase {
+        border-left: none; padding-left: 0;
+        border-top: 1px solid var(--border); padding-top: 36px;
+      }
+      .ac-phase:first-child { border-top: none; padding-top: 0; }
+    }
+
+    /* ══════════════════════════════════════════
        LOCATION
     ══════════════════════════════════════════ */
     #location {
@@ -1716,11 +1750,6 @@
   <div class="mq-row" id="mqrow"></div>
 </div>
 
-<!-- ════ QUOTE ════ -->
-<section id="quote">
-  <p class="qt-text">"Good work lasts. Everything else is just decoration."</p>
-</section>
-
 <!-- ════ WORK ════ -->
 <div id="work-outer">
 <section id="work">
@@ -1845,6 +1874,11 @@
   </div>
 </div>
 
+<!-- ════ QUOTE ════ -->
+<section id="quote">
+  <p class="qt-text">"Good work lasts. Everything else is just decoration."</p>
+</section>
+
 <!-- ════ EXPERTISE ════ -->
 <div style="text-align:center;padding:24px 0 0" aria-hidden="true"><span class="draw-rule"></span></div>
 <section id="exp">
@@ -1855,7 +1889,7 @@
   <ul class="exp-list">
 
     <li class="ei">
-      <span class="ei-n" aria-hidden="true">~</span>
+
       <div class="ei-nw"><span class="ei-name">Fine Line</span></div>
       <span class="ei-desc">Single needle · ultra-precise · long-lasting</span>
       <span class="ei-arr">→</span>
@@ -1869,7 +1903,7 @@
     </li>
 
     <li class="ei">
-      <span class="ei-n" aria-hidden="true">~</span>
+
       <div class="ei-nw"><span class="ei-name">Fine Line Art</span></div>
       <span class="ei-desc">Illustrative · considered · one of one</span>
       <span class="ei-arr">→</span>
@@ -1883,7 +1917,7 @@
     </li>
 
     <li class="ei">
-      <span class="ei-n" aria-hidden="true">~</span>
+
       <div class="ei-nw"><span class="ei-name">Micro Realism</span></div>
       <span class="ei-desc">Miniature · photographic · exact</span>
       <span class="ei-arr">→</span>
@@ -1897,7 +1931,7 @@
     </li>
 
     <li class="ei">
-      <span class="ei-n" aria-hidden="true">~</span>
+
       <div class="ei-nw"><span class="ei-name">Realism</span></div>
       <span class="ei-desc">Lifelike · detailed · striking</span>
       <span class="ei-arr">→</span>
@@ -1911,7 +1945,7 @@
     </li>
 
     <li class="ei">
-      <span class="ei-n" aria-hidden="true">~</span>
+
       <div class="ei-nw"><span class="ei-name">Portrait Work</span></div>
       <span class="ei-desc">Likeness · depth · held in the skin</span>
       <span class="ei-arr">→</span>
@@ -1925,7 +1959,7 @@
     </li>
 
     <li class="ei">
-      <span class="ei-n" aria-hidden="true">~</span>
+
       <div class="ei-nw"><span class="ei-name">Custom Design</span></div>
       <span class="ei-desc">Collaborative · your concept · built from scratch</span>
       <span class="ei-arr">→</span>
@@ -1939,6 +1973,86 @@
     </li>
 
   </ul>
+</section>
+
+<!-- ════ SOCIAL / FOLLOW ════ -->
+<section id="flash">
+  <!-- Left: copy + CTAs -->
+  <div class="fl-left">
+    <div class="fl-badge"><span class="fl-dot"></span> Follow the Work</div>
+    <h2 class="fl-h2">Stay in the <em>loop</em></h2>
+    <p class="fl-p">The best way to see what's happening — new work, available slots, flash days, and anything that doesn't make it onto the main site.</p>
+    <ul class="fl-reasons">
+      <li class="fl-reason">Flash day designs — first look before they're gone</li>
+      <li class="fl-reason">Behind-the-scenes from current projects</li>
+      <li class="fl-reason">Last-minute cancellation slots, announced same day</li>
+      <li class="fl-reason">Work in progress — detail shots and healed pieces</li>
+    </ul>
+    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="fl-ig-cta">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      Follow on Instagram
+      <span class="fl-ig-handle">@emmy.tattoo</span>
+    </a>
+    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="fl-ig-cta fl-fb-cta">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      Follow on Facebook
+      <span class="fl-fb-handle">EmmaleneTattoo</span>
+    </a>
+  </div>
+  <!-- Right: photo grid — click cell to view full image -->
+  <div class="fl-grid">
+    <div class="fl-cell">
+      <img src="pictures/7.jpg" alt="" loading="lazy">
+      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
+    </div>
+    <div class="fl-cell">
+      <img src="pictures/8.jpg" alt="" loading="lazy">
+      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
+    </div>
+    <div class="fl-cell">
+      <img src="pictures/tattto1.jpg" alt="" loading="lazy">
+      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
+    </div>
+    <div class="fl-cell">
+      <img src="pictures/2.jpg" alt="" loading="lazy">
+      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
+    </div>
+    <div class="fl-cell">
+      <img src="pictures/3.jpg" alt="" loading="lazy">
+      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
+    </div>
+    <div class="fl-cell">
+      <img src="pictures/4.jpg" alt="" loading="lazy">
+      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ GIFTS ════ -->
+<section id="gifts">
+  <div class="gf-left">
+    <div class="s-label">Gift Cards</div>
+    <h2 class="gf-h2">The gift that <em>stays</em></h2>
+    <p class="gf-p">Most gifts end up forgotten. A tattoo doesn't. Gift cards for any amount — redeemable whenever they're ready, no expiry, no pressure.</p>
+    <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
+       target="_blank" rel="noopener" class="gf-cta">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <span>Enquire via WhatsApp</span>
+    </a>
+  </div>
+  <div class="gf-right">
+    <div class="gf-occasions">
+      <span class="gf-oc gf-hi">Birthday</span>
+      <span class="gf-oc">Anniversary</span>
+      <span class="gf-oc gf-hi">Christmas</span>
+      <span class="gf-oc">Valentine's Day</span>
+      <span class="gf-oc">Graduation</span>
+      <span class="gf-oc gf-hi">Hen Do</span>
+      <span class="gf-oc">New Job</span>
+      <span class="gf-oc">Mother's Day</span>
+      <span class="gf-oc gf-hi">Just Because</span>
+    </div>
+  </div>
 </section>
 
 <!-- ════ BOOKING ════ -->
@@ -2017,83 +2131,52 @@
   </div>
 </section>
 
-<!-- ════ GIFTS ════ -->
-<section id="gifts">
-  <div class="gf-left">
-    <div class="s-label">Gift Cards</div>
-    <h2 class="gf-h2">The gift that <em>stays</em></h2>
-    <p class="gf-p">Most gifts end up forgotten. A tattoo doesn't. Gift cards for any amount — redeemable whenever they're ready, no expiry, no pressure.</p>
-    <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
-       target="_blank" rel="noopener" class="gf-cta">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      <span>Enquire via WhatsApp</span>
-    </a>
+<!-- ════ AFTERCARE ════ -->
+<section id="aftercare">
+  <div class="ac-hd">
+    <div class="s-label">Aftercare</div>
+    <h2 class="ac-h2">Keep it <em>clean.</em><br>Let it heal.</h2>
+    <p class="ac-sub">A new tattoo is an open wound. How you treat it in the first two weeks determines how it looks for the rest of your life — get it right and it'll stay sharp for decades.</p>
   </div>
-  <div class="gf-right">
-    <div class="gf-occasions">
-      <span class="gf-oc gf-hi">Birthday</span>
-      <span class="gf-oc">Anniversary</span>
-      <span class="gf-oc gf-hi">Christmas</span>
-      <span class="gf-oc">Valentine's Day</span>
-      <span class="gf-oc">Graduation</span>
-      <span class="gf-oc gf-hi">Hen Do</span>
-      <span class="gf-oc">New Job</span>
-      <span class="gf-oc">Mother's Day</span>
-      <span class="gf-oc gf-hi">Just Because</span>
-    </div>
-  </div>
-</section>
+  <div class="ac-phases">
 
-<!-- ════ SOCIAL / FOLLOW ════ -->
-<section id="flash">
-  <!-- Left: copy + CTAs -->
-  <div class="fl-left">
-    <div class="fl-badge"><span class="fl-dot"></span> Follow the Work</div>
-    <h2 class="fl-h2">Stay in the <em>loop</em></h2>
-    <p class="fl-p">The best way to see what's happening — new work, available slots, flash days, and anything that doesn't make it onto the main site.</p>
-    <ul class="fl-reasons">
-      <li class="fl-reason">Flash day designs — first look before they're gone</li>
-      <li class="fl-reason">Behind-the-scenes from current projects</li>
-      <li class="fl-reason">Last-minute cancellation slots, announced same day</li>
-      <li class="fl-reason">Work in progress — detail shots and healed pieces</li>
-    </ul>
-    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="fl-ig-cta">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-      Follow on Instagram
-      <span class="fl-ig-handle">@emmy.tattoo</span>
-    </a>
-    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="fl-ig-cta fl-fb-cta">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      Follow on Facebook
-      <span class="fl-fb-handle">EmmaleneTattoo</span>
-    </a>
+    <div class="ac-phase">
+      <span class="ac-phase-tag">Days 01 – 03</span>
+      <div class="ac-phase-title">The first 72 hours</div>
+      <ul class="ac-phase-list">
+        <li>Leave the wrap on for as long as specified — don't peek early</li>
+        <li>When removing, wash gently with unscented soap and warm water</li>
+        <li>Pat dry with a clean paper towel — never rub or use a cloth</li>
+        <li>Apply a thin layer of Bepanthen or Hustle Butter</li>
+      </ul>
+    </div>
+
+    <div class="ac-phase">
+      <span class="ac-phase-tag">Days 04 – 14</span>
+      <div class="ac-phase-title">The healing window</div>
+      <ul class="ac-phase-list">
+        <li>Moisturise 2–3× daily with fragrance-free lotion</li>
+        <li>Don't scratch, pick, or peel — let it flake naturally</li>
+        <li>Keep it out of direct sunlight while healing</li>
+        <li>No baths, pools, or sea water for at least 3 weeks</li>
+      </ul>
+    </div>
+
+    <div class="ac-phase">
+      <span class="ac-phase-tag">Long term</span>
+      <div class="ac-phase-title">Keeping it sharp</div>
+      <ul class="ac-phase-list">
+        <li>SPF 30+ on healed tattoos whenever you're in the sun</li>
+        <li>Keep skin moisturised — dry skin dulls the contrast</li>
+        <li>Sunbeds and UV degrade ink faster than anything else</li>
+        <li>Touch-ups are always available if needed</li>
+      </ul>
+    </div>
+
   </div>
-  <!-- Right: photo grid — click cell to view full image -->
-  <div class="fl-grid">
-    <div class="fl-cell">
-      <img src="pictures/7.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/8.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/tattto1.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/2.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/3.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/4.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
+  <div class="ac-note">
+    <svg class="ac-note-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message Emmy directly</strong> — don't wait, it's always better to ask early. <a href="https://wa.me/447405979137" style="color:var(--gold);text-decoration:none">WhatsApp</a> or Instagram DM.</p>
   </div>
 </section>
 
@@ -2679,12 +2762,6 @@
       { clipPath: 'inset(0 0% 0 0)', stagger: .1, duration: 1.1, ease: 'expo.out',
         scrollTrigger: { trigger: '.exp-list', start: 'top 82%' } }
     );
-    // Tilde emblems drift in
-    gsap.fromTo('.ei-n',
-      { opacity: 0, x: -10 },
-      { opacity: 1, x: 0, stagger: .08, duration: 1, ease: 'power3.out',
-        scrollTrigger: { trigger: '.exp-list', start: 'top 82%' } }
-    );
 
     /* ── Expertise expand accordion ── */
     document.querySelectorAll('.ei').forEach(row => {
@@ -2698,7 +2775,6 @@
         row.classList.toggle('open', isOpen);
 
         if (isOpen) {
-          /* Measure real height then animate from 0 → h */
           gsap.set(panel, { height: 'auto', overflow: 'visible' });
           const h = panel.offsetHeight;
           gsap.fromTo(panel,
@@ -2706,12 +2782,10 @@
             { height: h, duration: 0.58, ease: 'expo.out',
               onComplete() { gsap.set(panel, { height: 'auto' }); } }
           );
-          /* Content fade up */
           gsap.fromTo(panel.querySelector('.ei-expand-inner'),
             { opacity: 0, y: 12 },
             { opacity: 1, y: 0, duration: 0.45, delay: 0.12, ease: 'power3.out' }
           );
-          /* Arrow rotates to point down */
           gsap.to(arr, { rotation: 90, duration: 0.42, ease: 'expo.out' });
         } else {
           gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.38, ease: 'expo.in' });
@@ -2723,18 +2797,78 @@
       });
     });
 
-    /* ── Expertise — split each .ei-n into tilde + pipe children ── */
-    document.querySelectorAll('.ei-n').forEach(el => {
-      const tilde = document.createElement('span');
-      tilde.className = 'ei-n-tilde';
-      tilde.textContent = '~';
-      const pipe = document.createElement('span');
-      pipe.className = 'ei-n-pipe';
-      pipe.setAttribute('aria-hidden', 'true');
-      el.textContent = '';
-      el.appendChild(tilde);
-      el.appendChild(pipe);
+    /* ── Expertise — iOS-spring hover (GSAP elastic, no CSS transitions) ── */
+    document.querySelectorAll('.ei').forEach(row => {
+      const name  = row.querySelector('.ei-name');
+      const arr   = row.querySelector('.ei-arr');
+      const rule  = row.querySelector('.ei-rule');
+      const bgN   = row.querySelector('.ei-bg-n');
+
+      /* Inject left accent bar once */
+      const accent = document.createElement('div');
+      accent.className = 'ei-accent';
+      row.insertBefore(accent, row.firstChild);
+
+      let hTl = null;
+
+      row.addEventListener('mouseenter', () => {
+        if (hTl) hTl.kill();
+        hTl = gsap.timeline();
+
+        /* Accent bar: spring from top (elastic amplitude 1.3 → visible bounce) */
+        hTl.fromTo(accent,
+          { scaleY: 0, opacity: 0 },
+          { scaleY: 1, opacity: 1, duration: 0.62, ease: 'elastic.out(1.3, 0.38)', transformOrigin: 'top' },
+          0)
+        /* Name: rockets right, overshoots ~30px, settles at 18px */
+        .to(name,
+          { x: 18, color: 'var(--gold)', duration: 0.7, ease: 'elastic.out(1.5, 0.3)' },
+          0)
+        /* Arrow: even more aggressive — flies hard then snaps back decisively */
+        .to(arr,
+          { x: 14, color: 'var(--gold)', duration: 0.55, ease: 'elastic.out(2.2, 0.22)' },
+          0.05)
+        /* Rule: instant gold sweep, no spring */
+        .to(rule,
+          { width: '100%', duration: 0.28, ease: 'expo.out' },
+          0)
+        /* Ghost number: pops into view */
+        .to(bgN,
+          { opacity: 0.13, duration: 0.4, ease: 'power2.out' },
+          0);
+      });
+
+      row.addEventListener('mouseleave', () => {
+        if (hTl) hTl.kill();
+        hTl = gsap.timeline();
+
+        const openColor = row.classList.contains('open') ? 'var(--gold)' : 'var(--dim)';
+
+        hTl
+          .to(accent, { scaleY: 0, opacity: 0, duration: 0.26, ease: 'expo.in', transformOrigin: 'top' }, 0)
+          .to(name,   { x: 0, color: 'var(--fg)',    duration: 0.32, ease: 'expo.out' }, 0)
+          .to(arr,    { x: 0, color: openColor,       duration: 0.28, ease: 'expo.out' }, 0)
+          .to(rule,   { width: 0, duration: 0.28, ease: 'expo.in' }, 0)
+          .to(bgN,    { opacity: 0.045, duration: 0.3, ease: 'power2.out' }, 0);
+      });
     });
+
+    /* ── Aftercare ── */
+    gsap.fromTo('#aftercare .ac-hd',
+      { opacity: 0, y: 28 },
+      { opacity: 1, y: 0, duration: 1, ease: 'expo.out',
+        scrollTrigger: { trigger: '#aftercare', start: 'top 82%' } }
+    );
+    gsap.fromTo('#aftercare .ac-phase',
+      { opacity: 0, y: 32 },
+      { opacity: 1, y: 0, stagger: .12, duration: .85, ease: 'power3.out',
+        scrollTrigger: { trigger: '#aftercare .ac-phases', start: 'top 84%' } }
+    );
+    gsap.fromTo('#aftercare .ac-note',
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: .8, ease: 'power3.out',
+        scrollTrigger: { trigger: '#aftercare .ac-note', start: 'top 90%' } }
+    );
 
     /* ── Flash Days ── */
     gsap.fromTo('#flash .fl-left',
