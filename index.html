@@ -634,25 +634,53 @@
     }
     .ei:hover .ei-bg-n { opacity: .1; }
 
-    /* Tilde emblem */
+    /* Tilde → pipe container */
     .ei-n {
       font-family: var(--serif); font-size: 1.5rem;
       font-weight: 300; font-style: italic;
-      color: rgba(196,162,98,.35);
       min-width: 44px; flex-shrink: 0;
       position: relative; z-index: 1;
       line-height: 1;
-      transition: color .4s, transform .45s var(--out);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .45s var(--out);
     }
-    .ei:hover .ei-n { color: rgba(196,162,98,.8); transform: translateX(8px); }
-    /* Gold connector that extends from tilde toward the skill name */
+    .ei:hover .ei-n { transform: translateX(8px); }
+
+    /* The ~ — exits on hover: collapses sideways + spins */
+    .ei-n-tilde {
+      display: block; color: rgba(196,162,98,.35);
+      transition: opacity .18s cubic-bezier(.55,.055,.675,.19),
+                  transform .32s cubic-bezier(.55,.055,.675,.19);
+      transform-origin: center;
+    }
+    .ei:hover .ei-n-tilde {
+      opacity: 0;
+      transform: scaleX(0.08) rotate(90deg);
+    }
+
+    /* The | pipe — CSS line, springs in from centre */
+    .ei-n-pipe {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scaleY(0);
+      transform-origin: center;
+      width: 1.5px; height: 1.25em;
+      background: rgba(196,162,98,.8);
+      border-radius: 2px; opacity: 0;
+      transition: transform .52s var(--sp), opacity .18s;
+    }
+    .ei:hover .ei-n-pipe {
+      transform: translate(-50%, -50%) scaleY(1);
+      opacity: 1;
+    }
+
+    /* Gold line extending from pipe toward the skill name */
     .ei-n::after {
       content: '';
       position: absolute; top: 50%; left: 100%;
       height: 1px; width: 0;
       background: linear-gradient(90deg, var(--gold), transparent);
-      opacity: .7; transform: translateY(-50%);
-      transition: width .55s var(--out);
+      opacity: .6; transform: translateY(-50%);
+      transition: width .5s var(--out);
       pointer-events: none;
     }
     .ei:hover .ei-n::after { width: 22px; }
@@ -2691,6 +2719,19 @@
           gsap.to(arr, { rotation: 0, duration: 0.32, ease: 'expo.in' });
         }
       });
+    });
+
+    /* ── Expertise — split each .ei-n into tilde + pipe children ── */
+    document.querySelectorAll('.ei-n').forEach(el => {
+      const tilde = document.createElement('span');
+      tilde.className = 'ei-n-tilde';
+      tilde.textContent = '~';
+      const pipe = document.createElement('span');
+      pipe.className = 'ei-n-pipe';
+      pipe.setAttribute('aria-hidden', 'true');
+      el.textContent = '';
+      el.appendChild(tilde);
+      el.appendChild(pipe);
     });
 
     /* ── Flash Days ── */
