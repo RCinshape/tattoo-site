@@ -646,27 +646,27 @@
     }
     .ei:hover .ei-n { transform: translateX(8px); }
 
-    /* The ~ — exits on hover: collapses sideways + spins */
+    /* ~ stays — nudges right into the pipe on hover */
     .ei-n-tilde {
       display: block; color: rgba(196,162,98,.35);
-      transition: opacity .18s cubic-bezier(.55,.055,.675,.19),
-                  transform .32s cubic-bezier(.55,.055,.675,.19);
+      transition: color .3s, transform .48s var(--sp);
       transform-origin: center;
     }
     .ei:hover .ei-n-tilde {
-      opacity: 0;
-      transform: scaleX(0.08) rotate(90deg);
+      color: rgba(196,162,98,.85);
+      /* spring nudge: overshoots ~7px then settles at 5px — physical bump feel */
+      transform: translateX(5px) scaleX(.88);
     }
 
-    /* The | pipe — CSS line, springs in from centre */
+    /* | pipe — springs up at the exact spot the tilde nudges into */
     .ei-n-pipe {
-      position: absolute; top: 50%; left: 50%;
+      position: absolute; top: 50%; left: calc(50% + 9px);
       transform: translate(-50%, -50%) scaleY(0);
       transform-origin: center;
-      width: 1.5px; height: 1.25em;
-      background: rgba(196,162,98,.8);
+      width: 1.5px; height: 1.1em;
+      background: rgba(196,162,98,.78);
       border-radius: 2px; opacity: 0;
-      transition: transform .52s var(--sp), opacity .18s;
+      transition: transform .5s var(--sp), opacity .15s;
     }
     .ei:hover .ei-n-pipe {
       transform: translate(-50%, -50%) scaleY(1);
@@ -1706,7 +1706,7 @@
       <span class="tl"><em class="tl-i">Tattoo</em></span>
     </h1>
     <div class="h-sub">
-      <div class="h-loc">Sainthood · Princes Ave, Hull<br>By appointment only</div>
+      <div class="h-loc">Sainthood · Princes Ave, Hull<br>By appointment only &nbsp;·&nbsp; Tue–Sun &nbsp;·&nbsp; 9am–5pm</div>
     </div>
   </div>
 </section>
