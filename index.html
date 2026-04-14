@@ -180,7 +180,6 @@
       transition: background .5s, backdrop-filter .5s, padding .35s, border-color .4s;
       border-bottom: 1px solid transparent;
     }
-    /* .on class is now unused for show/hide — GSAP drives it */
     #nav.s {
       background: rgba(8,7,5,.88);
       backdrop-filter: blur(24px);
@@ -289,7 +288,8 @@
     .tl-i { display: block; opacity: 0; }
     .htc { display: inline-block; }
     .h-sub {
-      display: flex; justify-content: space-between; align-items: flex-end;
+      display: flex; justify-content: flex-start; align-items: flex-end;
+      gap: 18px;
       margin-top: 44px; opacity: 0;
     }
     .h-loc {
@@ -1358,7 +1358,7 @@
     .fq-item {
       border-top: 1px solid var(--border);
       position: relative; overflow: hidden;
-      opacity: 0; cursor: pointer;
+      cursor: pointer;
     }
     .fq-item:last-child { border-bottom: 1px solid var(--border); }
 
@@ -1601,6 +1601,11 @@
       width: 100%; aspect-ratio: 16/6; border-radius: var(--r);
       overflow: hidden; border: 1px solid var(--border);
       opacity: 0; transform: translateY(20px);
+      transition: box-shadow .6s ease, border-color .6s ease;
+    }
+    .loc-map-wrap.map-lit {
+      border-color: rgba(196,162,98,.35);
+      box-shadow: 0 0 0 3px rgba(196,162,98,.07), 0 0 40px rgba(196,162,98,.1);
     }
     .loc-map-wrap iframe {
       width: 100%; height: 100%; border: 0;
@@ -1716,7 +1721,7 @@
     </h1>
     <div class="h-sub">
       <div class="h-loc">At Sainthood Tattoo · Princes Ave, Hull<br>Appointment only &nbsp;·&nbsp; Tue–Sat</div>
-      <a href="https://maps.google.com/?q=Sainthood+Tattoo,+Princes+Avenue,+Hull" target="_blank" rel="noopener" class="h-dir" aria-label="Get directions to Sainthood Tattoo">
+      <a href="#location" class="h-dir" aria-label="View map for Sainthood Tattoo">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="5 5 19 5 19 19"/></svg>
         <span>Directions</span>
       </a>
@@ -2456,7 +2461,10 @@
     gsap.set(subChars,  { opacity: 0, y: 10 });
     gsap.set(rule,      { scaleX: 0, opacity: 0, transformOrigin: '50% 50%' });
 
-    gsap.timeline({ onComplete: () => setTimeout(exitLoader, 130) })
+    gsap.timeline({ onComplete: () => {
+      document.querySelectorAll('.ld-c').forEach(el => el.style.willChange = 'auto');
+      setTimeout(exitLoader, 130);
+    } })
       .to(nameChars, {
         clipPath: 'inset(-10% -10% -10% -10%)',
         y: 0,
@@ -2514,7 +2522,12 @@
     else if (_ptsRunning) gsap.ticker.add(tickPts);
   });
 
-  window.addEventListener('resize', () => { szCvs(); ScrollTrigger.refresh(); });
+  let _rzTimer;
+  window.addEventListener('resize', () => {
+    szCvs();
+    clearTimeout(_rzTimer);
+    _rzTimer = setTimeout(() => ScrollTrigger.refresh(), 180);
+  });
 
   /* ═══ CURSOR ═══ */
   if (window.innerWidth > 768) {
@@ -2601,6 +2614,14 @@
       if (!target) return;
       e.preventDefault();
       lenis.scrollTo(target, { duration: 1.6, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+      /* Directions button → pulse map glow on arrival */
+      if (a.classList.contains('h-dir')) {
+        const map = document.querySelector('.loc-map-wrap');
+        if (map) setTimeout(() => {
+          map.classList.add('map-lit');
+          setTimeout(() => map.classList.remove('map-lit'), 2200);
+        }, 1650);
+      }
     });
   });
 
@@ -2737,7 +2758,6 @@
         velBuf.length = 0;
         gsap.killTweensOf(track);
         gal.classList.add('dragging');
-        e.preventDefault();
       });
 
       gal.addEventListener('pointermove', e => {
@@ -3354,8 +3374,6 @@
       orb.style.transform = `translate(${cx - 240}px, ${cy - 240}px)`;
     });
   })();
-
-  /* watermark removed */
 
   /* ═══ DECORATIVE: animated section draw-rules ═══ */
   document.querySelectorAll('.draw-rule').forEach(el => {
