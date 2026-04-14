@@ -11,12 +11,10 @@
   <meta property="og:url" content="https://emmytattoo.co.uk">
   <meta property="og:type" content="website">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/romance-fatal-serif" rel="stylesheet">
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
@@ -29,2369 +27,731 @@
     html { scroll-behavior: auto; overscroll-behavior: none; }
 
     :root {
-      --bg:       #080705;
-      --bg2:      #0d0b09;
-      --fg:       #ede8df;
-      --fg2:      #b0a89c;
-      --dim:      #635c54;
-      --gold:     #c4a262;
-      --gold-lo:  rgba(196,162,98,.07);
-      --gold-md:  rgba(196,162,98,.18);
-      --border:   rgba(237,232,223,.07);
-      --border-h: rgba(237,232,223,.15);
-      --r:        12px;
-      --serif:   'Cormorant Garant', Georgia, serif;
-      --display: 'Romance Fatal Serif', Georgia, serif;
-      --mono:  'Space Mono', monospace;
-      --sans:  'DM Sans', sans-serif;
-      --out:   cubic-bezier(.16,1,.3,1);
-      --io:    cubic-bezier(.87,0,.13,1);
-      --sp:    cubic-bezier(.34,1.56,.64,1);
-      /* auto-center: 48px min, grows to keep content ≤ 1440px wide */
-      --pad:   max(48px, calc(50vw - 720px));
+      --bg:      #080705;
+      --bg2:     #0d0b09;
+      --fg:      #ede8df;
+      --fg2:     #b0a89c;
+      --dim:     #635c54;
+      --gold:    #c4a262;
+      --border:  rgba(237,232,223,.07);
+      --border-h:rgba(237,232,223,.16);
+      --r:       10px;
+      --serif:  'Cormorant Garant', Georgia, serif;
+      --display:'Romance Fatal Serif', Georgia, serif;
+      --mono:   'Space Mono', monospace;
+      --sans:   'DM Sans', sans-serif;
+      --out:    cubic-bezier(.16,1,.3,1);
+      --sp:     cubic-bezier(.34,1.56,.64,1);
+      --pad:    max(48px, calc(50vw - 720px));
     }
 
     body {
       font-family: var(--sans);
-      background: var(--bg);
-      color: var(--fg);
+      background: var(--bg); color: var(--fg);
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-      overscroll-behavior: none;
-      cursor: none;
+      overflow-x: hidden; cursor: none;
     }
-
     @media (max-width: 768px) { body { cursor: auto; } }
 
-    /* ══════════════════════════════════════════
-       VIGNETTE + AMBIENT GLOW
-    ══════════════════════════════════════════ */
-    .vignette {
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 9998;
-      background:
-        radial-gradient(ellipse at 0% 0%,   rgba(196,162,98,.022) 0%, transparent 48%),
-        radial-gradient(ellipse at 100% 0%,  rgba(196,162,98,.016) 0%, transparent 48%),
-        radial-gradient(ellipse at 0% 100%,  rgba(196,162,98,.016) 0%, transparent 48%),
-        radial-gradient(ellipse at 100% 100%,rgba(196,162,98,.022) 0%, transparent 48%),
-        radial-gradient(ellipse 90% 85% at 50% 50%, transparent 48%, rgba(8,7,5,.52) 100%);
-    }
-    .ambience {
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 9996;
-      background:
-        radial-gradient(ellipse 55% 55% at 8% 12%,  rgba(196,162,98,.055) 0%, transparent 70%),
-        radial-gradient(ellipse 45% 45% at 95% 95%, rgba(196,162,98,.05)  0%, transparent 70%),
-        radial-gradient(ellipse 38% 38% at 65% 45%, rgba(196,162,98,.04)  0%, transparent 70%);
-    }
-
-    /* ══════════════════════════════════════════
-       PROGRESS
-    ══════════════════════════════════════════ */
-    #prog {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 1px;
-      background: var(--gold);
-      transform-origin: left; transform: scaleX(0);
-      z-index: 9997;
-    }
-
-    /* ══════════════════════════════════════════
-       CURSOR
-    ══════════════════════════════════════════ */
+    /* ══ CURSOR ══ */
     #cr {
       position: fixed; left: 0; top: 0; width: 38px; height: 38px;
       border: 1px solid rgba(196,162,98,.45); border-radius: 50%;
-      pointer-events: none; z-index: 99999;
-      transition: width .4s var(--out), height .4s var(--out),
-                  border-color .3s, background .3s;
-      will-change: transform;
+      pointer-events: none; z-index: 99999; will-change: transform;
+      transition: width .4s var(--out), height .4s var(--out), border-color .3s, background .3s;
     }
-    #cr.h { width: 76px; height: 76px; border-color: rgba(196,162,98,.7); background: rgba(196,162,98,.05); }
-
+    #cr.h { width: 72px; height: 72px; border-color: rgba(196,162,98,.7); background: rgba(196,162,98,.05); }
     #cd {
       position: fixed; left: 0; top: 0; width: 4px; height: 4px;
       background: var(--gold); border-radius: 50%;
-      pointer-events: none; z-index: 99999;
-      will-change: transform;
+      pointer-events: none; z-index: 99999; will-change: transform;
     }
     @media (max-width: 768px) { #cr, #cd { display: none; } }
 
-    /* ══════════════════════════════════════════
-       LOADER
-    ══════════════════════════════════════════ */
+    /* ══ LOADER ══ */
     #loader {
       position: fixed; inset: 0; z-index: 999999;
       background: var(--bg);
       display: flex; align-items: center; justify-content: center;
     }
-
-    .ld-wrap {
-      text-align: center;
-    }
+    .ld-wrap { text-align: center; }
     .ld-name {
       font-family: var(--display);
       font-size: clamp(5rem, 14vw, 10.5rem);
-      font-weight: 400;
-      letter-spacing: 0.2em;
-      line-height: 1;
-      margin: 0;
+      font-weight: 400; letter-spacing: .2em; line-height: 1;
       display: flex; justify-content: center;
     }
     .ld-name .ld-c {
-      display: inline-block;
-      will-change: transform, clip-path;
-      background: linear-gradient(158deg, #eed98a 0%, #c4a262 38%, #f7e8b8 62%, #b8904a 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      display: inline-block; will-change: transform, clip-path;
+      background: linear-gradient(158deg,#eed98a 0%,#c4a262 38%,#f7e8b8 62%,#b8904a 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       filter: drop-shadow(0 2px 24px rgba(196,162,98,.28));
     }
     .ld-rule {
       width: 72px; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin: 1.1rem auto;
-      transform-origin: center;
+      background: linear-gradient(90deg,transparent,var(--gold),transparent);
+      margin: 1.1rem auto; transform-origin: center;
     }
     .ld-sub {
       font-family: var(--display);
-      font-size: clamp(1.2rem, 3vw, 2.2rem);
-      font-weight: 400;
-      font-style: normal;
-      letter-spacing: 0.62em;
-      color: var(--fg2);
-      margin: 0; line-height: 1;
-      display: flex; justify-content: center;
+      font-size: clamp(1.2rem,3vw,2.2rem);
+      font-weight: 400; letter-spacing: .62em;
+      color: var(--fg2); display: flex; justify-content: center;
     }
-    .ld-sub .ld-c {
-      display: inline-block;
-      will-change: transform, opacity;
+    .ld-sub .ld-c { display: inline-block; will-change: transform, opacity; }
+
+    /* ══ VIGNETTE ══ */
+    .vignette {
+      position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+      background: radial-gradient(ellipse 90% 85% at 50% 50%, transparent 50%, rgba(8,7,5,.55) 100%);
     }
 
-    /* ══════════════════════════════════════════
-       NAV
-    ══════════════════════════════════════════ */
+    /* ══ PROGRESS ══ */
+    #prog {
+      position: fixed; top: 0; left: 0; width: 100%; height: 1px;
+      background: var(--gold); transform-origin: left; transform: scaleX(0); z-index: 9997;
+    }
+
+    /* ══ NAV ══ */
     #nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      padding: 28px var(--pad);
+      padding: 26px var(--pad);
       display: flex; align-items: center; justify-content: space-between;
       opacity: 0; pointer-events: none;
-      transform: translateY(-110%);
       transition: background .5s, backdrop-filter .5s, padding .35s, border-color .4s;
       border-bottom: 1px solid transparent;
     }
     #nav.s {
-      background: rgba(8,7,5,.88);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      padding-top: 16px; padding-bottom: 16px;
-      border-bottom-color: var(--border);
+      background: rgba(8,7,5,.88); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      padding-top: 15px; padding-bottom: 15px; border-bottom-color: var(--border);
     }
     .n-logo {
-      font-family: var(--display); font-size: 1.15rem;
+      font-family: var(--display); font-size: 1.12rem;
       font-weight: 400; letter-spacing: .07em;
       text-decoration: none; color: var(--fg);
     }
     .n-logo em { font-style: italic; color: var(--gold); }
-    .n-links { display: flex; align-items: center; gap: 28px; }
-    .n-item {
-      font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .22em; text-transform: uppercase;
-      color: var(--fg2); text-decoration: none;
-      transition: color .3s;
+    .n-right { display: flex; align-items: center; gap: 10px; }
+    .n-info {
+      font-family: var(--mono); font-size: .67rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--fg2); background: none; border: 1px solid var(--border); border-radius: 999px;
+      padding: 8px 16px; cursor: pointer;
+      transition: color .3s, border-color .3s, background .3s;
     }
-    .n-item:hover { color: var(--fg); }
-    .n-btn {
-      font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .2em; text-transform: uppercase;
-      color: var(--fg); text-decoration: none;
-      border: 1px solid rgba(196,162,98,.32);
-      background: rgba(196,162,98,.04);
-      padding: 14px 32px; border-radius: 100px;
-      transition: border-color .38s, background .38s, color .38s;
+    .n-info:hover { color: var(--fg); border-color: var(--border-h); background: rgba(237,232,223,.03); }
+    .n-book {
+      font-family: var(--mono); font-size: .67rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--bg); background: var(--gold); border: none; border-radius: 999px;
+      padding: 9px 20px; cursor: pointer; text-decoration: none;
+      transition: opacity .25s, transform .35s var(--sp);
     }
-    .n-btn:hover { border-color: rgba(196,162,98,.65); background: rgba(196,162,98,.09); color: var(--fg); }
-    .n-social {
-      display: inline-flex; align-items: center; justify-content: center;
-      color: var(--dim); text-decoration: none;
-      border: 1px solid var(--border);
-      width: 38px; height: 38px; border-radius: 50%;
-      transition: color .25s, border-color .25s;
-      flex-shrink: 0;
-    }
-    .n-social:hover { color: var(--fg); border-color: var(--border-h); }
-    .n-social span { display: none; }
-    .n-social svg { flex-shrink: 0; }
-    @media (max-width: 768px) {
-      #nav { padding: 18px 24px; }
-      #nav.s { padding: 12px 24px; }
-      .n-item { display: none; }
-      .n-links { gap: 12px; }
-    }
+    .n-book:hover { opacity: .85; transform: scale(1.05); }
 
-    /* ══════════════════════════════════════════
-       HERO BACKGROUND IMAGE
-    ══════════════════════════════════════════ */
-    .hero-bg-photo {
-      position: absolute; inset: 0;
+    /* ══ HERO ══ */
+    #hero { position: relative; height: 100svh; overflow: hidden; }
+    .hero-img { position: absolute; inset: 0; }
+    .hero-img img {
       width: 100%; height: 100%;
-      pointer-events: none; z-index: 0;
+      object-fit: cover; object-position: center top; display: block;
     }
-    .hero-bg-photo img {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center 30%;
-      display: block;
-      filter: grayscale(1) brightness(.42) contrast(1.08);
+    .hero-grad {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(to top,
+        rgba(8,7,5,.95) 0%, rgba(8,7,5,.55) 28%, rgba(8,7,5,.1) 58%, transparent 100%);
     }
-    .hero-bg-photo::after {
-      content: '';
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 50% 0%,   rgba(8,7,5,.72) 0%, transparent 70%),
-        radial-gradient(ellipse 80% 60% at 50% 100%,  rgba(8,7,5,.90) 0%, transparent 65%),
-        radial-gradient(ellipse 40% 100% at 0% 50%,   rgba(8,7,5,.78) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 100% at 100% 50%, rgba(8,7,5,.78) 0%, transparent 70%);
-      z-index: 1;
-    }
-
-    /* ══════════════════════════════════════════
-       HERO
-    ══════════════════════════════════════════ */
-    #hero {
-      min-height: 100svh;
-      display: flex; flex-direction: column; justify-content: flex-start;
-      padding: clamp(88px, 12svh, 120px) var(--pad) 56px; position: relative; overflow: hidden;
-    }
-    #hcvs {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      pointer-events: none; opacity: .22;
-    }
-    .h-vign {
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse at 50% -5%, rgba(196,162,98,.035), transparent 55%),
-        radial-gradient(ellipse at 100% 100%, rgba(196,162,98,.025), transparent 50%),
-        radial-gradient(ellipse at 50% 110%, rgba(8,7,5,.6), transparent 60%);
-      pointer-events: none;
-    }
-    .h-inner { position: relative; z-index: 2; }
-    @keyframes dp { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.6); opacity: .5; } }
-    .h-title {
-      font-family: var(--display);
-      font-size: clamp(4rem,13.5vw,13rem);
-      font-weight: 400; line-height: .87; letter-spacing: -.03em;
-    }
-    .tl { display: block; }
-    .tl em { font-style: italic; color: var(--gold); }
-    .tl-i { display: block; opacity: 0; }
-    .htc { display: inline-block; }
-    .h-sub {
-      margin-top: 44px; opacity: 0;
-    }
-    .h-loc {
-      font-family: var(--serif); font-style: italic; font-weight: 300;
-      font-size: clamp(.95rem, 1.7vw, 1.1rem);
-      color: rgba(237,232,223,.62);
-      line-height: 1.75;
-      text-shadow: 0 0 28px rgba(8,7,5,1), 0 1px 6px rgba(8,7,5,.85);
-      display: flex; flex-direction: column; gap: 0;
-    }
-    .h-loc-studio {
-      display: flex; align-items: center; gap: 12px;
-    }
-    .h-loc-hours { display: block; }
-    .h-dir {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 6px 13px 6px 9px;
-      border-radius: 999px;
-      background: rgba(237,232,223,.07);
-      border: 1px solid rgba(237,232,223,.14);
-      backdrop-filter: blur(16px) saturate(1.4);
-      -webkit-backdrop-filter: blur(16px) saturate(1.4);
-      font-family: var(--sans); font-size: .7rem;
-      letter-spacing: .06em; text-transform: uppercase;
-      color: rgba(237,232,223,.65);
-      text-decoration: none; white-space: nowrap;
-      transition: background .35s, border-color .35s, color .35s,
-                  transform .45s cubic-bezier(.34,1.56,.64,1),
-                  box-shadow .35s;
-    }
-    .h-dir:hover {
-      background: rgba(196,162,98,.13);
-      border-color: rgba(196,162,98,.35);
-      color: rgba(196,162,98,.95);
-      transform: scale(1.06);
-      box-shadow: 0 2px 20px rgba(196,162,98,.1);
-    }
-    .h-dir svg { flex-shrink: 0; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
-    .h-dir:hover svg { transform: translate(1px, -1px); }
-    @media (max-width: 768px) {
-      #hero { padding: 80px 24px 48px; }
-      .h-title { font-size: clamp(3.4rem,16vw,6rem); }
-      .h-dir span { display: none; }
-      .h-dir { padding: 9px 11px; }
-    }
-
-    /* ══════════════════════════════════════════
-       MARQUEE
-    ══════════════════════════════════════════ */
-    .mq-wrap {
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 13px 0; overflow: hidden; background: var(--bg2);
-    }
-    .mq-row {
-      display: flex; width: max-content;
-      animation: mqS 28s linear infinite;
-    }
-    /* marquee never pauses on hover */
-    @keyframes mqS { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-    .mq-item {
-      font-family: var(--mono); font-size: .7rem;
-      letter-spacing: .24em; text-transform: uppercase;
-      color: var(--dim); white-space: nowrap;
-      display: flex; align-items: center; padding: 0 32px; gap: 32px;
-    }
-    .mq-dot {
-      width: 3px; height: 3px; border-radius: 50%;
-      background: var(--gold); opacity: .5; flex-shrink: 0;
-    }
-
-    /* ══════════════════════════════════════════
-       SHARED SECTION LABEL
-    ══════════════════════════════════════════ */
-    .s-label {
-      font-family: var(--mono); font-size: .74rem;
-      letter-spacing: .28em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 16px;
-      opacity: 0; transform: translateY(10px);
-    }
-
-    /* ══════════════════════════════════════════
-       WORK
-    ══════════════════════════════════════════ */
-    #work-outer { }
-    #work {
-      padding-top: 100px;
-      height: auto; overflow: visible;
-    }
-    .w-head {
-      padding: 0 var(--pad) 48px;
-      display: flex; align-items: flex-end; justify-content: space-between;
-    }
-    .w-h2 {
-      font-family: var(--serif);
-      font-size: clamp(2.4rem,5.5vw,4.8rem);
-      font-weight: 300; letter-spacing: -.02em; line-height: 1;
-    }
-    .w-h2 em { font-style: italic; color: var(--gold); }
-    .w-h2 .tl-i { /* inherits */ }
-    .w-hint {
-      font-family: var(--mono); font-size: .64rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--dim); text-align: right; opacity: 0;
-    }
-    .wh-arrows span {
-      display: inline-block;
-      animation: wha 1.4s ease-in-out infinite;
-      opacity: .25;
-    }
-    .wh-arrows span:nth-child(2) { animation-delay: .14s; }
-    .wh-arrows span:nth-child(3) { animation-delay: .28s; }
-    @keyframes wha { 0%,100% { opacity: .15; transform: translateX(0); } 50% { opacity: 1; transform: translateX(5px); } }
-
-    /* Gallery */
-    .w-gal { overflow: hidden; cursor: grab; user-select: none; }
-    .w-gal.dragging { cursor: grabbing; }
-    .w-track {
-      display: flex; gap: 14px;
-      padding: 0 var(--pad) 64px;
-      width: max-content; will-change: transform;
-    }
-    .wc {
-      width: clamp(220px,26vw,360px);
-      aspect-ratio: 2/3; /* matches 1119×1699 portrait crop — zero cropping */
-      border-radius: var(--r);
-      border: 1px solid var(--border);
-      overflow: hidden; position: relative;
-      flex-shrink: 0; cursor: pointer;
-      transition: border-color .4s, transform .22s ease;
-    }
-    /* iOS press-down feel when dragging */
-    .w-gal.dragging .wc { transform: scale(0.987); }
-    .wc:hover { border-color: var(--border-h); }
-    /* Photo fills card — full image shown in lightbox */
-    .wc { background: #0a0907; }
-    .wc-img {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center top;
-      transition: filter 1.1s, transform 1.4s var(--out);
-      filter: brightness(.9) saturate(.75);
-    }
-    .wc:hover .wc-img { filter: brightness(1) saturate(.9); transform: scale(1.05); }
-
-    /* Placeholder card — shown while waiting for photos */
-    .wc:not(:has(.wc-img)) {
-      background: repeating-linear-gradient(
-        -45deg,
-        transparent, transparent 18px,
-        rgba(237,232,223,.025) 18px, rgba(237,232,223,.025) 19px
-      );
-      cursor: default;
-    }
-    .wc:not(:has(.wc-img)) .wc-view {
-      transform: translate(-50%,-50%) scale(1);
-      font-size: 1.4rem; color: var(--dim);
-      border-color: var(--border);
-    }
-
-    /* Shine */
-    .wc::after {
+    /* top fade for nav readability */
+    .hero-grad::before {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(108deg,transparent 34%,rgba(255,255,255,.04) 44%,rgba(255,255,255,.07) 50%,rgba(255,255,255,.04) 56%,transparent 66%);
-      transform: translateX(-130%); transition: transform .9s var(--out);
-      pointer-events: none; z-index: 5;
+      background: linear-gradient(to bottom,
+        rgba(8,7,5,.35) 0%, transparent 22%);
     }
-    .wc:hover::after { transform: translateX(130%); }
+    .hero-content {
+      position: absolute; bottom: 60px; left: var(--pad); right: var(--pad);
+      z-index: 2; display: flex; align-items: flex-end; justify-content: space-between;
+    }
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(6rem, 16vw, 14rem);
+      font-weight: 400; line-height: .88; color: var(--fg);
+      opacity: 0; transform: translateY(40px);
+    }
+    .hero-title em { font-style: italic; color: var(--gold); }
+    .hero-meta { text-align: right; opacity: 0; }
+    .hero-meta-studio {
+      font-family: var(--serif); font-style: italic;
+      font-size: clamp(.9rem,1.5vw,1.05rem);
+      color: rgba(237,232,223,.6); line-height: 1.75;
+      display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+    }
+    .h-dir {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .08em; text-transform: uppercase;
+      color: rgba(196,162,98,.65); text-decoration: none;
+      padding: 6px 12px 6px 9px; border-radius: 999px;
+      border: 1px solid rgba(196,162,98,.22);
+      backdrop-filter: blur(12px);
+      transition: color .3s, border-color .3s, background .3s, transform .4s var(--sp);
+    }
+    .h-dir:hover { color: var(--gold); border-color: rgba(196,162,98,.45); background: rgba(196,162,98,.08); transform: scale(1.05); }
+    .h-dir svg { flex-shrink: 0; transition: transform .35s var(--sp); }
+    .h-dir:hover svg { transform: translate(1px,-1px); }
+    .hero-meta-hours {
+      font-family: var(--mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase;
+      color: rgba(237,232,223,.3); margin-top: 8px;
+    }
+    .hero-scroll {
+      position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      font-family: var(--mono); font-size: .56rem; letter-spacing: .22em; text-transform: uppercase;
+      color: rgba(237,232,223,.25); opacity: 0;
+    }
+    .hero-scroll::after {
+      content: ''; display: block; width: 1px; height: 36px;
+      background: linear-gradient(to bottom, rgba(237,232,223,.2), transparent);
+    }
+    @media (max-width: 768px) {
+      .hero-content { flex-direction: column; align-items: flex-start; gap: 20px; bottom: 44px; }
+      .hero-meta { text-align: left; }
+      .hero-meta-studio { justify-content: flex-start; }
+      .hero-scroll { display: none; }
+    }
 
-    .wc-num {
-      position: absolute; bottom: 18px; right: 18px; z-index: 4;
-      font-family: var(--mono); font-size: .66rem;
-      letter-spacing: .1em; color: var(--fg2);
+    /* ══ PORTFOLIO GRID ══ */
+    #work { padding: 4px; }
+    .pg {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr 1fr;
+      grid-auto-rows: clamp(260px, 33vw, 480px);
+      gap: 4px;
     }
-
-    /* Hover label */
-    .wc-lbl {
-      position: absolute; bottom: 0; left: 0; right: 0; z-index: 4;
-      padding: 70px 18px 18px;
-      background: linear-gradient(to top, rgba(0,0,0,.78), transparent);
-      transform: translateY(100%); transition: transform .5s var(--out);
+    .pg-item {
+      position: relative; overflow: hidden;
+      cursor: pointer; background: var(--bg2); opacity: 0;
     }
-    .wc:hover .wc-lbl { transform: translateY(0); }
-    .wc-title {
-      font-family: var(--serif); font-size: 1.2rem;
-      font-weight: 300; font-style: italic;
-      color: var(--fg); margin-bottom: 3px;
+    /* First image spans 2 rows — tall feature piece */
+    .pg-item:nth-child(1) { grid-row: span 2; }
+    .pg-item img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform .75s var(--out), filter .5s ease;
     }
-    .wc-sub {
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .12em; text-transform: uppercase;
-      color: rgba(237,232,223,.6);
-    }
-
-    /* View circle */
-    .wc-view {
-      position: absolute; top: 50%; left: 50%; z-index: 4;
-      width: 58px; height: 58px; border-radius: 50%;
-      border: 1px solid rgba(196,162,98,.5);
-      background: rgba(8,7,5,.68); backdrop-filter: blur(8px);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--gold); font-size: 1rem;
-      transform: translate(-50%,-50%) scale(0);
-      transition: transform .4s var(--sp);
-    }
-    .wc:hover .wc-view { transform: translate(-50%,-50%) scale(1); }
-
-    /* ── Gallery lightbox ── */
-    #gal-modal-bg {
-      position: fixed; inset: 0; z-index: 99990;
-      background: rgba(8,7,5,0);
+    .pg-item:hover img { transform: scale(1.04); filter: brightness(.78); }
+    /* Caption slides up on hover */
+    .pg-cap {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 56px 22px 20px;
+      background: linear-gradient(to top, rgba(8,7,5,.72), transparent);
+      transform: translateY(100%); transition: transform .48s var(--out);
       pointer-events: none;
     }
-    #gal-modal {
-      position: fixed; z-index: 99991;
-      overflow: hidden; display: none;
-      background: var(--bg);
-      will-change: top, left, width, height, border-radius;
+    .pg-item:hover .pg-cap { transform: translateY(0); }
+    .pg-cap-num {
+      font-family: var(--mono); font-size: .58rem;
+      letter-spacing: .16em; color: var(--gold); opacity: .65; margin-bottom: 4px;
     }
-    #gal-modal-img {
-      width: 100%; height: 100%;
-      object-fit: contain; display: block;
+    .pg-cap-lbl {
+      font-family: var(--serif); font-style: italic;
+      font-size: 1.1rem; font-weight: 300; color: var(--fg);
     }
-    #gal-modal-close {
+    /* Coming-soon placeholder */
+    .pg-soon {
+      cursor: default;
+      background: repeating-linear-gradient(-45deg,
+        transparent, transparent 18px,
+        rgba(237,232,223,.012) 18px, rgba(237,232,223,.012) 19px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pg-soon span {
+      font-family: var(--mono); font-size: .62rem;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--dim);
+    }
+    @media (max-width: 900px) {
+      .pg { grid-template-columns: 1fr 1fr; grid-auto-rows: clamp(200px,44vw,360px); }
+      .pg-item:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+    }
+    @media (max-width: 480px) {
+      .pg { grid-template-columns: 1fr; grid-auto-rows: 80vw; }
+      .pg-item:nth-child(1) { grid-column: 1; }
+    }
+
+    /* ══ LIGHTBOX ══ */
+    #lb-bg { position: fixed; inset: 0; z-index: 99990; background: rgba(8,7,5,0); pointer-events: none; }
+    #lb {
+      position: fixed; z-index: 99991; overflow: hidden; display: none;
+      background: var(--bg); will-change: top, left, width, height, border-radius;
+    }
+    #lb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    #lb-close {
       position: absolute; top: 18px; right: 18px; z-index: 2;
       width: 42px; height: 42px; border-radius: 50%;
       background: rgba(8,7,5,.7); backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--border-h);
-      color: var(--fg); font-size: .7rem; font-family: var(--mono);
-      letter-spacing: .1em;
+      border: 1px solid var(--border); font-size: .85rem; color: var(--fg2);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: background .2s;
+      cursor: pointer; opacity: 0; pointer-events: none;
+      transition: background .2s, color .2s;
     }
-    #gal-modal-close:hover { background: rgba(196,162,98,.15); color: var(--gold); }
+    #lb-close:hover { background: rgba(196,162,98,.15); color: var(--gold); }
 
-    @media (max-width: 768px) {
-      #work-outer { height: auto !important; }
-      #work { position: static; height: auto; overflow: visible; padding-top: 72px; }
-      .w-head { padding: 0 24px 36px; flex-direction: column; align-items: flex-start; gap: 20px; }
-      .w-hint { text-align: left; }
-      .w-track { padding: 0 24px 44px; gap: 12px; }
-      .wc { width: 68vw; aspect-ratio: 2/3; }
-      .w-gal { overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; scrollbar-width: none; }
-      .w-gal::-webkit-scrollbar { display: none; }
-      .wc { scroll-snap-align: start; }
-    }
-
-
-    /* ══════════════════════════════════════════
-       EXPERTISE
-    ══════════════════════════════════════════ */
-    #exp { padding: 80px var(--pad) 100px; }
-    .exp-hd { margin-bottom: 48px; }
-    .exp-h2 {
-      font-family: var(--serif);
-      font-size: clamp(1.9rem,4.5vw,3.8rem);
-      font-weight: 300; letter-spacing: -.02em; line-height: 1;
-    }
-    .exp-h2 em { font-style: italic; color: var(--gold); }
-    /* ── Expertise — editorial large-type stack ── */
-    .exp-list { list-style: none; }
-    .ei {
-      position: relative; overflow: hidden;
-      display: flex; align-items: center; gap: 0;
-      flex-wrap: wrap;
-      min-height: 108px; padding: 30px 0;
+    /* ══ REVIEWS ══ */
+    #reviews {
+      padding: 68px var(--pad);
       border-top: 1px solid var(--border);
-      opacity: 0; cursor: pointer;
+      display: grid; grid-template-columns: auto 1px 1fr auto;
+      gap: 0 52px; align-items: center;
+      opacity: 0;
     }
-    .ei:last-child { border-bottom: 1px solid var(--border); }
-
-    /* Ghost large number — decorative */
-    .ei-bg-n {
-      position: absolute; right: -4px; top: 50%;
-      transform: translateY(-50%);
-      font-family: var(--serif); font-weight: 600; font-style: italic;
-      font-size: clamp(5.5rem,11vw,9.5rem);
-      color: var(--gold); opacity: .045; line-height: 1;
-      pointer-events: none; user-select: none;
+    .rv-score { flex-shrink: 0; }
+    .rv-big {
+      font-family: var(--display); font-size: 4rem; line-height: 1; color: var(--fg);
     }
-
-    /* Gold accent bar — springs in from top on hover, GSAP-owned */
-    .ei-accent {
-      position: absolute; left: 0; top: 0; bottom: 0;
-      width: 2px; background: var(--gold);
-      border-radius: 0 2px 2px 0;
-      transform-origin: top; transform: scaleY(0); opacity: 0;
-      pointer-events: none; z-index: 2;
+    .rv-stars { font-size: .85rem; color: var(--gold); letter-spacing: .1em; margin-top: 3px; }
+    .rv-src {
+      font-family: var(--mono); font-size: .57rem; letter-spacing: .13em; text-transform: uppercase;
+      color: var(--dim); margin-top: 6px;
     }
-
-
-    /* Name wrapper — clip reveal target */
-    .ei-nw { flex: 1; overflow: visible; position: relative; z-index: 1; }
-    .ei-name {
-      display: block;
-      font-family: var(--serif);
-      font-size: clamp(2rem, 4.2vw, 3.8rem);
-      font-weight: 300; font-style: italic;
-      color: var(--fg); line-height: 1;
-    }
-
-    /* Description tags */
-    .ei-desc {
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: var(--fg2); max-width: 200px; text-align: right;
-      line-height: 2; position: relative; z-index: 1;
-      transition: color .35s;
-    }
-    .ei:hover .ei-desc { color: var(--fg2); }
-
-    /* Arrow */
-    .ei-arr {
-      font-size: 1rem; color: var(--dim);
-      margin-left: 22px; position: relative; z-index: 1;
-      display: inline-block;
-    }
-    .ei.open .ei-arr { color: var(--gold); }
-
-    /* Expand panel */
-    .ei-expand {
-      flex: 0 0 100%;
-      height: 0; overflow: hidden;
-    }
-    .ei-expand-inner {
-      display: grid;
-      grid-template-columns: 1fr 180px;
-      gap: 36px; align-items: start;
-      padding: 28px 0 36px 44px;
-    }
-    .ei-expand-text {
-      font-family: var(--sans);
-      font-size: 1rem; color: var(--fg2);
-      line-height: 1.9;
-    }
-    .ei-expand-img {
-      aspect-ratio: 3/4; border-radius: var(--r);
-      overflow: hidden; border: 1px solid var(--border);
-    }
-    .ei-expand-img img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-      filter: brightness(.8) saturate(.6);
-      transition: filter .8s var(--out);
-    }
-    .ei.open .ei-expand-img img { filter: brightness(.92) saturate(.8); }
-    @media (max-width: 768px) {
-      .ei-expand-inner { grid-template-columns: 1fr; padding-left: 0; }
-      .ei-expand-img { aspect-ratio: 16/9; }
-    }
-
-    /* Animated bottom rule — GSAP-owned */
-    .ei-rule {
-      position: absolute; bottom: -1px; left: 0;
-      height: 1px; width: 0; background: var(--gold);
-    }
-
-    @media (max-width: 768px) {
-      #exp { padding: 0 24px 80px; }
-      .ei { min-height: 80px; padding: 22px 0; gap: 0; }
-      .ei-desc { display: none; }
-      .ei-bg-n { font-size: 4.5rem; }
-      .ei-name { font-size: clamp(1.7rem,6vw,2.5rem); }
-    }
-
-    /* ══════════════════════════════════════════
-       SOCIAL / FOLLOW SECTION  (was Flash Days)
-    ══════════════════════════════════════════ */
-    #flash {
-      padding: 80px var(--pad) 90px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: start;
-      border-top: 1px solid var(--border);
-    }
-    .fl-badge {
-      display: inline-flex; align-items: center; gap: 9px;
-      font-family: var(--mono); font-size: .62rem;
-      letter-spacing: .2em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 22px;
-    }
-    .fl-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--gold); flex-shrink: 0;
-      box-shadow: 0 0 8px rgba(196,162,98,.6);
-      animation: dp 2.2s ease-in-out infinite;
-    }
-    .fl-h2 {
-      font-family: var(--serif);
-      font-size: clamp(2.8rem, 6.5vw, 5.5rem);
-      font-weight: 300; line-height: 1; letter-spacing: -.02em;
-      margin-bottom: 22px;
-    }
-    .fl-h2 em { font-style: italic; color: var(--gold); }
-    .fl-p {
-      font-size: 1rem; color: var(--fg2);
-      line-height: 1.85; max-width: 420px;
-      margin-bottom: 32px;
-    }
-    /* Bullet list of what you get */
-    .fl-reasons {
-      list-style: none; display: flex; flex-direction: column; gap: 14px;
-      margin-bottom: 44px;
-    }
-    .fl-reason {
-      display: flex; align-items: flex-start; gap: 14px;
-      font-family: var(--sans); font-size: .95rem;
-      color: var(--fg2); line-height: 1.55;
-    }
-    .fl-reason::before {
-      content: '—'; color: var(--gold);
-      font-family: var(--serif); font-size: 1rem;
-      flex-shrink: 0; line-height: 1.55;
-    }
-    /* Primary Instagram CTA */
-    .fl-ig-cta {
-      display: inline-flex; align-items: center; gap: 14px;
-      font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg); text-decoration: none;
-      border: 1px solid var(--border-h);
-      padding: 16px 28px; border-radius: 100px;
-      position: relative; overflow: hidden;
-      transition: border-color .35s, color .35s;
-      margin-bottom: 16px;
-    }
-    .fl-ig-cta::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(135deg,
-        rgba(253,212,99,.12) 0%, rgba(253,89,73,.12) 40%,
-        rgba(214,36,159,.12) 70%, rgba(40,90,235,.12) 100%);
-      opacity: 0; transition: opacity .4s;
-    }
-    .fl-ig-cta:hover::before { opacity: 1; }
-    .fl-ig-cta:hover { border-color: rgba(253,89,73,.5); color: var(--fg); }
-    /* Facebook CTA — same base, blue hover */
-    .fl-fb-cta::before { background: rgba(24,119,242,.12); }
-    .fl-fb-cta:hover { border-color: rgba(24,119,242,.5); }
-    .fl-fb-handle {
-      font-style: italic; font-family: var(--serif);
-      font-size: .9rem; color: #5b9cf6;
-      letter-spacing: 0; text-transform: none;
-    }
-    .fl-ig-handle {
-      font-style: italic; font-family: var(--serif);
-      font-size: .9rem; color: var(--gold);
-      letter-spacing: 0; text-transform: none;
-    }
-
-    /* Mock IG grid — links through to real profile */
-    .fl-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 6px; align-items: start;
-    }
-    .fl-cell {
-      border-radius: 8px;
-      background: var(--bg2);
-      position: relative; overflow: hidden;
-      display: block; cursor: pointer;
-    }
-    .fl-cell img {
-      width: 100%; height: auto; display: block;
-      filter: brightness(.5) saturate(.35);
-      transition: filter .55s;
-    }
-    .fl-cell:hover img { filter: brightness(.72) saturate(.6); }
-    .fl-cell-overlay {
-      position: absolute; inset: 0; z-index: 2;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 6px;
-      opacity: 0; transition: opacity .35s;
-      background: rgba(8,7,5,.42);
-    }
-    .fl-cell:hover .fl-cell-overlay { opacity: 1; }
-    .fl-cell-overlay svg { color: var(--fg); opacity: .9; }
-    .fl-cell-overlay span {
-      font-family: var(--mono); font-size: .62rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg); opacity: .7;
-    }
-
-    /* Flash grid lightbox */
-    #fl-lb {
-      position: fixed; inset: 0; z-index: 99994;
-      background: rgba(8,7,5,0);
-      display: flex; align-items: center; justify-content: center;
-      padding: clamp(16px,4vw,48px);
-      pointer-events: none;
-      transition: background .4s;
-    }
-    #fl-lb.fl-open { background: rgba(8,7,5,.93); pointer-events: all; }
-    #fl-lb-img {
-      max-width: min(90vw, 740px); max-height: 90vh;
-      width: auto; height: auto;
-      object-fit: contain; display: block;
-      border-radius: 6px;
-      opacity: 0; transform: scale(.88);
-      transition: opacity .42s, transform .52s cubic-bezier(.16,1,.3,1);
-    }
-    #fl-lb.fl-open #fl-lb-img { opacity: 1; transform: scale(1); }
-    #fl-lb-close {
-      position: fixed; top: 20px; right: 20px;
-      width: 42px; height: 42px; border-radius: 50%;
-      background: rgba(8,7,5,.72); backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--border-h);
-      color: var(--fg); cursor: pointer;
-      font-size: .75rem; font-family: var(--mono);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; transition: opacity .3s .1s, background .2s;
-      pointer-events: none;
-    }
-    #fl-lb.fl-open #fl-lb-close { opacity: 1; pointer-events: all; }
-    #fl-lb-close:hover { background: rgba(196,162,98,.18); color: var(--gold); }
-
-    /* Leave-a-review CTA strip */
-    .tr-review-cta {
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 20px;
-      padding: 36px var(--pad);
-      border-top: 1px solid var(--border);
-    }
-    .tr-review-btns { display: flex; gap: 12px; flex-wrap: wrap; }
-    .tr-review-prompt {
+    .rv-div { width: 1px; height: 60px; background: var(--border); }
+    .rv-quote-area { min-width: 0; }
+    .rv-q {
       font-family: var(--serif); font-style: italic;
-      font-size: clamp(1.1rem, 2.2vw, 1.6rem);
-      font-weight: 300; color: var(--fg2);
-      max-width: 520px; line-height: 1.4;
+      font-size: clamp(1rem,1.7vw,1.25rem);
+      font-weight: 300; line-height: 1.55; color: var(--fg);
+      overflow: hidden; display: -webkit-box;
+      -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+      transition: opacity .4s, transform .4s;
     }
-    .tr-review-prompt em { color: var(--fg); font-style: italic; }
-    .tr-review-btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .2em; text-transform: uppercase;
-      color: var(--gold); text-decoration: none;
-      border: 1px solid rgba(196,162,98,.35);
-      padding: 15px 30px; border-radius: 100px;
-      position: relative; overflow: hidden;
-      transition: border-color .4s, color .4s;
-      flex-shrink: 0;
+    .rv-auth {
+      font-family: var(--mono); font-size: .62rem;
+      letter-spacing: .1em; color: var(--dim); margin-top: 10px;
+      transition: opacity .4s;
     }
-    .tr-review-btn::before {
-      content: ''; position: absolute; inset: 0;
-      background: var(--gold);
-      transform: translateX(-101%); transition: transform .5s var(--out);
+    .rv-cta { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; flex-shrink: 0; }
+    .rv-btn {
+      font-family: var(--mono); font-size: .63rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--fg2); text-decoration: none; white-space: nowrap;
+      padding: 8px 16px; border: 1px solid var(--border); border-radius: 999px;
+      transition: color .3s, border-color .3s;
     }
-    .tr-review-btn > * { position: relative; z-index: 1; }
-    .tr-review-btn:hover::before { transform: translateX(0); }
-    .tr-review-btn:hover { color: var(--bg); border-color: var(--gold); }
-    .tr-review-btn svg { flex-shrink: 0; }
-    .tr-review-btn-fb::before { background: #1877f2; }
-    .tr-review-btn-fb { color: #5b9cf6; border-color: rgba(91,156,246,.35); }
-    .tr-review-btn-fb:hover { color: #fff; border-color: #1877f2; }
+    .rv-btn:hover { color: var(--fg); border-color: var(--border-h); }
     @media (max-width: 768px) {
-      #flash { grid-template-columns: 1fr; padding: 56px 24px 64px; gap: 44px; }
-      .fl-grid { grid-template-columns: repeat(3, 1fr); }
-      .tr-review-cta { flex-direction: column; align-items: flex-start; padding: 32px 24px; }
-      .tr-review-btns { flex-direction: column; }
+      #reviews { grid-template-columns: auto 1fr; grid-template-rows: auto auto; gap: 20px 28px; padding: 48px 24px; }
+      .rv-div { display: none; }
+      .rv-cta { display: none; }
+      .rv-quote-area { grid-column: 1 / -1; }
     }
 
-    /* ══════════════════════════════════════════
-       GIFTS SECTION
-    ══════════════════════════════════════════ */
-    #gifts {
-      padding: 90px var(--pad);
-      border-top: 1px solid var(--border);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 72px; align-items: center;
-    }
-    .gf-h2 {
-      font-family: var(--serif);
-      font-size: clamp(2.4rem,5vw,4.2rem);
-      font-weight: 300; line-height: 1; letter-spacing: -.02em;
-      margin-bottom: 22px; margin-top: 12px;
-    }
-    .gf-h2 em { font-style: italic; color: var(--gold); }
-    .gf-p {
-      font-size: 1rem; color: var(--fg2);
-      line-height: 1.9; max-width: 400px; margin-bottom: 36px;
-    }
-    .gf-cta {
-      display: inline-flex; align-items: center; gap: 14px;
-      font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .2em; text-transform: uppercase;
-      color: var(--fg); text-decoration: none;
-      border: 1px solid rgba(196,162,98,.32);
-      background: rgba(196,162,98,.04);
-      padding: 18px 36px; border-radius: 100px;
-      position: relative; overflow: hidden;
-      transition: border-color .38s, background .38s, transform .38s var(--out);
-    }
-    .gf-cta::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(115deg, transparent 30%, rgba(196,162,98,.09) 50%, transparent 70%);
-      transform: translateX(-110%); transition: transform .7s var(--out);
-      pointer-events: none;
-    }
-    .gf-cta:hover::before { transform: translateX(110%); }
-    .gf-cta:hover {
-      border-color: rgba(196,162,98,.65);
-      background: rgba(196,162,98,.09);
-      transform: translateY(-3px);
-    }
-    .gf-cta svg { color: var(--gold); flex-shrink: 0; }
-    /* Occasions cloud */
-    .gf-occasions {
-      display: flex; flex-wrap: wrap; gap: 11px; align-content: center;
-    }
-    .gf-oc {
-      font-family: var(--serif); font-style: italic;
-      font-size: clamp(1rem,1.9vw,1.55rem); font-weight: 300;
-      color: var(--fg2); border: 1px solid var(--border);
-      padding: 9px 22px; border-radius: 100px;
-      transition: color .3s, border-color .3s, transform .3s var(--out);
-      cursor: default;
-    }
-    .gf-oc:hover { color: var(--gold); border-color: rgba(196,162,98,.4); transform: translateY(-2px); }
-    .gf-oc.gf-hi { border-color: rgba(196,162,98,.2); color: rgba(237,232,223,.7); }
-    @media (max-width: 768px) {
-      #gifts { grid-template-columns: 1fr; padding: 72px 24px; gap: 44px; }
-      .gf-p { max-width: 100%; }
-    }
-
-    /* ══════════════════════════════════════════
-       BOOKING
-    ══════════════════════════════════════════ */
+    /* ══ BOOKING ══ */
     #book {
-      padding: 130px var(--pad) 110px;
-      position: relative; overflow: hidden;
+      padding: 110px var(--pad) 130px;
       border-top: 1px solid var(--border);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center;
     }
-    .bk-gbg {
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 80% 55% at 50% 0%,   rgba(196,162,98,.06)  0%, transparent 72%),
-        radial-gradient(ellipse 55% 45% at 50% 100%, rgba(196,162,98,.03)  0%, transparent 70%),
-        radial-gradient(ellipse 38% 70% at 0%   50%,  rgba(196,162,98,.025) 0%, transparent 62%),
-        radial-gradient(ellipse 38% 70% at 100% 50%,  rgba(196,162,98,.025) 0%, transparent 62%);
-    }
-    /* Large decorative watermark behind content */
-    .bk-wm {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: var(--display);
-      font-size: clamp(16rem, 30vw, 28rem);
-      font-weight: 400; line-height: 1;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(196,162,98,.045);
-      pointer-events: none; user-select: none; z-index: 0;
-      letter-spacing: -.04em; white-space: nowrap;
-    }
-    .bk-in {
-      position: relative; z-index: 2;
-      text-align: center; display: flex; flex-direction: column; align-items: center;
-    }
-    .bk-av {
-      display: inline-flex; align-items: center; gap: 10px;
-      margin-bottom: 40px;
-      padding: 9px 22px; border-radius: 100px;
-      background: rgba(61,164,107,.07);
-      border: 1px solid rgba(61,164,107,.2);
-      opacity: 0; transform: translateY(14px);
-    }
-    .bk-avdot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #3da46b; box-shadow: 0 0 12px rgba(61,164,107,.7);
-      animation: dp 2s ease-in-out infinite; flex-shrink: 0;
-    }
-    .bk-avtxt {
-      font-family: var(--mono); font-size: .74rem;
-      letter-spacing: .22em; text-transform: uppercase; color: #5ec98a;
+    .bk-eyebrow {
+      font-family: var(--mono); font-size: .63rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--gold); display: block; margin-bottom: 18px; opacity: 0;
     }
     .bk-h2 {
       font-family: var(--serif);
-      font-size: clamp(3.2rem, 9vw, 8rem);
-      font-weight: 300; letter-spacing: -.025em;
-      line-height: .97; margin-bottom: 0;
+      font-size: clamp(3rem,6.5vw,5.8rem);
+      font-weight: 300; letter-spacing: -.025em; line-height: .93;
+      opacity: 0;
     }
     .bk-h2 em { font-style: italic; color: var(--gold); }
-    /* Thin animated rule between heading and body */
-    .bk-rule {
-      width: 56px; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin: 36px auto 36px;
-      opacity: 0; transform: scaleX(0); transform-origin: center;
+    .bk-body {
+      font-family: var(--sans); font-size: clamp(.88rem,1.3vw,.98rem);
+      line-height: 1.75; color: var(--fg2); margin-top: 26px; max-width: 420px;
+      opacity: 0;
     }
-    .bk-sub {
-      font-size: 1.05rem; color: var(--fg2);
-      line-height: 1.88; max-width: 520px;
-      margin-bottom: 60px; text-align: center;
-      opacity: 0; transform: translateY(14px);
+    .bk-av {
+      display: inline-flex; align-items: center; gap: 9px;
+      margin-top: 28px; opacity: 0;
+      font-family: var(--mono); font-size: .63rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fg2);
     }
-    /* ── Button group ── */
-    .bk-btns {
-      display: flex; gap: 18px; flex-wrap: wrap;
-      justify-content: center; margin-bottom: 0;
+    .bk-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #4ecb71; box-shadow: 0 0 10px rgba(78,203,113,.6);
+      animation: pulse 2.2s ease-in-out infinite;
     }
-    /* Base reset for both buttons */
-    .bk-btn {
-      display: inline-flex; align-items: center;
-      text-decoration: none; border-radius: 100px;
-      opacity: 0; overflow: hidden; position: relative;
-      transition: transform .38s var(--out), box-shadow .4s;
-      cursor: pointer;
-    }
-    .bk-btn:hover { transform: translateY(-4px); }
-    .bk-btn-inner {
-      display: flex; align-items: center; gap: 16px;
-      position: relative; z-index: 1;
-    }
-    .bk-btn-text { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
-    .bk-btn-label {
-      font-family: var(--mono); font-size: .78rem;
-      letter-spacing: .22em; text-transform: uppercase;
-      line-height: 1; white-space: nowrap;
-    }
-    .bk-btn-note {
-      font-family: var(--serif); font-style: italic;
-      font-size: .88rem; letter-spacing: 0;
-      text-transform: none; line-height: 1;
-      opacity: .7;
-    }
-    .bk-btn-arr {
-      font-size: 1.2rem; flex-shrink: 0;
-      transition: transform .32s var(--sp);
-      position: relative; z-index: 1;
-    }
-    .bk-btn:hover .bk-btn-arr { transform: translateX(5px); }
-
-    /* Both enquiry buttons — identical outlined gold pills */
-    .bk-btn-wa,
-    .bk-btn-ig {
-      padding: 22px 48px 22px 40px;
-      border: 1px solid rgba(196,162,98,.32);
-      background: rgba(196,162,98,.04);
-      transition: border-color .38s, background .38s, transform .38s var(--out), box-shadow .4s;
-    }
-    .bk-btn-wa:hover,
-    .bk-btn-ig:hover {
-      border-color: rgba(196,162,98,.65);
-      background: rgba(196,162,98,.09);
-      box-shadow: 0 10px 48px rgba(196,162,98,.12);
-    }
-    /* Shimmer sweep — same for both */
-    .bk-btn-wa::before,
-    .bk-btn-ig::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(115deg, transparent 30%, rgba(196,162,98,.08) 50%, transparent 70%);
-      transform: translateX(-110%); transition: transform .7s var(--out);
-      pointer-events: none;
-    }
-    .bk-btn-wa:hover::before,
-    .bk-btn-ig:hover::before { transform: translateX(110%); }
-    .bk-btn-wa .bk-btn-label, .bk-btn-ig .bk-btn-label { color: var(--fg); }
-    .bk-btn-wa .bk-btn-note,  .bk-btn-ig .bk-btn-note  { color: var(--fg2); }
-    .bk-btn-wa .bk-btn-arr,   .bk-btn-ig .bk-btn-arr   { color: var(--gold); }
-    .bk-btn-wa svg, .bk-btn-ig svg { color: var(--gold); flex-shrink: 0; }
-
-    /* ── 3-step process ── */
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
     .bk-steps {
-      display: flex; align-items: center;
-      margin-bottom: 52px;
-      opacity: 0; transform: translateY(14px);
+      display: flex; align-items: center; gap: 0; margin-top: 36px; opacity: 0;
     }
-    .bk-step {
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-      padding: 0 44px;
+    .bk-step { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .bk-step-n { font-family: var(--display); font-size: 1.6rem; color: rgba(196,162,98,.35); }
+    .bk-step-l { font-family: var(--mono); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+    .bk-step-div { flex: 1; height: 1px; background: var(--border); margin: 0 16px; min-width: 24px; }
+    .bk-btns { display: flex; flex-direction: column; gap: 12px; opacity: 0; }
+    .bk-btn {
+      display: flex; align-items: center; gap: 16px;
+      padding: 22px 28px; border: 1px solid var(--border); border-radius: var(--r);
+      text-decoration: none; color: var(--fg);
+      background: var(--bg2); position: relative; overflow: hidden;
+      transition: border-color .3s;
     }
-    .bk-step-n {
-      font-family: var(--serif);
-      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-      font-weight: 300; letter-spacing: -.02em;
-      color: var(--gold); line-height: 1;
+    .bk-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--gold); transform: translateX(-101%);
+      transition: transform .42s var(--out);
     }
-    .bk-step-l {
-      font-family: var(--mono); font-size: .71rem;
-      letter-spacing: .28em; text-transform: uppercase;
-      color: var(--fg2); white-space: nowrap;
+    .bk-btn:hover::before { transform: translateX(0); }
+    .bk-btn:hover { border-color: var(--gold); }
+    .bk-btn > * { position: relative; z-index: 1; }
+    .bk-btn-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .bk-btn-text { flex: 1; }
+    .bk-btn-label { font-family: var(--sans); font-size: .98rem; font-weight: 400; display: block; }
+    .bk-btn-note {
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .07em;
+      color: var(--fg2); margin-top: 2px; display: block;
+      transition: color .3s;
     }
-    .bk-step-div {
-      width: 64px; height: 1px; flex-shrink: 0;
-      background: linear-gradient(90deg, transparent, rgba(196,162,98,.35), transparent);
-    }
-
-    @media (max-width: 768px) {
-      #book { padding: 88px 24px 80px; }
-      .bk-h2 { font-size: clamp(2.6rem, 11vw, 4.2rem); }
-      .bk-btns { flex-direction: column; align-items: stretch; gap: 14px; }
-      .bk-btn-wa, .bk-btn-ig { justify-content: center; padding: 20px 36px; }
-      .bk-steps { gap: 0; }
-      .bk-step  { padding: 0 18px; }
-      .bk-step-div { width: 28px; }
-      .bk-wm { font-size: clamp(10rem, 28vw, 16rem); }
-    }
-
-
-    /* ══════════════════════════════════════════
-       REVIEWS
-    ══════════════════════════════════════════ */
-    #trust { padding: 80px 0 100px; overflow: hidden; }
-    /* Editorial two-column header */
-    .tr-head {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      padding: 0 var(--pad) 52px; gap: 32px; flex-wrap: wrap;
-    }
-    .tr-h2 {
-      font-family: var(--serif);
-      font-size: clamp(2.4rem, 5.2vw, 4.4rem);
-      font-weight: 300; font-style: italic; line-height: 1;
-      margin-top: 12px;
-    }
-    .tr-h2 em { color: var(--gold); font-style: italic; }
-    .tr-head-r { text-align: right; flex-shrink: 0; }
-    .tr-big-score {
-      font-family: var(--serif);
-      font-size: clamp(4rem, 8vw, 6.5rem);
-      font-weight: 300; letter-spacing: -.04em;
-      line-height: 1; color: var(--fg);
-    }
-    .tr-stars {
-      color: var(--gold); font-size: .92rem;
-      letter-spacing: .12em; margin: 8px 0 6px;
-    }
-    .tr-platform {
-      font-family: var(--mono); font-size: .71rem;
-      letter-spacing: .18em; text-transform: uppercase; color: var(--fg2);
+    .bk-btn:hover .bk-btn-note { color: rgba(8,7,5,.65); }
+    .bk-btn-arr { font-size: 1rem; color: var(--dim); transition: color .3s, transform .35s var(--sp); }
+    .bk-btn:hover .bk-btn-arr { color: rgba(8,7,5,.8); transform: translateX(4px); }
+    .bk-note {
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .08em;
+      color: var(--dim); margin-top: 6px; text-align: center;
     }
     @media (max-width: 768px) {
-      .tr-head { flex-direction: column; align-items: flex-start; padding-bottom: 36px; }
-      .tr-head-r { text-align: left; }
-    }
-    /* Horizontal carousel */
-    .tr-carousel-wrap {
-      overflow: hidden; cursor: grab;
-      padding-bottom: 8px;
-      touch-action: pan-y;
-    }
-    .tr-carousel-wrap.tr-dragging { cursor: grabbing; }
-    .tr-carousel {
-      display: flex; gap: 16px;
-      padding: 0 var(--pad) 16px;
-      width: max-content; user-select: none;
-    }
-    .tr-card {
-      width: 300px; flex-shrink: 0;
-      padding: 26px 24px;
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      background: rgba(255,255,255,.015);
-      cursor: pointer;
-      transition: border-color .35s, transform .35s, box-shadow .35s;
-    }
-    .tr-card:hover { border-color: var(--border-h); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.28); }
-    /* iOS press-down feel */
-    .tr-carousel-wrap.tr-dragging .tr-card { transform: scale(0.987); transition: transform .15s ease; }
-    .tr-card-photo {
-      width: 38px; height: 38px; border-radius: 50%;
-      overflow: hidden; border: 1px solid var(--border);
-      margin-bottom: 14px; flex-shrink: 0;
-    }
-    .tr-card-photo img {
-      width: 100%; height: 100%; object-fit: cover;
-      display: block; filter: grayscale(.6);
-    }
-    .tr-card-stars { color: var(--gold); font-size: .8rem; letter-spacing: .1em; margin-bottom: 12px; }
-    .tr-card-q {
-      font-family: var(--serif); font-style: italic;
-      font-size: 1.05rem; color: var(--fg2);
-      line-height: 1.72; margin-bottom: 14px;
-      display: -webkit-box; -webkit-line-clamp: 5;
-      -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .tr-card-author {
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .14em; text-transform: uppercase; color: var(--fg2);
-    }
-    .tr-card-hint {
-      font-family: var(--mono); font-size: .64rem;
-      letter-spacing: .12em; text-transform: uppercase; color: var(--gold);
-      margin-top: 10px; opacity: 0; transition: opacity .25s;
-    }
-    .tr-card:hover .tr-card-hint { opacity: 1; }
-
-    /* Skeleton loading cards */
-    .tr-card-skeleton { pointer-events: none; gap: 14px; justify-content: center; }
-    .tr-sk-line {
-      height: 12px; border-radius: 6px;
-      background: linear-gradient(90deg, var(--bg2) 25%, rgba(255,255,255,.04) 50%, var(--bg2) 75%);
-      background-size: 200% 100%;
-      animation: sk-shimmer 1.6s infinite;
-    }
-    .tr-sk-w40 { width: 40%; } .tr-sk-w45 { width: 45%; }
-    .tr-sk-w50 { width: 50%; } .tr-sk-w55 { width: 55%; }
-    .tr-sk-w60 { width: 60%; } .tr-sk-w70 { width: 70%; }
-    .tr-sk-w75 { width: 75%; } .tr-sk-w80 { width: 80%; }
-    .tr-sk-w90 { width: 90%; }
-    @keyframes sk-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-    /* Review expand modal */
-    #rv-modal {
-      position: fixed; inset: 0; z-index: 999998;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity .35s;
-    }
-    #rv-modal.open { opacity: 1; pointer-events: all; }
-    .rvm-back {
-      position: absolute; inset: 0;
-      background: rgba(8,7,5,.86);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-    }
-    .rvm-box {
-      position: relative; z-index: 1;
-      max-width: 560px; width: calc(100% - 48px);
-      padding: 52px 48px; border: 1px solid var(--border-h);
-      border-radius: var(--r); background: var(--bg2);
-      transform: translateY(28px);
-      transition: transform .45s var(--out);
-    }
-    #rv-modal.open .rvm-box { transform: translateY(0); }
-    .rvm-close {
-      position: absolute; top: 18px; right: 20px;
-      background: none; border: none; color: var(--dim);
-      font-size: .85rem; cursor: pointer; line-height: 1;
-      font-family: var(--mono); letter-spacing: .1em;
-      transition: color .2s; padding: 4px 6px;
-    }
-    .rvm-close:hover { color: var(--fg); }
-    .rvm-stars { color: var(--gold); font-size: .9rem; letter-spacing: .12em; margin-bottom: 22px; }
-    .rvm-q {
-      font-family: var(--serif); font-style: italic;
-      font-size: 1.15rem; color: var(--fg2); line-height: 1.82; margin-bottom: 28px;
-    }
-    .rvm-author {
-      font-family: var(--mono); font-size: .6rem;
-      letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
-    }
-    .rvm-reply { display: none; margin-top: 28px; }
-    .rvm-reply.visible { display: block; }
-    .rvm-reply-divider {
-      height: 1px; background: var(--border); margin-bottom: 20px;
-    }
-    .rvm-reply-label {
-      font-family: var(--mono); font-size: .6rem;
-      letter-spacing: .18em; text-transform: uppercase; color: var(--gold);
-      margin-bottom: 10px;
-    }
-    .rvm-reply-text {
-      font-family: var(--sans); font-size: .92rem;
-      color: var(--fg2); line-height: 1.75;
-    }
-    @media (max-width: 768px) {
-      .rvm-box { padding: 40px 28px; }
-      .tr-card { width: 260px; }
+      #book { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px 96px; }
+      .bk-h2 { font-size: clamp(2.8rem,10vw,4rem); }
+      .bk-steps { justify-content: flex-start; }
     }
 
-
-    /* ══════════════════════════════════════════
-       DECORATIVE ELEMENTS
-    ══════════════════════════════════════════ */
-    /* ── Slow-drifting aurora orbs ── */
-    .bg-aurora {
-      position: fixed; inset: 0; z-index: 9993;
-      pointer-events: none; overflow: hidden;
-    }
-    .aur {
-      position: absolute; border-radius: 50%;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: infinite;
-      animation-direction: alternate;
-    }
-    .aur-1 {
-      width: 75vmax; height: 75vmax;
-      top: -25%; left: -18%;
-      background: radial-gradient(circle, rgba(196,162,98,.06) 0%, transparent 65%);
-      filter: blur(80px);
-      animation: aur1 26s ease-in-out infinite alternate;
-    }
-    .aur-2 {
-      width: 60vmax; height: 60vmax;
-      bottom: -18%; right: -12%;
-      background: radial-gradient(circle, rgba(196,162,98,.048) 0%, transparent 65%);
-      filter: blur(96px);
-      animation: aur2 32s ease-in-out infinite alternate;
-    }
-    .aur-3 {
-      width: 48vmax; height: 48vmax;
-      top: 28%; right: 18%;
-      background: radial-gradient(circle, rgba(180,148,88,.038) 0%, transparent 60%);
-      filter: blur(72px);
-      animation: aur3 21s ease-in-out infinite alternate;
-    }
-    .aur-4 {
-      width: 42vmax; height: 42vmax;
-      bottom: 18%; left: 16%;
-      background: radial-gradient(circle, rgba(196,162,98,.032) 0%, transparent 60%);
-      filter: blur(88px);
-      animation: aur4 28s ease-in-out infinite alternate;
-    }
-    @keyframes aur1 {
-      from { transform: translate(0, 0) scale(1); }
-      to   { transform: translate(11vw, 9vh) scale(1.14); }
-    }
-    @keyframes aur2 {
-      from { transform: translate(0, 0) scale(1.06); }
-      to   { transform: translate(-9vw, -7vh) scale(0.94); }
-    }
-    @keyframes aur3 {
-      from { transform: translate(0, 0) scale(0.94); }
-      to   { transform: translate(-7vw, 11vh) scale(1.1); }
-    }
-    @keyframes aur4 {
-      from { transform: translate(0, 0) scale(1); }
-      to   { transform: translate(8vw, -10vh) scale(1.12); }
-    }
-    /* Decorative floating orb that follows mouse */
-    #mouse-glow {
-      position: fixed; z-index: 9994; pointer-events: none;
-      width: 480px; height: 480px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(196,162,98,.07) 0%, transparent 70%);
-      transform: translate(-50%, -50%);
-      will-change: transform;
-    }
-    /* Decorative large quote behind reviews */
-    .trust-deco-quote {
-      position: absolute; top: -20px; left: var(--pad);
-      font-family: var(--display); font-size: clamp(10rem,18vw,18rem);
-      line-height: 1; color: transparent;
-      -webkit-text-stroke: 1px rgba(196,162,98,.05);
-      pointer-events: none; user-select: none; z-index: 0;
-    }
-    #trust { position: relative; }
-    /* Animated horizontal rule ornament */
-    .draw-rule {
-      display: block; height: 1px; width: 0;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin: 0 auto;
-    }
-
-    /* ══════════════════════════════════════════
-       FAQ — editorial accordion
-    ══════════════════════════════════════════ */
-    #faq { padding: 100px var(--pad) 120px; border-top: 1px solid var(--border); }
-    .faq-hd {
-      display: flex; align-items: flex-end; gap: 2.5rem;
-      margin-bottom: 72px;
-    }
-    .faq-hd-text { flex: none; }
-    .faq-h2 {
-      font-family: var(--serif);
-      font-size: clamp(1.9rem,4.5vw,3.8rem);
-      font-weight: 300; letter-spacing: -.02em; line-height: 1;
-    }
-    .faq-h2 em { font-style: italic; color: var(--gold); }
-    .faq-hd-rule {
-      flex: 1; height: 1px;
-      background: var(--border);
-      margin-bottom: .55rem;
-    }
-    .faq-hd-count {
-      font-family: var(--mono); font-size: .65rem;
-      color: var(--dim); letter-spacing: .14em; text-transform: uppercase;
-      white-space: nowrap; margin-bottom: .4rem; flex: none;
-    }
-    .fq-list { list-style: none; }
-
-    /* Item wrapper */
-    .fq-item {
-      border-top: 1px solid var(--border);
-      position: relative; overflow: hidden;
-      cursor: pointer;
-    }
-    .fq-item:last-child { border-bottom: 1px solid var(--border); }
-
-    /* Header row — grid: [number] [question+tags] [toggle] */
-    .fq-trigger {
-      display: grid;
-      grid-template-columns: 96px 1fr auto;
-      align-items: center;
-      gap: 0 2.5rem;
-      padding: 36px 0;
-      width: 100%;
-    }
-
-    /* Large italic number */
-    .fq-num {
-      font-family: var(--serif);
-      font-size: clamp(2.4rem,4.5vw,4rem);
-      font-style: italic; font-weight: 300;
-      color: rgba(196,162,98,.25);
-      line-height: 1; user-select: none;
-      transition: color .5s ease;
-    }
-    .fq-item:hover .fq-num { color: rgba(196,162,98,.55); }
-    .fq-item.open  .fq-num { color: var(--gold); }
-
-    /* Question text + tags */
-    .fq-q-wrap { display: flex; flex-direction: column; gap: 6px; }
-    .fq-question {
-      font-family: var(--serif);
-      font-size: clamp(1.15rem,2.2vw,1.8rem);
-      font-weight: 300; letter-spacing: -.015em; line-height: 1.2;
-      color: var(--fg); transition: color .3s ease;
-    }
-    .fq-item.open .fq-question { color: var(--gold); }
-    .fq-tags-row {
-      font-family: var(--mono); font-size: .62rem;
-      color: var(--dim); letter-spacing: .1em; text-transform: uppercase;
-      transition: color .3s ease;
-    }
-    .fq-item:hover .fq-tags-row,
-    .fq-item.open  .fq-tags-row { color: rgba(196,162,98,.5); }
-
-    /* Circular toggle (+→×) */
-    .fq-toggle {
-      width: 38px; height: 38px; flex-shrink: 0;
-      border: 1px solid var(--border); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.25rem; line-height: 1; color: var(--dim);
-      transition: border-color .35s, color .35s, background .35s,
-                  transform .5s cubic-bezier(.34,1.56,.64,1);
-    }
-    .fq-item:hover .fq-toggle { border-color: rgba(196,162,98,.45); color: var(--gold); }
-    .fq-item.open  .fq-toggle {
-      border-color: var(--gold); color: var(--gold);
-      background: rgba(196,162,98,.08);
-      transform: rotate(45deg);
-    }
-
-    /* Gold sweep rule at bottom of trigger */
-    .fq-rule {
-      position: absolute; bottom: -1px; left: 96px;
-      height: 1px; width: 0;
-      background: linear-gradient(90deg, var(--gold), transparent);
-      opacity: .5;
-    }
-
-    /* Expand panel */
-    .fq-panel { height: 0; overflow: hidden; }
-    .fq-panel-inner {
-      padding: 0 0 44px calc(96px + 2.5rem);
-      max-width: 800px;
-    }
-    .fq-answer {
-      font-family: var(--sans);
-      font-size: clamp(.9rem,1.4vw,1.05rem);
-      line-height: 1.78; color: var(--fg2);
-    }
-    .fq-answer-list {
-      list-style: none; padding: 0; margin: 0;
-      display: flex; flex-direction: column; gap: 10px;
-      font-family: var(--sans); font-size: clamp(.9rem,1.4vw,1.05rem);
-      line-height: 1.65; color: var(--fg2);
-    }
-
-    @media (max-width: 768px) {
-      #faq { padding: 60px 24px 80px; }
-      .faq-hd { flex-direction: column; align-items: flex-start; gap: 8px; }
-      .faq-hd-rule, .faq-hd-count { display: none; }
-      .fq-trigger { grid-template-columns: 52px 1fr auto; gap: 0 1.25rem; padding: 24px 0; }
-      .fq-num { font-size: 2rem; }
-      .fq-question { font-size: 1.1rem; }
-      .fq-toggle { width: 30px; height: 30px; font-size: 1rem; }
-      .fq-panel-inner { padding: 0 0 30px calc(52px + 1.25rem); }
-      .fq-rule { left: 52px; }
-    }
-
-    /* ══════════════════════════════════════════
-       AFTERCARE
-    ══════════════════════════════════════════ */
-    #aftercare {
-      padding: 80px var(--pad) 100px;
-      border-top: 1px solid var(--border);
-    }
-    .ac-hd {
-      max-width: 680px; margin-bottom: 64px;
-    }
-    .ac-h2 {
-      font-family: var(--serif);
-      font-size: clamp(2rem,4.5vw,3.8rem);
-      font-weight: 300; letter-spacing: -.02em; line-height: 1.1;
-      margin-bottom: 20px;
-    }
-    .ac-h2 em { font-style: italic; color: var(--gold); }
-    .ac-sub {
-      font-family: var(--sans); font-size: 1rem;
-      color: var(--fg2); line-height: 1.8; max-width: 520px;
-    }
-    .ac-phases {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0;
-    }
-    .ac-phase {
-      padding: 40px 40px 40px 0;
-      border-left: 1px solid var(--border);
-      padding-left: 40px;
-    }
-    .ac-phase:first-child { border-left: none; padding-left: 0; }
-    .ac-phase-tag {
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 14px; display: block;
-    }
-    .ac-phase-title {
-      font-family: var(--serif); font-size: 1.45rem;
-      font-weight: 300; font-style: italic;
-      line-height: 1.2; margin-bottom: 20px;
-      color: var(--fg);
-    }
-    .ac-phase-list {
-      list-style: none;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .ac-phase-list li {
-      font-family: var(--sans); font-size: .9rem;
-      color: var(--fg2); line-height: 1.7;
-      padding-left: 18px; position: relative;
-    }
-    .ac-phase-list li::before {
-      content: '—';
-      position: absolute; left: 0;
-      color: var(--gold); opacity: .55;
-      font-size: .85rem;
-    }
-    .ac-note {
-      margin-top: 56px;
-      padding: 28px 32px;
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      display: flex; align-items: flex-start; gap: 20px;
-      max-width: 680px;
-    }
-    .ac-note-icon {
-      color: var(--gold); flex-shrink: 0; opacity: .8;
-      margin-top: 2px;
-    }
-    .ac-note-text {
-      font-family: var(--sans); font-size: .95rem;
-      color: var(--fg2); line-height: 1.8;
-    }
-    .ac-note-text strong { color: var(--fg); font-weight: 400; }
-    @media (max-width: 768px) {
-      #aftercare { padding: 60px 24px 80px; }
-      .ac-phases { grid-template-columns: 1fr; }
-      .ac-phase {
-        border-left: none; padding-left: 0;
-        border-top: 1px solid var(--border); padding-top: 36px;
-      }
-      .ac-phase:first-child { border-top: none; padding-top: 0; }
-    }
-
-    /* ══════════════════════════════════════════
-       LOCATION
-    ══════════════════════════════════════════ */
-    #location {
-      padding: 90px var(--pad) 100px;
-      border-top: 1px solid var(--border);
-    }
-    .loc-hd {
-      display: flex; align-items: flex-end;
-      justify-content: space-between; flex-wrap: wrap;
-      gap: 28px; margin-bottom: 48px;
-    }
-    .loc-addr {
-      font-family: var(--serif); font-size: clamp(1.6rem, 3vw, 2.4rem);
-      font-weight: 300; line-height: 1.3;
-    }
-    .loc-addr em { font-style: italic; color: var(--gold); }
-    .loc-meta {
-      font-family: var(--mono); font-size: .74rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg2); margin-top: 8px;
-    }
-    .loc-btns { display: flex; gap: 12px; flex-wrap: wrap; }
-    .loc-btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-family: var(--mono); font-size: .66rem;
-      letter-spacing: .14em; text-transform: uppercase;
-      text-decoration: none; border-radius: 100px;
-      padding: 14px 26px; border: 1px solid var(--border);
-      color: var(--fg2); transition: color .25s, border-color .25s, background .25s;
-    }
-    .loc-btn:hover { color: var(--fg); border-color: var(--border-h); }
-    .loc-btn.loc-btn-waze { border-color: rgba(0,210,255,.25); color: #00d2ff; }
-    .loc-btn.loc-btn-waze:hover { background: rgba(0,210,255,.08); border-color: rgba(0,210,255,.5); }
-    /* Google Maps — multicolor brand gradient border on hover */
-    .loc-btn.loc-btn-gmaps { border-color: rgba(66,133,244,.32); color: #6ba5ff; }
-    .loc-btn.loc-btn-gmaps:hover {
-      background: linear-gradient(var(--bg), var(--bg)) padding-box,
-                  linear-gradient(90deg, #4285f4 0%, #ea4335 33%, #fbbc05 66%, #34a853 100%) border-box;
-      border-color: transparent; color: var(--fg);
-    }
-    /* Google Transit (was Moovit) */
-    .loc-btn.loc-btn-transit { border-color: rgba(52,168,83,.28); color: #4caf72; }
-    .loc-btn.loc-btn-transit:hover {
-      background: linear-gradient(var(--bg), var(--bg)) padding-box,
-                  linear-gradient(90deg, #4285f4, #34a853) border-box;
-      border-color: transparent; color: var(--fg);
-    }
-    .loc-btn.loc-btn-uber { border-color: rgba(255,255,255,.18); color: var(--fg2); }
-    .loc-btn.loc-btn-uber:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.3); }
-    /* "Find Me" heading */
-    .loc-find-label {
-      font-family: var(--serif); font-size: clamp(1.1rem, 2.5vw, 1.7rem);
-      font-weight: 300; font-style: italic;
-      letter-spacing: .04em; color: var(--gold);
-      margin-bottom: 14px; display: block;
-    }
-    .loc-map-wrap {
-      width: 100%; aspect-ratio: 16/6; border-radius: var(--r);
-      overflow: hidden; border: 1px solid var(--border);
-      opacity: 0; transform: translateY(20px);
-      transition: box-shadow .6s ease, border-color .6s ease;
-    }
-    .loc-map-wrap.map-lit {
-      border-color: rgba(196,162,98,.35);
-      box-shadow: 0 0 0 3px rgba(196,162,98,.07), 0 0 40px rgba(196,162,98,.1);
-    }
-    .loc-map-wrap iframe {
-      width: 100%; height: 100%; border: 0;
-    }
-    @media (max-width: 768px) {
-      #location { padding: 72px 24px 80px; }
-      .loc-hd { flex-direction: column; align-items: flex-start; }
-      .loc-map-wrap { aspect-ratio: 4/3; }
-    }
-
-    /* ══════════════════════════════════════════
-       FOOTER
-    ══════════════════════════════════════════ */
+    /* ══ FOOTER ══ */
     footer {
-      padding: 36px var(--pad);
+      padding: 28px var(--pad);
       border-top: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
     }
-    .ft-logo {
-      font-family: var(--display); font-size: 1.05rem;
-      font-weight: 400; color: var(--dim);
-    }
+    .ft-logo { font-family: var(--display); font-size: 1.05rem; letter-spacing: .06em; color: var(--fg2); }
     .ft-logo em { font-style: italic; color: var(--gold); }
     .ft-links { display: flex; gap: 22px; }
     .ft-a {
-      font-family: var(--mono); font-size: .71rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg2); text-decoration: none;
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--dim); text-decoration: none; transition: color .25s;
+    }
+    .ft-a:hover { color: var(--fg2); }
+    .ft-copy { font-family: var(--mono); font-size: .58rem; letter-spacing: .07em; color: var(--dim); }
+    @media (max-width: 600px) {
+      footer { flex-direction: column; align-items: flex-start; padding: 24px 24px; }
+      .ft-copy { display: none; }
+    }
+
+    /* ══ INFO DRAWER ══ */
+    #info-overlay {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(8,7,5,.65); backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none; transition: opacity .45s;
+    }
+    #info-overlay.open { opacity: 1; pointer-events: all; }
+    #info-drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 10001;
+      width: min(540px, 100vw);
+      background: #0b0906; border-left: 1px solid var(--border);
+      overflow-y: auto; overflow-x: hidden;
+      transform: translateX(100%);
+      transition: transform .58s var(--out);
+    }
+    #info-drawer.open { transform: translateX(0); }
+
+    .dr-top {
+      position: sticky; top: 0; z-index: 2;
+      padding: 22px 36px; background: #0b0906; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .dr-title { font-family: var(--mono); font-size: .65rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
+    .dr-close {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1px solid var(--border); background: none; cursor: pointer;
+      color: var(--fg2); font-size: .8rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .25s, color .25s, background .25s;
+    }
+    .dr-close:hover { border-color: var(--border-h); color: var(--fg); background: rgba(237,232,223,.04); }
+
+    .dr-sec { padding: 38px 36px; border-bottom: 1px solid var(--border); }
+    .dr-sec:last-child { border-bottom: none; }
+    .dr-lbl {
+      font-family: var(--mono); font-size: .58rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--dim); display: block; margin-bottom: 18px;
+    }
+    .dr-h {
+      font-family: var(--serif); font-size: clamp(1.5rem,3vw,2.1rem);
+      font-weight: 300; letter-spacing: -.015em; line-height: 1.05; margin-bottom: 16px;
+    }
+    .dr-h em { font-style: italic; color: var(--gold); }
+    .dr-body {
+      font-family: var(--sans); font-size: .9rem; line-height: 1.78; color: var(--fg2);
+    }
+    .dr-body p + p { margin-top: 12px; }
+
+    /* Expertise list */
+    .dr-exp { list-style: none; margin-top: 6px; display: flex; flex-direction: column; gap: 14px; }
+    .dr-exp li {
+      display: flex; align-items: baseline; gap: 12px;
+      font-family: var(--serif); font-size: 1.1rem; font-weight: 300; line-height: 1.3; color: var(--fg2);
+    }
+    .dr-exp li::before { content: '—'; color: var(--gold); opacity: .45; font-family: var(--sans); font-size: .85rem; flex-shrink: 0; }
+    .dr-exp-sub { font-family: var(--mono); font-size: .58rem; letter-spacing: .08em; color: var(--dim); margin-left: auto; white-space: nowrap; }
+
+    /* FAQ inside drawer */
+    .dr-faq { list-style: none; }
+    .dr-faq .fq-item { border-top: 1px solid var(--border); cursor: pointer; }
+    .dr-faq .fq-item:last-child { border-bottom: 1px solid var(--border); }
+    .dr-faq .fq-trigger {
+      display: grid; grid-template-columns: 52px 1fr auto;
+      align-items: center; gap: 0 1.5rem; padding: 20px 0; width: 100%;
+    }
+    .dr-faq .fq-num {
+      font-family: var(--serif); font-size: 1.9rem; font-style: italic; font-weight: 300;
+      color: rgba(196,162,98,.22); line-height: 1; user-select: none;
+      transition: color .5s;
+    }
+    .dr-faq .fq-item:hover .fq-num,
+    .dr-faq .fq-item.open .fq-num { color: var(--gold); }
+    .dr-faq .fq-q-wrap { display: flex; flex-direction: column; gap: 4px; }
+    .dr-faq .fq-question {
+      font-family: var(--serif); font-size: clamp(1rem,1.8vw,1.15rem);
+      font-weight: 300; letter-spacing: -.01em; line-height: 1.25; color: var(--fg);
       transition: color .3s;
     }
-    .ft-a:hover { color: var(--fg); }
-    .ft-copy {
-      font-family: var(--mono); font-size: .66rem;
-      letter-spacing: .1em; color: var(--fg2);
+    .dr-faq .fq-item.open .fq-question { color: var(--gold); }
+    .dr-faq .fq-tags-row {
+      font-family: var(--mono); font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; color: var(--dim);
+      transition: color .3s;
     }
-    @media (max-width: 768px) {
-      footer { padding: 28px 24px; flex-direction: column; gap: 20px; text-align: center; }
-      .ft-links { flex-wrap: wrap; justify-content: center; }
+    .dr-faq .fq-item.open .fq-tags-row,
+    .dr-faq .fq-item:hover .fq-tags-row { color: rgba(196,162,98,.45); }
+    .dr-faq .fq-toggle {
+      width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; line-height: 1; color: var(--dim);
+      transition: border-color .3s, color .3s, background .3s, transform .5s var(--sp);
+      flex-shrink: 0;
     }
+    .dr-faq .fq-item:hover .fq-toggle { border-color: rgba(196,162,98,.35); color: var(--gold); }
+    .dr-faq .fq-item.open .fq-toggle { border-color: var(--gold); color: var(--gold); background: rgba(196,162,98,.08); transform: rotate(45deg); }
+    .dr-faq .fq-rule { position: absolute; bottom: -1px; left: 52px; height: 1px; width: 0; background: var(--gold); opacity: .45; }
+    .dr-faq .fq-panel { height: 0; overflow: hidden; position: relative; }
+    .dr-faq .fq-panel-inner {
+      padding: 0 0 28px calc(52px + 1.5rem);
+      font-family: var(--sans); font-size: .88rem; line-height: 1.75; color: var(--fg2);
+    }
+    .dr-faq .fq-answer-list {
+      list-style: none; padding: 0; margin: 0;
+      display: flex; flex-direction: column; gap: 8px;
+      font-family: var(--sans); font-size: .88rem; line-height: 1.65; color: var(--fg2);
+    }
+
+    /* Aftercare in drawer */
+    .dr-ac { display: flex; flex-direction: column; gap: 18px; margin-top: 6px; }
+    .dr-phase { border-left: 2px solid var(--border); padding-left: 16px; }
+    .dr-phase-tag {
+      font-family: var(--mono); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 4px; display: block;
+    }
+    .dr-phase-title { font-family: var(--serif); font-size: 1rem; font-weight: 300; color: var(--fg); margin-bottom: 8px; }
+    .dr-phase-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+    .dr-phase-list li {
+      font-family: var(--sans); font-size: .85rem; line-height: 1.6; color: var(--fg2);
+      padding-left: 12px; position: relative;
+    }
+    .dr-phase-list li::before { content: '–'; position: absolute; left: 0; color: var(--dim); }
+
+    /* Map in drawer */
+    .dr-map {
+      width: 100%; aspect-ratio: 4/3; border-radius: 8px;
+      overflow: hidden; border: 1px solid var(--border); margin-top: 16px;
+      transition: box-shadow .6s, border-color .6s;
+    }
+    .dr-map.map-lit { border-color: rgba(196,162,98,.38); box-shadow: 0 0 0 3px rgba(196,162,98,.07), 0 0 40px rgba(196,162,98,.1); }
+    .dr-map iframe { width: 100%; height: 100%; border: 0; display: block; }
+    .dr-addr {
+      margin-top: 14px; font-family: var(--serif); font-style: italic;
+      font-size: .95rem; color: var(--fg2);
+    }
+    .dr-loc-btns {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;
+    }
+    .dr-loc-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .09em; text-transform: uppercase;
+      color: var(--fg2); text-decoration: none;
+      padding: 7px 14px; border: 1px solid var(--border); border-radius: 999px;
+      transition: color .3s, border-color .3s;
+    }
+    .dr-loc-btn:hover { color: var(--fg); border-color: var(--border-h); }
   </style>
 </head>
 <body>
 
-<div class="vignette"  aria-hidden="true"></div>
-<div class="ambience"  aria-hidden="true"></div>
-<div class="bg-aurora" aria-hidden="true">
-  <div class="aur aur-1"></div>
-  <div class="aur aur-2"></div>
-  <div class="aur aur-3"></div>
-  <div class="aur aur-4"></div>
-</div>
-<div id="mouse-glow"   aria-hidden="true"></div>
-<div id="prog"  aria-hidden="true"></div>
-<div id="cr"    aria-hidden="true"></div>
-<div id="cd"    aria-hidden="true"></div>
+<!-- Vignette -->
+<div class="vignette" aria-hidden="true"></div>
+
+<!-- Progress bar -->
+<div id="prog" aria-hidden="true"></div>
+
+<!-- Cursor -->
+<div id="cr" aria-hidden="true"></div>
+<div id="cd" aria-hidden="true"></div>
 
 <!-- ════ LOADER ════ -->
 <div id="loader" aria-hidden="true">
   <div class="ld-wrap">
-    <p class="ld-name">
-      <span class="ld-c">E</span><span class="ld-c">m</span><span class="ld-c">m</span><span class="ld-c">y</span>
+    <p class="ld-name" aria-label="Emmy">
+      <span class="ld-c">E</span><span class="ld-c">M</span><span class="ld-c">M</span><span class="ld-c">Y</span>
     </p>
     <div class="ld-rule"></div>
-    <p class="ld-sub">
-      <span class="ld-c">T</span><span class="ld-c">a</span><span class="ld-c">t</span><span class="ld-c">t</span><span class="ld-c">o</span><span class="ld-c">o</span>
+    <p class="ld-sub" aria-label="Tattoo">
+      <span class="ld-c">T</span><span class="ld-c">A</span><span class="ld-c">T</span><span class="ld-c">T</span><span class="ld-c">O</span><span class="ld-c">O</span>
     </p>
   </div>
 </div>
 
 <!-- ════ NAV ════ -->
-<nav id="nav">
-  <a href="#" class="n-logo">Emmy <em>Tattoo</em></a>
-  <div class="n-links">
-    <a href="#work" class="n-item">Portfolio</a>
-    <a href="#trust" class="n-item">Reviews</a>
-    <a href="#faq" class="n-item">FAQ</a>
-    <a href="#book" class="n-btn">Book a Session</a>
-    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="n-social" aria-label="Instagram">
-      <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="ig-g" cx="30%" cy="107%" r="150%">
-            <stop offset="0%"   stop-color="#fdf497"/>
-            <stop offset="10%"  stop-color="#fdf497"/>
-            <stop offset="50%"  stop-color="#fd5949"/>
-            <stop offset="68%"  stop-color="#d6249f"/>
-            <stop offset="100%" stop-color="#285AEB"/>
-          </radialGradient>
-        </defs>
-        <path fill="url(#ig-g)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-      </svg>
-      <span>Instagram</span>
-    </a>
-    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="n-social" aria-label="Facebook">
-      <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-      </svg>
-      <span>Facebook</span>
-    </a>
+<nav id="nav" aria-label="Main navigation">
+  <a href="#" class="n-logo" aria-label="Emmy Tattoo — home">Emmy <em>Tattoo</em></a>
+  <div class="n-right">
+    <button class="n-info" id="n-info-btn" aria-expanded="false" aria-controls="info-drawer">Info</button>
+    <a href="#book" class="n-book">Book a Session</a>
   </div>
 </nav>
 
 <!-- ════ HERO ════ -->
 <section id="hero">
-  <div class="hero-bg-photo" aria-hidden="true">
-    <img src="pictures/BANNER.jpg" alt="" loading="eager">
+  <div class="hero-img">
+    <img src="pictures/BANNER.jpg" alt="Emmy Tattoo work" loading="eager">
   </div>
-  <canvas id="hcvs" aria-hidden="true"></canvas>
-  <div class="h-vign" aria-hidden="true"></div>
-  <div class="h-inner">
-    <h1 class="h-title">
-      <span class="tl"><span class="tl-i">Emmy</span></span>
-      <span class="tl"><em class="tl-i">Tattoo</em></span>
-    </h1>
-    <div class="h-sub">
-      <div class="h-loc">
-        <span class="h-loc-studio">At Sainthood Tattoo · Princes Ave, Hull<a href="#location" class="h-dir" aria-label="View map for Sainthood Tattoo"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="5 5 19 5 19 19"/></svg><span>Directions</span></a></span>
-        <span class="h-loc-hours">Appointment only &nbsp;·&nbsp; Tue–Sat</span>
+  <div class="hero-grad" aria-hidden="true"></div>
+  <canvas id="hcvs" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1"></canvas>
+  <div class="hero-content">
+    <h1 class="hero-title">Emmy<em>.</em></h1>
+    <div class="hero-meta">
+      <div class="hero-meta-studio">
+        At Sainthood Tattoo · Princes Ave, Hull
+        <button class="h-dir" id="hero-dir-btn" aria-label="View location on map">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="5 5 19 5 19 19"/></svg>
+          <span>Map</span>
+        </button>
       </div>
+      <div class="hero-meta-hours">Appointment only &nbsp;·&nbsp; Tue – Sat</div>
     </div>
   </div>
+  <div class="hero-scroll" aria-hidden="true">Scroll</div>
 </section>
 
-<!-- ════ MARQUEE ════ -->
-<div class="mq-wrap" aria-hidden="true">
-  <div class="mq-row" id="mqrow"></div>
-</div>
+<!-- ════ PORTFOLIO GRID ════ -->
+<section id="work" aria-label="Portfolio">
+  <div class="pg">
 
-<!-- ════ WORK ════ -->
-<div id="work-outer">
-<section id="work">
-  <div class="w-head">
-    <div>
-      <div class="s-label">Selected Work</div>
-      <h2 class="w-h2"><span class="tl"><span class="tl-i"><em>Portfolio</em></span></span></h2>
-    </div>
-    <div class="w-hint">
-      <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
-        <span class="wh-arrows"><span>›</span><span>›</span><span>›</span></span>
-        Drag to explore
+    <div class="pg-item" data-src="pictures/2cropped..jpg" tabindex="0" role="button" aria-label="View piece 01">
+      <img src="pictures/2cropped..jpg" alt="Emmy Tattoo — piece 01" loading="eager">
+      <div class="pg-cap" aria-hidden="true">
+        <div class="pg-cap-num">01</div>
+        <div class="pg-cap-lbl">Emmy Tattoo · Hull</div>
       </div>
-      <div style="margin-top:3px">06 pieces selected</div>
     </div>
-  </div>
-  <div class="w-gal">
-    <div class="w-track" id="wtrack">
 
-      <!-- src = portrait crop · data-full = hi-res for lightbox           -->
-      <!-- Recommended: 1200×1800px JPEG — add more cards as photos arrive -->
-
-      <article class="wc" aria-label="Work 1" data-full="pictures/2cropped..jpg">
-        <img class="wc-img" src="pictures/2cropped..jpg" alt="Emmy Tattoo — piece 1" loading="eager">
-        <div class="wc-num">01</div>
-        <div class="wc-view">→</div>
-        <div class="wc-lbl"><div class="wc-title">No. 01</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
-      </article>
-
-      <article class="wc" aria-label="Work 2" data-full="pictures/4cropped.jpg">
-        <img class="wc-img" src="pictures/4cropped.jpg" alt="Emmy Tattoo — piece 2" loading="lazy">
-        <div class="wc-num">02</div>
-        <div class="wc-view">→</div>
-        <div class="wc-lbl"><div class="wc-title">No. 02</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
-      </article>
-
-      <article class="wc" aria-label="Work 3" data-full="pictures/5cropped.jpg">
-        <img class="wc-img" src="pictures/5cropped.jpg" alt="Emmy Tattoo — piece 3" loading="lazy">
-        <div class="wc-num">03</div>
-        <div class="wc-view">→</div>
-        <div class="wc-lbl"><div class="wc-title">No. 03</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
-      </article>
-
-      <article class="wc" aria-label="Work 4" data-full="pictures/7cropped.jpg">
-        <img class="wc-img" src="pictures/7cropped.jpg" alt="Emmy Tattoo — piece 4" loading="lazy">
-        <div class="wc-num">04</div>
-        <div class="wc-view">→</div>
-        <div class="wc-lbl"><div class="wc-title">No. 04</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
-      </article>
-
-      <article class="wc" aria-label="Work 5" data-full="pictures/9cropped.jpg">
-        <img class="wc-img" src="pictures/9cropped.jpg" alt="Emmy Tattoo — piece 5" loading="lazy">
-        <div class="wc-num">05</div>
-        <div class="wc-view">→</div>
-        <div class="wc-lbl"><div class="wc-title">No. 05</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
-      </article>
-
-      <article class="wc" aria-label="Work 6" data-full="">
-        <div class="wc-num">06</div>
-        <div class="wc-view">+</div>
-        <div class="wc-lbl"><div class="wc-title">Coming soon</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
-      </article>
-
+    <div class="pg-item" data-src="pictures/4cropped.jpg" tabindex="0" role="button" aria-label="View piece 02">
+      <img src="pictures/4cropped.jpg" alt="Emmy Tattoo — piece 02" loading="lazy">
+      <div class="pg-cap" aria-hidden="true">
+        <div class="pg-cap-num">02</div>
+        <div class="pg-cap-lbl">Emmy Tattoo · Hull</div>
+      </div>
     </div>
+
+    <div class="pg-item" data-src="pictures/5cropped.jpg" tabindex="0" role="button" aria-label="View piece 03">
+      <img src="pictures/5cropped.jpg" alt="Emmy Tattoo — piece 03" loading="lazy">
+      <div class="pg-cap" aria-hidden="true">
+        <div class="pg-cap-num">03</div>
+        <div class="pg-cap-lbl">Emmy Tattoo · Hull</div>
+      </div>
+    </div>
+
+    <div class="pg-item" data-src="pictures/7cropped.jpg" tabindex="0" role="button" aria-label="View piece 04">
+      <img src="pictures/7cropped.jpg" alt="Emmy Tattoo — piece 04" loading="lazy">
+      <div class="pg-cap" aria-hidden="true">
+        <div class="pg-cap-num">04</div>
+        <div class="pg-cap-lbl">Emmy Tattoo · Hull</div>
+      </div>
+    </div>
+
+    <div class="pg-item" data-src="pictures/9cropped.jpg" tabindex="0" role="button" aria-label="View piece 05">
+      <img src="pictures/9cropped.jpg" alt="Emmy Tattoo — piece 05" loading="lazy">
+      <div class="pg-cap" aria-hidden="true">
+        <div class="pg-cap-num">05</div>
+        <div class="pg-cap-lbl">Emmy Tattoo · Hull</div>
+      </div>
+    </div>
+
+    <div class="pg-item pg-soon" aria-hidden="true">
+      <span>Coming soon</span>
+    </div>
+
   </div>
 </section>
-</div><!-- /#work-outer -->
 
 <!-- ════ REVIEWS ════ -->
-<section id="trust">
-
-  <div class="tr-head">
-    <div class="tr-head-l">
-      <div class="s-label">Reviews</div>
-      <h2 class="tr-h2">What clients <em>say</em></h2>
-    </div>
-    <div class="tr-head-r">
-      <div class="tr-big-score">5.0</div>
-      <div class="tr-stars">★★★★★</div>
-      <div class="tr-platform">Google Reviews</div>
-    </div>
+<section id="reviews" aria-label="Reviews">
+  <div class="rv-score">
+    <div class="rv-big">5.0</div>
+    <div class="rv-stars">★★★★★</div>
+    <div class="rv-src">Google Reviews</div>
   </div>
-  <div class="trust-deco-quote" aria-hidden="true">"</div>
-
-  <div class="tr-carousel-wrap" id="trcwrap">
-    <div class="tr-carousel" id="trcarousel">
-
-      <div class="tr-card" data-static="true" data-q="Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" data-author="— Jess Dan · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Jess Dunn.jpg" alt="Jess Dan" loading="lazy"></div>
-        <p class="tr-card-q">"Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰"</p>
-        <div class="tr-card-author">— Jess Dan · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" data-author="— Jaime Dale · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/James Dale.jpg" alt="Jaime Dale" loading="lazy"></div>
-        <p class="tr-card-q">"Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)"</p>
-        <div class="tr-card-author">— Jaime Dale · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist" data-author="— Ruby Taylor · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Ruby Taylor.jpg" alt="Ruby Taylor" loading="lazy"></div>
-        <p class="tr-card-q">"Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist"</p>
-        <div class="tr-card-author">— Ruby Taylor · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻" data-author="— Leanne Smith · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Leanne Smith.jpg" alt="Leanne Smith" loading="lazy"></div>
-        <p class="tr-card-q">"Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻"</p>
-        <div class="tr-card-author">— Leanne Smith · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="I'm Matthew on a different account but Emmy did me an absolutely unbelievable full back tattoo, she did it all in one sitting and the experience was unbelievable. So kind and patient and I will be sure to go back to her next time I want a tattoo" data-author="— Matthew Wallace · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Matthew wallace.png" alt="Matthew Wallace" loading="lazy"></div>
-        <p class="tr-card-q">"I'm Matthew on a different account but Emmy did me an absolutely unbelievable full back tattoo, she did it all in one sitting and the experience was unbelievable. So kind and…"</p>
-        <div class="tr-card-author">— Matthew Wallace · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!" data-author="— Sarah Andrew · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Sarah Andrew.png" alt="Sarah Andrew" loading="lazy"></div>
-        <p class="tr-card-q">"Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!"</p>
-        <div class="tr-card-author">— Sarah Andrew · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting. Can't wait to get more, so happy with the three I currently have, such beautiful artwork. ❤️" data-author="— Kimberley Rust · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Kimberely Rust.jpg" alt="Kimberley Rust" loading="lazy"></div>
-        <p class="tr-card-q">"Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting. Can't wait to get more, so happy with the three I currently have, such…"</p>
-        <div class="tr-card-author">— Kimberley Rust · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-
-    </div>
+  <div class="rv-div" aria-hidden="true"></div>
+  <div class="rv-quote-area">
+    <p class="rv-q" id="rv-q-text"></p>
+    <div class="rv-auth" id="rv-q-auth"></div>
   </div>
-
-  <!-- View-all + leave-a-review strip — inside trust section -->
-  <div class="tr-review-cta">
-    <p class="tr-review-prompt">Reviews are genuinely appreciated. <em>They help people find their way here.</em></p>
-    <div class="tr-review-btns">
-      <a href="https://g.page/r/CVRweODDPiBwEAI" target="_blank" rel="noopener" class="tr-review-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span>See all Google reviews</span>
-      </a>
-      <a href="https://g.page/r/CVRweODDPiBwEAI/review" target="_blank" rel="noopener" class="tr-review-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        <span>Leave a Google review</span>
-      </a>
-      <a href="https://www.facebook.com/EmmaleneTattoo/reviews" target="_blank" rel="noopener" class="tr-review-btn tr-review-btn-fb">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-        <span>Recommend on Facebook</span>
-      </a>
-    </div>
-  </div>
-
-</section>
-
-<!-- Review modal -->
-<div id="rv-modal" aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="rvm-back"></div>
-  <div class="rvm-box">
-    <button class="rvm-close" aria-label="Close review">✕ close</button>
-    <div class="rvm-stars">★★★★★</div>
-    <p class="rvm-q"></p>
-    <div class="rvm-author"></div>
-    <div class="rvm-reply" aria-hidden="true">
-      <div class="rvm-reply-divider"></div>
-      <div class="rvm-reply-label">Response from Emmy</div>
-      <p class="rvm-reply-text"></p>
-    </div>
-  </div>
-</div>
-
-<!-- ════ EXPERTISE ════ -->
-<section id="exp">
-  <div class="exp-hd">
-    <div class="s-label">Specialties</div>
-    <h2 class="exp-h2"><span class="tl"><span class="tl-i">Areas of <em>Expertise</em></span></span></h2>
-  </div>
-  <ul class="exp-list">
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Fine Line</span></div>
-      <span class="ei-desc">Single needle · ultra-precise · long-lasting</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Single-needle work. Ultra-thin lines that hold crisp definition over years without spreading or blurring. Best suited to botanical studies, geometric forms, and script.</p>
-          <div class="ei-expand-img"><img src="pictures/tattto1.jpg" alt="Fine line example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Fine Art</span></div>
-      <span class="ei-desc">Illustrative · considered · bespoke</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Illustrative work — botanical, abstract, and figurative pieces drawn from scratch. Designed around your concept and placement.</p>
-          <div class="ei-expand-img"><img src="pictures/2.jpg" alt="Fine art example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Micro Realism</span></div>
-      <span class="ei-desc">Miniature · photographic · exact</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Photographic precision compressed into small scale. Portraits, animals, and objects rendered with genuine depth and tonal range — detail that reads clearly at a glance and holds up under close inspection, even years later.</p>
-          <div class="ei-expand-img"><img src="pictures/3.jpg" alt="Micro realism example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Realism</span></div>
-      <span class="ei-desc">Lifelike · detailed · accurate</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">A lifelike rendering of anything you can photograph. Depth, tonal range, and texture reproduced accurately — from portraits to natural subjects to still life.</p>
-          <div class="ei-expand-img"><img src="pictures/4.jpg" alt="Realism example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Portrait Work</span></div>
-      <span class="ei-desc">Likeness · depth · long-lasting</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Portraits require exact technique and a precise understanding of how skin holds tone over time. Done well, they hold a recognisable likeness for years.</p>
-          <div class="ei-expand-img"><img src="pictures/5.jpg" alt="Portrait work example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Custom Design</span></div>
-      <span class="ei-desc">Your brief · drawn from scratch · original</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Bring a reference image, a mood board, or just a description of what you want. I draw the design from scratch. Nothing is pre-drawn or reused. You get something made specifically for you.</p>
-          <div class="ei-expand-img"><img src="pictures/6.jpg" alt="Custom design example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-  </ul>
-</section>
-
-<!-- ════ SOCIAL / FOLLOW ════ -->
-<section id="flash">
-  <!-- Left: copy + CTAs -->
-  <div class="fl-left">
-    <div class="fl-badge"><span class="fl-dot"></span> @emmy.tattoo</div>
-    <h2 class="fl-h2">Follow the <em>work</em></h2>
-    <p class="fl-p">Instagram is where new work goes first — finished pieces, available slots, flash designs. Updated when something happens, not on a schedule.</p>
-    <ul class="fl-reasons">
-      <li class="fl-reason">New pieces posted as they're completed</li>
-      <li class="fl-reason">Available slots and same-day cancellations when they open</li>
-      <li class="fl-reason">Flash designs as they come up</li>
-      <li class="fl-reason">Healed results alongside fresh work</li>
-    </ul>
-    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="fl-ig-cta">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-      Follow on Instagram
-      <span class="fl-ig-handle">@emmy.tattoo</span>
-    </a>
-    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="fl-ig-cta fl-fb-cta">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      Follow on Facebook
-      <span class="fl-fb-handle">EmmaleneTattoo</span>
-    </a>
-  </div>
-  <!-- Right: photo grid — click cell to view full image -->
-  <div class="fl-grid">
-    <div class="fl-cell">
-      <img src="pictures/7.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/8.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/tattto1.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/2.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/3.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/4.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- ════ GIFTS ════ -->
-<section id="gifts">
-  <div class="gf-left">
-    <div class="s-label">Gift Cards</div>
-    <h2 class="gf-h2">Give someone <em>a tattoo.</em></h2>
-    <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount — no expiry, redeemed when they decide.</p>
-    <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
-       target="_blank" rel="noopener" class="gf-cta">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      <span>Enquire via WhatsApp</span>
-    </a>
-  </div>
-  <div class="gf-right">
-    <div class="gf-occasions">
-      <span class="gf-oc gf-hi">Birthday</span>
-      <span class="gf-oc">Anniversary</span>
-      <span class="gf-oc gf-hi">Christmas</span>
-      <span class="gf-oc">Valentine's Day</span>
-      <span class="gf-oc">Graduation</span>
-      <span class="gf-oc gf-hi">Hen Do</span>
-      <span class="gf-oc">New Job</span>
-      <span class="gf-oc">Mother's Day</span>
-      <span class="gf-oc gf-hi">Just Because</span>
-    </div>
+  <div class="rv-cta">
+    <a href="https://g.page/r/CVRweODDPiBwEAI" target="_blank" rel="noopener" class="rv-btn">See all reviews ↗</a>
+    <a href="https://g.page/r/CVRweODDPiBwEAI/review" target="_blank" rel="noopener" class="rv-btn">Leave a review ↗</a>
   </div>
 </section>
 
 <!-- ════ BOOKING ════ -->
 <section id="book">
-  <div class="bk-gbg" aria-hidden="true"></div>
-  <div class="bk-wm" aria-hidden="true">Book</div>
-
-  <div class="bk-in">
-
-    <!-- Availability pill -->
+  <div class="bk-left">
+    <span class="bk-eyebrow">Get in touch</span>
+    <h2 class="bk-h2">Book<br><em>a session.</em></h2>
+    <p class="bk-body">Start with a message. A reference, a sketch, a feeling — or nothing yet. The design is built from scratch. Consultation is free.</p>
     <div class="bk-av">
-      <span class="bk-avdot"></span>
-      <span class="bk-avtxt">Diary open &nbsp;·&nbsp; taking appointments now</span>
+      <span class="bk-dot" id="bk-dot"></span>
+      <span id="bk-avtxt">Diary open &nbsp;·&nbsp; taking appointments now</span>
     </div>
-
-    <!-- Heading -->
-    <h2 class="bk-h2">
-      <span class="tl"><span class="tl-i">Book</span></span>
-      <span class="tl"><em class="tl-i">a session.</em></span>
-    </h2>
-
-    <!-- Animated divider -->
-    <div class="bk-rule"></div>
-
-    <!-- Body -->
-    <p class="bk-sub">Start with a message. A reference, a sketch, a feeling — or nothing yet. The design is built from scratch. Consultation is free.</p>
-
-    <!-- 3-step process -->
     <div class="bk-steps">
-      <div class="bk-step">
-        <span class="bk-step-n">01</span>
-        <span class="bk-step-l">Message</span>
-      </div>
+      <div class="bk-step"><span class="bk-step-n">01</span><span class="bk-step-l">Message</span></div>
       <div class="bk-step-div" aria-hidden="true"></div>
-      <div class="bk-step">
-        <span class="bk-step-n">02</span>
-        <span class="bk-step-l">Consult</span>
-      </div>
+      <div class="bk-step"><span class="bk-step-n">02</span><span class="bk-step-l">Consult</span></div>
       <div class="bk-step-div" aria-hidden="true"></div>
-      <div class="bk-step">
-        <span class="bk-step-n">03</span>
-        <span class="bk-step-l">Create</span>
-      </div>
+      <div class="bk-step"><span class="bk-step-n">03</span><span class="bk-step-l">Create</span></div>
     </div>
-
-    <!-- CTA buttons -->
+  </div>
+  <div class="bk-right">
     <div class="bk-btns">
-
       <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
-         target="_blank" rel="noopener" class="bk-btn bk-btn-wa" id="bkbtn">
-        <div class="bk-btn-inner">
+         target="_blank" rel="noopener" class="bk-btn" id="bk-btn-wa">
+        <span class="bk-btn-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          <div class="bk-btn-text">
-            <span class="bk-btn-label">Enquire via WhatsApp</span>
-            <span class="bk-btn-note">Usually same day</span>
-          </div>
-        </div>
+        </span>
+        <span class="bk-btn-text">
+          <span class="bk-btn-label">Enquire via WhatsApp</span>
+          <span class="bk-btn-note">Usually same day</span>
+        </span>
         <span class="bk-btn-arr">→</span>
       </a>
-
-      <a href="https://ig.me/m/emmy.tattoo"
-         target="_blank" rel="noopener" class="bk-btn bk-btn-ig">
-        <div class="bk-btn-inner">
+      <a href="https://ig.me/m/emmy.tattoo" target="_blank" rel="noopener" class="bk-btn">
+        <span class="bk-btn-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-          <div class="bk-btn-text">
-            <span class="bk-btn-label">Enquire via Instagram</span>
-            <span class="bk-btn-note">DM · @emmy.tattoo</span>
-          </div>
-        </div>
+        </span>
+        <span class="bk-btn-text">
+          <span class="bk-btn-label">Enquire via Instagram</span>
+          <span class="bk-btn-note">DM · @emmy.tattoo</span>
+        </span>
         <span class="bk-btn-arr">→</span>
       </a>
-
     </div>
-
+    <p class="bk-note">Appointment only &nbsp;·&nbsp; Deposit required to confirm</p>
   </div>
 </section>
-
-<!-- ════ FAQ ════ -->
-<section id="faq">
-  <div class="faq-hd">
-    <div class="faq-hd-text">
-      <div class="s-label">FAQ</div>
-      <h2 class="faq-h2"><span class="tl"><span class="tl-i">Common <em>Questions</em></span></span></h2>
-    </div>
-    <div class="faq-hd-rule"></div>
-    <span class="faq-hd-count">06 questions</span>
-  </div>
-  <ul class="fq-list">
-
-    <li class="fq-item">
-      <div class="fq-trigger">
-        <span class="fq-num">01</span>
-        <div class="fq-q-wrap">
-          <span class="fq-question">How much does a tattoo cost?</span>
-          <span class="fq-tags-row">Pricing · quotes · deposits</span>
-        </div>
-        <span class="fq-toggle">+</span>
-      </div>
-      <div class="fq-rule"></div>
-      <div class="fq-panel">
-        <div class="fq-panel-inner">
-          <p class="fq-answer">I price by piece, not by the hour. Every quote is based on size, complexity, and placement. Message me via WhatsApp or Instagram and I'll give you an honest estimate before anything is agreed. Deposits are non-refundable.</p>
-        </div>
-      </div>
-    </li>
-
-    <li class="fq-item">
-      <div class="fq-trigger">
-        <span class="fq-num">02</span>
-        <div class="fq-q-wrap">
-          <span class="fq-question">Do you do walk-ins?</span>
-          <span class="fq-tags-row">Appointments · walk-ins · availability</span>
-        </div>
-        <span class="fq-toggle">+</span>
-      </div>
-      <div class="fq-rule"></div>
-      <div class="fq-panel">
-        <div class="fq-panel-inner">
-          <p class="fq-answer">Walk-ins are welcome, but a booking guarantees your tattoo. A walk-in depends on availability on the day. If you're nearby and want to try your luck, feel free to come in. A quick message beforehand avoids a wasted trip.</p>
-        </div>
-      </div>
-    </li>
-
-    <li class="fq-item">
-      <div class="fq-trigger">
-        <span class="fq-num">03</span>
-        <div class="fq-q-wrap">
-          <span class="fq-question">How do I prepare for my appointment?</span>
-          <span class="fq-tags-row">Preparation · health · what to bring</span>
-        </div>
-        <span class="fq-toggle">+</span>
-      </div>
-      <div class="fq-rule"></div>
-      <div class="fq-panel">
-        <div class="fq-panel-inner">
-          <ul class="fq-answer-list">
-            <li>— Eat a proper meal beforehand and stay well hydrated</li>
-            <li>— Wear clothing that gives easy access to the area being tattooed</li>
-            <li>— Avoid alcohol for at least 24 hours before your session</li>
-            <li>— Do not book if you are pregnant or breastfeeding</li>
-            <li>— If you are on blood thinners or have a skin condition affecting the area, let me know in advance and I'll advise</li>
-            <li>— Worth bringing: earphones, an iPad, an audiobook, or anything that helps you pass the time. A blanket is welcome too</li>
-          </ul>
-        </div>
-      </div>
-    </li>
-
-    <li class="fq-item">
-      <div class="fq-trigger">
-        <span class="fq-num">04</span>
-        <div class="fq-q-wrap">
-          <span class="fq-question">Does it hurt?</span>
-          <span class="fq-tags-row">Pain · tolerance · placement</span>
-        </div>
-        <span class="fq-toggle">+</span>
-      </div>
-      <div class="fq-rule"></div>
-      <div class="fq-panel">
-        <div class="fq-panel-inner">
-          <p class="fq-answer">Honestly, yes, but it's manageable for most people. Most describe it as uncomfortable rather than unbearable, and you adjust to it quickly. We can take breaks whenever you need them. We go at your pace. If you're worried about a longer session, we can split it into two or more shorter appointments instead.</p>
-        </div>
-      </div>
-    </li>
-
-    <li class="fq-item">
-      <div class="fq-trigger">
-        <span class="fq-num">05</span>
-        <div class="fq-q-wrap">
-          <span class="fq-question">What should I know before my first tattoo?</span>
-          <span class="fq-tags-row">First time · expectations · nerves</span>
-        </div>
-        <span class="fq-toggle">+</span>
-      </div>
-      <div class="fq-rule"></div>
-      <div class="fq-panel">
-        <div class="fq-panel-inner">
-          <p class="fq-answer">It's normal to be nervous. Everyone is the first time. The process is more considered than most people expect, I'll walk you through every step. Take your time choosing the design and placement.</p>
-        </div>
-      </div>
-    </li>
-
-    <li class="fq-item">
-      <div class="fq-trigger">
-        <span class="fq-num">06</span>
-        <div class="fq-q-wrap">
-          <span class="fq-question">What's the minimum age?</span>
-          <span class="fq-tags-row">Age · ID · legal</span>
-        </div>
-        <span class="fq-toggle">+</span>
-      </div>
-      <div class="fq-rule"></div>
-      <div class="fq-panel">
-        <div class="fq-panel-inner">
-          <p class="fq-answer">18, strictly. No exceptions regardless of parental consent. Valid photo ID is required on the day. If you can't prove your age, the session cannot go ahead.</p>
-        </div>
-      </div>
-    </li>
-
-  </ul>
-</section>
-
-<!-- ════ AFTERCARE ════ -->
-<section id="aftercare">
-  <div class="ac-hd">
-    <div class="s-label">Aftercare</div>
-    <h2 class="ac-h2">Keep it <em>clean.</em><br>Let it heal.</h2>
-    <p class="ac-sub">A new tattoo is an open wound. How you treat it in the first few days determines how it looks for the rest of your life. Get it right and it'll stay sharp for decades.</p>
-  </div>
-  <div class="ac-phases">
-
-    <div class="ac-phase">
-      <span class="ac-phase-tag">First 24 hours</span>
-      <div class="ac-phase-title">Immediate care</div>
-      <ul class="ac-phase-list">
-        <li>Leave the wrap on for as long as specified</li>
-        <li>When removing, wash gently with unscented soap and warm water</li>
-        <li>Pat dry with a clean paper towel. Don't rub.</li>
-        <li>Apply a thin layer of Palmer's Cocoa Butter. Highly recommended.</li>
-      </ul>
-    </div>
-
-    <div class="ac-phase">
-      <span class="ac-phase-tag">24 – 72 hours</span>
-      <div class="ac-phase-title">The healing window</div>
-      <ul class="ac-phase-list">
-        <li>Moisturise 2–3× daily with Palmer's Cocoa Butter</li>
-        <li>Don't scratch, pick, or peel. Let it flake naturally.</li>
-        <li>Keep it out of direct sunlight while healing</li>
-        <li>No baths, pools, or sea water for at least 3 weeks</li>
-      </ul>
-    </div>
-
-    <div class="ac-phase">
-      <span class="ac-phase-tag">Long term</span>
-      <div class="ac-phase-title">Keeping it sharp</div>
-      <ul class="ac-phase-list">
-        <li>SPF 30+ on healed tattoos whenever you're in the sun</li>
-        <li>Keep skin moisturised. Dry skin dulls the contrast.</li>
-        <li>Sunbeds and UV degrade ink faster than anything else</li>
-        <li>First touch-up is free. Get in touch when fully healed.</li>
-      </ul>
-    </div>
-
-  </div>
-  <div class="ac-note" style="margin-left:auto;margin-right:auto;">
-    <svg class="ac-note-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message me directly</strong>. Don't wait, it's always better to ask early. Reach me on <a href="https://wa.me/447405979137" style="color:var(--gold);text-decoration:none">WhatsApp</a> or <a href="https://ig.me/m/emmy.tattoo" style="color:var(--gold);text-decoration:none">Instagram</a>.</p>
-  </div>
-</section>
-
-<!-- ════ LOCATION ════ -->
-<section id="location">
-  <div class="loc-hd">
-    <div>
-      <span class="loc-find-label">Find Me</span>
-      <div class="loc-addr">
-        I work at <em>Sainthood Tattoo</em><br>
-        80 Princes Avenue, Hull HU5 3QJ
-      </div>
-      <div class="loc-meta">Appointment only &nbsp;·&nbsp; Tuesday – Saturday</div>
-    </div>
-    <div class="loc-btns">
-      <a href="https://www.waze.com/ul?ll=53.7558,-0.3587&navigate=yes&zoom=17"
-         target="_blank" rel="noopener" class="loc-btn loc-btn-waze">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M20.54 6.63A10.78 10.78 0 0012 2a10.78 10.78 0 00-8.54 4.63 10.23 10.23 0 00-1.9 7.38 10.55 10.55 0 005.3 7.35l-.24 1.37a.62.62 0 00.61.72h1.06a.62.62 0 00.62-.62v-.5a5.3 5.3 0 002.1.43 5.3 5.3 0 002.1-.43v.5a.62.62 0 00.62.62h1.06a.62.62 0 00.61-.72l-.24-1.37a10.55 10.55 0 005.3-7.35 10.23 10.23 0 00-1.86-7.38zM8.5 13a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm7 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm.5-5.5a.5.5 0 01-.38-.17 5.07 5.07 0 00-7.24 0A.5.5 0 018 6.88a6.07 6.07 0 018.67 0A.5.5 0 0116 7.5z"/></svg>
-        Navigate with Waze
-      </a>
-      <a href="https://www.google.com/maps/dir/?api=1&destination=80+Princes+Avenue,+Hull+HU5+3QJ&travelmode=driving"
-         target="_blank" rel="noopener" class="loc-btn loc-btn-gmaps">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-        Navigate with Google Maps
-      </a>
-      <a href="https://www.google.com/maps/dir/?api=1&destination=80+Princes+Avenue,+Hull+HU5+3QJ&travelmode=transit"
-         target="_blank" rel="noopener" class="loc-btn loc-btn-transit">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z"/></svg>
-        Bus / Transit
-      </a>
-      <a href="https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]=53.7558&dropoff[longitude]=-0.3587&dropoff[nickname]=Sainthood+Tattoo+Studio&dropoff[formatted_address]=80+Princes+Avenue,+Hull+HU5+3QJ"
-         target="_blank" rel="noopener" class="loc-btn loc-btn-uber">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-        Get an Uber
-      </a>
-    </div>
-  </div>
-  <div class="loc-map-wrap">
-    <iframe
-      title="Sainthood Tattoo Studio — Hull"
-      src="https://maps.google.com/maps?q=80+Princes+Avenue,+Hull+HU5+3QJ&output=embed&z=17"
-      allowfullscreen="" loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade">
-    </iframe>
-  </div>
-</section>
-
-<!-- ════ GALLERY LIGHTBOX ════ -->
-<div id="gal-modal-bg" aria-hidden="true"></div>
-<div id="gal-modal" role="dialog" aria-modal="true" aria-label="Portfolio image" aria-hidden="true">
-  <img id="gal-modal-img" src="" alt="">
-  <button id="gal-modal-close" aria-label="Close">✕</button>
-</div>
-
-<!-- ════ FLASH GRID LIGHTBOX ════ -->
-<div id="fl-lb" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Photo">
-  <button id="fl-lb-close" aria-label="Close">✕</button>
-  <img id="fl-lb-img" src="" alt="">
-</div>
 
 <!-- ════ FOOTER ════ -->
 <footer>
@@ -2401,18 +761,224 @@
     <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="ft-a">Facebook</a>
     <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="ft-a">WhatsApp</a>
   </div>
-  <div class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</div>
+  <span class="ft-copy">&copy; 2026 Emmy Tattoo · Hull</span>
 </footer>
+
+<!-- ════ INFO DRAWER ════ -->
+<div id="info-overlay" aria-hidden="true"></div>
+<aside id="info-drawer" aria-label="Information" aria-hidden="true" role="dialog">
+  <div class="dr-top">
+    <span class="dr-title">Emmy Tattoo — Info</span>
+    <button class="dr-close" id="dr-close-btn" aria-label="Close info panel">✕</button>
+  </div>
+
+  <!-- About -->
+  <div class="dr-sec">
+    <span class="dr-lbl">About</span>
+    <h2 class="dr-h">Emmy<br><em>Fine line & realism.</em></h2>
+    <div class="dr-body">
+      <p>Based at Sainthood Tattoo on Princes Avenue, Hull. Specialising in fine line, micro realism, realism, and portrait work — pieces built on precision and designed to age well.</p>
+      <p>Every tattoo is drawn from scratch. Nothing is pre-drawn or reused. Consultations are free, and the design process is collaborative from the first message.</p>
+    </div>
+  </div>
+
+  <!-- Expertise -->
+  <div class="dr-sec">
+    <span class="dr-lbl">Specialties</span>
+    <ul class="dr-exp">
+      <li>Fine Line <span class="dr-exp-sub">Single needle · precise · lasting</span></li>
+      <li>Micro Realism <span class="dr-exp-sub">Small scale · high detail</span></li>
+      <li>Realism <span class="dr-exp-sub">Photographic · tonal depth</span></li>
+      <li>Fine Art <span class="dr-exp-sub">Illustrative · bespoke</span></li>
+      <li>Portraits <span class="dr-exp-sub">Likeness · care · longevity</span></li>
+      <li>Custom Design <span class="dr-exp-sub">Built from scratch · yours</span></li>
+    </ul>
+  </div>
+
+  <!-- FAQ -->
+  <div class="dr-sec" id="dr-faq-sec">
+    <span class="dr-lbl">FAQ</span>
+    <ul class="dr-faq fq-list">
+
+      <li class="fq-item" style="position:relative;overflow:hidden">
+        <div class="fq-trigger">
+          <span class="fq-num">01</span>
+          <div class="fq-q-wrap">
+            <span class="fq-question">How much does a tattoo cost?</span>
+            <span class="fq-tags-row">Pricing · quotes · deposits</span>
+          </div>
+          <span class="fq-toggle">+</span>
+        </div>
+        <div class="fq-rule"></div>
+        <div class="fq-panel"><div class="fq-panel-inner">
+          <p class="fq-answer">I price by piece, not by the hour. Every quote is based on size, complexity, and placement. Message me via WhatsApp or Instagram and I'll give you an honest estimate before anything is agreed. Deposits are non-refundable.</p>
+        </div></div>
+      </li>
+
+      <li class="fq-item" style="position:relative;overflow:hidden">
+        <div class="fq-trigger">
+          <span class="fq-num">02</span>
+          <div class="fq-q-wrap">
+            <span class="fq-question">Do you do walk-ins?</span>
+            <span class="fq-tags-row">Appointments · walk-ins · availability</span>
+          </div>
+          <span class="fq-toggle">+</span>
+        </div>
+        <div class="fq-rule"></div>
+        <div class="fq-panel"><div class="fq-panel-inner">
+          <p class="fq-answer">Walk-ins are welcome, but a booking guarantees your tattoo. A walk-in depends on availability on the day. If you're nearby and want to try your luck, feel free to come in. A quick message beforehand avoids a wasted trip.</p>
+        </div></div>
+      </li>
+
+      <li class="fq-item" style="position:relative;overflow:hidden">
+        <div class="fq-trigger">
+          <span class="fq-num">03</span>
+          <div class="fq-q-wrap">
+            <span class="fq-question">How do I prepare?</span>
+            <span class="fq-tags-row">Preparation · health · what to bring</span>
+          </div>
+          <span class="fq-toggle">+</span>
+        </div>
+        <div class="fq-rule"></div>
+        <div class="fq-panel"><div class="fq-panel-inner">
+          <ul class="fq-answer-list">
+            <li>— Eat a proper meal and stay hydrated</li>
+            <li>— Wear clothing that gives easy access to the area</li>
+            <li>— No alcohol for at least 24 hours before</li>
+            <li>— Do not book if pregnant or breastfeeding</li>
+            <li>— Let me know if you're on blood thinners or have skin conditions</li>
+            <li>— Earphones, a blanket, anything that helps you settle in</li>
+          </ul>
+        </div></div>
+      </li>
+
+      <li class="fq-item" style="position:relative;overflow:hidden">
+        <div class="fq-trigger">
+          <span class="fq-num">04</span>
+          <div class="fq-q-wrap">
+            <span class="fq-question">Does it hurt?</span>
+            <span class="fq-tags-row">Pain · tolerance · placement</span>
+          </div>
+          <span class="fq-toggle">+</span>
+        </div>
+        <div class="fq-rule"></div>
+        <div class="fq-panel"><div class="fq-panel-inner">
+          <p class="fq-answer">Honestly, yes — but it's manageable. Most describe it as uncomfortable rather than unbearable, and you adjust quickly. We can take breaks whenever you need them. Longer sessions can be split into two or more shorter appointments.</p>
+        </div></div>
+      </li>
+
+      <li class="fq-item" style="position:relative;overflow:hidden">
+        <div class="fq-trigger">
+          <span class="fq-num">05</span>
+          <div class="fq-q-wrap">
+            <span class="fq-question">First tattoo — what to expect?</span>
+            <span class="fq-tags-row">First time · expectations · nerves</span>
+          </div>
+          <span class="fq-toggle">+</span>
+        </div>
+        <div class="fq-rule"></div>
+        <div class="fq-panel"><div class="fq-panel-inner">
+          <p class="fq-answer">It's normal to be nervous. Everyone is the first time. The process is more considered than most people expect — I'll walk you through every step. Take your time choosing the design and placement.</p>
+        </div></div>
+      </li>
+
+      <li class="fq-item" style="position:relative;overflow:hidden">
+        <div class="fq-trigger">
+          <span class="fq-num">06</span>
+          <div class="fq-q-wrap">
+            <span class="fq-question">What's the minimum age?</span>
+            <span class="fq-tags-row">Age · ID · legal</span>
+          </div>
+          <span class="fq-toggle">+</span>
+        </div>
+        <div class="fq-rule"></div>
+        <div class="fq-panel"><div class="fq-panel-inner">
+          <p class="fq-answer">18, strictly. No exceptions regardless of parental consent. Valid photo ID is required on the day. If you can't prove your age, the session cannot go ahead.</p>
+        </div></div>
+      </li>
+
+    </ul>
+  </div>
+
+  <!-- Aftercare -->
+  <div class="dr-sec">
+    <span class="dr-lbl">Aftercare</span>
+    <h3 class="dr-h" style="font-size:clamp(1.3rem,2.5vw,1.7rem)">Keep it <em>clean.</em><br>Let it heal.</h3>
+    <div class="dr-ac">
+      <div class="dr-phase">
+        <span class="dr-phase-tag">First 24 hours</span>
+        <div class="dr-phase-title">Immediate care</div>
+        <ul class="dr-phase-list">
+          <li>Leave the wrap on for as long as specified</li>
+          <li>Wash gently with unscented soap and warm water</li>
+          <li>Pat dry with a clean paper towel — don't rub</li>
+          <li>Apply a thin layer of Palmer's Cocoa Butter</li>
+        </ul>
+      </div>
+      <div class="dr-phase">
+        <span class="dr-phase-tag">24 – 72 hours</span>
+        <div class="dr-phase-title">The healing window</div>
+        <ul class="dr-phase-list">
+          <li>Moisturise 2–3× daily with Palmer's Cocoa Butter</li>
+          <li>Don't scratch, pick, or peel — let it flake naturally</li>
+          <li>Keep out of direct sunlight while healing</li>
+          <li>No baths, pools, or sea water for at least 3 weeks</li>
+        </ul>
+      </div>
+      <div class="dr-phase">
+        <span class="dr-phase-tag">Long term</span>
+        <div class="dr-phase-title">Keeping it sharp</div>
+        <ul class="dr-phase-list">
+          <li>SPF 30+ on healed tattoos in the sun</li>
+          <li>Keep skin moisturised — dry skin dulls contrast</li>
+          <li>Sunbeds and UV degrade ink faster than anything else</li>
+          <li>First touch-up is free — get in touch when fully healed</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location -->
+  <div class="dr-sec" id="dr-location">
+    <span class="dr-lbl">Find Me</span>
+    <h3 class="dr-h" style="font-size:clamp(1.3rem,2.5vw,1.7rem)">Sainthood Tattoo<br><em>80 Princes Avenue, Hull</em></h3>
+    <div class="dr-body">Appointment only &nbsp;·&nbsp; Tuesday – Saturday</div>
+    <div class="dr-map" id="dr-map-el">
+      <iframe
+        title="Sainthood Tattoo Studio — Hull"
+        src="https://maps.google.com/maps?q=80+Princes+Avenue,+Hull+HU5+3QJ&output=embed&z=17"
+        allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+    <div class="dr-loc-btns">
+      <a href="https://www.google.com/maps/dir/?api=1&destination=80+Princes+Avenue,+Hull+HU5+3QJ&travelmode=driving" target="_blank" rel="noopener" class="dr-loc-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        Google Maps
+      </a>
+      <a href="https://www.waze.com/ul?ll=53.7558,-0.3587&navigate=yes" target="_blank" rel="noopener" class="dr-loc-btn">Waze</a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=80+Princes+Avenue,+Hull+HU5+3QJ&travelmode=transit" target="_blank" rel="noopener" class="dr-loc-btn">Bus / Transit</a>
+      <a href="https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]=53.7558&dropoff[longitude]=-0.3587&dropoff[nickname]=Sainthood+Tattoo" target="_blank" rel="noopener" class="dr-loc-btn">Uber</a>
+    </div>
+  </div>
+
+</aside>
+
+<!-- ════ LIGHTBOX ════ -->
+<div id="lb-bg" aria-hidden="true"></div>
+<div id="lb" role="dialog" aria-modal="true" aria-label="Portfolio image" aria-hidden="true">
+  <img id="lb-img" src="" alt="">
+  <button id="lb-close" aria-label="Close">✕</button>
+</div>
 
 <script>
 (function () {
   'use strict';
 
-  /* ═══ AVAILABILITY TOGGLE ═══
-     Set to false when not taking bookings — updates pill text + colour */
+  /* ═══ AVAILABILITY ═══ */
   const DIARY_OPEN = true;
 
-  /* ═══ SCROLL RESET ON REFRESH ═══ */
+  /* ═══ SCROLL RESET ═══ */
   if (history.scrollRestoration) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
 
@@ -2420,89 +986,42 @@
   gsap.registerPlugin(ScrollTrigger);
 
   /* ═══ LENIS ═══ */
-  const lenis = new Lenis({
-    duration: 1.25,
-    easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smoothWheel: true,
-  });
-  lenis.stop(); /* locked until loader exits */
+  const lenis = new Lenis({ duration: 1.25, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
+  lenis.stop();
   lenis.on('scroll', ScrollTrigger.update);
-
-  /* ── Availability pill ── */
-  if (!DIARY_OPEN) {
-    const avTxt = document.querySelector('.bk-avtxt');
-    const avDot = document.querySelector('.bk-avdot');
-    if (avTxt) avTxt.textContent = 'Diary closed \u00b7 not taking appointments';
-    if (avDot) { avDot.style.background = '#e05555'; avDot.style.boxShadow = '0 0 12px rgba(224,85,85,.7)'; }
-  }
   gsap.ticker.add(t => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
 
-  /* ═══ LOADER ═══ */
-  const ldr = document.getElementById('loader');
-
-  function exitLoader() {
-    gsap.timeline({
-      onComplete: () => {
-        ldr.style.display = 'none';
-        lenis.start(); /* unlock scroll */
-        initHero();
-      }
-    })
-    .to('.ld-wrap', { opacity: 0, y: -32, duration: 0.55, ease: 'power2.in' })
-    .to(ldr,        { opacity: 0, duration: 0.35, ease: 'power1.inOut' }, '-=0.15');
+  /* ═══ AVAILABILITY PILL ═══ */
+  if (!DIARY_OPEN) {
+    const dot = document.getElementById('bk-dot');
+    const txt = document.getElementById('bk-avtxt');
+    if (dot) { dot.style.background = '#e05555'; dot.style.boxShadow = '0 0 10px rgba(224,85,85,.6)'; }
+    if (txt) txt.textContent = 'Diary closed · not taking appointments';
   }
-
-  // Clip-path wipe — letters rise up into view left-to-right
-  (() => {
-    const nameChars = document.querySelectorAll('.ld-name .ld-c');
-    const subChars  = document.querySelectorAll('.ld-sub  .ld-c');
-    const rule      = document.querySelector('.ld-rule');
-
-    gsap.set(nameChars, { clipPath: 'inset(115% -10% -10% -10%)', y: 22 });
-    gsap.set(subChars,  { opacity: 0, y: 10 });
-    gsap.set(rule,      { scaleX: 0, opacity: 0, transformOrigin: '50% 50%' });
-
-    gsap.timeline({ onComplete: () => {
-      document.querySelectorAll('.ld-c').forEach(el => el.style.willChange = 'auto');
-      setTimeout(exitLoader, 130);
-    } })
-      .to(nameChars, {
-        clipPath: 'inset(-10% -10% -10% -10%)',
-        y: 0,
-        duration: 1.0, ease: 'expo.out',
-        stagger: { amount: 0.26, from: 'start' }
-      })
-      .to(rule, { scaleX: 1, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.5')
-      .to(subChars, {
-        opacity: 1, y: 0,
-        duration: 0.65, ease: 'power3.out',
-        stagger: { amount: 0.18, from: 'center' }
-      }, '-=0.28');
-  })();
 
   /* ═══ HERO CANVAS PARTICLES ═══ */
   const hcvs = document.getElementById('hcvs');
-  const hctx = hcvs.getContext('2d');
-  let cW, cH;
+  const hctx = hcvs ? hcvs.getContext('2d') : null;
+  let cW = 0, cH = 0;
 
   function szCvs() {
+    if (!hcvs) return;
     cW = hcvs.width  = hcvs.offsetWidth;
     cH = hcvs.height = hcvs.offsetHeight;
   }
   szCvs();
 
-  const pts = Array.from({ length: 28 }, () => ({
+  const pts = Array.from({ length: 24 }, () => ({
     x: Math.random() * cW, y: Math.random() * cH,
-    r: Math.random() * 1.6 + .4,
-    dx: (Math.random() - .5) * .28,
-    dy: (Math.random() - .5) * .28,
-    a: Math.random() * .22 + .06,
-    ph: Math.random() * Math.PI * 2,
-    ps: Math.random() * .012 + .005,
+    r: Math.random() * 1.5 + .3,
+    dx: (Math.random() - .5) * .25, dy: (Math.random() - .5) * .25,
+    a: Math.random() * .2 + .05,
+    ph: Math.random() * Math.PI * 2, ps: Math.random() * .011 + .004,
   }));
 
   function tickPts() {
+    if (!hctx) return;
     hctx.clearRect(0, 0, cW, cH);
     hctx.fillStyle = '#c4a262';
     pts.forEach(p => {
@@ -2510,13 +1029,10 @@
       if (p.x < 0) p.x = cW; if (p.x > cW) p.x = 0;
       if (p.y < 0) p.y = cH; if (p.y > cH) p.y = 0;
       hctx.globalAlpha = p.a * (.6 + .4 * Math.sin(p.ph));
-      hctx.beginPath();
-      hctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      hctx.fill();
+      hctx.beginPath(); hctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); hctx.fill();
     });
     hctx.globalAlpha = 1;
   }
-  /* tickPts is added to gsap.ticker inside initHero — not during load */
 
   let _ptsRunning = false;
   document.addEventListener('visibilitychange', () => {
@@ -2535,79 +1051,65 @@
   if (window.innerWidth > 768) {
     const cr = document.getElementById('cr');
     const cd = document.getElementById('cd');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-    let crHW = 19;          // cached half-width — 19 (38px) or 38 (76px expanded)
-    let scl = 1, sclT = 1;  // scale: current / target — lerped in ticker
-
+    let mx = 0, my = 0, rx = 0, ry = 0, crHW = 19, scl = 1, sclT = 1;
     document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
     document.addEventListener('mousedown', () => sclT = .82);
     document.addEventListener('mouseup',   () => sclT = 1);
-
-    document.querySelectorAll('a,.wc,.ei,.fq-item,button').forEach(el => {
-      el.addEventListener('mouseenter', () => { cr.classList.add('h');    crHW = 38; });
+    document.querySelectorAll('a,button,.pg-item').forEach(el => {
+      el.addEventListener('mouseenter', () => { cr.classList.add('h');    crHW = 36; });
       el.addEventListener('mouseleave', () => { cr.classList.remove('h'); crHW = 19; });
     });
-
-    /* single GSAP tick — no offsetWidth reads, no GSAP tween overhead, pure style writes */
     gsap.ticker.add(() => {
-      rx  += (mx   - rx)  * .1;
-      ry  += (my   - ry)  * .1;
-      scl += (sclT - scl) * .18;
+      rx += (mx - rx) * .1; ry += (my - ry) * .1; scl += (sclT - scl) * .18;
       cr.style.transform = `translate(${rx - crHW}px,${ry - crHW}px) scale(${scl})`;
       cd.style.transform = `translate(${mx - 2}px,${my - 2}px)`;
     });
   }
 
-  /* ═══ MARQUEE ═══ */
-  const mqItems = ['Fine Line','Micro Realism','Realism','Fine Art','Portrait Work','Custom Design','Emmy Tattoo','Hull, UK','Sainthood Tattoo'];
-  const mqRow = document.getElementById('mqrow');
-  [0,1].forEach(() => mqItems.forEach(s => {
-    const d = document.createElement('div');
-    d.className = 'mq-item';
-    d.innerHTML = s + '<span class="mq-dot"></span>';
-    mqRow.appendChild(d);
-  }));
+  /* ═══ LOADER ═══ */
+  const ldr = document.getElementById('loader');
+
+  function exitLoader() {
+    gsap.timeline({ onComplete: () => { ldr.style.display = 'none'; lenis.start(); initHero(); } })
+      .to('.ld-wrap', { opacity: 0, y: -28, duration: .5, ease: 'power2.in' })
+      .to(ldr,        { opacity: 0, duration: .32, ease: 'power1.inOut' }, '-=.12');
+  }
+
+  (() => {
+    const nameChars = document.querySelectorAll('.ld-name .ld-c');
+    const subChars  = document.querySelectorAll('.ld-sub .ld-c');
+    const rule      = document.querySelector('.ld-rule');
+    gsap.set(nameChars, { clipPath: 'inset(115% -10% -10% -10%)', y: 22 });
+    gsap.set(subChars,  { opacity: 0, y: 10 });
+    gsap.set(rule,      { scaleX: 0, opacity: 0, transformOrigin: '50% 50%' });
+    gsap.timeline({ onComplete: () => {
+      document.querySelectorAll('.ld-c').forEach(el => el.style.willChange = 'auto');
+      setTimeout(exitLoader, 130);
+    }})
+      .to(nameChars, { clipPath: 'inset(-10% -10% -10% -10%)', y: 0, duration: 1, ease: 'expo.out', stagger: { amount: .26 } })
+      .to(rule,      { scaleX: 1, opacity: 1, duration: .5, ease: 'power2.out' }, '-=.5')
+      .to(subChars,  { opacity: 1, y: 0, duration: .65, ease: 'power3.out', stagger: { amount: .18, from: 'center' } }, '-=.28');
+  })();
 
   /* ═══ SCROLL PROGRESS ═══ */
   const progEl = document.getElementById('prog');
-  lenis.on('scroll', ({ scroll, limit }) => {
-    gsap.set(progEl, { scaleX: limit ? scroll / limit : 0 });
-  });
+  lenis.on('scroll', ({ scroll, limit }) => gsap.set(progEl, { scaleX: limit ? scroll / limit : 0 }));
 
   /* ═══ NAV ═══ */
   const navEl = document.getElementById('nav');
-
   function navTo(show) {
     if (show) {
-      /* iOS drop-in: spring from just above the viewport */
-      gsap.fromTo(navEl,
-        { y: -52, scale: 0.97, opacity: 0 },
-        {
-          y: 0, scale: 1, opacity: 1,
-          duration: 0.46, ease: 'back.out(1.5)',
-          overwrite: true,
-          onStart: () => { navEl.style.pointerEvents = 'all'; }
-        }
-      );
+      gsap.fromTo(navEl, { y: -52, scale: .97, opacity: 0 },
+        { y: 0, scale: 1, opacity: 1, duration: .46, ease: 'back.out(1.5)', overwrite: true,
+          onStart: () => { navEl.style.pointerEvents = 'all'; } });
     } else {
-      /* iOS dismiss: snap up and fade */
-      gsap.to(navEl, {
-        y: -18, scale: 0.97, opacity: 0,
-        duration: 0.28, ease: 'power2.in',
-        overwrite: true,
-        onComplete: () => {
-          navEl.style.pointerEvents = 'none';
-          gsap.set(navEl, { y: -52, scale: 0.97 }); /* park above so next entrance starts consistently */
-        }
-      });
+      gsap.to(navEl, { y: -18, scale: .97, opacity: 0, duration: .28, ease: 'power2.in', overwrite: true,
+        onComplete: () => { navEl.style.pointerEvents = 'none'; gsap.set(navEl, { y: -52, scale: .97 }); } });
     }
   }
+  lenis.on('scroll', ({ scroll }) => navEl.classList.toggle('s', scroll > 80));
 
-  lenis.on('scroll', ({ scroll }) => {
-    navEl.classList.toggle('s', scroll > 80);
-  });
-
-  // Smooth anchor scrolling via Lenis (no teleport)
+  /* Lenis anchor scroll */
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       const id = a.getAttribute('href');
@@ -2616,39 +1118,91 @@
       if (!target) return;
       e.preventDefault();
       lenis.scrollTo(target, { duration: 1.6, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-      /* Directions button → pulse map glow on arrival */
-      if (a.classList.contains('h-dir')) {
-        const map = document.querySelector('.loc-map-wrap');
-        if (map) setTimeout(() => {
-          map.classList.add('map-lit');
-          setTimeout(() => map.classList.remove('map-lit'), 2200);
-        }, 1650);
+    });
+  });
+
+  /* ═══ INFO DRAWER ═══ */
+  const overlay = document.getElementById('info-overlay');
+  const drawer  = document.getElementById('info-drawer');
+  const infoBtns = [document.getElementById('n-info-btn')];
+  const closeBtn = document.getElementById('dr-close-btn');
+  const heroDirBtn = document.getElementById('hero-dir-btn');
+
+  function openDrawer(scrollToId) {
+    overlay.classList.add('open'); overlay.setAttribute('aria-hidden', 'false');
+    drawer.classList.add('open');  drawer.setAttribute('aria-hidden', 'false');
+    document.getElementById('n-info-btn').setAttribute('aria-expanded', 'true');
+    lenis.stop();
+    if (scrollToId) {
+      setTimeout(() => {
+        const target = document.getElementById(scrollToId);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (scrollToId === 'dr-location') {
+          setTimeout(() => {
+            const map = document.getElementById('dr-map-el');
+            if (map) { map.classList.add('map-lit'); setTimeout(() => map.classList.remove('map-lit'), 2400); }
+          }, 700);
+        }
+      }, 580);
+    }
+  }
+
+  function closeDrawer() {
+    overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true');
+    drawer.classList.remove('open');  drawer.setAttribute('aria-hidden', 'true');
+    document.getElementById('n-info-btn').setAttribute('aria-expanded', 'false');
+    lenis.start();
+  }
+
+  infoBtns.forEach(btn => btn && btn.addEventListener('click', () => openDrawer(null)));
+  heroDirBtn && heroDirBtn.addEventListener('click', () => openDrawer('dr-location'));
+  closeBtn && closeBtn.addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
+
+  /* ═══ FAQ ACCORDION (inside drawer) ═══ */
+  drawer.querySelectorAll('.fq-item').forEach(item => {
+    const panel = item.querySelector('.fq-panel');
+    const inner = item.querySelector('.fq-panel-inner');
+    const rule  = item.querySelector('.fq-rule');
+    if (!panel) return;
+    let isOpen = false;
+
+    item.addEventListener('click', () => {
+      isOpen = !isOpen;
+      item.classList.toggle('open', isOpen);
+      if (isOpen) {
+        gsap.set(panel, { height: 'auto', overflow: 'visible' });
+        const h = panel.offsetHeight;
+        gsap.fromTo(panel, { height: 0, overflow: 'hidden' },
+          { height: h, duration: .52, ease: 'expo.out', onComplete() { gsap.set(panel, { height: 'auto' }); } });
+        gsap.fromTo(inner, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .4, delay: .1, ease: 'power3.out' });
+        gsap.to(rule, { width: '60%', duration: .45, ease: 'expo.out' });
+      } else {
+        gsap.to(panel, { height: 0, overflow: 'hidden', duration: .32, ease: 'expo.in' });
+        gsap.to(inner, { opacity: 0, y: 6, duration: .18, ease: 'power2.in' });
+        gsap.to(rule, { width: 0, duration: .25, ease: 'expo.in' });
       }
+    });
+
+    item.addEventListener('mouseenter', () => {
+      if (item.classList.contains('open') || !rule) return;
+      gsap.to(rule, { width: '28%', duration: .32, ease: 'expo.out' });
+    });
+    item.addEventListener('mouseleave', () => {
+      if (item.classList.contains('open') || !rule) return;
+      gsap.to(rule, { width: 0, duration: .22, ease: 'expo.in' });
     });
   });
 
   /* ═══ HERO INIT ═══ */
   function initHero() {
-    /* start particles now — not during loader */
     gsap.ticker.add(tickPts);
     _ptsRunning = true;
 
-    /* — Char-split hero title with blur-in (different from loader's 3D flip) — */
-    document.querySelectorAll('.h-title .tl-i').forEach(el => {
-      gsap.set(el, { opacity: 1 });
-      el.innerHTML = [...el.textContent].map(ch =>
-        ch === ' ' ? '&nbsp;' : `<span class="htc">${ch}</span>`
-      ).join('');
-    });
-    const htChars = document.querySelectorAll('.h-title .htc');
-    gsap.set(htChars, { opacity: 0, scale: 1.38, filter: 'blur(14px)', transformOrigin: '50% 100%' });
-
-    gsap.timeline({ defaults: { ease: 'power3.out' } })
-      .to(htChars,   {
-        opacity: 1, scale: 1, filter: 'blur(0px)',
-        duration: 1.35, delay: .1, stagger: { amount: 0.5, from: 'start' }
-      })
-      .to('.h-sub',    { opacity: 1, duration: 1.2          }, '-=.5');
+    gsap.to('.hero-title', { opacity: 1, y: 0, duration: 1.4, ease: 'expo.out', delay: .1 });
+    gsap.to('.hero-meta',  { opacity: 1, duration: 1.1, ease: 'power2.out', delay: .45 });
+    gsap.to('.hero-scroll',{ opacity: 1, duration: 1,   ease: 'power2.out', delay: 1.1 });
 
     initScrollAnims();
   }
@@ -2656,733 +1210,127 @@
   /* ═══ SCROLL ANIMATIONS ═══ */
   function initScrollAnims() {
 
-    /* ── Nav: show once hero title exits, hide when back in hero ── */
+    /* Nav reveal */
     ScrollTrigger.create({
-      trigger: '.h-title',
-      start: 'bottom top',
+      trigger: '#hero', start: 'bottom top',
       onEnter:     () => navTo(true),
       onLeaveBack: () => navTo(false),
     });
 
-    /* ── Hero depth parallax ── */
-    gsap.to('.h-inner', {
-      yPercent: -20, ease: 'none',
-      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
-    });
-    gsap.to('#hcvs', {
-      yPercent: -10, ease: 'none',
-      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
-    });
+    /* Hero parallax */
+    gsap.to('.hero-img img', { yPercent: 18, ease: 'none',
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true } });
+    gsap.to('.hero-content', { yPercent: -14, ease: 'none',
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true } });
 
-    /* ── Marquee entrance ── */
-    gsap.from('.mq-wrap', {
-      opacity: 0, y: 20, duration: 1.2, ease: 'expo.out',
-      scrollTrigger: { trigger: '.mq-wrap', start: 'top 96%' }
-    });
-
-    /* ── Section labels ── */
-    gsap.utils.toArray('.s-label').forEach(el => {
-      gsap.to(el, {
-        opacity: 1, y: 0, duration: .9, ease: 'expo.out',
-        scrollTrigger: { trigger: el, start: 'top 92%' }
-      });
-    });
-
-    /* ── Work header ── */
-    gsap.fromTo('.w-h2 .tl-i',
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out',
-        scrollTrigger: { trigger: '#work-outer', start: 'top 88%' } }
-    );
-    gsap.from('.w-hint', {
-      opacity: 0, y: 12, duration: 1, ease: 'expo.out',
-      scrollTrigger: { trigger: '#work-outer', start: 'top 82%' }
-    });
-
-    /* ── Work cards cascade in ── */
-    gsap.fromTo('.wc',
-      { opacity: 0, y: 40, scale: .97 },
-      { opacity: 1, y: 0, scale: 1,
-        stagger: .08, duration: 1.2, ease: 'expo.out',
-        scrollTrigger: { trigger: '#work-outer', start: 'top 85%', once: true } }
+    /* Portfolio grid — stagger in */
+    gsap.fromTo('.pg-item',
+      { opacity: 0, y: 36, scale: .98 },
+      { opacity: 1, y: 0, scale: 1, stagger: .07, duration: 1.1, ease: 'expo.out',
+        scrollTrigger: { trigger: '#work', start: 'top 88%', once: true } }
     );
 
-    /* ── Portfolio gallery — auto-scroll + bulletproof pointer drag ── */
-    (() => {
-      const gal   = document.querySelector('.w-gal');
-      const track = document.getElementById('wtrack');
-      if (!gal || !track) return;
+    /* Reviews */
+    gsap.to('#reviews', { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
+      scrollTrigger: { trigger: '#reviews', start: 'top 84%' } });
 
-      /* Duplicate cards for seamless infinite loop */
-      [...track.children].forEach(c => {
-        const clone = c.cloneNode(true);
-        clone.setAttribute('aria-hidden', 'true');
-        track.appendChild(clone);
-      });
-
-      let singleW = 0;
-      requestAnimationFrame(() => { singleW = track.scrollWidth / 2; });
-
-      let curX = 0;
-      const GAL_SPEED = 0.5;
-      let galPaused = false;
-      let ptId = null, startX = 0, startTrackX = 0, prevX = 0;
-      let dragDist = 0;
-      const velBuf = [];
-
-      function normalizeX(x) {
-        if (!singleW) return x;
-        x = x % singleW;
-        if (x > 0) x -= singleW;
-        return x;
-      }
-
-      /* Auto-scroll */
-      gsap.ticker.add(() => {
-        if (ptId !== null || galPaused || !singleW) return;
-        curX -= GAL_SPEED;
-        if (curX < -singleW) curX += singleW;
-        gsap.set(track, { x: curX });
-      });
-
-      /* Pause on hover */
-      gal.addEventListener('mouseenter', () => { galPaused = true; });
-      gal.addEventListener('mouseleave', () => { galPaused = false; });
-
-      /* ── Pointer drag — setPointerCapture keeps tracking even off-element ── */
-      gal.addEventListener('pointerdown', e => {
-        if (e.button !== 0 && e.pointerType === 'mouse') return;
-        gal.setPointerCapture(e.pointerId);
-        ptId = e.pointerId;
-        startX = prevX = e.clientX;
-        startTrackX = curX;
-        dragDist = 0;
-        velBuf.length = 0;
-        gsap.killTweensOf(track);
-        gal.classList.add('dragging');
-      });
-
-      gal.addEventListener('pointermove', e => {
-        if (e.pointerId !== ptId) return;
-        const delta = e.clientX - prevX;
-        velBuf.push(delta);
-        if (velBuf.length > 8) velBuf.shift();
-        prevX = e.clientX;
-        dragDist = Math.abs(e.clientX - startX);
-        curX = normalizeX(startTrackX + (e.clientX - startX));
-        gsap.set(track, { x: curX });
-      });
-
-      gal.addEventListener('pointerup', e => {
-        if (e.pointerId !== ptId) return;
-        ptId = null;
-        gal.classList.remove('dragging');
-        const vel = velBuf.length ? velBuf.reduce((s, v) => s + v, 0) / velBuf.length : 0;
-        /* Cap throw to 80% of loop width — prevents multi-loop teleport */
-        const rawThrow = vel * 28;
-        const maxThrow = singleW > 0 ? singleW * 0.8 : 2000;
-        const clampedThrow = Math.max(-maxThrow, Math.min(maxThrow, rawThrow));
-        gsap.to(track, {
-          x: curX + clampedThrow, duration: 1.5, ease: 'expo.out',
-          onUpdate() { curX = gsap.getProperty(track, 'x'); },
-          onComplete() { curX = normalizeX(curX); gsap.set(track, { x: curX }); }
-        });
-      });
-
-      gal.addEventListener('pointercancel', () => {
-        if (ptId === null) return;
-        ptId = null; gal.classList.remove('dragging');
-      });
-
-      /* ── iOS-style lightbox ── */
-      const galModal    = document.getElementById('gal-modal');
-      const galModalImg = document.getElementById('gal-modal-img');
-      const galModalBg  = document.getElementById('gal-modal-bg');
-      const galClose    = document.getElementById('gal-modal-close');
-      if (!galModal) return;
-
-      let originCard = null;
-      const CARD_R = 12;
-
-      function openLightbox(card) {
-        const img = card.querySelector('.wc-img');
-        if (!img) return;
-        originCard = card;
-        const rect = card.getBoundingClientRect();
-        /* data-full = hi-res original; falls back to thumbnail src */
-        galModalImg.src = card.dataset.full || img.src;
-        galModal.style.display = 'block';
-        galModal.setAttribute('aria-hidden', 'false');
-        galModalBg.style.pointerEvents = 'all';
-        gsap.set(galModal, {
-          top: rect.top, left: rect.left,
-          width: rect.width, height: rect.height,
-          borderRadius: CARD_R, opacity: 1
-        });
-        gsap.set(galClose, { opacity: 0, scale: 0.7 });
-        gsap.to(galModal, {
-          top: 0, left: 0,
-          width: window.innerWidth, height: window.innerHeight,
-          borderRadius: 0, duration: 0.52, ease: 'expo.out'
-        });
-        gsap.to(galModalBg, { background: 'rgba(8,7,5,0.92)', duration: 0.35, ease: 'power2.out' });
-        gsap.to(galClose, { opacity: 1, scale: 1, duration: 0.28, delay: 0.38, ease: 'back.out(2)' });
-        lenis.stop();
-      }
-
-      function closeLightbox() {
-        if (!originCard) return;
-        const r = originCard.getBoundingClientRect();
-        /* If card scrolled offscreen, shrink to center instead of chasing it */
-        const onscreen = r.top < window.innerHeight && r.bottom > 0
-                      && r.left < window.innerWidth && r.right > 0;
-        if (onscreen) {
-          gsap.to(galModal, {
-            top: r.top, left: r.left, width: r.width, height: r.height,
-            borderRadius: CARD_R, duration: 0.42, ease: 'expo.in',
-            onComplete() {
-              galModal.style.display = 'none';
-              galModal.setAttribute('aria-hidden', 'true');
-              galModalBg.style.pointerEvents = 'none';
-              originCard = null;
-            }
-          });
-        } else {
-          gsap.to(galModal, {
-            top: window.innerHeight * 0.1, left: window.innerWidth * 0.1,
-            width: window.innerWidth * 0.8, height: window.innerHeight * 0.8,
-            borderRadius: CARD_R, opacity: 0,
-            duration: 0.38, ease: 'power2.in',
-            onComplete() {
-              galModal.style.display = 'none';
-              galModal.setAttribute('aria-hidden', 'true');
-              galModalBg.style.pointerEvents = 'none';
-              originCard = null;
-              gsap.set(galModal, { opacity: 1 });
-            }
-          });
-        }
-        gsap.to(galModalBg, { background: 'rgba(8,7,5,0)', duration: 0.36, ease: 'power2.in' });
-        gsap.to(galClose, { opacity: 0, scale: 0.7, duration: 0.18 });
-        lenis.start();
-      }
-
-      /* Click fires only when drag < 6px and card has a photo */
-      track.addEventListener('click', e => {
-        if (dragDist > 6) return;
-        const card = e.target.closest('.wc');
-        if (card && card.querySelector('.wc-img')) openLightbox(card);
-      });
-      galModalBg.addEventListener('click', closeLightbox);
-      galClose.addEventListener('click', closeLightbox);
-      document.addEventListener('keydown', e => { if (e.key === 'Escape' && originCard) closeLightbox(); });
-    })();
-
-
-    /* ── About quote — word by word ── */
-    const qEl = document.getElementById('abq');
-    if (qEl) {
-      const raw = qEl.textContent;
-      qEl.innerHTML = raw.split(' ').map(w =>
-        `<span class="qw"><span class="qi">${w}</span></span>`
-      ).join(' ');
-      gsap.fromTo('.qi',
-        { y: '100%', opacity: 0 },
-        { y: 0, opacity: 1, stagger: .055, duration: 1, ease: 'expo.out',
-          scrollTrigger: { trigger: '#about', start: 'top 72%' } }
-      );
-    }
-
-    /* ── About grid ── */
-    gsap.fromTo('.ab-grid',
-      { opacity: 0, y: 60, scale: .97 },
-      { opacity: 1, y: 0, scale: 1, duration: 1.4, ease: 'expo.out',
-        scrollTrigger: { trigger: '.ab-grid', start: 'top 84%' } }
-    );
-    gsap.from('.ab-bio p', {
-      opacity: 0, y: 22, stagger: .14, duration: .9, ease: 'expo.out',
-      scrollTrigger: { trigger: '.ab-bio', start: 'top 80%' }
-    });
-
-    /* ── Stats ── */
-    document.querySelectorAll('.stat').forEach((el, i) => {
-      const numEl = el.querySelector('.stat-n');
-      const target = parseInt(numEl.dataset.t, 10);
-      const sup    = numEl.dataset.sup || '';
-
-      gsap.to(el, {
-        opacity: 1, x: 0, duration: 1, ease: 'expo.out', delay: i * .13,
-        scrollTrigger: { trigger: '.ab-stats', start: 'top 80%' }
-      });
-      ScrollTrigger.create({
-        trigger: el, start: 'top 85%', once: true,
-        onEnter: () => gsap.to({ n: 0 }, {
-          n: target, duration: 2.2, ease: 'expo.out',
-          onUpdate() {
-            const v = Math.floor(this.targets()[0].n);
-            numEl.innerHTML = sup ? `<sup>${sup}</sup>${v}` : String(v);
-          }
-        })
-      });
-    });
-
-    /* ── Expertise — clip-path curtain left→right ── */
-    gsap.fromTo('.exp-h2 .tl-i',
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out',
-        scrollTrigger: { trigger: '#exp', start: 'top 84%' } }
-    );
-    // Row fade-up
-    gsap.fromTo('.ei',
-      { opacity: 0, y: 28 },
-      { opacity: 1, y: 0, stagger: .09, duration: .85, ease: 'power3.out',
-        scrollTrigger: { trigger: '.exp-list', start: 'top 82%' } }
-    );
-    // FAQ heading
-    gsap.fromTo('.faq-h2 .tl-i',
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out',
-        scrollTrigger: { trigger: '#faq', start: 'top 84%' } }
-    );
-    gsap.fromTo('.faq-hd-rule',
-      { scaleX: 0, transformOrigin: 'left' },
-      { scaleX: 1, duration: 1.4, ease: 'expo.out',
-        scrollTrigger: { trigger: '#faq', start: 'top 84%' } }
-    );
-    gsap.fromTo('.faq-hd-count',
-      { opacity: 0 },
-      { opacity: 1, duration: .8, delay: .5, ease: 'power2.out',
-        scrollTrigger: { trigger: '#faq', start: 'top 84%' } }
-    );
-    // FAQ items scroll-in: slide from left
-    gsap.fromTo('.fq-item',
-      { opacity: 0, x: -32 },
-      { opacity: 1, x: 0, stagger: .08, duration: .8, ease: 'power3.out',
-        scrollTrigger: { trigger: '.fq-list', start: 'top 82%' } }
-    );
-    // Numbers reveal
-    gsap.fromTo('.fq-num',
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, stagger: .08, duration: .7, ease: 'expo.out',
-        scrollTrigger: { trigger: '.fq-list', start: 'top 82%' } }
-    );
-
-    /* ── Accordion (expertise only) ── */
-    document.querySelectorAll('.ei').forEach(row => {
-      const panel = row.querySelector('.ei-expand');
-      const arr   = row.querySelector('.ei-arr');
-      if (!panel || !arr) return;
-      let isOpen = false;
-
-      row.addEventListener('click', () => {
-        isOpen = !isOpen;
-        row.classList.toggle('open', isOpen);
-
-        if (isOpen) {
-          gsap.set(panel, { height: 'auto', overflow: 'visible' });
-          const h = panel.offsetHeight;
-          gsap.fromTo(panel,
-            { height: 0, overflow: 'hidden' },
-            { height: h, duration: 0.58, ease: 'expo.out',
-              onComplete() { gsap.set(panel, { height: 'auto' }); } }
-          );
-          gsap.fromTo(panel.querySelector('.ei-expand-inner'),
-            { opacity: 0, y: 12 },
-            { opacity: 1, y: 0, duration: 0.45, delay: 0.12, ease: 'power3.out' }
-          );
-          gsap.to(arr, { rotation: 90, duration: 0.42, ease: 'expo.out' });
-        } else {
-          gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.38, ease: 'expo.in' });
-          gsap.to(panel.querySelector('.ei-expand-inner'),
-            { opacity: 0, y: 6, duration: 0.22, ease: 'power2.in' }
-          );
-          gsap.to(arr, { rotation: 0, duration: 0.32, ease: 'expo.in' });
-        }
-      });
-    });
-
-    /* ── FAQ accordion ── */
-    document.querySelectorAll('.fq-item').forEach(item => {
-      const panel  = item.querySelector('.fq-panel');
-      const inner  = item.querySelector('.fq-panel-inner');
-      const rule   = item.querySelector('.fq-rule');
-      if (!panel) return;
-      let isOpen = false;
-
-      item.addEventListener('click', () => {
-        isOpen = !isOpen;
-        item.classList.toggle('open', isOpen);
-
-        if (isOpen) {
-          gsap.set(panel, { height: 'auto', overflow: 'visible' });
-          const h = panel.offsetHeight;
-          gsap.fromTo(panel,
-            { height: 0, overflow: 'hidden' },
-            { height: h, duration: 0.55, ease: 'expo.out',
-              onComplete() { gsap.set(panel, { height: 'auto' }); } }
-          );
-          gsap.fromTo(inner,
-            { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, duration: 0.42, delay: 0.1, ease: 'power3.out' }
-          );
-          gsap.to(rule, { width: '60%', duration: 0.5, ease: 'expo.out' });
-        } else {
-          gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.35, ease: 'expo.in' });
-          gsap.to(inner, { opacity: 0, y: 6, duration: 0.2, ease: 'power2.in' });
-          gsap.to(rule, { width: 0, duration: 0.28, ease: 'expo.in' });
-        }
-      });
-    });
-
-    /* ── FAQ hover: rule sweep ── */
-    document.querySelectorAll('.fq-item').forEach(item => {
-      const rule = item.querySelector('.fq-rule');
-      if (!rule) return;
-      item.addEventListener('mouseenter', () => {
-        if (item.classList.contains('open')) return;
-        gsap.to(rule, { width: '30%', duration: 0.35, ease: 'expo.out' });
-      });
-      item.addEventListener('mouseleave', () => {
-        if (item.classList.contains('open')) return;
-        gsap.to(rule, { width: 0, duration: 0.25, ease: 'expo.in' });
-      });
-    });
-
-    /* ── iOS-spring hover (expertise only) ── */
-    document.querySelectorAll('.ei').forEach(row => {
-      const name  = row.querySelector('.ei-name');
-      const arr   = row.querySelector('.ei-arr');
-      const rule  = row.querySelector('.ei-rule');
-      const bgN   = row.querySelector('.ei-bg-n');
-
-      /* Inject left accent bar once */
-      const accent = document.createElement('div');
-      accent.className = 'ei-accent';
-      row.insertBefore(accent, row.firstChild);
-
-      let hTl = null;
-
-      row.addEventListener('mouseenter', () => {
-        if (hTl) hTl.kill();
-        hTl = gsap.timeline();
-
-        /* Accent bar: slides in from top */
-        hTl.fromTo(accent,
-          { scaleY: 0, opacity: 0 },
-          { scaleY: 1, opacity: 1, duration: 0.35, ease: 'power3.out', transformOrigin: 'top' },
-          0)
-        /* Name: clean slide right */
-        .to(name,
-          { x: 18, color: 'var(--gold)', duration: 0.4, ease: 'power3.out' },
-          0)
-        /* Arrow: clean slide right */
-        .to(arr,
-          { x: 14, color: 'var(--gold)', duration: 0.35, ease: 'power3.out' },
-          0.03)
-        /* Rule: instant gold sweep, no spring */
-        .to(rule,
-          { width: '100%', duration: 0.28, ease: 'expo.out' },
-          0)
-        /* Ghost number: pops into view */
-        .to(bgN,
-          { opacity: 0.13, duration: 0.4, ease: 'power2.out' },
-          0);
-      });
-
-      row.addEventListener('mouseleave', () => {
-        if (hTl) hTl.kill();
-        hTl = gsap.timeline();
-
-        const openColor = row.classList.contains('open') ? 'var(--gold)' : 'var(--dim)';
-
-        hTl
-          .to(accent, { scaleY: 0, opacity: 0, duration: 0.26, ease: 'expo.in', transformOrigin: 'top' }, 0)
-          .to(name,   { x: 0, color: 'var(--fg)',    duration: 0.32, ease: 'expo.out' }, 0)
-          .to(arr,    { x: 0, color: openColor,       duration: 0.28, ease: 'expo.out' }, 0)
-          .to(rule,   { width: 0, duration: 0.28, ease: 'expo.in' }, 0)
-          .to(bgN,    { opacity: 0.045, duration: 0.3, ease: 'power2.out' }, 0);
-      });
-    });
-
-    /* ── Aftercare ── */
-    gsap.fromTo('#aftercare .ac-hd',
-      { opacity: 0, y: 28 },
-      { opacity: 1, y: 0, duration: 1, ease: 'expo.out',
-        scrollTrigger: { trigger: '#aftercare', start: 'top 82%' } }
-    );
-    gsap.fromTo('#aftercare .ac-phase',
-      { opacity: 0, y: 32 },
-      { opacity: 1, y: 0, stagger: .12, duration: .85, ease: 'power3.out',
-        scrollTrigger: { trigger: '#aftercare .ac-phases', start: 'top 84%' } }
-    );
-    gsap.fromTo('#aftercare .ac-note',
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: .8, ease: 'power3.out',
-        scrollTrigger: { trigger: '#aftercare .ac-note', start: 'top 90%' } }
-    );
-
-    /* ── Flash Days ── */
-    gsap.fromTo('#flash .fl-left',
-      { opacity: 0, x: -32 },
-      { opacity: 1, x: 0, duration: 1.1, ease: 'expo.out',
-        scrollTrigger: { trigger: '#flash', start: 'top 82%' } }
-    );
-    gsap.fromTo('#flash .fl-cell',
-      { opacity: 0, y: 24, scale: .95 },
-      { opacity: 1, y: 0, scale: 1, stagger: .07, duration: .8, ease: 'power3.out',
-        scrollTrigger: { trigger: '#flash', start: 'top 78%' } }
-    );
-
-    /* ── Flash grid lightbox ── */
-    (function() {
-      const lb    = document.getElementById('fl-lb');
-      const lbImg = document.getElementById('fl-lb-img');
-      const lbBtn = document.getElementById('fl-lb-close');
-      if (!lb) return;
-
-      function openFlLb(src) {
-        lbImg.src = src;
-        lb.setAttribute('aria-hidden', 'false');
-        lb.classList.add('fl-open');
-        lenis.stop();
-      }
-      function closeFlLb() {
-        lb.classList.remove('fl-open');
-        lb.setAttribute('aria-hidden', 'true');
-        lenis.start();
-      }
-
-      document.querySelectorAll('.fl-cell').forEach(cell => {
-        cell.addEventListener('click', () => {
-          const img = cell.querySelector('img');
-          if (img) openFlLb(img.src);
-        });
-      });
-
-      lbBtn.addEventListener('click', closeFlLb);
-      lb.addEventListener('click', e => { if (e.target === lb) closeFlLb(); });
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && lb.classList.contains('fl-open')) closeFlLb();
-      });
-    })();
-    /* ── Gifts section ── */
-    gsap.fromTo('#gifts .gf-left',
-      { opacity: 0, x: -32 },
-      { opacity: 1, x: 0, duration: 1.1, ease: 'expo.out',
-        scrollTrigger: { trigger: '#gifts', start: 'top 82%' } }
-    );
-    gsap.fromTo('#gifts .gf-oc',
-      { opacity: 0, y: 18, scale: .94 },
-      { opacity: 1, y: 0, scale: 1, stagger: .07, duration: .75, ease: 'power3.out',
-        scrollTrigger: { trigger: '#gifts', start: 'top 78%' } }
-    );
-
-    /* ── Booking — staggered reveal ── */
-    gsap.to('.bk-av', {
-      opacity: 1, y: 0, duration: .9, ease: 'expo.out',
-      scrollTrigger: { trigger: '#book', start: 'top 82%' }
-    });
-    gsap.fromTo('.bk-h2 .tl-i',
-      { y: 52, opacity: 0 },
-      { y: 0, opacity: 1, stagger: .13, duration: 1.3, ease: 'expo.out', delay: .1,
-        scrollTrigger: { trigger: '#book', start: 'top 80%' } }
-    );
-    gsap.to('.bk-rule', {
-      opacity: 1, scaleX: 1, duration: .9, ease: 'expo.out', delay: .4,
-      scrollTrigger: { trigger: '#book', start: 'top 76%' }
-    });
-    gsap.to('.bk-sub', {
-      opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: .32,
-      scrollTrigger: { trigger: '#book', start: 'top 76%' }
-    });
-    gsap.to('.bk-steps', {
-      opacity: 1, y: 0, duration: .9, ease: 'expo.out', delay: .44,
-      scrollTrigger: { trigger: '#book', start: 'top 74%' }
-    });
-    gsap.fromTo('.bk-btn',
-      { opacity: 0, y: 28 },
-      { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .16, delay: .6,
-        scrollTrigger: { trigger: '#book', start: 'top 70%' } }
-    );
+    /* Booking */
+    gsap.fromTo('.bk-eyebrow', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .8, ease: 'expo.out',
+      scrollTrigger: { trigger: '#book', start: 'top 82%' } });
+    gsap.fromTo('.bk-h2', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.2, ease: 'expo.out',
+      scrollTrigger: { trigger: '#book', start: 'top 80%' } });
+    gsap.fromTo('.bk-body', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .9, ease: 'expo.out', delay: .12,
+      scrollTrigger: { trigger: '#book', start: 'top 78%' } });
+    gsap.fromTo('.bk-av', { opacity: 0 }, { opacity: 1, duration: .7, ease: 'power2.out', delay: .22,
+      scrollTrigger: { trigger: '#book', start: 'top 78%' } });
+    gsap.fromTo('.bk-steps', { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .8, ease: 'expo.out', delay: .3,
+      scrollTrigger: { trigger: '#book', start: 'top 76%' } });
+    gsap.fromTo('.bk-btns', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: .9, ease: 'expo.out', delay: .38,
+      scrollTrigger: { trigger: '#book', start: 'top 74%' } });
   }
 
-  /* ── Reviews carousel ── */
-  gsap.fromTo('.tr-head', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
-    scrollTrigger: { trigger: '#trust', start: 'top 88%' } });
-  gsap.fromTo('.tr-card',
-    { opacity: 0, y: 32, scale: .97 },
-    { opacity: 1, y: 0, scale: 1, stagger: .07, duration: 1, ease: 'expo.out',
-      scrollTrigger: { trigger: '#trust', start: 'top 82%' } }
-  );
-
-  /* ── Reviews: auto-scroll + bulletproof pointer drag + modal ── */
+  /* ═══ LIGHTBOX ═══ */
   (() => {
-    const wrap     = document.getElementById('trcwrap');
-    const carousel = document.getElementById('trcarousel');
-    const modal    = document.getElementById('rv-modal');
-    if (!wrap || !carousel || !modal) return;
+    const bg    = document.getElementById('lb-bg');
+    const lb    = document.getElementById('lb');
+    const img   = document.getElementById('lb-img');
+    const close = document.getElementById('lb-close');
+    const CARD_R = 10;
+    let origin = null;
 
-    /* Duplicate cards for seamless infinite loop */
-    function cloneAll() {
-      [...carousel.querySelectorAll('.tr-card:not([data-clone])')].forEach(c => {
-        const clone = c.cloneNode(true);
-        clone.setAttribute('aria-hidden', 'true');
-        clone.dataset.clone = 'true';
-        carousel.appendChild(clone);
-      });
-    }
-    cloneAll();
-
-    let singleW = 0;
-    requestAnimationFrame(() => { singleW = carousel.scrollWidth / 2; });
-
-    let curX = 0;
-    const SPEED = 0.375;
-    let ptId = null, startX = 0, startCarX = 0, prevX = 0;
-    let dragDist = 0, downCard = null;
-    const velBuf = [];
-
-    /* Called by live Google fetch — keeps static cards, blends in live ones */
-    window.__refreshReviews = function(newCards) {
-      /* Remove all clones and any previous live cards, preserve static originals */
-      carousel.querySelectorAll('[data-clone]').forEach(c => c.remove());
-      carousel.querySelectorAll('.tr-card:not([data-static])').forEach(c => c.remove());
-      newCards.forEach(c => carousel.appendChild(c));
-      cloneAll();
-      curX = 0;
-      gsap.set(carousel, { x: 0 });
-      requestAnimationFrame(() => { singleW = carousel.scrollWidth / 2; });
-    };
-
-    function normalizeX(x) {
-      if (!singleW) return x;
-      x = x % singleW;
-      if (x > 0) x -= singleW;
-      return x;
+    function open(card) {
+      const src = card.dataset.src;
+      if (!src) return;
+      origin = card;
+      img.src = src;
+      lb.style.display = 'block';
+      lb.setAttribute('aria-hidden', 'false');
+      bg.style.pointerEvents = 'all';
+      const r = card.getBoundingClientRect();
+      gsap.set(lb, { top: r.top, left: r.left, width: r.width, height: r.height, borderRadius: CARD_R, opacity: 1 });
+      gsap.set(close, { opacity: 0, scale: .7 });
+      gsap.to(lb, { top: 0, left: 0, width: innerWidth, height: innerHeight, borderRadius: 0, duration: .52, ease: 'expo.out' });
+      gsap.to(bg, { background: 'rgba(8,7,5,.92)', duration: .35, ease: 'power2.out' });
+      gsap.to(close, { opacity: 1, scale: 1, duration: .28, delay: .36, ease: 'back.out(2)' });
+      close.style.pointerEvents = 'all';
+      lenis.stop();
     }
 
-    /* Auto-scroll */
-    gsap.ticker.add(() => {
-      if (ptId !== null || wrap.classList.contains('tr-paused') || !singleW) return;
-      curX -= SPEED;
-      if (curX < -singleW) curX += singleW;
-      gsap.set(carousel, { x: curX });
-    });
-
-    /* Pause on hover */
-    wrap.addEventListener('mouseenter', () => wrap.classList.add('tr-paused'));
-    wrap.addEventListener('mouseleave', () => wrap.classList.remove('tr-paused'));
-
-    /* ── Pointer drag — setPointerCapture locks tracking regardless of position ── */
-    wrap.addEventListener('pointerdown', e => {
-      if (e.button !== 0 && e.pointerType === 'mouse') return;
-      /* Capture the card NOW, before setPointerCapture redirects all events to wrap */
-      downCard = e.target.closest('.tr-card');
-      wrap.setPointerCapture(e.pointerId);
-      ptId = e.pointerId;
-      startX = prevX = e.clientX;
-      startCarX = curX;
-      dragDist = 0;
-      velBuf.length = 0;
-      gsap.killTweensOf(carousel);
-      wrap.classList.add('tr-dragging');
-    });
-
-    wrap.addEventListener('pointermove', e => {
-      if (e.pointerId !== ptId) return;
-      const delta = e.clientX - prevX;
-      velBuf.push(delta);
-      if (velBuf.length > 8) velBuf.shift();
-      prevX = e.clientX;
-      dragDist = Math.abs(e.clientX - startX);
-      curX = normalizeX(startCarX + (e.clientX - startX));
-      gsap.set(carousel, { x: curX });
-    });
-
-    wrap.addEventListener('pointerup', e => {
-      if (e.pointerId !== ptId) return;
-      ptId = null;
-      wrap.classList.remove('tr-dragging');
-      const vel = velBuf.length ? velBuf.reduce((s, v) => s + v, 0) / velBuf.length : 0;
-      /* Cap throw — prevents animating through multiple loops */
-      const rawThrow = vel * 24;
-      const maxThrow = singleW > 0 ? singleW * 0.8 : 2000;
-      const clampedThrow = Math.max(-maxThrow, Math.min(maxThrow, rawThrow));
-      gsap.to(carousel, {
-        x: curX + clampedThrow, duration: 1.4, ease: 'expo.out',
-        onUpdate() { curX = gsap.getProperty(carousel, 'x'); },
-        onComplete() { curX = normalizeX(curX); gsap.set(carousel, { x: curX }); }
-      });
-      /* Open modal on tap/click — card captured at pointerdown before setPointerCapture */
-      if (dragDist <= 6 && downCard && downCard.dataset.q) {
-        mq.textContent    = '\u201c' + downCard.dataset.q + '\u201d';
-        mauth.textContent = downCard.dataset.author;
-        if (downCard.dataset.reply) {
-          mreplyT.textContent = downCard.dataset.reply;
-          mreply.classList.add('visible');
-          mreply.setAttribute('aria-hidden', 'false');
-        } else {
-          mreply.classList.remove('visible');
-          mreply.setAttribute('aria-hidden', 'true');
-        }
-        modal.classList.add('open');
-        modal.setAttribute('aria-hidden', 'false');
-        lenis.stop();
+    function closeLb() {
+      if (!origin) return;
+      const r = origin.getBoundingClientRect();
+      const onscreen = r.top < innerHeight && r.bottom > 0 && r.left < innerWidth && r.right > 0;
+      gsap.to(close, { opacity: 0, scale: .7, duration: .18 });
+      close.style.pointerEvents = 'none';
+      if (onscreen) {
+        gsap.to(lb, { top: r.top, left: r.left, width: r.width, height: r.height, borderRadius: CARD_R, duration: .42, ease: 'expo.in',
+          onComplete() { lb.style.display = 'none'; lb.setAttribute('aria-hidden','true'); bg.style.pointerEvents = 'none'; origin = null; } });
+      } else {
+        gsap.to(lb, { top: innerHeight*.1, left: innerWidth*.1, width: innerWidth*.8, height: innerHeight*.8, borderRadius: CARD_R, opacity: 0, duration: .38, ease: 'power2.in',
+          onComplete() { lb.style.display = 'none'; lb.setAttribute('aria-hidden','true'); bg.style.pointerEvents = 'none'; origin = null; gsap.set(lb, { opacity: 1 }); } });
       }
-      dragDist = 0;
-      downCard = null;
-    });
-
-    wrap.addEventListener('pointercancel', () => {
-      if (ptId === null) return;
-      ptId = null; wrap.classList.remove('tr-dragging');
-    });
-
-    /* Modal — opened in pointerup (card captured at pointerdown before setPointerCapture) */
-    const mq      = modal.querySelector('.rvm-q');
-    const mauth   = modal.querySelector('.rvm-author');
-    const mback   = modal.querySelector('.rvm-back');
-    const mclose  = modal.querySelector('.rvm-close');
-    const mreply  = modal.querySelector('.rvm-reply');
-    const mreplyT = modal.querySelector('.rvm-reply-text');
-
-    const closeModal = () => {
-      modal.classList.remove('open');
-      modal.setAttribute('aria-hidden', 'true');
+      gsap.to(bg, { background: 'rgba(8,7,5,0)', duration: .36, ease: 'power2.in' });
       lenis.start();
-    };
-    mback.addEventListener('click', closeModal);
-    mclose.addEventListener('click', closeModal);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-  })();
+    }
 
-
-  /* ═══ LOCATION ═══ */
-  gsap.to('.loc-map-wrap', {
-    opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
-    scrollTrigger: { trigger: '#location', start: 'top 78%' }
-  });
-
-  /* ═══ DECORATIVE: mouse-following ambient glow ═══ */
-  (() => {
-    const orb = document.getElementById('mouse-glow');
-    if (!orb || window.innerWidth <= 768) { if (orb) orb.style.display = 'none'; return; }
-    let tx = window.innerWidth / 2, ty = window.innerHeight / 2;
-    let cx = tx, cy = ty;
-    document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
-    gsap.ticker.add(() => {
-      cx += (tx - cx) * 0.06;
-      cy += (ty - cy) * 0.06;
-      orb.style.transform = `translate(${cx - 240}px, ${cy - 240}px)`;
+    document.querySelectorAll('.pg-item:not(.pg-soon)').forEach(item => {
+      item.addEventListener('click', () => open(item));
+      item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') open(item); });
     });
+    bg.addEventListener('click', closeLb);
+    close.addEventListener('click', closeLb);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && origin) closeLb(); });
   })();
 
-  /* ═══ DECORATIVE: animated section draw-rules ═══ */
-  document.querySelectorAll('.draw-rule').forEach(el => {
-    gsap.to(el, { width: '80px', duration: 1.2, ease: 'expo.out',
-      scrollTrigger: { trigger: el, start: 'top 90%' } });
-  });
+  /* ═══ REVIEWS CYCLING ═══ */
+  (() => {
+    const qEl   = document.getElementById('rv-q-text');
+    const aEl   = document.getElementById('rv-q-auth');
+    if (!qEl || !aEl) return;
 
+    const quotes = [
+      { q: "Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰", a: "— Jess Dan · Google Review" },
+      { q: "Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend!", a: "— Jaime Dale · Google Review" },
+      { q: "Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist", a: "— Ruby Taylor · Google Review" },
+      { q: "Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻", a: "— Leanne Smith · Google Review" },
+      { q: "Emmy did me an absolutely unbelievable full back tattoo. So kind and patient and I will be sure to go back to her next time.", a: "— Matthew Wallace · Google Review" },
+      { q: "Emmy is an amazing artist and really listens to everything you say. She takes your ideas and puts in a beautiful design. I wouldn't trust anyone else!", a: "— Sarah Andrew · Google Review" },
+      { q: "Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting.", a: "— Kimberley Rust · Google Review" },
+    ];
+
+    let idx = 0;
+    function show(i) {
+      const q = quotes[i];
+      gsap.to([qEl, aEl], { opacity: 0, y: -8, duration: .3, ease: 'power2.in', onComplete: () => {
+        qEl.textContent = '\u201c' + q.q + '\u201d';
+        aEl.textContent = q.a;
+        gsap.fromTo([qEl, aEl], { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .5, ease: 'expo.out' });
+      }});
+    }
+
+    show(0);
+    setInterval(() => { idx = (idx + 1) % quotes.length; show(idx); }, 5500);
+  })();
 
 })();
 </script>
@@ -3398,7 +1346,6 @@
     const name  = r.authorAttribution?.displayName || 'Google Reviewer';
     const photo = r.authorAttribution?.photoUri || '';
     const full  = r.text?.text || '';
-    const short = full.length > 180 ? full.slice(0, 180) + '\u2026' : full;
     const reply = r.reviewReply?.text || '';
 
     const card = document.createElement('div');
@@ -3423,6 +1370,7 @@
 
     const q = document.createElement('p');
     q.className   = 'tr-card-q';
+    const short = full.length > 180 ? full.slice(0, 180) + '\u2026' : full;
     q.textContent = '\u201c' + short + '\u201d';
     card.appendChild(q);
 
@@ -3431,32 +1379,35 @@
     auth.textContent = '\u2014 ' + name + ' \u00b7 Google Review';
     card.appendChild(auth);
 
-    const hint = document.createElement('div');
-    hint.className   = 'tr-card-hint';
-    hint.textContent = 'Read full review \u2192';
-    card.appendChild(hint);
-
     return card;
   }
 
   fetch(WORKER_URL)
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-      if (data.error) { console.error('[Reviews] Worker error:', data.error); return; }
-      if (data.rating) {
-        var scoreEl = document.querySelector('.tr-big-score');
-        if (scoreEl) scoreEl.textContent = data.rating.toFixed(1);
-      }
-      if (data.userRatingCount) {
-        var platEl = document.querySelector('.tr-platform');
-        if (platEl) platEl.textContent = data.userRatingCount + ' Google Reviews';
-      }
-      if (data.reviews && data.reviews.length && window.__refreshReviews) {
-        window.__refreshReviews(data.reviews.map(buildCard));
-      }
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => {
+      const reviews = (data.reviews || []).filter(r => r.text?.text && r.rating === 5).slice(0, 8);
+      if (!reviews.length) return;
+
+      /* Update the cycling quotes array with live data */
+      const qEl = document.getElementById('rv-q-text');
+      const aEl = document.getElementById('rv-q-auth');
+      if (!qEl || !aEl) return;
+
+      const liveQuotes = reviews.map(r => ({
+        q: r.text.text,
+        a: '\u2014 ' + (r.authorAttribution?.displayName || 'Google Reviewer') + ' \u00b7 Google Review'
+      }));
+
+      /* Swap in first live quote immediately */
+      gsap.to([qEl, aEl], { opacity: 0, duration: .3, onComplete: () => {
+        qEl.textContent = '\u201c' + liveQuotes[0].q + '\u201d';
+        aEl.textContent = liveQuotes[0].a;
+        gsap.to([qEl, aEl], { opacity: 1, duration: .5, ease: 'expo.out' });
+      }});
     })
-    .catch(function(err) { console.error('[Reviews] Fetch failed:', err); });
+    .catch(() => { /* silently fall back to static quotes */ });
 })();
 </script>
+
 </body>
 </html>
