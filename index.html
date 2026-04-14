@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Emmy Tattoo — Hull</title>
+  <meta name="description" content="Emmy Tattoo — fine line, micro realism, realism & portrait work. Working out of Sainthood Tattoo, Princes Avenue, Hull. By appointment.">
+  <meta property="og:title" content="Emmy Tattoo — Hull">
+  <meta property="og:description" content="Fine line, micro realism, realism & portrait work. Sainthood Tattoo, Hull. By appointment.">
+  <meta property="og:image" content="pictures/BANNER.jpg">
+  <meta property="og:url" content="https://emmytattoo.co.uk">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -206,21 +213,20 @@
     }
     .n-btn:hover { border-color: rgba(196,162,98,.65); background: rgba(196,162,98,.09); color: var(--fg); }
     .n-social {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-family: var(--mono); font-size: .64rem;
-      letter-spacing: .12em; text-transform: uppercase;
-      color: var(--fg2); text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--dim); text-decoration: none;
       border: 1px solid var(--border);
-      padding: 10px 18px; border-radius: 100px;
+      width: 38px; height: 38px; border-radius: 50%;
       transition: color .25s, border-color .25s;
+      flex-shrink: 0;
     }
     .n-social:hover { color: var(--fg); border-color: var(--border-h); }
+    .n-social span { display: none; }
     .n-social svg { flex-shrink: 0; }
     @media (max-width: 768px) {
       #nav { padding: 18px 24px; }
       #nav.s { padding: 12px 24px; }
       .n-item { display: none; }
-      .n-social span { display: none; }
       .n-links { gap: 12px; }
     }
 
@@ -271,25 +277,6 @@
         radial-gradient(ellipse at 50% 110%, rgba(8,7,5,.6), transparent 60%);
       pointer-events: none;
     }
-    .h-scroll {
-      position: absolute; right: 48px; top: 50%; transform: translateY(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-      z-index: 2; opacity: 0;
-    }
-    .h-scroll-txt {
-      font-family: var(--mono); font-size: .6rem;
-      letter-spacing: .28em; text-transform: uppercase;
-      color: var(--dim); writing-mode: vertical-rl;
-    }
-    .h-scroll-ln {
-      width: 1px; height: 60px;
-      background: linear-gradient(to bottom, transparent, var(--gold));
-      animation: sLn 2.2s ease-in-out infinite;
-    }
-    @keyframes sLn {
-      0%,100% { transform: scaleY(1); opacity: .8; transform-origin: top; }
-      50% { transform: scaleY(.3); opacity: .25; transform-origin: bottom; }
-    }
     .h-inner { position: relative; z-index: 2; }
     @keyframes dp { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.6); opacity: .5; } }
     .h-title {
@@ -312,14 +299,36 @@
       line-height: 1.75;
       text-shadow: 0 0 28px rgba(8,7,5,1), 0 1px 6px rgba(8,7,5,.85);
     }
-    .h-tagline {
-      font-family: var(--serif); font-style: italic;
-      font-size: 1.1rem; color: var(--dim);
-      max-width: 270px; text-align: right; line-height: 1.7;
+    .h-dir {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 15px 9px 11px;
+      border-radius: 999px;
+      background: rgba(237,232,223,.07);
+      border: 1px solid rgba(237,232,223,.14);
+      backdrop-filter: blur(16px) saturate(1.4);
+      -webkit-backdrop-filter: blur(16px) saturate(1.4);
+      font-family: var(--sans); font-size: .7rem;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: rgba(237,232,223,.65);
+      text-decoration: none; white-space: nowrap;
+      transition: background .35s, border-color .35s, color .35s,
+                  transform .45s cubic-bezier(.34,1.56,.64,1),
+                  box-shadow .35s;
     }
+    .h-dir:hover {
+      background: rgba(196,162,98,.13);
+      border-color: rgba(196,162,98,.35);
+      color: rgba(196,162,98,.95);
+      transform: scale(1.06);
+      box-shadow: 0 2px 20px rgba(196,162,98,.1);
+    }
+    .h-dir svg { flex-shrink: 0; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+    .h-dir:hover svg { transform: translate(1px, -1px); }
     @media (max-width: 768px) {
       #hero { padding: 80px 24px 48px; }
       .h-title { font-size: clamp(3.4rem,16vw,6rem); }
+      .h-dir span { display: none; }
+      .h-dir { padding: 9px 11px; }
     }
 
     /* ══════════════════════════════════════════
@@ -445,16 +454,6 @@
     }
     .wc:hover::after { transform: translateX(130%); }
 
-    /* Category badge */
-    .wc-cat {
-      position: absolute; top: 14px; left: 14px; z-index: 4;
-      font-family: var(--mono); font-size: .67rem;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: rgba(237,232,223,.65);
-      border: 1px solid rgba(237,232,223,.14);
-      padding: 6px 13px; border-radius: 100px;
-      background: rgba(8,7,5,.52); backdrop-filter: blur(8px);
-    }
     .wc-num {
       position: absolute; bottom: 18px; right: 18px; z-index: 4;
       font-family: var(--mono); font-size: .66rem;
@@ -534,75 +533,11 @@
       .wc { scroll-snap-align: start; }
     }
 
-    /* ══════════════════════════════════════════
-       ABOUT
-    ══════════════════════════════════════════ */
-    /* ── Full-bleed photo band ── */
-    #about { padding: 90px var(--pad); }
-    .ab-quote {
-      font-family: var(--serif);
-      font-size: clamp(1.9rem,4.5vw,4rem);
-      font-weight: 300; font-style: italic;
-      line-height: 1.22; letter-spacing: -.01em;
-      max-width: 860px; margin-bottom: 80px;
-    }
-    .ab-quote .qw { display: inline-block; overflow: hidden; }
-    .ab-quote .qi { display: inline-block; transform: translateY(100%); opacity: 0; }
-    .ab-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;
-    }
-    .ab-right { display: flex; flex-direction: column; gap: 28px; }
-    .ab-photo {
-      border-radius: var(--r); overflow: hidden;
-      aspect-ratio: 4/5; width: 100%;
-    }
-    .ab-photo img {
-      width: 100%; height: 100%;
-      object-fit: cover; display: block;
-      filter: brightness(.7) saturate(.5);
-      transition: filter 1.2s, transform 1.2s var(--out);
-    }
-    #about:hover .ab-photo img {
-      filter: brightness(.82) saturate(.65);
-      transform: scale(1.03);
-    }
-    .ab-bio .ab-lbl { /* uses .s-label */ margin-bottom: 24px; }
-    .ab-bio p {
-      font-size: 1rem; color: var(--fg2);
-      line-height: 1.95; margin-bottom: 18px;
-    }
-    .ab-bio p strong { color: var(--fg); font-weight: 400; }
-    .ab-stats { display: flex; flex-direction: column; }
-    .stat {
-      padding: 26px 0; border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-      opacity: 0; transform: translateX(28px);
-    }
-    .stat:first-child { border-top: 1px solid var(--border); }
-    .stat-n {
-      font-family: var(--serif);
-      font-size: clamp(2.2rem,4.5vw,3.8rem);
-      font-weight: 300; letter-spacing: -.03em;
-      line-height: 1; color: var(--fg);
-    }
-    .stat-n sup { font-size: .42em; vertical-align: super; color: var(--gold); }
-    .stat-l {
-      font-family: var(--mono); font-size: .71rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg2); text-align: right;
-      max-width: 130px; line-height: 1.9;
-    }
-    @media (max-width: 768px) {
-      #about { padding: 72px 24px; }
-      .ab-grid { grid-template-columns: 1fr; gap: 40px; }
-      .ab-photo { aspect-ratio: 16/9; }
-      .ab-quote { font-size: clamp(1.5rem,7vw,2.4rem); margin-bottom: 48px; }
-    }
 
     /* ══════════════════════════════════════════
        EXPERTISE
     ══════════════════════════════════════════ */
-    #exp { padding: 0 var(--pad) 100px; }
+    #exp { padding: 80px var(--pad) 100px; }
     .exp-hd { margin-bottom: 48px; }
     .exp-h2 {
       font-family: var(--serif);
@@ -641,17 +576,9 @@
       pointer-events: none; z-index: 2;
     }
 
-    /* Abstract skill icon */
-    .ei-icon {
-      display: flex; align-items: center;
-      margin-right: 18px; flex-shrink: 0;
-      color: var(--dim); position: relative; z-index: 1;
-      transition: color .4s, transform .45s var(--out);
-    }
-    .ei:hover .ei-icon { color: var(--gold); transform: scale(1.12); }
 
     /* Name wrapper — clip reveal target */
-    .ei-nw { flex: 1; overflow: hidden; position: relative; z-index: 1; }
+    .ei-nw { flex: 1; overflow: visible; position: relative; z-index: 1; }
     .ei-name {
       display: block;
       font-family: var(--serif);
@@ -807,23 +734,6 @@
       font-size: .9rem; color: var(--gold);
       letter-spacing: 0; text-transform: none;
     }
-    .fl-follows { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
-    .fl-follow {
-      display: inline-flex; align-items: center; gap: 13px;
-      font-family: var(--mono); font-size: .64rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg2); text-decoration: none;
-      transition: color .35s;
-    }
-    .fl-follow:hover { color: var(--gold); }
-    .fl-follow svg { opacity: .5; transition: opacity .35s; flex-shrink: 0; }
-    .fl-follow:hover svg { opacity: 1; }
-    .fl-follow-handle {
-      font-style: italic; font-family: var(--serif);
-      font-size: .78rem; color: var(--dim);
-      margin-left: 4px; transition: color .35s;
-    }
-    .fl-follow:hover .fl-follow-handle { color: var(--gold); }
 
     /* Mock IG grid — links through to real profile */
     .fl-grid {
@@ -1072,7 +982,7 @@
     /* ── Button group ── */
     .bk-btns {
       display: flex; gap: 18px; flex-wrap: wrap;
-      justify-content: center; margin-bottom: 64px;
+      justify-content: center; margin-bottom: 0;
     }
     /* Base reset for both buttons */
     .bk-btn {
@@ -1138,7 +1048,7 @@
     /* ── 3-step process ── */
     .bk-steps {
       display: flex; align-items: center;
-      margin-bottom: 68px;
+      margin-bottom: 52px;
       opacity: 0; transform: translateY(14px);
     }
     .bk-step {
@@ -1172,24 +1082,6 @@
       .bk-wm { font-size: clamp(10rem, 28vw, 16rem); }
     }
 
-    /* ══════════════════════════════════════════
-       BOOK NOW CTA
-    ══════════════════════════════════════════ */
-    #cta {
-      padding: 80px var(--pad);
-      text-align: center;
-      border-top: 1px solid var(--border);
-    }
-    .cta-in { max-width: 600px; margin: 0 auto; }
-    .cta-h2 {
-      font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.2rem);
-      font-weight: 300; line-height: 1.1; margin-bottom: 18px;
-    }
-    .cta-sub {
-      font-size: .92rem; color: var(--fg2); line-height: 1.7;
-      margin-bottom: 36px;
-    }
-    .cta-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
 
     /* ══════════════════════════════════════════
        REVIEWS
@@ -1333,42 +1225,25 @@
       font-family: var(--mono); font-size: .6rem;
       letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
     }
+    .rvm-reply { display: none; margin-top: 28px; }
+    .rvm-reply.visible { display: block; }
+    .rvm-reply-divider {
+      height: 1px; background: var(--border); margin-bottom: 20px;
+    }
+    .rvm-reply-label {
+      font-family: var(--mono); font-size: .6rem;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .rvm-reply-text {
+      font-family: var(--sans); font-size: .92rem;
+      color: var(--fg2); line-height: 1.75;
+    }
     @media (max-width: 768px) {
       .rvm-box { padding: 40px 28px; }
       .tr-card { width: 260px; }
     }
-    .tr-map-label {
-      display: flex; align-items: center; gap: 8px;
-      font-family: var(--mono); font-size: .48rem;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: var(--dim); margin-bottom: 14px;
-    }
-    .tr-map-label svg { color: var(--gold); flex-shrink: 0; }
-    .tr-map-frame {
-      width: 100%; height: 380px;
-      border-radius: var(--r); overflow: hidden;
-      border: 1px solid var(--border);
-    }
-    @media (max-width: 900px) { .tr-map-frame { height: 280px; } }
 
-    /* ══════════════════════════════════════════
-       QUOTE SECTION
-    ══════════════════════════════════════════ */
-    #quote {
-      padding: 100px var(--pad) 80px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .qt-text {
-      font-family: var(--serif);
-      font-size: clamp(1.9rem, 4.5vw, 4rem);
-      font-weight: 300; font-style: italic;
-      line-height: 1.22; letter-spacing: -.01em;
-      max-width: 860px; text-align: center;
-      color: var(--fg); opacity: 0; transform: translateY(24px);
-    }
-    @media (max-width: 768px) {
-      #quote { padding: 72px 24px 56px; }
-    }
 
     /* ══════════════════════════════════════════
        DECORATIVE ELEMENTS
@@ -1428,19 +1303,6 @@
       from { transform: translate(0, 0) scale(1); }
       to   { transform: translate(8vw, -10vh) scale(1.12); }
     }
-    /* Large watermark text in hero */
-    .hero-wm {
-      position: absolute; right: var(--pad); top: 50%;
-      transform: translateY(-50%);
-      font-family: var(--display);
-      font-size: clamp(14rem, 26vw, 26rem);
-      font-weight: 400; line-height: 1;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(196,162,98,.06);
-      pointer-events: none; z-index: 1;
-      letter-spacing: -.04em; user-select: none;
-      will-change: transform;
-    }
     /* Decorative floating orb that follows mouse */
     #mouse-glow {
       position: fixed; z-index: 9994; pointer-events: none;
@@ -1458,23 +1320,6 @@
       pointer-events: none; user-select: none; z-index: 0;
     }
     #trust { position: relative; }
-    /* Expertise gold left accent on hover */
-    .ei::before {
-      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-      width: 2px; background: var(--gold);
-      transform: scaleY(0); transform-origin: bottom;
-      transition: transform .5s var(--out);
-    }
-    .ei:hover::before { transform: scaleY(1); }
-    /* Section floating number ornament */
-    .sec-ornament {
-      font-family: var(--display); font-size: clamp(6rem,12vw,12rem);
-      font-weight: 400; line-height: 1;
-      color: transparent; -webkit-text-stroke: 1px rgba(196,162,98,.04);
-      pointer-events: none; user-select: none;
-      position: absolute; right: var(--pad); top: 50%;
-      transform: translateY(-50%);
-    }
     /* Animated horizontal rule ornament */
     .draw-rule {
       display: block; height: 1px; width: 0;
@@ -1483,36 +1328,131 @@
     }
 
     /* ══════════════════════════════════════════
-       FAQ
+       FAQ — editorial accordion
     ══════════════════════════════════════════ */
-    #faq { padding: 0 var(--pad) 100px; border-top: 1px solid var(--border); }
-    .faq-hd { margin-bottom: 48px; }
+    #faq { padding: 100px var(--pad) 120px; border-top: 1px solid var(--border); }
+    .faq-hd {
+      display: flex; align-items: flex-end; gap: 2.5rem;
+      margin-bottom: 72px;
+    }
+    .faq-hd-text { flex: none; }
     .faq-h2 {
       font-family: var(--serif);
       font-size: clamp(1.9rem,4.5vw,3.8rem);
       font-weight: 300; letter-spacing: -.02em; line-height: 1;
     }
     .faq-h2 em { font-style: italic; color: var(--gold); }
+    .faq-hd-rule {
+      flex: 1; height: 1px;
+      background: var(--border);
+      margin-bottom: .55rem;
+    }
+    .faq-hd-count {
+      font-family: var(--mono); font-size: .65rem;
+      color: var(--dim); letter-spacing: .14em; text-transform: uppercase;
+      white-space: nowrap; margin-bottom: .4rem; flex: none;
+    }
     .fq-list { list-style: none; }
 
-    /* FAQ row — mirrors .ei visually, GSAP-animated */
-    .fq-row {
-      position: relative; overflow: hidden;
-      display: flex; align-items: center; gap: 0;
-      flex-wrap: wrap;
-      min-height: 108px; padding: 30px 0;
+    /* Item wrapper */
+    .fq-item {
       border-top: 1px solid var(--border);
+      position: relative; overflow: hidden;
       opacity: 0; cursor: pointer;
     }
-    .fq-row:last-child { border-bottom: 1px solid var(--border); }
-    /* FAQ expand: text only, no image column */
-    .fq-row .ei-expand-inner { grid-template-columns: 1fr; padding-left: 0; max-width: 680px; }
+    .fq-item:last-child { border-bottom: 1px solid var(--border); }
+
+    /* Header row — grid: [number] [question+tags] [toggle] */
+    .fq-trigger {
+      display: grid;
+      grid-template-columns: 96px 1fr auto;
+      align-items: center;
+      gap: 0 2.5rem;
+      padding: 36px 0;
+      width: 100%;
+    }
+
+    /* Large italic number */
+    .fq-num {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem,4.5vw,4rem);
+      font-style: italic; font-weight: 300;
+      color: rgba(196,162,98,.25);
+      line-height: 1; user-select: none;
+      transition: color .5s ease;
+    }
+    .fq-item:hover .fq-num { color: rgba(196,162,98,.55); }
+    .fq-item.open  .fq-num { color: var(--gold); }
+
+    /* Question text + tags */
+    .fq-q-wrap { display: flex; flex-direction: column; gap: 6px; }
+    .fq-question {
+      font-family: var(--serif);
+      font-size: clamp(1.15rem,2.2vw,1.8rem);
+      font-weight: 300; letter-spacing: -.015em; line-height: 1.2;
+      color: var(--fg); transition: color .3s ease;
+    }
+    .fq-item.open .fq-question { color: var(--gold); }
+    .fq-tags-row {
+      font-family: var(--mono); font-size: .62rem;
+      color: var(--dim); letter-spacing: .1em; text-transform: uppercase;
+      transition: color .3s ease;
+    }
+    .fq-item:hover .fq-tags-row,
+    .fq-item.open  .fq-tags-row { color: rgba(196,162,98,.5); }
+
+    /* Circular toggle (+→×) */
+    .fq-toggle {
+      width: 38px; height: 38px; flex-shrink: 0;
+      border: 1px solid var(--border); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; line-height: 1; color: var(--dim);
+      transition: border-color .35s, color .35s, background .35s,
+                  transform .5s cubic-bezier(.34,1.56,.64,1);
+    }
+    .fq-item:hover .fq-toggle { border-color: rgba(196,162,98,.45); color: var(--gold); }
+    .fq-item.open  .fq-toggle {
+      border-color: var(--gold); color: var(--gold);
+      background: rgba(196,162,98,.08);
+      transform: rotate(45deg);
+    }
+
+    /* Gold sweep rule at bottom of trigger */
+    .fq-rule {
+      position: absolute; bottom: -1px; left: 96px;
+      height: 1px; width: 0;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      opacity: .5;
+    }
+
+    /* Expand panel */
+    .fq-panel { height: 0; overflow: hidden; }
+    .fq-panel-inner {
+      padding: 0 0 44px calc(96px + 2.5rem);
+      max-width: 800px;
+    }
+    .fq-answer {
+      font-family: var(--sans);
+      font-size: clamp(.9rem,1.4vw,1.05rem);
+      line-height: 1.78; color: var(--fg2);
+    }
+    .fq-answer-list {
+      list-style: none; padding: 0; margin: 0;
+      display: flex; flex-direction: column; gap: 10px;
+      font-family: var(--sans); font-size: clamp(.9rem,1.4vw,1.05rem);
+      line-height: 1.65; color: var(--fg2);
+    }
 
     @media (max-width: 768px) {
-      #faq { padding: 0 24px 80px; }
-      .fq-row { min-height: 80px; padding: 22px 0; }
-      .fq-row .ei-bg-n { font-size: 4.5rem; }
-      .fq-row .ei-name { font-size: clamp(1.2rem,5vw,2rem); }
+      #faq { padding: 60px 24px 80px; }
+      .faq-hd { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .faq-hd-rule, .faq-hd-count { display: none; }
+      .fq-trigger { grid-template-columns: 52px 1fr auto; gap: 0 1.25rem; padding: 24px 0; }
+      .fq-num { font-size: 2rem; }
+      .fq-question { font-size: 1.1rem; }
+      .fq-toggle { width: 30px; height: 30px; font-size: 1rem; }
+      .fq-panel-inner { padding: 0 0 30px calc(52px + 1.25rem); }
+      .fq-rule { left: 52px; }
     }
 
     /* ══════════════════════════════════════════
@@ -1736,8 +1676,10 @@
   <div class="n-links">
     <a href="#work" class="n-item">Portfolio</a>
     <a href="#trust" class="n-item">Reviews</a>
+    <a href="#faq" class="n-item">FAQ</a>
+    <a href="#book" class="n-btn">Book a Session</a>
     <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="n-social" aria-label="Instagram">
-      <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <radialGradient id="ig-g" cx="30%" cy="107%" r="150%">
             <stop offset="0%"   stop-color="#fdf497"/>
@@ -1752,12 +1694,11 @@
       <span>Instagram</span>
     </a>
     <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="n-social" aria-label="Facebook">
-      <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
       </svg>
       <span>Facebook</span>
     </a>
-    <a href="#book" class="n-btn">Book a Session</a>
   </div>
 </nav>
 
@@ -1774,7 +1715,11 @@
       <span class="tl"><em class="tl-i">Tattoo</em></span>
     </h1>
     <div class="h-sub">
-      <div class="h-loc">Sainthood · Princes Ave, Hull<br>By appointment only &nbsp;·&nbsp; Tue–Sun &nbsp;·&nbsp; 9am–5pm</div>
+      <div class="h-loc">At Sainthood Tattoo · Princes Ave, Hull<br>Appointment only &nbsp;·&nbsp; Tue–Sat</div>
+      <a href="https://maps.google.com/?q=Sainthood+Tattoo,+Princes+Avenue,+Hull" target="_blank" rel="noopener" class="h-dir" aria-label="Get directions to Sainthood Tattoo">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="5 5 19 5 19 19"/></svg>
+        <span>Directions</span>
+      </a>
     </div>
   </div>
 </section>
@@ -1790,7 +1735,7 @@
   <div class="w-head">
     <div>
       <div class="s-label">Selected Work</div>
-      <h2 class="w-h2"><span class="tl"><span class="tl-i">The <em>Portfolio</em></span></span></h2>
+      <h2 class="w-h2"><span class="tl"><span class="tl-i"><em>Portfolio</em></span></span></h2>
     </div>
     <div class="w-hint">
       <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
@@ -1871,22 +1816,70 @@
   <div class="tr-carousel-wrap" id="trcwrap">
     <div class="tr-carousel" id="trcarousel">
 
-      <div class="tr-card tr-card-skeleton"><div class="tr-sk-line tr-sk-w60"></div><div class="tr-sk-line tr-sk-w90"></div><div class="tr-sk-line tr-sk-w75"></div><div class="tr-sk-line tr-sk-w40"></div></div>
-      <div class="tr-card tr-card-skeleton"><div class="tr-sk-line tr-sk-w90"></div><div class="tr-sk-line tr-sk-w60"></div><div class="tr-sk-line tr-sk-w80"></div><div class="tr-sk-line tr-sk-w50"></div></div>
-      <div class="tr-card tr-card-skeleton"><div class="tr-sk-line tr-sk-w75"></div><div class="tr-sk-line tr-sk-w90"></div><div class="tr-sk-line tr-sk-w55"></div><div class="tr-sk-line tr-sk-w40"></div></div>
-      <div class="tr-card tr-card-skeleton"><div class="tr-sk-line tr-sk-w60"></div><div class="tr-sk-line tr-sk-w80"></div><div class="tr-sk-line tr-sk-w90"></div><div class="tr-sk-line tr-sk-w45"></div></div>
-      <div class="tr-card tr-card-skeleton"><div class="tr-sk-line tr-sk-w80"></div><div class="tr-sk-line tr-sk-w55"></div><div class="tr-sk-line tr-sk-w70"></div><div class="tr-sk-line tr-sk-w40"></div></div>
+      <div class="tr-card" data-static="true" data-q="Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" data-author="— Jess Dan · Google Review">
+        <div class="tr-card-stars">★★★★★</div>
+        <div class="tr-card-photo"><img src="google.reviews/Jess Dunn.jpg" alt="Jess Dan" loading="lazy"></div>
+        <p class="tr-card-q">"Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰"</p>
+        <div class="tr-card-author">— Jess Dan · Google Review</div>
+        <div class="tr-card-hint">Read full review →</div>
+      </div>
+      <div class="tr-card" data-static="true" data-q="Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" data-author="— Jaime Dale · Google Review">
+        <div class="tr-card-stars">★★★★★</div>
+        <div class="tr-card-photo"><img src="google.reviews/James Dale.jpg" alt="Jaime Dale" loading="lazy"></div>
+        <p class="tr-card-q">"Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)"</p>
+        <div class="tr-card-author">— Jaime Dale · Google Review</div>
+        <div class="tr-card-hint">Read full review →</div>
+      </div>
+      <div class="tr-card" data-static="true" data-q="Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist" data-author="— Ruby Taylor · Google Review">
+        <div class="tr-card-stars">★★★★★</div>
+        <div class="tr-card-photo"><img src="google.reviews/Ruby Taylor.jpg" alt="Ruby Taylor" loading="lazy"></div>
+        <p class="tr-card-q">"Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist"</p>
+        <div class="tr-card-author">— Ruby Taylor · Google Review</div>
+        <div class="tr-card-hint">Read full review →</div>
+      </div>
+      <div class="tr-card" data-static="true" data-q="Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻" data-author="— Leanne Smith · Google Review">
+        <div class="tr-card-stars">★★★★★</div>
+        <div class="tr-card-photo"><img src="google.reviews/Leanne Smith.jpg" alt="Leanne Smith" loading="lazy"></div>
+        <p class="tr-card-q">"Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻"</p>
+        <div class="tr-card-author">— Leanne Smith · Google Review</div>
+        <div class="tr-card-hint">Read full review →</div>
+      </div>
+      <div class="tr-card" data-static="true" data-q="I'm Matthew on a different account but Emmy did me an absolutely unbelievable full back tattoo, she did it all in one sitting and the experience was unbelievable. So kind and patient and I will be sure to go back to her next time I want a tattoo" data-author="— Matthew Wallace · Google Review">
+        <div class="tr-card-stars">★★★★★</div>
+        <div class="tr-card-photo"><img src="google.reviews/Matthew wallace.png" alt="Matthew Wallace" loading="lazy"></div>
+        <p class="tr-card-q">"I'm Matthew on a different account but Emmy did me an absolutely unbelievable full back tattoo, she did it all in one sitting and the experience was unbelievable. So kind and…"</p>
+        <div class="tr-card-author">— Matthew Wallace · Google Review</div>
+        <div class="tr-card-hint">Read full review →</div>
+      </div>
+      <div class="tr-card" data-static="true" data-q="Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!" data-author="— Sarah Andrew · Google Review">
+        <div class="tr-card-stars">★★★★★</div>
+        <div class="tr-card-photo"><img src="google.reviews/Sarah Andrew.png" alt="Sarah Andrew" loading="lazy"></div>
+        <p class="tr-card-q">"Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!"</p>
+        <div class="tr-card-author">— Sarah Andrew · Google Review</div>
+        <div class="tr-card-hint">Read full review →</div>
+      </div>
+      <div class="tr-card" data-static="true" data-q="Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting. Can't wait to get more, so happy with the three I currently have, such beautiful artwork. ❤️" data-author="— Kimberley Rust · Google Review">
+        <div class="tr-card-stars">★★★★★</div>
+        <div class="tr-card-photo"><img src="google.reviews/Kimberely Rust.jpg" alt="Kimberley Rust" loading="lazy"></div>
+        <p class="tr-card-q">"Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting. Can't wait to get more, so happy with the three I currently have, such…"</p>
+        <div class="tr-card-author">— Kimberley Rust · Google Review</div>
+        <div class="tr-card-hint">Read full review →</div>
+      </div>
 
     </div>
   </div>
 
-  <!-- Leave-a-review strip — inside trust section -->
+  <!-- View-all + leave-a-review strip — inside trust section -->
   <div class="tr-review-cta">
-    <p class="tr-review-prompt">Left with something <em>permanent</em>? The kind words go further than you think.</p>
+    <p class="tr-review-prompt">Reviews are genuinely appreciated. <em>They help people find their way here.</em></p>
     <div class="tr-review-btns">
+      <a href="https://g.page/r/CVRweODDPiBwEAI" target="_blank" rel="noopener" class="tr-review-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>See all Google reviews</span>
+      </a>
       <a href="https://g.page/r/CVRweODDPiBwEAI/review" target="_blank" rel="noopener" class="tr-review-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        <span>Leave a Google Review</span>
+        <span>Leave a Google review</span>
       </a>
       <a href="https://www.facebook.com/EmmaleneTattoo/reviews" target="_blank" rel="noopener" class="tr-review-btn tr-review-btn-fb">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -1905,16 +1898,15 @@
     <div class="rvm-stars">★★★★★</div>
     <p class="rvm-q"></p>
     <div class="rvm-author"></div>
+    <div class="rvm-reply" aria-hidden="true">
+      <div class="rvm-reply-divider"></div>
+      <div class="rvm-reply-label">Response from Emmy</div>
+      <p class="rvm-reply-text"></p>
+    </div>
   </div>
 </div>
 
-<!-- ════ QUOTE ════ -->
-<section id="quote">
-  <p class="qt-text">"Good work lasts. Everything else is just decoration."</p>
-</section>
-
 <!-- ════ EXPERTISE ════ -->
-<div style="text-align:center;padding:24px 0 0" aria-hidden="true"><span class="draw-rule"></span></div>
 <section id="exp">
   <div class="exp-hd">
     <div class="s-label">Specialties</div>
@@ -1930,7 +1922,7 @@
       <div class="ei-rule"></div>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
-          <p class="ei-expand-text">Single-needle work at its most refined. Ultra-thin lines that hold crisp definition over years without spreading or blurring. Ideal for botanical studies, geometric forms, and script — anything that rewards a second look up close.</p>
+          <p class="ei-expand-text">Single-needle work. Ultra-thin lines that hold crisp definition over years without spreading or blurring. Best suited to botanical studies, geometric forms, and script.</p>
           <div class="ei-expand-img"><img src="pictures/tattto1.jpg" alt="Fine line example" loading="lazy"></div>
         </div>
       </div>
@@ -1938,14 +1930,14 @@
 
     <li class="ei">
 
-      <div class="ei-nw"><span class="ei-name">Fine Line Art</span></div>
-      <span class="ei-desc">Illustrative · considered · one of one</span>
+      <div class="ei-nw"><span class="ei-name">Fine Art</span></div>
+      <span class="ei-desc">Illustrative · considered · bespoke</span>
       <span class="ei-arr">→</span>
       <div class="ei-rule"></div>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
-          <p class="ei-expand-text">Illustrative line work where drawing sensibility meets the permanence of skin. Botanical, abstract, and figurative pieces designed from scratch — suited to your concept, placement, and the way the design will move with the body.</p>
-          <div class="ei-expand-img"><img src="pictures/2.jpg" alt="Fine line art example" loading="lazy"></div>
+          <p class="ei-expand-text">Illustrative work — botanical, abstract, and figurative pieces drawn from scratch. Designed around your concept and placement.</p>
+          <div class="ei-expand-img"><img src="pictures/2.jpg" alt="Fine art example" loading="lazy"></div>
         </div>
       </div>
     </li>
@@ -1967,12 +1959,12 @@
     <li class="ei">
 
       <div class="ei-nw"><span class="ei-name">Realism</span></div>
-      <span class="ei-desc">Lifelike · detailed · striking</span>
+      <span class="ei-desc">Lifelike · detailed · accurate</span>
       <span class="ei-arr">→</span>
       <div class="ei-rule"></div>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
-          <p class="ei-expand-text">A lifelike rendering of anything you can photograph. Depth, tonal range, and texture reproduced with accuracy — from portraits to natural subjects to still life. The goal is always skin that looks like it remembers the subject.</p>
+          <p class="ei-expand-text">A lifelike rendering of anything you can photograph. Depth, tonal range, and texture reproduced accurately — from portraits to natural subjects to still life.</p>
           <div class="ei-expand-img"><img src="pictures/4.jpg" alt="Realism example" loading="lazy"></div>
         </div>
       </div>
@@ -1981,12 +1973,12 @@
     <li class="ei">
 
       <div class="ei-nw"><span class="ei-name">Portrait Work</span></div>
-      <span class="ei-desc">Likeness · depth · held in the skin</span>
+      <span class="ei-desc">Likeness · depth · long-lasting</span>
       <span class="ei-arr">→</span>
       <div class="ei-rule"></div>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
-          <p class="ei-expand-text">Capturing a face and keeping it. Portraits require exact technique and a precise understanding of how skin holds tone over time. Done properly, they don't just look like someone — they feel like them.</p>
+          <p class="ei-expand-text">Portraits require exact technique and a precise understanding of how skin holds tone over time. Done well, they hold a recognisable likeness for years.</p>
           <div class="ei-expand-img"><img src="pictures/5.jpg" alt="Portrait work example" loading="lazy"></div>
         </div>
       </div>
@@ -1995,12 +1987,12 @@
     <li class="ei">
 
       <div class="ei-nw"><span class="ei-name">Custom Design</span></div>
-      <span class="ei-desc">Collaborative · your concept · built from scratch</span>
+      <span class="ei-desc">Your brief · drawn from scratch · original</span>
       <span class="ei-arr">→</span>
       <div class="ei-rule"></div>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
-          <p class="ei-expand-text">Your idea built from nothing. Bring a reference image, a mood board, a feeling — or just words. The design is collaborative and made entirely for you: nothing pre-drawn, nothing recycled. Every piece starts as a blank page.</p>
+          <p class="ei-expand-text">Bring a reference image, a mood board, or just a description of what you want. I draw the design from scratch. Nothing is pre-drawn or reused. You get something made specifically for you.</p>
           <div class="ei-expand-img"><img src="pictures/6.jpg" alt="Custom design example" loading="lazy"></div>
         </div>
       </div>
@@ -2013,14 +2005,14 @@
 <section id="flash">
   <!-- Left: copy + CTAs -->
   <div class="fl-left">
-    <div class="fl-badge"><span class="fl-dot"></span> Follow the Work</div>
-    <h2 class="fl-h2">Stay in the <em>loop</em></h2>
-    <p class="fl-p">The best way to see what's happening — new work, available slots, flash days, and anything that doesn't make it onto the main site.</p>
+    <div class="fl-badge"><span class="fl-dot"></span> @emmy.tattoo</div>
+    <h2 class="fl-h2">Follow the <em>work</em></h2>
+    <p class="fl-p">Instagram is where new work goes first — finished pieces, available slots, flash designs. Updated when something happens, not on a schedule.</p>
     <ul class="fl-reasons">
-      <li class="fl-reason">Flash day designs — first look before they're gone</li>
-      <li class="fl-reason">Behind-the-scenes from current projects</li>
-      <li class="fl-reason">Last-minute cancellation slots, announced same day</li>
-      <li class="fl-reason">Work in progress — detail shots and healed pieces</li>
+      <li class="fl-reason">New pieces posted as they're completed</li>
+      <li class="fl-reason">Available slots and same-day cancellations when they open</li>
+      <li class="fl-reason">Flash designs as they come up</li>
+      <li class="fl-reason">Healed results alongside fresh work</li>
     </ul>
     <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="fl-ig-cta">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
@@ -2066,8 +2058,8 @@
 <section id="gifts">
   <div class="gf-left">
     <div class="s-label">Gift Cards</div>
-    <h2 class="gf-h2">The gift that <em>stays</em></h2>
-    <p class="gf-p">Most gifts end up forgotten. A tattoo doesn't. Gift cards for any amount — redeemable whenever they're ready, no expiry, no pressure.</p>
+    <h2 class="gf-h2">Give someone <em>a tattoo.</em></h2>
+    <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount — no expiry, redeemed when they decide.</p>
     <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
        target="_blank" rel="noopener" class="gf-cta">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -2104,45 +2096,15 @@
 
     <!-- Heading -->
     <h2 class="bk-h2">
-      <span class="tl"><span class="tl-i">Let's make</span></span>
-      <span class="tl"><em class="tl-i">something</em></span>
-      <span class="tl"><span class="tl-i">permanent.</span></span>
+      <span class="tl"><span class="tl-i">Book</span></span>
+      <span class="tl"><em class="tl-i">a session.</em></span>
     </h2>
 
     <!-- Animated divider -->
     <div class="bk-rule"></div>
 
     <!-- Body -->
-    <p class="bk-sub">It starts with a conversation — no charge, no pressure. Bring a reference, a rough idea, or nothing at all. We'll figure out the rest together.</p>
-
-    <!-- CTA buttons -->
-    <div class="bk-btns">
-
-      <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
-         target="_blank" rel="noopener" class="bk-btn bk-btn-wa" id="bkbtn">
-        <div class="bk-btn-inner">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          <div class="bk-btn-text">
-            <span class="bk-btn-label">Enquire via WhatsApp</span>
-            <span class="bk-btn-note">Usually same day · no pressure</span>
-          </div>
-        </div>
-        <span class="bk-btn-arr">→</span>
-      </a>
-
-      <a href="https://ig.me/m/emmy.tattoo"
-         target="_blank" rel="noopener" class="bk-btn bk-btn-ig">
-        <div class="bk-btn-inner">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-          <div class="bk-btn-text">
-            <span class="bk-btn-label">Enquire via Instagram</span>
-            <span class="bk-btn-note">DM · @emmy.tattoo</span>
-          </div>
-        </div>
-        <span class="bk-btn-arr">→</span>
-      </a>
-
-    </div>
+    <p class="bk-sub">Start with a message. A reference, a sketch, a feeling — or nothing yet. The design is built from scratch. Consultation is free.</p>
 
     <!-- 3-step process -->
     <div class="bk-steps">
@@ -2162,130 +2124,155 @@
       </div>
     </div>
 
+    <!-- CTA buttons -->
+    <div class="bk-btns">
+
+      <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
+         target="_blank" rel="noopener" class="bk-btn bk-btn-wa" id="bkbtn">
+        <div class="bk-btn-inner">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <div class="bk-btn-text">
+            <span class="bk-btn-label">Enquire via WhatsApp</span>
+            <span class="bk-btn-note">Usually same day</span>
+          </div>
+        </div>
+        <span class="bk-btn-arr">→</span>
+      </a>
+
+      <a href="https://ig.me/m/emmy.tattoo"
+         target="_blank" rel="noopener" class="bk-btn bk-btn-ig">
+        <div class="bk-btn-inner">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          <div class="bk-btn-text">
+            <span class="bk-btn-label">Enquire via Instagram</span>
+            <span class="bk-btn-note">DM · @emmy.tattoo</span>
+          </div>
+        </div>
+        <span class="bk-btn-arr">→</span>
+      </a>
+
+    </div>
+
   </div>
 </section>
 
 <!-- ════ FAQ ════ -->
 <section id="faq">
   <div class="faq-hd">
-    <div class="s-label">FAQ</div>
-    <h2 class="faq-h2"><span class="tl"><span class="tl-i">Common <em>Questions</em></span></span></h2>
+    <div class="faq-hd-text">
+      <div class="s-label">FAQ</div>
+      <h2 class="faq-h2"><span class="tl"><span class="tl-i">Common <em>Questions</em></span></span></h2>
+    </div>
+    <div class="faq-hd-rule"></div>
+    <span class="faq-hd-count">06 questions</span>
   </div>
   <ul class="fq-list">
 
-    <li class="fq-row">
-      <div class="ei-nw"><span class="ei-name">How much does a tattoo cost?</span></div>
-      <span class="ei-desc">Pricing · quotes · deposits</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-bg-n" aria-hidden="true">01</div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Pricing depends on size, complexity, and placement. Small pieces start from £80. Custom and larger work is quoted after a free consultation — message via WhatsApp or Instagram and Emmy will give you an honest estimate before anything is agreed.</p>
+    <li class="fq-item">
+      <div class="fq-trigger">
+        <span class="fq-num">01</span>
+        <div class="fq-q-wrap">
+          <span class="fq-question">How much does a tattoo cost?</span>
+          <span class="fq-tags-row">Pricing · quotes · deposits</span>
+        </div>
+        <span class="fq-toggle">+</span>
+      </div>
+      <div class="fq-rule"></div>
+      <div class="fq-panel">
+        <div class="fq-panel-inner">
+          <p class="fq-answer">I price by piece, not by the hour. Every quote is based on size, complexity, and placement. Message me via WhatsApp or Instagram and I'll give you an honest estimate before anything is agreed. Deposits are non-refundable.</p>
         </div>
       </div>
     </li>
 
-    <li class="fq-row">
-      <div class="ei-nw"><span class="ei-name">Do you do walk-ins?</span></div>
-      <span class="ei-desc">Appointments · booking · availability</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-bg-n" aria-hidden="true">02</div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Walk-ins are welcome when there's availability — but they're not guaranteed, so it's always worth checking first. If you're nearby, give it a try. To be safe and avoid a wasted trip, a quick message before you head over is the best move.</p>
+    <li class="fq-item">
+      <div class="fq-trigger">
+        <span class="fq-num">02</span>
+        <div class="fq-q-wrap">
+          <span class="fq-question">Do you do walk-ins?</span>
+          <span class="fq-tags-row">Appointments · walk-ins · availability</span>
+        </div>
+        <span class="fq-toggle">+</span>
+      </div>
+      <div class="fq-rule"></div>
+      <div class="fq-panel">
+        <div class="fq-panel-inner">
+          <p class="fq-answer">Walk-ins are welcome, but a booking guarantees your tattoo. A walk-in depends on availability on the day. If you're nearby and want to try your luck, feel free to come in. A quick message beforehand avoids a wasted trip.</p>
         </div>
       </div>
     </li>
 
-    <li class="fq-row">
-      <div class="ei-nw"><span class="ei-name">How do I prepare for my session?</span></div>
-      <span class="ei-desc">Preparation · day-of · what to bring</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-bg-n" aria-hidden="true">03</div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Eat a proper meal beforehand and stay well hydrated — your body handles it better than you'd think when it's fuelled properly. Wear clothing that gives easy access to the area being tattooed. Avoid alcohol for at least 24 hours before the appointment.</p>
+    <li class="fq-item">
+      <div class="fq-trigger">
+        <span class="fq-num">03</span>
+        <div class="fq-q-wrap">
+          <span class="fq-question">How do I prepare for my appointment?</span>
+          <span class="fq-tags-row">Preparation · health · what to bring</span>
+        </div>
+        <span class="fq-toggle">+</span>
+      </div>
+      <div class="fq-rule"></div>
+      <div class="fq-panel">
+        <div class="fq-panel-inner">
+          <ul class="fq-answer-list">
+            <li>— Eat a proper meal beforehand and stay well hydrated</li>
+            <li>— Wear clothing that gives easy access to the area being tattooed</li>
+            <li>— Avoid alcohol for at least 24 hours before your session</li>
+            <li>— Do not book if you are pregnant or breastfeeding</li>
+            <li>— If you are on blood thinners or have a skin condition affecting the area, let me know in advance and I'll advise</li>
+            <li>— Worth bringing: earphones, an iPad, an audiobook, or anything that helps you pass the time. A blanket is welcome too</li>
+          </ul>
         </div>
       </div>
     </li>
 
-    <li class="fq-row">
-      <div class="ei-nw"><span class="ei-name">Can I bring my own design?</span></div>
-      <span class="ei-desc">Custom work · references · process</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-bg-n" aria-hidden="true">04</div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Absolutely. Bring references, sketches, a mood board, or just a description and a feeling. The design is built collaboratively from scratch — nothing is pre-drawn, nothing is recycled. Every piece starts as a blank page and ends as something made entirely for you.</p>
+    <li class="fq-item">
+      <div class="fq-trigger">
+        <span class="fq-num">04</span>
+        <div class="fq-q-wrap">
+          <span class="fq-question">Does it hurt?</span>
+          <span class="fq-tags-row">Pain · tolerance · placement</span>
+        </div>
+        <span class="fq-toggle">+</span>
+      </div>
+      <div class="fq-rule"></div>
+      <div class="fq-panel">
+        <div class="fq-panel-inner">
+          <p class="fq-answer">Honestly, yes, but it's manageable for most people. Most describe it as uncomfortable rather than unbearable, and you adjust to it quickly. We can take breaks whenever you need them. We go at your pace. If you're worried about a longer session, we can split it into two or more shorter appointments instead.</p>
         </div>
       </div>
     </li>
 
-    <li class="fq-row">
-      <div class="ei-nw"><span class="ei-name">Does it hurt?</span></div>
-      <span class="ei-desc">Pain · tolerance · placement</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-bg-n" aria-hidden="true">05</div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Honestly — yes, but it's manageable for most people. Most describe it as uncomfortable rather than unbearable, and you adjust to it quickly. Placement matters more than individual pain tolerance: ribs, spine, and feet hurt more; outer arm and thigh hurt less. Emmy will talk you through it on the day.</p>
+    <li class="fq-item">
+      <div class="fq-trigger">
+        <span class="fq-num">05</span>
+        <div class="fq-q-wrap">
+          <span class="fq-question">What should I know before my first tattoo?</span>
+          <span class="fq-tags-row">First time · expectations · nerves</span>
+        </div>
+        <span class="fq-toggle">+</span>
+      </div>
+      <div class="fq-rule"></div>
+      <div class="fq-panel">
+        <div class="fq-panel-inner">
+          <p class="fq-answer">It's normal to be nervous. Everyone is the first time. The process is more considered than most people expect, I'll walk you through every step. Take your time choosing the design and placement.</p>
         </div>
       </div>
     </li>
 
-    <li class="fq-row">
-      <div class="ei-nw"><span class="ei-name">Can I see the design before the day?</span></div>
-      <span class="ei-desc">Design approval · revisions · process</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-bg-n" aria-hidden="true">06</div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Yes. Designs are shared before the session so there's time to review and adjust. Nothing gets tattooed without your full approval — if something isn't right, it gets changed. The goal is that you sit down on the day already certain about what you're getting.</p>
+    <li class="fq-item">
+      <div class="fq-trigger">
+        <span class="fq-num">06</span>
+        <div class="fq-q-wrap">
+          <span class="fq-question">What's the minimum age?</span>
+          <span class="fq-tags-row">Age · ID · legal</span>
         </div>
+        <span class="fq-toggle">+</span>
       </div>
-    </li>
-
-    <li class="fq-row">
-      <div class="ei-nw"><span class="ei-name">What should I know before my first tattoo?</span></div>
-      <span class="ei-desc">First time · expectations · nerves</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-bg-n" aria-hidden="true">07</div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">It's normal to be nervous — everyone is the first time. The process is slower and more considered than most people expect. Emmy will walk you through every step. Take your time choosing the design and placement; this is permanent, so there's no rush to book. If something feels off about the design during the session, say so — nothing gets tattooed without your full sign-off.</p>
-        </div>
-      </div>
-    </li>
-
-    <li class="fq-row">
-      <div class="ei-nw"><span class="ei-name">What should I know before my appointment?</span></div>
-      <span class="ei-desc">Preparation · health · what to avoid</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-bg-n" aria-hidden="true">08</div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Eat a proper meal and stay well hydrated before you arrive. Avoid alcohol for at least 24 hours beforehand — it thins the blood and makes the skin harder to work with. Don't take aspirin or ibuprofen unless medically necessary for the same reason. Do not book if you are pregnant or breastfeeding. Wear (or bring) clothing that gives easy access to the area being tattooed. If you are on blood thinners, have a skin condition affecting the area, or have any other health concerns, let Emmy know in advance so she can advise properly.</p>
-        </div>
-      </div>
-    </li>
-
-    <li class="fq-row">
-      <div class="ei-nw"><span class="ei-name">What's the minimum age?</span></div>
-      <span class="ei-desc">Age · ID · legal</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-bg-n" aria-hidden="true">09</div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">18, strictly. No exceptions regardless of parental consent. Valid photo ID is required at the appointment — if you can't prove your age on the day, the session cannot go ahead.</p>
+      <div class="fq-rule"></div>
+      <div class="fq-panel">
+        <div class="fq-panel-inner">
+          <p class="fq-answer">18, strictly. No exceptions regardless of parental consent. Valid photo ID is required on the day. If you can't prove your age, the session cannot go ahead.</p>
         </div>
       </div>
     </li>
@@ -2298,27 +2285,27 @@
   <div class="ac-hd">
     <div class="s-label">Aftercare</div>
     <h2 class="ac-h2">Keep it <em>clean.</em><br>Let it heal.</h2>
-    <p class="ac-sub">A new tattoo is an open wound. How you treat it in the first two weeks determines how it looks for the rest of your life — get it right and it'll stay sharp for decades.</p>
+    <p class="ac-sub">A new tattoo is an open wound. How you treat it in the first few days determines how it looks for the rest of your life. Get it right and it'll stay sharp for decades.</p>
   </div>
   <div class="ac-phases">
 
     <div class="ac-phase">
-      <span class="ac-phase-tag">Days 01 – 03</span>
-      <div class="ac-phase-title">The first 72 hours</div>
+      <span class="ac-phase-tag">First 24 hours</span>
+      <div class="ac-phase-title">Immediate care</div>
       <ul class="ac-phase-list">
-        <li>Leave the wrap on for as long as specified — don't peek early</li>
+        <li>Leave the wrap on for as long as specified</li>
         <li>When removing, wash gently with unscented soap and warm water</li>
-        <li>Pat dry with a clean paper towel — never rub or use a cloth</li>
-        <li>Apply a thin layer of Bepanthen or Hustle Butter</li>
+        <li>Pat dry with a clean paper towel. Don't rub.</li>
+        <li>Apply a thin layer of Palmer's Cocoa Butter. Highly recommended.</li>
       </ul>
     </div>
 
     <div class="ac-phase">
-      <span class="ac-phase-tag">Days 04 – 14</span>
+      <span class="ac-phase-tag">24 – 72 hours</span>
       <div class="ac-phase-title">The healing window</div>
       <ul class="ac-phase-list">
-        <li>Moisturise 2–3× daily with fragrance-free lotion</li>
-        <li>Don't scratch, pick, or peel — let it flake naturally</li>
+        <li>Moisturise 2–3× daily with Palmer's Cocoa Butter</li>
+        <li>Don't scratch, pick, or peel. Let it flake naturally.</li>
         <li>Keep it out of direct sunlight while healing</li>
         <li>No baths, pools, or sea water for at least 3 weeks</li>
       </ul>
@@ -2329,16 +2316,16 @@
       <div class="ac-phase-title">Keeping it sharp</div>
       <ul class="ac-phase-list">
         <li>SPF 30+ on healed tattoos whenever you're in the sun</li>
-        <li>Keep skin moisturised — dry skin dulls the contrast</li>
+        <li>Keep skin moisturised. Dry skin dulls the contrast.</li>
         <li>Sunbeds and UV degrade ink faster than anything else</li>
-        <li>First touch-up is free — just get in touch when fully healed</li>
+        <li>First touch-up is free. Get in touch when fully healed.</li>
       </ul>
     </div>
 
   </div>
-  <div class="ac-note">
+  <div class="ac-note" style="margin-left:auto;margin-right:auto;">
     <svg class="ac-note-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message Emmy directly</strong> — don't wait, it's always better to ask early. <a href="https://wa.me/447405979137" style="color:var(--gold);text-decoration:none">WhatsApp</a> or Instagram DM.</p>
+    <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message me directly</strong>. Don't wait, it's always better to ask early. Reach me on <a href="https://wa.me/447405979137" style="color:var(--gold);text-decoration:none">WhatsApp</a> or <a href="https://ig.me/m/emmy.tattoo" style="color:var(--gold);text-decoration:none">Instagram</a>.</p>
   </div>
 </section>
 
@@ -2348,10 +2335,10 @@
     <div>
       <span class="loc-find-label">Find Me</span>
       <div class="loc-addr">
-        <em>Sainthood</em> Tattoo Studio<br>
+        I work at <em>Sainthood Tattoo</em><br>
         80 Princes Avenue, Hull HU5 3QJ
       </div>
-      <div class="loc-meta">By appointment only &nbsp;·&nbsp; Tuesday – Sunday &nbsp;·&nbsp; 09:00 AM – 17:00 PM</div>
+      <div class="loc-meta">Appointment only &nbsp;·&nbsp; Tuesday – Saturday</div>
     </div>
     <div class="loc-btns">
       <a href="https://www.waze.com/ul?ll=53.7558,-0.3587&navigate=yes&zoom=17"
@@ -2407,12 +2394,16 @@
     <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="ft-a">Facebook</a>
     <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="ft-a">WhatsApp</a>
   </div>
-  <div class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood, Hull</div>
+  <div class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</div>
 </footer>
 
 <script>
 (function () {
   'use strict';
+
+  /* ═══ AVAILABILITY TOGGLE ═══
+     Set to false when not taking bookings — updates pill text + colour */
+  const DIARY_OPEN = true;
 
   /* ═══ SCROLL RESET ON REFRESH ═══ */
   if (history.scrollRestoration) history.scrollRestoration = 'manual';
@@ -2429,6 +2420,14 @@
   });
   lenis.stop(); /* locked until loader exits */
   lenis.on('scroll', ScrollTrigger.update);
+
+  /* ── Availability pill ── */
+  if (!DIARY_OPEN) {
+    const avTxt = document.querySelector('.bk-avtxt');
+    const avDot = document.querySelector('.bk-avdot');
+    if (avTxt) avTxt.textContent = 'Diary closed \u00b7 not taking appointments';
+    if (avDot) { avDot.style.background = '#e05555'; avDot.style.boxShadow = '0 0 12px rgba(224,85,85,.7)'; }
+  }
   gsap.ticker.add(t => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
 
@@ -2529,7 +2528,7 @@
     document.addEventListener('mousedown', () => sclT = .82);
     document.addEventListener('mouseup',   () => sclT = 1);
 
-    document.querySelectorAll('a,.wc,.ei,.fq-row,button').forEach(el => {
+    document.querySelectorAll('a,.wc,.ei,.fq-item,button').forEach(el => {
       el.addEventListener('mouseenter', () => { cr.classList.add('h');    crHW = 38; });
       el.addEventListener('mouseleave', () => { cr.classList.remove('h'); crHW = 19; });
     });
@@ -2545,7 +2544,7 @@
   }
 
   /* ═══ MARQUEE ═══ */
-  const mqItems = ['Fine Line','Micro Realism','Realism','Fine Line Art','Portrait Work','Custom Design','Emmy Tattoo','Hull, UK','Sainthood'];
+  const mqItems = ['Fine Line','Micro Realism','Realism','Fine Art','Portrait Work','Custom Design','Emmy Tattoo','Hull, UK','Sainthood Tattoo'];
   const mqRow = document.getElementById('mqrow');
   [0,1].forEach(() => mqItems.forEach(s => {
     const d = document.createElement('div');
@@ -2626,8 +2625,7 @@
         opacity: 1, scale: 1, filter: 'blur(0px)',
         duration: 1.35, delay: .1, stagger: { amount: 0.5, from: 'start' }
       })
-      .to('.h-sub',    { opacity: 1, duration: 1.2          }, '-=.5')
-      .to('.h-scroll', { opacity: 1,        duration: .7  }, '-=.5');
+      .to('.h-sub',    { opacity: 1, duration: 1.2          }, '-=.5');
 
     initScrollAnims();
   }
@@ -2918,32 +2916,37 @@
       { opacity: 1, y: 0, stagger: .09, duration: .85, ease: 'power3.out',
         scrollTrigger: { trigger: '.exp-list', start: 'top 82%' } }
     );
-    // Title clip-in from left — scoped to expertise list only
-    gsap.fromTo('.exp-list .ei-name',
-      { clipPath: 'inset(0 100% 0 0)' },
-      { clipPath: 'inset(0 0% 0 0)', stagger: .1, duration: 1.1, ease: 'expo.out',
-        scrollTrigger: { trigger: '.exp-list', start: 'top 82%' } }
-    );
-    // FAQ rows scroll-in
-    gsap.fromTo('.fq-row',
-      { opacity: 0, y: 28 },
-      { opacity: 1, y: 0, stagger: .09, duration: .85, ease: 'power3.out',
-        scrollTrigger: { trigger: '.fq-list', start: 'top 82%' } }
-    );
-    gsap.fromTo('.fq-list .ei-name',
-      { clipPath: 'inset(0 100% 0 0)' },
-      { clipPath: 'inset(0 0% 0 0)', stagger: .1, duration: 1.1, ease: 'expo.out',
-        scrollTrigger: { trigger: '.fq-list', start: 'top 82%' } }
-    );
     // FAQ heading
     gsap.fromTo('.faq-h2 .tl-i',
       { y: 40, opacity: 0 },
       { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out',
         scrollTrigger: { trigger: '#faq', start: 'top 84%' } }
     );
+    gsap.fromTo('.faq-hd-rule',
+      { scaleX: 0, transformOrigin: 'left' },
+      { scaleX: 1, duration: 1.4, ease: 'expo.out',
+        scrollTrigger: { trigger: '#faq', start: 'top 84%' } }
+    );
+    gsap.fromTo('.faq-hd-count',
+      { opacity: 0 },
+      { opacity: 1, duration: .8, delay: .5, ease: 'power2.out',
+        scrollTrigger: { trigger: '#faq', start: 'top 84%' } }
+    );
+    // FAQ items scroll-in: slide from left
+    gsap.fromTo('.fq-item',
+      { opacity: 0, x: -32 },
+      { opacity: 1, x: 0, stagger: .08, duration: .8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.fq-list', start: 'top 82%' } }
+    );
+    // Numbers reveal
+    gsap.fromTo('.fq-num',
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, stagger: .08, duration: .7, ease: 'expo.out',
+        scrollTrigger: { trigger: '.fq-list', start: 'top 82%' } }
+    );
 
-    /* ── Accordion (expertise + FAQ) ── */
-    document.querySelectorAll('.ei, .fq-row').forEach(row => {
+    /* ── Accordion (expertise only) ── */
+    document.querySelectorAll('.ei').forEach(row => {
       const panel = row.querySelector('.ei-expand');
       const arr   = row.querySelector('.ei-arr');
       if (!panel || !arr) return;
@@ -2976,8 +2979,55 @@
       });
     });
 
-    /* ── iOS-spring hover (expertise + FAQ) ── */
-    document.querySelectorAll('.ei, .fq-row').forEach(row => {
+    /* ── FAQ accordion ── */
+    document.querySelectorAll('.fq-item').forEach(item => {
+      const panel  = item.querySelector('.fq-panel');
+      const inner  = item.querySelector('.fq-panel-inner');
+      const rule   = item.querySelector('.fq-rule');
+      if (!panel) return;
+      let isOpen = false;
+
+      item.addEventListener('click', () => {
+        isOpen = !isOpen;
+        item.classList.toggle('open', isOpen);
+
+        if (isOpen) {
+          gsap.set(panel, { height: 'auto', overflow: 'visible' });
+          const h = panel.offsetHeight;
+          gsap.fromTo(panel,
+            { height: 0, overflow: 'hidden' },
+            { height: h, duration: 0.55, ease: 'expo.out',
+              onComplete() { gsap.set(panel, { height: 'auto' }); } }
+          );
+          gsap.fromTo(inner,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.42, delay: 0.1, ease: 'power3.out' }
+          );
+          gsap.to(rule, { width: '60%', duration: 0.5, ease: 'expo.out' });
+        } else {
+          gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.35, ease: 'expo.in' });
+          gsap.to(inner, { opacity: 0, y: 6, duration: 0.2, ease: 'power2.in' });
+          gsap.to(rule, { width: 0, duration: 0.28, ease: 'expo.in' });
+        }
+      });
+    });
+
+    /* ── FAQ hover: rule sweep ── */
+    document.querySelectorAll('.fq-item').forEach(item => {
+      const rule = item.querySelector('.fq-rule');
+      if (!rule) return;
+      item.addEventListener('mouseenter', () => {
+        if (item.classList.contains('open')) return;
+        gsap.to(rule, { width: '30%', duration: 0.35, ease: 'expo.out' });
+      });
+      item.addEventListener('mouseleave', () => {
+        if (item.classList.contains('open')) return;
+        gsap.to(rule, { width: 0, duration: 0.25, ease: 'expo.in' });
+      });
+    });
+
+    /* ── iOS-spring hover (expertise only) ── */
+    document.querySelectorAll('.ei').forEach(row => {
       const name  = row.querySelector('.ei-name');
       const arr   = row.querySelector('.ei-arr');
       const rule  = row.querySelector('.ei-rule');
@@ -2994,19 +3044,19 @@
         if (hTl) hTl.kill();
         hTl = gsap.timeline();
 
-        /* Accent bar: spring from top (elastic amplitude 1.3 → visible bounce) */
+        /* Accent bar: slides in from top */
         hTl.fromTo(accent,
           { scaleY: 0, opacity: 0 },
-          { scaleY: 1, opacity: 1, duration: 0.62, ease: 'elastic.out(1.3, 0.38)', transformOrigin: 'top' },
+          { scaleY: 1, opacity: 1, duration: 0.35, ease: 'power3.out', transformOrigin: 'top' },
           0)
-        /* Name: rockets right, overshoots ~30px, settles at 18px */
+        /* Name: clean slide right */
         .to(name,
-          { x: 18, color: 'var(--gold)', duration: 0.7, ease: 'elastic.out(1.5, 0.3)' },
+          { x: 18, color: 'var(--gold)', duration: 0.4, ease: 'power3.out' },
           0)
-        /* Arrow: even more aggressive — flies hard then snaps back decisively */
+        /* Arrow: clean slide right */
         .to(arr,
-          { x: 14, color: 'var(--gold)', duration: 0.55, ease: 'elastic.out(2.2, 0.22)' },
-          0.05)
+          { x: 14, color: 'var(--gold)', duration: 0.35, ease: 'power3.out' },
+          0.03)
         /* Rule: instant gold sweep, no spring */
         .to(rule,
           { width: '100%', duration: 0.28, ease: 'expo.out' },
@@ -3123,15 +3173,15 @@
       opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: .32,
       scrollTrigger: { trigger: '#book', start: 'top 76%' }
     });
+    gsap.to('.bk-steps', {
+      opacity: 1, y: 0, duration: .9, ease: 'expo.out', delay: .44,
+      scrollTrigger: { trigger: '#book', start: 'top 74%' }
+    });
     gsap.fromTo('.bk-btn',
       { opacity: 0, y: 28 },
-      { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .16, delay: .44,
-        scrollTrigger: { trigger: '#book', start: 'top 74%' } }
+      { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .16, delay: .6,
+        scrollTrigger: { trigger: '#book', start: 'top 70%' } }
     );
-    gsap.to('.bk-steps', {
-      opacity: 1, y: 0, duration: .9, ease: 'expo.out', delay: .6,
-      scrollTrigger: { trigger: '#book', start: 'top 70%' }
-    });
   }
 
   /* ── Reviews carousel ── */
@@ -3151,11 +3201,15 @@
     if (!wrap || !carousel || !modal) return;
 
     /* Duplicate cards for seamless infinite loop */
-    [...carousel.children].forEach(c => {
-      const clone = c.cloneNode(true);
-      clone.setAttribute('aria-hidden', 'true');
-      carousel.appendChild(clone);
-    });
+    function cloneAll() {
+      [...carousel.querySelectorAll('.tr-card:not([data-clone])')].forEach(c => {
+        const clone = c.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        clone.dataset.clone = 'true';
+        carousel.appendChild(clone);
+      });
+    }
+    cloneAll();
 
     let singleW = 0;
     requestAnimationFrame(() => { singleW = carousel.scrollWidth / 2; });
@@ -3163,18 +3217,16 @@
     let curX = 0;
     const SPEED = 0.375;
     let ptId = null, startX = 0, startCarX = 0, prevX = 0;
-    let dragDist = 0;
+    let dragDist = 0, downCard = null;
     const velBuf = [];
 
-    /* Called by live Google fetch once real reviews arrive */
+    /* Called by live Google fetch — keeps static cards, blends in live ones */
     window.__refreshReviews = function(newCards) {
-      carousel.innerHTML = '';
+      /* Remove all clones and any previous live cards, preserve static originals */
+      carousel.querySelectorAll('[data-clone]').forEach(c => c.remove());
+      carousel.querySelectorAll('.tr-card:not([data-static])').forEach(c => c.remove());
       newCards.forEach(c => carousel.appendChild(c));
-      [...carousel.children].forEach(c => {
-        const clone = c.cloneNode(true);
-        clone.setAttribute('aria-hidden', 'true');
-        carousel.appendChild(clone);
-      });
+      cloneAll();
       curX = 0;
       gsap.set(carousel, { x: 0 });
       requestAnimationFrame(() => { singleW = carousel.scrollWidth / 2; });
@@ -3202,6 +3254,8 @@
     /* ── Pointer drag — setPointerCapture locks tracking regardless of position ── */
     wrap.addEventListener('pointerdown', e => {
       if (e.button !== 0 && e.pointerType === 'mouse') return;
+      /* Capture the card NOW, before setPointerCapture redirects all events to wrap */
+      downCard = e.target.closest('.tr-card');
       wrap.setPointerCapture(e.pointerId);
       ptId = e.pointerId;
       startX = prevX = e.clientX;
@@ -3237,7 +3291,24 @@
         onUpdate() { curX = gsap.getProperty(carousel, 'x'); },
         onComplete() { curX = normalizeX(curX); gsap.set(carousel, { x: curX }); }
       });
-      dragDist = 0; /* reset so next click can open modal */
+      /* Open modal on tap/click — card captured at pointerdown before setPointerCapture */
+      if (dragDist <= 6 && downCard && downCard.dataset.q) {
+        mq.textContent    = '\u201c' + downCard.dataset.q + '\u201d';
+        mauth.textContent = downCard.dataset.author;
+        if (downCard.dataset.reply) {
+          mreplyT.textContent = downCard.dataset.reply;
+          mreply.classList.add('visible');
+          mreply.setAttribute('aria-hidden', 'false');
+        } else {
+          mreply.classList.remove('visible');
+          mreply.setAttribute('aria-hidden', 'true');
+        }
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        lenis.stop();
+      }
+      dragDist = 0;
+      downCard = null;
     });
 
     wrap.addEventListener('pointercancel', () => {
@@ -3245,25 +3316,13 @@
       ptId = null; wrap.classList.remove('tr-dragging');
     });
 
-    /* Modal via event delegation (works on originals + clones) */
-    const mq     = modal.querySelector('.rvm-q');
-    const mauth  = modal.querySelector('.rvm-author');
-    const mback  = modal.querySelector('.rvm-back');
-    const mclose = modal.querySelector('.rvm-close');
-
-    /* Use wrap (not carousel) so setPointerCapture doesn't swallow the target */
-    wrap.addEventListener('click', e => {
-      if (dragDist > 6) return;
-      /* composedPath() finds the real clicked element even when pointer capture
-         redirects e.target to wrap */
-      const card = e.composedPath().find(el => el.classList?.contains('tr-card'));
-      if (!card || !card.dataset.q) return;
-      mq.textContent    = '\u201c' + card.dataset.q + '\u201d';
-      mauth.textContent = card.dataset.author;
-      modal.classList.add('open');
-      modal.setAttribute('aria-hidden', 'false');
-      lenis.stop();
-    });
+    /* Modal — opened in pointerup (card captured at pointerdown before setPointerCapture) */
+    const mq      = modal.querySelector('.rvm-q');
+    const mauth   = modal.querySelector('.rvm-author');
+    const mback   = modal.querySelector('.rvm-back');
+    const mclose  = modal.querySelector('.rvm-close');
+    const mreply  = modal.querySelector('.rvm-reply');
+    const mreplyT = modal.querySelector('.rvm-reply-text');
 
     const closeModal = () => {
       modal.classList.remove('open');
@@ -3275,11 +3334,6 @@
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
   })();
 
-  /* ═══ QUOTE ═══ */
-  gsap.to('.qt-text', {
-    opacity: 1, y: 0, duration: 1.4, ease: 'expo.out',
-    scrollTrigger: { trigger: '#quote', start: 'top 80%' }
-  });
 
   /* ═══ LOCATION ═══ */
   gsap.to('.loc-map-wrap', {
@@ -3325,11 +3379,13 @@
     const photo = r.authorAttribution?.photoUri || '';
     const full  = r.text?.text || '';
     const short = full.length > 180 ? full.slice(0, 180) + '\u2026' : full;
+    const reply = r.reviewReply?.text || '';
 
     const card = document.createElement('div');
     card.className      = 'tr-card';
     card.dataset.q      = full;
     card.dataset.author = '\u2014 ' + name + ' \u00b7 Google Review';
+    if (reply) card.dataset.reply = reply;
 
     const stars = document.createElement('div');
     stars.className   = 'tr-card-stars';
