@@ -288,8 +288,6 @@
     .tl-i { display: block; opacity: 0; }
     .htc { display: inline-block; }
     .h-sub {
-      display: flex; justify-content: flex-start; align-items: flex-end;
-      gap: 18px;
       margin-top: 44px; opacity: 0;
     }
     .h-loc {
@@ -298,10 +296,15 @@
       color: rgba(237,232,223,.62);
       line-height: 1.75;
       text-shadow: 0 0 28px rgba(8,7,5,1), 0 1px 6px rgba(8,7,5,.85);
+      display: flex; flex-direction: column; gap: 0;
     }
+    .h-loc-studio {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .h-loc-hours { display: block; }
     .h-dir {
       display: inline-flex; align-items: center; gap: 7px;
-      padding: 9px 15px 9px 11px;
+      padding: 6px 13px 6px 9px;
       border-radius: 999px;
       background: rgba(237,232,223,.07);
       border: 1px solid rgba(237,232,223,.14);
@@ -1720,11 +1723,10 @@
       <span class="tl"><em class="tl-i">Tattoo</em></span>
     </h1>
     <div class="h-sub">
-      <div class="h-loc">At Sainthood Tattoo · Princes Ave, Hull<br>Appointment only &nbsp;·&nbsp; Tue–Sat</div>
-      <a href="#location" class="h-dir" aria-label="View map for Sainthood Tattoo">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="5 5 19 5 19 19"/></svg>
-        <span>Directions</span>
-      </a>
+      <div class="h-loc">
+        <span class="h-loc-studio">At Sainthood Tattoo · Princes Ave, Hull<a href="#location" class="h-dir" aria-label="View map for Sainthood Tattoo"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="5 5 19 5 19 19"/></svg><span>Directions</span></a></span>
+        <span class="h-loc-hours">Appointment only &nbsp;·&nbsp; Tue–Sat</span>
+      </div>
     </div>
   </div>
 </section>
