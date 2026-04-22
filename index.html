@@ -412,7 +412,7 @@
     }
     .wc {
       width: clamp(220px,26vw,360px);
-      aspect-ratio: 2/3; /* matches 1119×1699 portrait crop — zero cropping */
+      aspect-ratio: 3/4;
       border-radius: var(--r);
       border: 1px solid var(--border);
       overflow: hidden; position: relative;
@@ -427,11 +427,11 @@
     .wc-img {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      object-fit: cover; object-position: center top;
-      transition: filter 1.1s, transform 1.4s var(--out);
+      object-fit: contain; object-position: center;
+      transition: filter 1.1s;
       filter: brightness(.9) saturate(.75);
     }
-    .wc:hover .wc-img { filter: brightness(1) saturate(.9); transform: scale(1.05); }
+    .wc:hover .wc-img { filter: brightness(1) saturate(.9); }
 
     /* Placeholder card — shown while waiting for photos */
     .wc:not(:has(.wc-img)) {
@@ -498,13 +498,14 @@
     /* ── Gallery lightbox ── */
     #gal-modal-bg {
       position: fixed; inset: 0; z-index: 99990;
-      background: rgba(8,7,5,0);
       pointer-events: none;
     }
     #gal-modal {
       position: fixed; z-index: 99991;
       overflow: hidden; display: none;
-      background: var(--bg);
+      background: rgba(8,7,5,0.35);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
       will-change: top, left, width, height, border-radius;
     }
     #gal-modal-img {
@@ -629,14 +630,14 @@
       overflow: hidden; border: 1px solid var(--border);
     }
     .ei-expand-img img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
+      width: 100%; height: 100%; object-fit: contain; display: block;
       filter: brightness(.8) saturate(.6);
       transition: filter .8s var(--out);
     }
     .ei.open .ei-expand-img img { filter: brightness(.92) saturate(.8); }
     @media (max-width: 768px) {
       .ei-expand-inner { grid-template-columns: 1fr; padding-left: 0; }
-      .ei-expand-img { aspect-ratio: 16/9; }
+      .ei-expand-img { aspect-ratio: 3/4; }
     }
 
     /* Animated bottom rule — GSAP-owned */
@@ -658,10 +659,10 @@
     ══════════════════════════════════════════ */
     #flash {
       padding: 80px var(--pad) 90px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: start;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
       border-top: 1px solid var(--border);
     }
     .fl-badge {
@@ -685,13 +686,13 @@
     .fl-h2 em { font-style: italic; color: var(--gold); }
     .fl-p {
       font-size: 1rem; color: var(--fg2);
-      line-height: 1.85; max-width: 420px;
+      line-height: 1.85; max-width: 520px;
       margin-bottom: 32px;
     }
     /* Bullet list of what you get */
     .fl-reasons {
       list-style: none; display: flex; flex-direction: column; gap: 14px;
-      margin-bottom: 44px;
+      margin-bottom: 44px; max-width: 420px; text-align: left;
     }
     .fl-reason {
       display: flex; align-items: flex-start; gap: 14px;
@@ -703,6 +704,9 @@
       font-family: var(--serif); font-size: 1rem;
       flex-shrink: 0; line-height: 1.55;
     }
+    .fl-btns {
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+    }
     /* Primary Instagram CTA */
     .fl-ig-cta {
       display: inline-flex; align-items: center; gap: 14px;
@@ -713,7 +717,6 @@
       padding: 16px 28px; border-radius: 100px;
       position: relative; overflow: hidden;
       transition: border-color .35s, color .35s;
-      margin-bottom: 16px;
     }
     .fl-ig-cta::before {
       content: ''; position: absolute; inset: 0;
@@ -843,8 +846,7 @@
     .tr-review-btn-fb { color: #5b9cf6; border-color: rgba(91,156,246,.35); }
     .tr-review-btn-fb:hover { color: #fff; border-color: #1877f2; }
     @media (max-width: 768px) {
-      #flash { grid-template-columns: 1fr; padding: 56px 24px 64px; gap: 44px; }
-      .fl-grid { grid-template-columns: repeat(3, 1fr); }
+      #flash { padding: 56px 24px 64px; }
       .tr-review-cta { flex-direction: column; align-items: flex-start; padding: 32px 24px; }
       .tr-review-btns { flex-direction: column; }
     }
@@ -859,6 +861,9 @@
       grid-template-columns: 1fr 1fr;
       gap: 72px; align-items: center;
     }
+    .gf-left {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
     .gf-h2 {
       font-family: var(--serif);
       font-size: clamp(2.4rem,5vw,4.2rem);
@@ -871,7 +876,7 @@
       line-height: 1.9; max-width: 400px; margin-bottom: 36px;
     }
     .gf-cta {
-      display: inline-flex; align-items: center; gap: 14px;
+      display: flex; align-items: center; gap: 14px;
       font-family: var(--mono); font-size: .72rem;
       letter-spacing: .2em; text-transform: uppercase;
       color: var(--fg); text-decoration: none;
@@ -1731,19 +1736,11 @@
   </div>
 </section>
 
-<!-- ════ MARQUEE ════ -->
-<div class="mq-wrap" aria-hidden="true">
-  <div class="mq-row" id="mqrow"></div>
-</div>
-
 <!-- ════ WORK ════ -->
 <div id="work-outer">
 <section id="work">
   <div class="w-head">
-    <div>
-      <div class="s-label">Selected Work</div>
-      <h2 class="w-h2"><span class="tl"><span class="tl-i"><em>Portfolio</em></span></span></h2>
-    </div>
+    <div></div>
     <div class="w-hint">
       <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
         <span class="wh-arrows"><span>›</span><span>›</span><span>›</span></span>
@@ -1755,61 +1752,127 @@
   <div class="w-gal">
     <div class="w-track" id="wtrack">
 
-      <!-- src = portrait crop · data-full = hi-res for lightbox           -->
-      <!-- Recommended: 1200×1800px JPEG — add more cards as photos arrive -->
-
-      <article class="wc" aria-label="Work 1" data-full="pictures/2cropped..jpg">
-        <img class="wc-img" src="pictures/2cropped..jpg" alt="Emmy Tattoo — piece 1" loading="eager">
+      <article class="wc" aria-label="Work 1" data-full="pictures/flowing line.jpg">
+        <img class="wc-img" src="pictures/flowing line.jpg" alt="Emmy Tattoo — piece 1" loading="eager">
         <div class="wc-num">01</div>
         <div class="wc-view">→</div>
         <div class="wc-lbl"><div class="wc-title">No. 01</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 2" data-full="pictures/4cropped.jpg">
-        <img class="wc-img" src="pictures/4cropped.jpg" alt="Emmy Tattoo — piece 2" loading="lazy">
+      <article class="wc" aria-label="Work 2" data-full="pictures/fighter owl.jpg">
+        <img class="wc-img" src="pictures/fighter owl.jpg" alt="Emmy Tattoo — piece 2" loading="lazy">
         <div class="wc-num">02</div>
         <div class="wc-view">→</div>
         <div class="wc-lbl"><div class="wc-title">No. 02</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 3" data-full="pictures/5cropped.jpg">
-        <img class="wc-img" src="pictures/5cropped.jpg" alt="Emmy Tattoo — piece 3" loading="lazy">
+      <article class="wc" aria-label="Work 3" data-full="pictures/cute doggie.jpg">
+        <img class="wc-img" src="pictures/cute doggie.jpg" alt="Emmy Tattoo — piece 3" loading="lazy">
         <div class="wc-num">03</div>
         <div class="wc-view">→</div>
         <div class="wc-lbl"><div class="wc-title">No. 03</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 4" data-full="pictures/7cropped.jpg">
-        <img class="wc-img" src="pictures/7cropped.jpg" alt="Emmy Tattoo — piece 4" loading="lazy">
+      <article class="wc" aria-label="Work 4" data-full="pictures/wolfy wolf.jpg">
+        <img class="wc-img" src="pictures/wolfy wolf.jpg" alt="Emmy Tattoo — piece 4" loading="lazy">
         <div class="wc-num">04</div>
         <div class="wc-view">→</div>
         <div class="wc-lbl"><div class="wc-title">No. 04</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 5" data-full="pictures/9cropped.jpg">
-        <img class="wc-img" src="pictures/9cropped.jpg" alt="Emmy Tattoo — piece 5" loading="lazy">
+      <article class="wc" aria-label="Work 5" data-full="pictures/9.jpg">
+        <img class="wc-img" src="pictures/9.jpg" alt="Emmy Tattoo — piece 5" loading="lazy">
         <div class="wc-num">05</div>
         <div class="wc-view">→</div>
         <div class="wc-lbl"><div class="wc-title">No. 05</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 6" data-full="">
+      <article class="wc" aria-label="Work 6" data-full="pictures/cute doggie 2.jpg">
+        <img class="wc-img" src="pictures/cute doggie 2.jpg" alt="Emmy Tattoo — piece 6" loading="lazy">
         <div class="wc-num">06</div>
-        <div class="wc-view">+</div>
-        <div class="wc-lbl"><div class="wc-title">Coming soon</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-view">→</div>
+        <div class="wc-lbl"><div class="wc-title">No. 06</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
+
+      <article class="wc" aria-label="Work 7" data-full="pictures/water wolf.jpg">
+        <img class="wc-img" src="pictures/water wolf.jpg" alt="Emmy Tattoo — piece 7" loading="lazy">
+        <div class="wc-num">07</div>
+        <div class="wc-view">→</div>
+        <div class="wc-lbl"><div class="wc-title">No. 07</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+      </article>
+
+      <article class="wc" aria-label="Work 8" data-full="pictures/buncha cats.jpg">
+        <img class="wc-img" src="pictures/buncha cats.jpg" alt="Emmy Tattoo — piece 8" loading="lazy">
+        <div class="wc-num">08</div>
+        <div class="wc-view">→</div>
+        <div class="wc-lbl"><div class="wc-title">No. 08</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+      </article>
+
 
     </div>
   </div>
 </section>
 </div><!-- /#work-outer -->
 
+<!-- ════ EXPERTISE ════ -->
+<section id="exp">
+  <div class="exp-hd">
+
+    <h2 class="exp-h2"><span class="tl"><span class="tl-i">Areas of <em>Expertise</em></span></span></h2>
+  </div>
+  <ul class="exp-list">
+
+    <li class="ei">
+
+      <div class="ei-nw"><span class="ei-name">Fine Line</span></div>
+      <span class="ei-desc">Single needle · ultra-precise · long-lasting</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">Single-needle work. Ultra-thin lines that hold crisp definition over years without spreading or blurring. Best suited to botanical studies, geometric forms, and script.</p>
+          <div class="ei-expand-img"><img src="pictures/flowing line.jpg" alt="Fine line example" loading="lazy"></div>
+        </div>
+      </div>
+    </li>
+
+    <li class="ei">
+
+      <div class="ei-nw"><span class="ei-name">Fine Art</span></div>
+      <span class="ei-desc">Illustrative · considered · bespoke</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">Illustrative work — botanical, abstract, and figurative pieces drawn from scratch. Designed around your concept and placement.</p>
+          <div class="ei-expand-img"><img src="pictures/fighter owl.jpg" alt="Fine art example" loading="lazy"></div>
+        </div>
+      </div>
+    </li>
+
+    <li class="ei">
+
+      <div class="ei-nw"><span class="ei-name">Realism</span></div>
+      <span class="ei-desc">Lifelike · detailed · accurate</span>
+      <span class="ei-arr">→</span>
+      <div class="ei-rule"></div>
+      <div class="ei-expand" aria-hidden="true">
+        <div class="ei-expand-inner">
+          <p class="ei-expand-text">A lifelike rendering of anything you can photograph. Depth, tonal range, and texture reproduced accurately — from portraits to natural subjects to still life.</p>
+          <div class="ei-expand-img"><img src="pictures/wolfy wolf.jpg" alt="Realism example" loading="lazy"></div>
+        </div>
+      </div>
+    </li>
+
+
+  </ul>
+</section>
+
 <!-- ════ REVIEWS ════ -->
 <section id="trust">
 
   <div class="tr-head">
     <div class="tr-head-l">
-      <div class="s-label">Reviews</div>
       <h2 class="tr-h2">What clients <em>say</em></h2>
     </div>
     <div class="tr-head-r">
@@ -1818,7 +1881,6 @@
       <div class="tr-platform">Google Reviews</div>
     </div>
   </div>
-  <div class="trust-deco-quote" aria-hidden="true">"</div>
 
   <div class="tr-carousel-wrap" id="trcwrap">
     <div class="tr-carousel" id="trcarousel">
@@ -1913,181 +1975,6 @@
   </div>
 </div>
 
-<!-- ════ EXPERTISE ════ -->
-<section id="exp">
-  <div class="exp-hd">
-    <div class="s-label">Specialties</div>
-    <h2 class="exp-h2"><span class="tl"><span class="tl-i">Areas of <em>Expertise</em></span></span></h2>
-  </div>
-  <ul class="exp-list">
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Fine Line</span></div>
-      <span class="ei-desc">Single needle · ultra-precise · long-lasting</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Single-needle work. Ultra-thin lines that hold crisp definition over years without spreading or blurring. Best suited to botanical studies, geometric forms, and script.</p>
-          <div class="ei-expand-img"><img src="pictures/tattto1.jpg" alt="Fine line example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Fine Art</span></div>
-      <span class="ei-desc">Illustrative · considered · bespoke</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Illustrative work — botanical, abstract, and figurative pieces drawn from scratch. Designed around your concept and placement.</p>
-          <div class="ei-expand-img"><img src="pictures/2.jpg" alt="Fine art example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Micro Realism</span></div>
-      <span class="ei-desc">Miniature · photographic · exact</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Photographic precision compressed into small scale. Portraits, animals, and objects rendered with genuine depth and tonal range — detail that reads clearly at a glance and holds up under close inspection, even years later.</p>
-          <div class="ei-expand-img"><img src="pictures/3.jpg" alt="Micro realism example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Realism</span></div>
-      <span class="ei-desc">Lifelike · detailed · accurate</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">A lifelike rendering of anything you can photograph. Depth, tonal range, and texture reproduced accurately — from portraits to natural subjects to still life.</p>
-          <div class="ei-expand-img"><img src="pictures/4.jpg" alt="Realism example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Portrait Work</span></div>
-      <span class="ei-desc">Likeness · depth · long-lasting</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Portraits require exact technique and a precise understanding of how skin holds tone over time. Done well, they hold a recognisable likeness for years.</p>
-          <div class="ei-expand-img"><img src="pictures/5.jpg" alt="Portrait work example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei">
-
-      <div class="ei-nw"><span class="ei-name">Custom Design</span></div>
-      <span class="ei-desc">Your brief · drawn from scratch · original</span>
-      <span class="ei-arr">→</span>
-      <div class="ei-rule"></div>
-      <div class="ei-expand" aria-hidden="true">
-        <div class="ei-expand-inner">
-          <p class="ei-expand-text">Bring a reference image, a mood board, or just a description of what you want. I draw the design from scratch. Nothing is pre-drawn or reused. You get something made specifically for you.</p>
-          <div class="ei-expand-img"><img src="pictures/6.jpg" alt="Custom design example" loading="lazy"></div>
-        </div>
-      </div>
-    </li>
-
-  </ul>
-</section>
-
-<!-- ════ SOCIAL / FOLLOW ════ -->
-<section id="flash">
-  <!-- Left: copy + CTAs -->
-  <div class="fl-left">
-    <div class="fl-badge"><span class="fl-dot"></span> @emmy.tattoo</div>
-    <h2 class="fl-h2">Follow the <em>work</em></h2>
-    <p class="fl-p">Instagram is where new work goes first — finished pieces, available slots, flash designs. Updated when something happens, not on a schedule.</p>
-    <ul class="fl-reasons">
-      <li class="fl-reason">New pieces posted as they're completed</li>
-      <li class="fl-reason">Available slots and same-day cancellations when they open</li>
-      <li class="fl-reason">Flash designs as they come up</li>
-      <li class="fl-reason">Healed results alongside fresh work</li>
-    </ul>
-    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="fl-ig-cta">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-      Follow on Instagram
-      <span class="fl-ig-handle">@emmy.tattoo</span>
-    </a>
-    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="fl-ig-cta fl-fb-cta">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      Follow on Facebook
-      <span class="fl-fb-handle">EmmaleneTattoo</span>
-    </a>
-  </div>
-  <!-- Right: photo grid — click cell to view full image -->
-  <div class="fl-grid">
-    <div class="fl-cell">
-      <img src="pictures/7.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/8.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/tattto1.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/2.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/3.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-    <div class="fl-cell">
-      <img src="pictures/4.jpg" alt="" loading="lazy">
-      <div class="fl-cell-overlay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>View full</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- ════ GIFTS ════ -->
-<section id="gifts">
-  <div class="gf-left">
-    <div class="s-label">Gift Cards</div>
-    <h2 class="gf-h2">Give someone <em>a tattoo.</em></h2>
-    <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount — no expiry, redeemed when they decide.</p>
-    <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
-       target="_blank" rel="noopener" class="gf-cta">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      <span>Enquire via WhatsApp</span>
-    </a>
-  </div>
-  <div class="gf-right">
-    <div class="gf-occasions">
-      <span class="gf-oc gf-hi">Birthday</span>
-      <span class="gf-oc">Anniversary</span>
-      <span class="gf-oc gf-hi">Christmas</span>
-      <span class="gf-oc">Valentine's Day</span>
-      <span class="gf-oc">Graduation</span>
-      <span class="gf-oc gf-hi">Hen Do</span>
-      <span class="gf-oc">New Job</span>
-      <span class="gf-oc">Mother's Day</span>
-      <span class="gf-oc gf-hi">Just Because</span>
-    </div>
-  </div>
-</section>
-
 <!-- ════ BOOKING ════ -->
 <section id="book">
   <div class="bk-gbg" aria-hidden="true"></div>
@@ -2171,7 +2058,7 @@
       <h2 class="faq-h2"><span class="tl"><span class="tl-i">Common <em>Questions</em></span></span></h2>
     </div>
     <div class="faq-hd-rule"></div>
-    <span class="faq-hd-count">06 questions</span>
+
   </div>
   <ul class="fq-list">
 
@@ -2287,6 +2174,33 @@
   </ul>
 </section>
 
+<!-- ════ GIFTS ════ -->
+<section id="gifts">
+  <div class="gf-left">
+    <div class="s-label">Gift Cards</div>
+    <h2 class="gf-h2">Give someone <em>a tattoo.</em></h2>
+    <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount — no expiry, redeemed when they decide.</p>
+    <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
+       target="_blank" rel="noopener" class="gf-cta">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <span>Enquire via WhatsApp</span>
+    </a>
+  </div>
+  <div class="gf-right">
+    <div class="gf-occasions">
+      <span class="gf-oc gf-hi">Birthday</span>
+      <span class="gf-oc">Anniversary</span>
+      <span class="gf-oc gf-hi">Christmas</span>
+      <span class="gf-oc">Valentine's Day</span>
+      <span class="gf-oc">Graduation</span>
+      <span class="gf-oc gf-hi">Hen Do</span>
+      <span class="gf-oc">New Job</span>
+      <span class="gf-oc">Mother's Day</span>
+      <span class="gf-oc gf-hi">Just Because</span>
+    </div>
+  </div>
+</section>
+
 <!-- ════ AFTERCARE ════ -->
 <section id="aftercare">
   <div class="ac-hd">
@@ -2333,6 +2247,33 @@
   <div class="ac-note" style="margin-left:auto;margin-right:auto;">
     <svg class="ac-note-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message me directly</strong>. Don't wait, it's always better to ask early. Reach me on <a href="https://wa.me/447405979137" style="color:var(--gold);text-decoration:none">WhatsApp</a> or <a href="https://ig.me/m/emmy.tattoo" style="color:var(--gold);text-decoration:none">Instagram</a>.</p>
+  </div>
+</section>
+
+<!-- ════ SOCIAL / FOLLOW ════ -->
+<section id="flash">
+  <div class="fl-left">
+    <div class="fl-badge"><span class="fl-dot"></span> @emmy.tattoo</div>
+    <h2 class="fl-h2">Follow the <em>work</em></h2>
+    <p class="fl-p">Instagram is where new work goes first — finished pieces, available slots, flash designs. Updated when something happens, not on a schedule.</p>
+    <ul class="fl-reasons">
+      <li class="fl-reason">New pieces posted as they're completed</li>
+      <li class="fl-reason">Available slots and same-day cancellations when they open</li>
+      <li class="fl-reason">Flash designs as they come up</li>
+      <li class="fl-reason">Healed results alongside fresh work</li>
+    </ul>
+    <div class="fl-btns">
+      <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="fl-ig-cta">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        Follow on Instagram
+        <span class="fl-ig-handle">@emmy.tattoo</span>
+      </a>
+      <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="fl-ig-cta fl-fb-cta">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        Follow on Facebook
+        <span class="fl-fb-handle">EmmaleneTattoo</span>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -2558,15 +2499,6 @@
     });
   }
 
-  /* ═══ MARQUEE ═══ */
-  const mqItems = ['Fine Line','Micro Realism','Realism','Fine Art','Portrait Work','Custom Design','Emmy Tattoo','Hull, UK','Sainthood Tattoo'];
-  const mqRow = document.getElementById('mqrow');
-  [0,1].forEach(() => mqItems.forEach(s => {
-    const d = document.createElement('div');
-    d.className = 'mq-item';
-    d.innerHTML = s + '<span class="mq-dot"></span>';
-    mqRow.appendChild(d);
-  }));
 
   /* ═══ SCROLL PROGRESS ═══ */
   const progEl = document.getElementById('prog');
@@ -2674,11 +2606,6 @@
       scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
     });
 
-    /* ── Marquee entrance ── */
-    gsap.from('.mq-wrap', {
-      opacity: 0, y: 20, duration: 1.2, ease: 'expo.out',
-      scrollTrigger: { trigger: '.mq-wrap', start: 'top 96%' }
-    });
 
     /* ── Section labels ── */
     gsap.utils.toArray('.s-label').forEach(el => {
@@ -2727,7 +2654,7 @@
       const GAL_SPEED = 0.5;
       let galPaused = false;
       let ptId = null, startX = 0, startTrackX = 0, prevX = 0;
-      let dragDist = 0;
+      let dragDist = 0, downCard = null;
       const velBuf = [];
 
       function normalizeX(x) {
@@ -2752,6 +2679,7 @@
       /* ── Pointer drag — setPointerCapture keeps tracking even off-element ── */
       gal.addEventListener('pointerdown', e => {
         if (e.button !== 0 && e.pointerType === 'mouse') return;
+        downCard = e.target.closest('.wc');
         gal.setPointerCapture(e.pointerId);
         ptId = e.pointerId;
         startX = prevX = e.clientX;
@@ -2778,7 +2706,6 @@
         ptId = null;
         gal.classList.remove('dragging');
         const vel = velBuf.length ? velBuf.reduce((s, v) => s + v, 0) / velBuf.length : 0;
-        /* Cap throw to 80% of loop width — prevents multi-loop teleport */
         const rawThrow = vel * 28;
         const maxThrow = singleW > 0 ? singleW * 0.8 : 2000;
         const clampedThrow = Math.max(-maxThrow, Math.min(maxThrow, rawThrow));
@@ -2787,6 +2714,10 @@
           onUpdate() { curX = gsap.getProperty(track, 'x'); },
           onComplete() { curX = normalizeX(curX); gsap.set(track, { x: curX }); }
         });
+        if (dragDist <= 8 && downCard && downCard.querySelector('.wc-img')) {
+          openLightbox(downCard);
+        }
+        downCard = null;
       });
 
       gal.addEventListener('pointercancel', () => {
@@ -2825,7 +2756,6 @@
           width: window.innerWidth, height: window.innerHeight,
           borderRadius: 0, duration: 0.52, ease: 'expo.out'
         });
-        gsap.to(galModalBg, { background: 'rgba(8,7,5,0.92)', duration: 0.35, ease: 'power2.out' });
         gsap.to(galClose, { opacity: 1, scale: 1, duration: 0.28, delay: 0.38, ease: 'back.out(2)' });
         lenis.stop();
       }
@@ -2862,17 +2792,10 @@
             }
           });
         }
-        gsap.to(galModalBg, { background: 'rgba(8,7,5,0)', duration: 0.36, ease: 'power2.in' });
         gsap.to(galClose, { opacity: 0, scale: 0.7, duration: 0.18 });
         lenis.start();
       }
 
-      /* Click fires only when drag < 6px and card has a photo */
-      track.addEventListener('click', e => {
-        if (dragDist > 6) return;
-        const card = e.target.closest('.wc');
-        if (card && card.querySelector('.wc-img')) openLightbox(card);
-      });
       galModalBg.addEventListener('click', closeLightbox);
       galClose.addEventListener('click', closeLightbox);
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && originCard) closeLightbox(); });
@@ -3234,7 +3157,22 @@
     cloneAll();
 
     let singleW = 0;
-    requestAnimationFrame(() => { singleW = carousel.scrollWidth / 2; });
+
+    /* Sum original card widths + gaps — more reliable than scrollWidth / 2 */
+    function measureSingleW() {
+      const cards = [...carousel.querySelectorAll('.tr-card:not([data-clone])')];
+      if (!cards.length) return 0;
+      const gap = parseFloat(getComputedStyle(carousel).columnGap) || 16;
+      return cards.reduce((sum, c) => sum + c.offsetWidth + gap, 0);
+    }
+
+    /* Double rAF ensures layout is fully committed before measuring */
+    function scheduleMeasure() {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        singleW = measureSingleW();
+      }));
+    }
+    scheduleMeasure();
 
     let curX = 0;
     const SPEED = 0.375;
@@ -3244,16 +3182,16 @@
 
     /* Called by live Google fetch — keeps static cards, blends in live ones */
     window.__refreshReviews = function(newCards) {
-      /* Remove all clones and any previous live cards, preserve static originals */
       carousel.querySelectorAll('[data-clone]').forEach(c => c.remove());
       carousel.querySelectorAll('.tr-card:not([data-static])').forEach(c => c.remove());
       newCards.forEach(c => carousel.appendChild(c));
       cloneAll();
       curX = 0;
       gsap.set(carousel, { x: 0 });
-      requestAnimationFrame(() => { singleW = carousel.scrollWidth / 2; });
+      scheduleMeasure();
     };
 
+    /* Always returns a value in [-singleW, 0) */
     function normalizeX(x) {
       if (!singleW) return x;
       x = x % singleW;
@@ -3265,7 +3203,7 @@
     gsap.ticker.add(() => {
       if (ptId !== null || wrap.classList.contains('tr-paused') || !singleW) return;
       curX -= SPEED;
-      if (curX < -singleW) curX += singleW;
+      if (curX <= -singleW) curX += singleW;
       gsap.set(carousel, { x: curX });
     });
 
