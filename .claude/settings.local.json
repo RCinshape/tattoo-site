@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(live-server:*)",
+      "Bash(npx live-server*)",
+      "WebFetch(domain:ibb.co)",
+      "WebFetch(domain:i.ibb.co)",
+      "Bash(node -e ':*)",
+      "WebSearch",
+      "WebFetch(domain:nicelocal.co.uk)",
+      "WebFetch(domain:yably.co.uk)",
+      "WebFetch(domain:www.tattoodo.com)",
+      "WebFetch(domain:www.facebook.com)",
+      "Bash(magick --version)",
+      "Bash(convert --version)",
+      "Bash(ffmpeg -version)",
+      "Bash(file c:/Website/tattoo-site/pictures/*.jpg c:/Website/tattoo-site/pictures/*.jpeg c:/Website/tattoo-site/pictures/*.png)",
+      "Bash(du -sh pictures/*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git tag:*)",
+      "Bash(cmd *)",
+      "WebFetch(domain:www.sliderrevolution.com)",
+      "WebFetch(domain:webflow.com)",
+      "WebFetch(domain:tympanus.net)",
+      "WebFetch(domain:rathcoremarketing.com)",
+      "WebFetch(domain:www.founderjar.com)",
+      "Bash(git checkout *)",
+      "WebFetch(domain:developers.cloudflare.com)",
+      "Bash(grep -n \"\\\\\\\\\\\\\\\\[*]\" /c/Website/tattoo-site/index.html)",
+      "Bash(grep *)",
+      "PowerShell(Rename-Item *)"
+    ]
+  },
+  "model": "claude-sonnet-4-6"
+}
