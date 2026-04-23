@@ -67,20 +67,7 @@
     .vignette {
       position: fixed; inset: 0;
       pointer-events: none; z-index: 9998;
-      background:
-        radial-gradient(ellipse at 0% 0%,   rgba(196,162,98,.022) 0%, transparent 48%),
-        radial-gradient(ellipse at 100% 0%,  rgba(196,162,98,.016) 0%, transparent 48%),
-        radial-gradient(ellipse at 0% 100%,  rgba(196,162,98,.016) 0%, transparent 48%),
-        radial-gradient(ellipse at 100% 100%,rgba(196,162,98,.022) 0%, transparent 48%),
-        radial-gradient(ellipse 90% 85% at 50% 50%, transparent 48%, rgba(8,7,5,.52) 100%);
-    }
-    .ambience {
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 9996;
-      background:
-        radial-gradient(ellipse 55% 55% at 8% 12%,  rgba(196,162,98,.055) 0%, transparent 70%),
-        radial-gradient(ellipse 45% 45% at 95% 95%, rgba(196,162,98,.05)  0%, transparent 70%),
-        radial-gradient(ellipse 38% 38% at 65% 45%, rgba(196,162,98,.04)  0%, transparent 70%);
+      background: radial-gradient(ellipse 110% 110% at 50% 50%, transparent 40%, rgba(8,7,5,.38) 70%, rgba(8,7,5,.62) 100%);
     }
 
     /* ══════════════════════════════════════════
@@ -226,10 +213,10 @@
       content: '';
       position: absolute; inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 50% 0%,   rgba(8,7,5,.72) 0%, transparent 70%),
-        linear-gradient(to bottom, transparent 40%, rgba(8,7,5,.85) 72%, rgba(8,7,5,1) 100%),
-        radial-gradient(ellipse 40% 100% at 0% 50%,   rgba(8,7,5,.78) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 100% at 100% 50%, rgba(8,7,5,.78) 0%, transparent 70%);
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(8,7,5,.65) 0%, transparent 100%),
+        linear-gradient(to bottom, transparent 20%, rgba(8,7,5,.2) 40%, rgba(8,7,5,.6) 60%, rgba(8,7,5,.88) 78%, rgba(8,7,5,1) 100%),
+        radial-gradient(ellipse 35% 100% at 0% 50%,   rgba(8,7,5,.7) 0%, transparent 100%),
+        radial-gradient(ellipse 35% 100% at 100% 50%, rgba(8,7,5,.7) 0%, transparent 100%);
       z-index: 1;
     }
 
@@ -394,7 +381,7 @@
       border-radius: var(--r);
       border: 1px solid var(--border);
       overflow: hidden; position: relative;
-      flex-shrink: 0; cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Ccircle cx='11' cy='11' r='7.5' fill='none' stroke='%23c4a262' stroke-width='2'/%3E%3Cline x1='16.5' y1='16.5' x2='23' y2='23' stroke='%23c4a262' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='8' y1='11' x2='14' y2='11' stroke='%23c4a262' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='11' y1='8' x2='11' y2='14' stroke='%23c4a262' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") 11 11, zoom-in;
+      flex-shrink: 0; cursor: pointer;
       transition: border-color .4s, transform .22s ease;
     }
     /* iOS press-down feel when dragging */
@@ -463,14 +450,14 @@
     /* View circle */
     .wc-view {
       position: absolute; top: 50%; left: 50%; z-index: 4;
-      width: 58px; height: 58px; border-radius: 50%;
+      width: 54px; height: 54px; border-radius: 50%;
       border: 1px solid rgba(196,162,98,.5);
-      background: rgba(8,7,5,.68); backdrop-filter: blur(8px);
+      background: rgba(8,7,5,.62);
       display: flex; align-items: center; justify-content: center;
-      color: var(--gold); font-size: 1rem;
       transform: translate(-50%,-50%) scale(0);
       transition: transform .4s var(--sp);
     }
+    .wc-view svg { width: 22px; height: 22px; }
     .wc:hover .wc-view { transform: translate(-50%,-50%) scale(1); }
 
     /* ── Gallery lightbox ── */
@@ -1114,7 +1101,7 @@
     .tr-carousel-wrap.tr-dragging { cursor: grabbing; }
     .tr-carousel {
       display: flex; gap: 16px;
-      padding: 0 var(--pad) 16px;
+      padding: 0 0 16px var(--pad);
       width: max-content; user-select: none;
     }
     .tr-card {
@@ -1629,7 +1616,6 @@
 <body>
 
 <div class="vignette"  aria-hidden="true"></div>
-<div class="ambience"  aria-hidden="true"></div>
 <div id="prog"  aria-hidden="true"></div>
 
 <!-- ════ LOADER ════ -->
@@ -1717,56 +1703,56 @@
       <article class="wc" aria-label="Work 1" data-full="pictures/flowing-line.jpg">
         <img class="wc-img" src="pictures/flowing-line.jpg" alt="Emmy Tattoo — piece 1" loading="eager">
         <div class="wc-num">01</div>
-        <div class="wc-view">→</div>
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-title">No. 01</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 2" data-full="pictures/fighter-owl.jpg">
         <img class="wc-img" src="pictures/fighter-owl.jpg" alt="Emmy Tattoo — piece 2" loading="lazy">
         <div class="wc-num">02</div>
-        <div class="wc-view">→</div>
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-title">No. 02</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 3" data-full="pictures/cute-doggie.jpg">
         <img class="wc-img" src="pictures/cute-doggie.jpg" alt="Emmy Tattoo — piece 3" loading="lazy">
         <div class="wc-num">03</div>
-        <div class="wc-view">→</div>
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-title">No. 03</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 4" data-full="pictures/wolfy-wolf.jpg">
         <img class="wc-img" src="pictures/wolfy-wolf.jpg" alt="Emmy Tattoo — piece 4" loading="lazy">
         <div class="wc-num">04</div>
-        <div class="wc-view">→</div>
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-title">No. 04</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 5" data-full="pictures/9.jpg">
         <img class="wc-img" src="pictures/9.jpg" alt="Emmy Tattoo — piece 5" loading="lazy">
         <div class="wc-num">05</div>
-        <div class="wc-view">→</div>
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-title">No. 05</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 6" data-full="pictures/cute-doggie-2.jpg">
         <img class="wc-img" src="pictures/cute-doggie-2.jpg" alt="Emmy Tattoo — piece 6" loading="lazy">
         <div class="wc-num">06</div>
-        <div class="wc-view">→</div>
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-title">No. 06</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 7" data-full="pictures/water-wolf.jpg">
         <img class="wc-img" src="pictures/water-wolf.jpg" alt="Emmy Tattoo — piece 7" loading="lazy">
         <div class="wc-num">07</div>
-        <div class="wc-view">→</div>
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-title">No. 07</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 8" data-full="pictures/buncha-cats.jpg">
         <img class="wc-img" src="pictures/buncha-cats.jpg" alt="Emmy Tattoo — piece 8" loading="lazy">
         <div class="wc-num">08</div>
-        <div class="wc-view">→</div>
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-title">No. 08</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
@@ -3096,12 +3082,13 @@
 
     let singleW = 0;
 
-    /* Sum original card widths + gaps — more reliable than scrollWidth / 2 */
+    /* Measure using actual DOM positions — immune to padding/gap edge cases */
     function measureSingleW() {
       const cards = [...carousel.querySelectorAll('.tr-card:not([data-clone])')];
-      if (!cards.length) return 0;
-      const gap = parseFloat(getComputedStyle(carousel).columnGap) || 16;
-      return cards.reduce((sum, c) => sum + c.offsetWidth + gap, 0);
+      if (cards.length < 2) return 0;
+      const first = cards[0], last = cards[cards.length - 1];
+      const gap = cards[1].offsetLeft - (cards[0].offsetLeft + cards[0].offsetWidth);
+      return (last.offsetLeft + last.offsetWidth) - first.offsetLeft + gap;
     }
 
     /* Double rAF ensures layout is fully committed before measuring */
