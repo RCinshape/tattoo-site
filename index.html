@@ -671,9 +671,82 @@
       transition: filter .8s var(--out);
     }
     .ei.open .ei-expand-img img { filter: brightness(.92) saturate(.8); }
+
+    .ei-see-more {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 14px;
+      font-family: var(--mono); font-size: .72rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      cursor: pointer; background: none; border: none; padding: 0;
+      transition: opacity .2s;
+    }
+    .ei-see-more:hover { opacity: .7; }
+
+    /* ── Skill gallery carousel modal ── */
+    #sk-modal {
+      position: fixed; inset: 0; z-index: 99995;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+    }
+    #sk-modal.open { opacity: 1; pointer-events: all; }
+    #sk-modal-bg {
+      position: absolute; inset: 0;
+      background: rgba(8,7,5,.88);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    }
+    #sk-modal-inner {
+      position: relative; z-index: 1;
+      width: min(92vw, 600px);
+      display: flex; flex-direction: column; align-items: center; gap: 20px;
+    }
+    #sk-modal-img-wrap {
+      width: 100%; aspect-ratio: 3/4;
+      border-radius: var(--r); overflow: hidden;
+      background: rgba(255,255,255,.03);
+    }
+    #sk-modal-img {
+      width: 100%; height: 100%; object-fit: contain;
+      display: block;
+      transition: opacity .22s;
+    }
+    #sk-modal-nav {
+      display: flex; align-items: center; gap: 24px;
+    }
+    .sk-nav-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid var(--border-h);
+      background: rgba(8,7,5,.6);
+      color: var(--fg); font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: border-color .2s, background .2s;
+    }
+    .sk-nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+    #sk-modal-counter {
+      font-family: var(--mono); font-size: .72rem;
+      letter-spacing: .18em; color: var(--fg2);
+      min-width: 52px; text-align: center;
+    }
+    #sk-modal-close {
+      position: absolute; top: -14px; right: -14px;
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid var(--border-h);
+      background: rgba(8,7,5,.8);
+      color: var(--fg); font-size: .68rem; font-family: var(--mono);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background .2s;
+    }
+    #sk-modal-close:hover { background: rgba(196,162,98,.15); color: var(--gold); }
+    #sk-modal-label {
+      font-family: var(--mono); font-size: .68rem;
+      letter-spacing: .16em; text-transform: uppercase; color: var(--fg2);
+    }
+
     @media (max-width: 768px) {
       .ei-expand-inner { grid-template-columns: 1fr; padding-left: 0; }
       .ei-expand-img { aspect-ratio: 3/4; }
+      #sk-modal-img-wrap { aspect-ratio: 4/5; }
     }
 
     /* Animated bottom rule — GSAP-owned */
@@ -1841,8 +1914,9 @@
   </div>
   <ul class="exp-list">
 
-    <li class="ei">
-
+    <li class="ei" data-gallery='[
+      {"src":"pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg","alt":"Minimalist fine-line abstract continuous flower tattoo"}
+    ]'>
       <div class="ei-nw"><span class="ei-name">Fine Line</span></div>
       <span class="ei-desc">Single needle · ultra-precise · long-lasting</span>
       <span class="ei-arr">→</span>
@@ -1850,13 +1924,18 @@
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
           <p class="ei-expand-text">Single-needle work. Ultra-thin lines that hold crisp definition over years without spreading or blurring. Best suited to botanical studies, geometric forms, and script.</p>
-          <div class="ei-expand-img"><img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull." loading="lazy"></div>
+          <div class="ei-expand-img">
+            <img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull." loading="lazy">
+          </div>
         </div>
+        <button class="ei-see-more" aria-label="See more fine line work">See more &nbsp;›</button>
       </div>
     </li>
 
-    <li class="ei">
-
+    <li class="ei" data-gallery='[
+      {"src":"pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg","alt":"Flying barn owl black and grey tattoo"},
+      {"src":"pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg","alt":"Classical mythology Hermes fine art tattoo"}
+    ]'>
       <div class="ei-nw"><span class="ei-name">Fine Art</span></div>
       <span class="ei-desc">Illustrative · considered · bespoke</span>
       <span class="ei-arr">→</span>
@@ -1864,13 +1943,21 @@
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
           <p class="ei-expand-text">Illustrative work — botanical, abstract, and figurative pieces drawn from scratch. Designed around your concept and placement.</p>
-          <div class="ei-expand-img"><img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull." loading="lazy"></div>
+          <div class="ei-expand-img">
+            <img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull." loading="lazy">
+          </div>
         </div>
+        <button class="ei-see-more" aria-label="See more fine art work">See more &nbsp;›</button>
       </div>
     </li>
 
-    <li class="ei">
-
+    <li class="ei" data-gallery='[
+      {"src":"pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg","alt":"Wolf portrait clock forest forearm half-sleeve"},
+      {"src":"pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg","alt":"Pug Bonnie portrait with roses on thigh"},
+      {"src":"pictures/Black-Pug-Portrait-Tattoo-With-Daisies.jpg","alt":"Black pug Marley portrait with daisies"},
+      {"src":"pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg","alt":"Thresher shark realism tattoo"},
+      {"src":"pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg","alt":"Five cat portraits — Hazel, Ocean, Wolfie, Oreo and Pumpkin"}
+    ]'>
       <div class="ei-nw"><span class="ei-name">Realism</span></div>
       <span class="ei-desc">Lifelike · detailed · accurate</span>
       <span class="ei-arr">→</span>
@@ -1878,8 +1965,11 @@
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
           <p class="ei-expand-text">A lifelike rendering of anything you can photograph. Depth, tonal range, and texture reproduced accurately — from portraits to natural subjects to still life.</p>
-          <div class="ei-expand-img"><img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" alt="Wolf portrait clock forest forearm realism tattoo by Emmy, Hull." loading="lazy"></div>
+          <div class="ei-expand-img">
+            <img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" alt="Wolf portrait clock forest forearm realism tattoo by Emmy, Hull." loading="lazy">
+          </div>
         </div>
+        <button class="ei-see-more" aria-label="See more realism work">See more &nbsp;›</button>
       </div>
     </li>
 
@@ -2338,6 +2428,23 @@
     </iframe>
   </div>
 </section>
+
+<!-- ════ SKILL CAROUSEL MODAL ════ -->
+<div id="sk-modal" role="dialog" aria-modal="true" aria-label="Skill gallery" aria-hidden="true">
+  <div id="sk-modal-bg"></div>
+  <div id="sk-modal-inner">
+    <button id="sk-modal-close" aria-label="Close">✕</button>
+    <div id="sk-modal-img-wrap">
+      <img id="sk-modal-img" src="" alt="">
+    </div>
+    <div id="sk-modal-nav">
+      <button class="sk-nav-btn" id="sk-prev" aria-label="Previous">‹</button>
+      <span id="sk-modal-counter">1 / 1</span>
+      <button class="sk-nav-btn" id="sk-next" aria-label="Next">›</button>
+    </div>
+    <span id="sk-modal-label"></span>
+  </div>
+</div>
 
 <!-- ════ GALLERY LIGHTBOX ════ -->
 <div id="gal-modal-bg" aria-hidden="true"></div>
@@ -3032,6 +3139,77 @@
           .to(bgN,    { opacity: 0.045, duration: 0.3, ease: 'power2.out' }, 0);
       });
     });
+
+    /* ── Skill carousel modal ── */
+    (() => {
+      const modal   = document.getElementById('sk-modal');
+      const modalBg = document.getElementById('sk-modal-bg');
+      const img     = document.getElementById('sk-modal-img');
+      const counter = document.getElementById('sk-modal-counter');
+      const label   = document.getElementById('sk-modal-label');
+      const btnPrev = document.getElementById('sk-prev');
+      const btnNext = document.getElementById('sk-next');
+      const btnClose= document.getElementById('sk-modal-close');
+      if (!modal) return;
+
+      let images = [], idx = 0;
+
+      function show(i) {
+        idx = (i + images.length) % images.length;
+        img.style.opacity = '0';
+        setTimeout(() => {
+          img.src = images[idx].src;
+          img.alt = images[idx].alt;
+          img.style.opacity = '1';
+        }, 120);
+        counter.textContent = `${idx + 1} / ${images.length}`;
+        btnPrev.style.display = images.length < 2 ? 'none' : '';
+        btnNext.style.display = images.length < 2 ? 'none' : '';
+      }
+
+      function open(ei) {
+        try { images = JSON.parse(ei.dataset.gallery || '[]'); } catch(e) { images = []; }
+        if (!images.length) return;
+        label.textContent = ei.querySelector('.ei-name')?.textContent || '';
+        show(0);
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        lenis.stop();
+      }
+
+      function close() {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        lenis.start();
+      }
+
+      document.querySelectorAll('.ei-see-more').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          open(btn.closest('.ei'));
+        });
+      });
+
+      btnPrev.addEventListener('click', () => show(idx - 1));
+      btnNext.addEventListener('click', () => show(idx + 1));
+      btnClose.addEventListener('click', close);
+      modalBg.addEventListener('click', close);
+      document.addEventListener('keydown', e => {
+        if (!modal.classList.contains('open')) return;
+        if (e.key === 'Escape') close();
+        if (e.key === 'ArrowLeft')  show(idx - 1);
+        if (e.key === 'ArrowRight') show(idx + 1);
+      });
+
+      /* swipe support */
+      let swipeX = null;
+      modal.addEventListener('pointerdown', e => { swipeX = e.clientX; });
+      modal.addEventListener('pointerup',   e => {
+        if (swipeX === null) return;
+        const d = e.clientX - swipeX; swipeX = null;
+        if (Math.abs(d) > 40) show(d < 0 ? idx + 1 : idx - 1);
+      });
+    })();
 
     /* ── Aftercare ── */
     gsap.fromTo('#aftercare .ac-hd',
