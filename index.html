@@ -100,22 +100,15 @@
        CURSOR
     ══════════════════════════════════════════ */
     #cr {
-      position: fixed; left: 0; top: 0; width: 38px; height: 38px;
-      border: 1px solid rgba(196,162,98,.45); border-radius: 50%;
-      pointer-events: none; z-index: 99999;
-      transition: width .4s var(--out), height .4s var(--out),
-                  border-color .3s, background .3s;
-      will-change: transform;
-    }
-    #cr.h { width: 76px; height: 76px; border-color: rgba(196,162,98,.7); background: rgba(196,162,98,.05); }
-
-    #cd {
-      position: fixed; left: 0; top: 0; width: 4px; height: 4px;
-      background: var(--gold); border-radius: 50%;
+      position: fixed; left: 0; top: 0; width: 20px; height: 24px;
+      background: var(--gold);
+      clip-path: polygon(0% 0%, 0% 88%, 30% 64%, 44% 96%, 58% 89%, 44% 57%, 72% 57%);
       pointer-events: none; z-index: 99999;
       will-change: transform;
+      transition: opacity .2s;
     }
-    @media (max-width: 768px) { #cr, #cd { display: none; } }
+    #cr.h { opacity: .75; }
+    @media (max-width: 768px) { #cr { display: none; } }
 
     /* ══════════════════════════════════════════
        LOADER
@@ -1660,16 +1653,9 @@
 
 <div class="vignette"  aria-hidden="true"></div>
 <div class="ambience"  aria-hidden="true"></div>
-<div class="bg-aurora" aria-hidden="true">
-  <div class="aur aur-1"></div>
-  <div class="aur aur-2"></div>
-  <div class="aur aur-3"></div>
-  <div class="aur aur-4"></div>
-</div>
 <div id="mouse-glow"   aria-hidden="true"></div>
 <div id="prog"  aria-hidden="true"></div>
 <div id="cr"    aria-hidden="true"></div>
-<div id="cd"    aria-hidden="true"></div>
 
 <!-- ════ LOADER ════ -->
 <div id="loader" aria-hidden="true">
@@ -2475,27 +2461,21 @@
   /* ═══ CURSOR ═══ */
   if (window.innerWidth > 768) {
     const cr = document.getElementById('cr');
-    const cd = document.getElementById('cd');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-    let crHW = 19;          // cached half-width — 19 (38px) or 38 (76px expanded)
-    let scl = 1, sclT = 1;  // scale: current / target — lerped in ticker
+    let mx = 0, my = 0;
+    let scl = 1, sclT = 1;
 
     document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
     document.addEventListener('mousedown', () => sclT = .82);
     document.addEventListener('mouseup',   () => sclT = 1);
 
     document.querySelectorAll('a,.wc,.ei,.fq-item,button').forEach(el => {
-      el.addEventListener('mouseenter', () => { cr.classList.add('h');    crHW = 38; });
-      el.addEventListener('mouseleave', () => { cr.classList.remove('h'); crHW = 19; });
+      el.addEventListener('mouseenter', () => cr.classList.add('h'));
+      el.addEventListener('mouseleave', () => cr.classList.remove('h'));
     });
 
-    /* single GSAP tick — no offsetWidth reads, no GSAP tween overhead, pure style writes */
     gsap.ticker.add(() => {
-      rx  += (mx   - rx)  * .1;
-      ry  += (my   - ry)  * .1;
       scl += (sclT - scl) * .18;
-      cr.style.transform = `translate(${rx - crHW}px,${ry - crHW}px) scale(${scl})`;
-      cd.style.transform = `translate(${mx - 2}px,${my - 2}px)`;
+      cr.style.transform = `translate(${mx}px,${my}px) scale(${scl})`;
     });
   }
 
