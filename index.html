@@ -394,7 +394,7 @@
       border-radius: var(--r);
       border: 1px solid var(--border);
       overflow: hidden; position: relative;
-      flex-shrink: 0; cursor: pointer;
+      flex-shrink: 0; cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Ccircle cx='11' cy='11' r='7.5' fill='none' stroke='%23c4a262' stroke-width='2'/%3E%3Cline x1='16.5' y1='16.5' x2='23' y2='23' stroke='%23c4a262' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='8' y1='11' x2='14' y2='11' stroke='%23c4a262' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='11' y1='8' x2='11' y2='14' stroke='%23c4a262' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") 11 11, zoom-in;
       transition: border-color .4s, transform .22s ease;
     }
     /* iOS press-down feel when dragging */
@@ -476,15 +476,15 @@
     /* ── Gallery lightbox ── */
     #gal-modal-bg {
       position: fixed; inset: 0; z-index: 99990;
-      pointer-events: none;
+      pointer-events: none; opacity: 0;
+      background: rgba(8,7,5,0.55);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
     }
     #gal-modal {
       position: fixed; z-index: 99991;
       overflow: hidden; display: none;
-      background: rgba(8,7,5,0.35);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      will-change: top, left, width, height, border-radius;
+      background: transparent;
     }
     #gal-modal-img {
       width: 100%; height: 100%;
@@ -2314,6 +2314,11 @@
      Set to false when not taking bookings — updates pill text + colour */
   const DIARY_OPEN = true;
 
+  /* ═══ LOW-END DEVICE DETECTION ═══ */
+  const LOW_END = navigator.hardwareConcurrency <= 4
+    || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (LOW_END) gsap.globalTimeline.timeScale(1); // keep timing but skip below
+
   /* ═══ SCROLL RESET ON REFRESH ═══ */
   if (history.scrollRestoration) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
@@ -2394,7 +2399,8 @@
   }
   szCvs();
 
-  const pts = Array.from({ length: 28 }, () => ({
+  const ptCount = LOW_END ? 0 : 28;
+  const pts = Array.from({ length: ptCount }, () => ({
     x: Math.random() * cW, y: Math.random() * cH,
     r: Math.random() * 1.6 + .4,
     dx: (Math.random() - .5) * .28,
@@ -2675,11 +2681,11 @@
         if (!img) return;
         originCard = card;
         const rect = card.getBoundingClientRect();
-        /* data-full = hi-res original; falls back to thumbnail src */
         galModalImg.src = card.dataset.full || img.src;
         galModal.style.display = 'block';
         galModal.setAttribute('aria-hidden', 'false');
         galModalBg.style.pointerEvents = 'all';
+        gsap.to(galModalBg, { opacity: 1, duration: 0.22, ease: 'power1.out' });
         gsap.set(galModal, {
           top: rect.top, left: rect.left,
           width: rect.width, height: rect.height,
@@ -2698,7 +2704,7 @@
       function closeLightbox() {
         if (!originCard) return;
         const r = originCard.getBoundingClientRect();
-        /* If card scrolled offscreen, shrink to center instead of chasing it */
+        gsap.to(galModalBg, { opacity: 0, duration: 0.28, ease: 'power1.in' });
         const onscreen = r.top < window.innerHeight && r.bottom > 0
                       && r.left < window.innerWidth && r.right > 0;
         if (onscreen) {
@@ -2714,10 +2720,7 @@
           });
         } else {
           gsap.to(galModal, {
-            top: window.innerHeight * 0.1, left: window.innerWidth * 0.1,
-            width: window.innerWidth * 0.8, height: window.innerHeight * 0.8,
-            borderRadius: CARD_R, opacity: 0,
-            duration: 0.38, ease: 'power2.in',
+            opacity: 0, duration: 0.28, ease: 'power2.in',
             onComplete() {
               galModal.style.display = 'none';
               galModal.setAttribute('aria-hidden', 'true');
