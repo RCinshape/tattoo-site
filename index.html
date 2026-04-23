@@ -1088,8 +1088,7 @@
       .bk-step  { padding: 0 18px; }
       .bk-step-div { width: 28px; }
       .bk-wm { font-size: clamp(10rem, 28vw, 16rem); }
-      .bk-av { padding: 9px 16px; }
-      .bk-avtxt { font-size: .66rem; letter-spacing: .12em; }
+      .bk-av-long { display: none; }
     }
 
 
@@ -1987,7 +1986,7 @@
     <!-- Availability pill -->
     <div class="bk-av">
       <span class="bk-avdot"></span>
-      <span class="bk-avtxt">Diary open &nbsp;·&nbsp; taking appointments now</span>
+      <span class="bk-avtxt">Diary open<span class="bk-av-long">&nbsp;·&nbsp; taking appointments now</span></span>
     </div>
 
     <!-- Heading -->
@@ -2374,7 +2373,7 @@
   if (!DIARY_OPEN) {
     const avTxt = document.querySelector('.bk-avtxt');
     const avDot = document.querySelector('.bk-avdot');
-    if (avTxt) avTxt.textContent = 'Diary closed \u00b7 not taking appointments';
+    if (avTxt) { avTxt.innerHTML = 'Diary closed<span class="bk-av-long">&nbsp;\u00b7&nbsp; not taking appointments</span>'; }
     if (avDot) { avDot.style.background = '#e05555'; avDot.style.boxShadow = '0 0 12px rgba(224,85,85,.7)'; }
   }
   gsap.ticker.add(t => lenis.raf(t * 1000));
