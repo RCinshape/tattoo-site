@@ -368,7 +368,7 @@
     @keyframes wha { 0%,100% { opacity: .15; transform: translateX(0); } 50% { opacity: 1; transform: translateX(5px); } }
 
     /* Gallery */
-    .w-gal { overflow: hidden; cursor: grab; user-select: none; }
+    .w-gal { overflow: hidden; cursor: grab; user-select: none; touch-action: pan-y; }
     .w-gal.dragging { cursor: grabbing; }
     .w-track {
       display: flex; gap: 14px;
@@ -2603,22 +2603,33 @@
       gal.addEventListener('mouseenter', () => { galPaused = true; });
       gal.addEventListener('mouseleave', () => { galPaused = false; });
 
-      /* ── Pointer drag — setPointerCapture keeps tracking even off-element ── */
+      /* ── Pointer drag — capture only after confirming horizontal intent ── */
+      let startY = 0, captured = false;
+
       gal.addEventListener('pointerdown', e => {
         if (e.button !== 0 && e.pointerType === 'mouse') return;
         downCard = e.target.closest('.wc');
-        gal.setPointerCapture(e.pointerId);
         ptId = e.pointerId;
         startX = prevX = e.clientX;
+        startY = e.clientY;
         startTrackX = curX;
         dragDist = 0;
+        captured = false;
         velBuf.length = 0;
         gsap.killTweensOf(track);
-        gal.classList.add('dragging');
       });
 
       gal.addEventListener('pointermove', e => {
         if (e.pointerId !== ptId) return;
+        const dx = Math.abs(e.clientX - startX);
+        const dy = Math.abs(e.clientY - startY);
+        if (!captured) {
+          if (dy > dx) { ptId = null; return; }
+          if (dx < 6) return;
+          captured = true;
+          gal.setPointerCapture(e.pointerId);
+          gal.classList.add('dragging');
+        }
         const delta = e.clientX - prevX;
         velBuf.push(delta);
         if (velBuf.length > 8) velBuf.shift();
