@@ -493,11 +493,7 @@
     }
     .wc:hover::after { transform: translateX(130%); }
 
-    .wc-num {
-      position: absolute; bottom: 18px; right: 18px; z-index: 4;
-      font-family: var(--mono); font-size: .66rem;
-      letter-spacing: .1em; color: var(--fg2);
-    }
+
 
     /* Hover label */
     .wc-lbl {
@@ -507,11 +503,6 @@
       transform: translateY(100%); transition: transform .5s var(--out);
     }
     .wc:hover .wc-lbl { transform: translateY(0); }
-    .wc-title {
-      font-family: var(--serif); font-size: 1.2rem;
-      font-weight: 300; font-style: italic;
-      color: var(--fg); margin-bottom: 3px;
-    }
     .wc-sub {
       font-family: var(--mono); font-size: .68rem;
       letter-spacing: .12em; text-transform: uppercase;
@@ -661,8 +652,11 @@
       font-size: 1rem; color: var(--fg2);
       line-height: 1.9;
     }
+    .ei-img-col {
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+    }
     .ei-expand-img {
-      aspect-ratio: 3/4; border-radius: var(--r);
+      width: 100%; aspect-ratio: 3/4; border-radius: var(--r);
       overflow: hidden; border: 1px solid var(--border);
     }
     .ei-expand-img img {
@@ -673,12 +667,13 @@
     .ei.open .ei-expand-img img { filter: brightness(.92) saturate(.8); }
 
     .ei-see-more {
-      display: inline-flex; align-items: center; gap: 6px;
-      margin-top: 14px;
+      display: flex; align-items: center; gap: 6px;
+      margin: 10px auto 0;
       font-family: var(--mono); font-size: .72rem;
       letter-spacing: .18em; text-transform: uppercase;
       color: var(--gold); text-decoration: none;
       cursor: pointer; background: none; border: none; padding: 0;
+      width: fit-content;
       transition: opacity .2s;
     }
     .ei-see-more:hover { opacity: .7; }
@@ -1025,6 +1020,7 @@
     @media (max-width: 768px) {
       #gifts { grid-template-columns: 1fr; padding: 72px 24px; gap: 44px; }
       .gf-p { max-width: 100%; }
+      .gf-occasions { justify-content: center; }
     }
 
     /* ══════════════════════════════════════════
@@ -1233,7 +1229,7 @@
       letter-spacing: .18em; text-transform: uppercase; color: var(--fg2);
     }
     @media (max-width: 768px) {
-      .tr-head { flex-direction: column; align-items: flex-start; padding-bottom: 36px; }
+      .tr-head { flex-direction: column; align-items: flex-start; padding: 0 24px 36px; }
       .tr-head-r { text-align: left; }
     }
     /* Horizontal carousel */
@@ -1838,7 +1834,6 @@
         <span class="wh-arrows"><span>›</span><span>›</span><span>›</span></span>
         Drag to explore
       </div>
-      <div style="margin-top:3px">06 pieces selected</div>
     </div>
   </div>
   <div class="w-gal">
@@ -1846,58 +1841,57 @@
 
       <article class="wc" aria-label="Work 1" data-full="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg">
         <img class="wc-img" src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" alt="Minimalist fine-line tattoo on an upper arm featuring an abstract, continuous flowing line that forms a delicate flower." loading="eager">
-        <div class="wc-num">01</div>
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-title">No. 01</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 2" data-full="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg">
         <img class="wc-img" src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" alt="Detailed black and grey tattoo of a barn owl in mid-flight with talons extended, placed on the upper arm." loading="lazy">
-        <div class="wc-num">02</div>
+
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-title">No. 02</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 3" data-full="pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg">
         <img class="wc-img" src="pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg" alt="Black and grey realistic portrait tattoo of a pug named Bonnie, surrounded by roses and floral accents on a client's thigh." loading="lazy">
-        <div class="wc-num">03</div>
+
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-title">No. 03</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 4" data-full="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg">
         <img class="wc-img" src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" alt="Black and grey forearm half-sleeve tattoo featuring a realistic wolf face, a shattered Roman numeral clock, and a forest silhouette with a howling wolf." loading="lazy">
-        <div class="wc-num">04</div>
+
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-title">No. 04</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 5" data-full="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg">
         <img class="wc-img" src="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg" alt="Intricate fine-art forearm tattoo featuring a classical winged figure, likely Hermes, surrounded by geometric shapes, a D20 die, and cursive script." loading="lazy">
-        <div class="wc-num">05</div>
+
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-title">No. 05</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 6" data-full="pictures/Black-Pug-Portrait-Tattoo-With-Daisies.jpg">
         <img class="wc-img" src="pictures/Black-Pug-Portrait-Tattoo-With-Daisies.jpg" alt="Highly detailed black and grey realism tattoo of a black pug named Marley, accompanied by daisies, a rose, and cursive script on a thigh." loading="lazy">
-        <div class="wc-num">06</div>
+
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-title">No. 06</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 7" data-full="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg">
         <img class="wc-img" src="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg" alt="Black and grey realism tattoo of a Thresher shark swimming downwards on a client's upper arm." loading="lazy">
-        <div class="wc-num">07</div>
+
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-title">No. 07</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
       <article class="wc" aria-label="Work 8" data-full="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg">
         <img class="wc-img" src="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg" alt="Black and grey realistic pet portrait tattoo featuring five cats named Hazel, Ocean, Wolfie, Oreo, and Pumpkin on a client's upper arm." loading="lazy">
-        <div class="wc-num">08</div>
+
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-title">No. 08</div><div class="wc-sub">Emmy Tattoo · Hull</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Emmy Tattoo · Hull</div></div>
       </article>
 
 
@@ -1924,11 +1918,13 @@
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
           <p class="ei-expand-text">Single-needle work. Ultra-thin lines that hold crisp definition over years without spreading or blurring. Best suited to botanical studies, geometric forms, and script.</p>
-          <div class="ei-expand-img">
-            <img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull." loading="lazy">
+          <div class="ei-img-col">
+            <div class="ei-expand-img">
+              <img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull." loading="lazy">
+            </div>
+            <button class="ei-see-more" aria-label="See more fine line work">See more &nbsp;›</button>
           </div>
         </div>
-        <button class="ei-see-more" aria-label="See more fine line work">See more &nbsp;›</button>
       </div>
     </li>
 
@@ -1943,11 +1939,13 @@
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
           <p class="ei-expand-text">Illustrative work — botanical, abstract, and figurative pieces drawn from scratch. Designed around your concept and placement.</p>
-          <div class="ei-expand-img">
-            <img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull." loading="lazy">
+          <div class="ei-img-col">
+            <div class="ei-expand-img">
+              <img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull." loading="lazy">
+            </div>
+            <button class="ei-see-more" aria-label="See more fine art work">See more &nbsp;›</button>
           </div>
         </div>
-        <button class="ei-see-more" aria-label="See more fine art work">See more &nbsp;›</button>
       </div>
     </li>
 
@@ -1965,11 +1963,13 @@
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
           <p class="ei-expand-text">A lifelike rendering of anything you can photograph. Depth, tonal range, and texture reproduced accurately — from portraits to natural subjects to still life.</p>
-          <div class="ei-expand-img">
-            <img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" alt="Wolf portrait clock forest forearm realism tattoo by Emmy, Hull." loading="lazy">
+          <div class="ei-img-col">
+            <div class="ei-expand-img">
+              <img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" alt="Wolf portrait clock forest forearm realism tattoo by Emmy, Hull." loading="lazy">
+            </div>
+            <button class="ei-see-more" aria-label="See more realism work">See more &nbsp;›</button>
           </div>
         </div>
-        <button class="ei-see-more" aria-label="See more realism work">See more &nbsp;›</button>
       </div>
     </li>
 
