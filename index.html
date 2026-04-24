@@ -1226,20 +1226,22 @@
       margin-top: 12px;
     }
     .tr-h2 em { color: var(--gold); font-style: italic; }
-    .tr-head-r { text-align: right; flex-shrink: 0; }
-    .tr-big-score {
-      font-family: var(--serif);
-      font-size: clamp(4rem, 8vw, 6.5rem);
-      font-weight: 300; letter-spacing: -.04em;
-      line-height: 1; color: var(--fg);
+    .tr-head-r { flex-shrink: 0; }
+    .tr-score-badge {
+      display: inline-flex; align-items: center; gap: 11px;
+      padding: 13px 22px; border-radius: 100px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.018);
     }
-    .tr-stars {
-      color: var(--gold); font-size: .92rem;
-      letter-spacing: .12em; margin: 8px 0 6px;
+    .tr-score-stars { color: var(--gold); font-size: .8rem; letter-spacing: .1em; }
+    .tr-score-val {
+      font-family: var(--serif); font-size: 1.15rem;
+      font-weight: 300; color: var(--fg); line-height: 1;
     }
-    .tr-platform {
-      font-family: var(--mono); font-size: .71rem;
-      letter-spacing: .18em; text-transform: uppercase; color: var(--fg2);
+    .tr-score-sep { color: var(--dim); font-size: .8rem; }
+    .tr-score-meta {
+      font-family: var(--mono); font-size: .63rem;
+      letter-spacing: .16em; text-transform: uppercase; color: var(--fg2);
     }
     @media (max-width: 768px) {
       .tr-head { flex-direction: column; align-items: flex-start; padding: 0 24px 36px; }
@@ -1911,7 +1913,7 @@
     </div>
   </div>
   <div class="w-more-wrap">
-    <a href="/portfolio" class="w-more-btn">View more work &nbsp;›</a>
+    <a href="/my-work" class="w-more-btn">View more work &nbsp;›</a>
   </div>
 </section>
 </div><!-- /#work-outer -->
@@ -2001,9 +2003,12 @@
       <h2 class="tr-h2">What clients <em>say</em></h2>
     </div>
     <div class="tr-head-r">
-      <div class="tr-big-score">5.0</div>
-      <div class="tr-stars">★★★★★</div>
-      <div class="tr-platform">Google Reviews</div>
+      <div class="tr-score-badge">
+        <span class="tr-score-stars">★★★★★</span>
+        <span class="tr-score-val">5.0</span>
+        <span class="tr-score-sep">·</span>
+        <span class="tr-score-meta">17 Google Reviews</span>
+      </div>
     </div>
   </div>
 
@@ -3579,11 +3584,11 @@
     .then(function(data) {
       if (data.error) { console.error('[Reviews] Worker error:', data.error); return; }
       if (data.rating) {
-        var scoreEl = document.querySelector('.tr-big-score');
+        var scoreEl = document.querySelector('.tr-score-val');
         if (scoreEl) scoreEl.textContent = data.rating.toFixed(1);
       }
       if (data.userRatingCount) {
-        var platEl = document.querySelector('.tr-platform');
+        var platEl = document.querySelector('.tr-score-meta');
         if (platEl) platEl.textContent = data.userRatingCount + ' Google Reviews';
       }
       if (data.reviews && data.reviews.length && window.__refreshReviews) {
