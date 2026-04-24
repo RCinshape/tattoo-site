@@ -552,6 +552,19 @@
     }
     #gal-modal-close:hover { background: rgba(196,162,98,.15); color: var(--gold); }
 
+    .w-more-wrap {
+      display: flex; justify-content: center;
+      padding: 32px var(--pad) 0;
+    }
+    .w-more-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--mono); font-size: .72rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      transition: opacity .2s;
+    }
+    .w-more-btn:hover { opacity: .7; }
+
     @media (max-width: 768px) {
       #work-outer { height: auto !important; }
       #work { position: static; height: auto; overflow: visible; padding-top: 72px; }
@@ -1896,6 +1909,9 @@
 
 
     </div>
+  </div>
+  <div class="w-more-wrap">
+    <a href="/portfolio" class="w-more-btn">View more work &nbsp;›</a>
   </div>
 </section>
 </div><!-- /#work-outer -->
