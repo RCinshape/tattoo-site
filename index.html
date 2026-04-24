@@ -438,36 +438,28 @@
     .wh-arrows span:nth-child(3) { animation-delay: .28s; }
     @keyframes wha { 0%,100% { opacity: .15; transform: translateX(0); } 50% { opacity: 1; transform: translateX(5px); } }
 
-    /* Gallery */
-    .w-gal { overflow: hidden; cursor: grab; user-select: none; touch-action: pan-y; }
-    .w-gal.dragging { cursor: grabbing; }
-    .w-track {
-      display: flex; gap: 14px;
-      padding: 0 var(--pad) 20px;
-      width: max-content; will-change: transform;
+    /* Gallery — masonry grid */
+    .w-grid {
+      columns: 3; column-gap: 12px;
+      padding: 0 var(--pad) 48px;
     }
     .wc {
-      width: clamp(220px,26vw,360px);
-      aspect-ratio: 3/4;
+      break-inside: avoid;
+      margin-bottom: 12px;
       border-radius: var(--r);
       border: 1px solid var(--border);
       overflow: hidden; position: relative;
-      flex-shrink: 0; cursor: pointer;
-      transition: border-color .4s, transform .22s ease;
+      cursor: pointer;
+      transition: border-color .4s;
     }
-    /* iOS press-down feel when dragging */
-    .w-gal.dragging .wc { transform: scale(0.987); }
     .wc:hover { border-color: var(--border-h); }
-    /* Photo fills card — full image shown in lightbox */
     .wc { background: #0a0907; }
     .wc-img {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center;
-      transition: filter 1.1s;
+      display: block; width: 100%; height: auto;
+      transition: filter 1.1s, transform .6s var(--out);
       filter: brightness(.9) saturate(.75);
     }
-    .wc:hover .wc-img { filter: brightness(1) saturate(.9); }
+    .wc:hover .wc-img { filter: brightness(1) saturate(.9); transform: scale(1.03); }
 
     /* Placeholder card — shown while waiting for photos */
     .wc:not(:has(.wc-img)) {
@@ -565,16 +557,18 @@
     }
     .w-more-btn:hover { opacity: .7; }
 
+    @media (max-width: 1024px) {
+      .w-grid { columns: 2; }
+    }
     @media (max-width: 768px) {
       #work-outer { height: auto !important; }
       #work { position: static; height: auto; overflow: visible; padding-top: 72px; }
       .w-head { padding: 0 24px 36px; flex-direction: column; align-items: flex-start; gap: 20px; }
-      .w-hint { text-align: left; }
-      .w-track { padding: 0 24px 44px; gap: 12px; }
-      .wc { width: 68vw; aspect-ratio: 2/3; }
-      .w-gal { overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; scrollbar-width: none; }
-      .w-gal::-webkit-scrollbar { display: none; }
-      .wc { scroll-snap-align: start; }
+      .w-grid { columns: 2; padding: 0 16px 36px; column-gap: 8px; }
+      .wc { margin-bottom: 8px; }
+    }
+    @media (max-width: 480px) {
+      .w-grid { columns: 1; }
     }
 
 
@@ -1842,17 +1836,7 @@
 <!-- ════ WORK ════ -->
 <div id="work-outer">
 <section id="work">
-  <div class="w-head">
-    <div></div>
-    <div class="w-hint">
-      <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
-        <span class="wh-arrows"><span>›</span><span>›</span><span>›</span></span>
-        Drag to explore
-      </div>
-    </div>
-  </div>
-  <div class="w-gal">
-    <div class="w-track" id="wtrack">
+  <div class="w-grid">
 
       <article class="wc" aria-label="Work 1" data-full="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg">
         <img class="wc-img" src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" alt="Minimalist fine-line tattoo on an upper arm featuring an abstract, continuous flowing line that forms a delicate flower." loading="eager">
@@ -1910,7 +1894,6 @@
       </article>
 
 
-    </div>
   </div>
   <div class="w-more-wrap">
     <a href="/portfolio" class="w-more-btn">View more work &nbsp;›</a>
@@ -2737,128 +2720,16 @@
       });
     });
 
-    /* ── Work header ── */
-    gsap.fromTo('.w-h2 .tl-i',
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out',
-        scrollTrigger: { trigger: '#work-outer', start: 'top 88%' } }
-    );
-    gsap.from('.w-hint', {
-      opacity: 0, y: 12, duration: 1, ease: 'expo.out',
-      scrollTrigger: { trigger: '#work-outer', start: 'top 82%' }
-    });
-
     /* ── Work cards cascade in ── */
     gsap.fromTo('.wc',
-      { opacity: 0, y: 40, scale: .97 },
-      { opacity: 1, y: 0, scale: 1,
-        stagger: .08, duration: 1.2, ease: 'expo.out',
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0,
+        stagger: .06, duration: 1, ease: 'expo.out',
         scrollTrigger: { trigger: '#work-outer', start: 'top 85%', once: true } }
     );
 
-    /* ── Portfolio gallery — auto-scroll + bulletproof pointer drag ── */
+    /* ── Portfolio grid lightbox ── */
     (() => {
-      const gal   = document.querySelector('.w-gal');
-      const track = document.getElementById('wtrack');
-      if (!gal || !track) return;
-
-      /* Duplicate cards for seamless infinite loop */
-      [...track.children].forEach(c => {
-        const clone = c.cloneNode(true);
-        clone.setAttribute('aria-hidden', 'true');
-        track.appendChild(clone);
-      });
-
-      let singleW = 0;
-      requestAnimationFrame(() => { singleW = track.scrollWidth / 2; });
-
-      let curX = 0;
-      const GAL_SPEED = 0.5;
-      let galPaused = false;
-      let ptId = null, startX = 0, startTrackX = 0, prevX = 0;
-      let dragDist = 0, downCard = null;
-      const velBuf = [];
-
-      function normalizeX(x) {
-        if (!singleW) return x;
-        x = x % singleW;
-        if (x > 0) x -= singleW;
-        return x;
-      }
-
-      /* Auto-scroll */
-      gsap.ticker.add(() => {
-        if (ptId !== null || galPaused || !singleW) return;
-        curX -= GAL_SPEED;
-        if (curX < -singleW) curX += singleW;
-        gsap.set(track, { x: curX });
-      });
-
-      /* Pause on hover */
-      gal.addEventListener('mouseenter', () => { galPaused = true; });
-      gal.addEventListener('mouseleave', () => { galPaused = false; });
-
-      /* ── Pointer drag — capture only after confirming horizontal intent ── */
-      let startY = 0, captured = false;
-
-      gal.addEventListener('pointerdown', e => {
-        if (e.button !== 0 && e.pointerType === 'mouse') return;
-        downCard = e.target.closest('.wc');
-        ptId = e.pointerId;
-        startX = prevX = e.clientX;
-        startY = e.clientY;
-        startTrackX = curX;
-        dragDist = 0;
-        captured = false;
-        velBuf.length = 0;
-        gsap.killTweensOf(track);
-      });
-
-      gal.addEventListener('pointermove', e => {
-        if (e.pointerId !== ptId) return;
-        const dx = Math.abs(e.clientX - startX);
-        const dy = Math.abs(e.clientY - startY);
-        if (!captured) {
-          if (dy > dx) { ptId = null; return; }
-          if (dx < 6) return;
-          captured = true;
-          gal.setPointerCapture(e.pointerId);
-          gal.classList.add('dragging');
-        }
-        const delta = e.clientX - prevX;
-        velBuf.push(delta);
-        if (velBuf.length > 8) velBuf.shift();
-        prevX = e.clientX;
-        dragDist = Math.abs(e.clientX - startX);
-        curX = normalizeX(startTrackX + (e.clientX - startX));
-        gsap.set(track, { x: curX });
-      });
-
-      gal.addEventListener('pointerup', e => {
-        if (e.pointerId !== ptId) return;
-        ptId = null;
-        gal.classList.remove('dragging');
-        const vel = velBuf.length ? velBuf.reduce((s, v) => s + v, 0) / velBuf.length : 0;
-        const rawThrow = vel * 28;
-        const maxThrow = singleW > 0 ? singleW * 0.8 : 2000;
-        const clampedThrow = Math.max(-maxThrow, Math.min(maxThrow, rawThrow));
-        gsap.to(track, {
-          x: curX + clampedThrow, duration: 1.5, ease: 'expo.out',
-          onUpdate() { curX = gsap.getProperty(track, 'x'); },
-          onComplete() { curX = normalizeX(curX); gsap.set(track, { x: curX }); }
-        });
-        if (dragDist <= 8 && downCard && downCard.querySelector('.wc-img')) {
-          openLightbox(downCard);
-        }
-        downCard = null;
-      });
-
-      gal.addEventListener('pointercancel', () => {
-        if (ptId === null) return;
-        ptId = null; gal.classList.remove('dragging');
-      });
-
-      /* ── iOS-style lightbox ── */
       const galModal    = document.getElementById('gal-modal');
       const galModalImg = document.getElementById('gal-modal-img');
       const galModalBg  = document.getElementById('gal-modal-bg');
@@ -2926,6 +2797,9 @@
         lenis.start();
       }
 
+      document.querySelectorAll('.wc').forEach(card => {
+        card.addEventListener('click', () => { if (card.querySelector('.wc-img')) openLightbox(card); });
+      });
       galModalBg.addEventListener('click', closeLightbox);
       galClose.addEventListener('click', closeLightbox);
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && originCard) closeLightbox(); });
