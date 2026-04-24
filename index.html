@@ -410,7 +410,7 @@
     ══════════════════════════════════════════ */
     #work-outer { }
     #work {
-      padding-top: 100px;
+      padding-top: 52px;
       height: auto; overflow: visible;
     }
     .w-head {
@@ -443,7 +443,7 @@
     .w-gal.dragging { cursor: grabbing; }
     .w-track {
       display: flex; gap: 14px;
-      padding: 0 var(--pad) 64px;
+      padding: 0 var(--pad) 20px;
       width: max-content; will-change: transform;
     }
     .wc {
@@ -554,7 +554,7 @@
 
     .w-more-wrap {
       display: flex; justify-content: center;
-      padding: 32px var(--pad) 0;
+      padding: 20px var(--pad) 0;
     }
     .w-more-btn {
       display: inline-flex; align-items: center; gap: 6px;
@@ -1028,8 +1028,8 @@
       transition: color .3s, border-color .3s, transform .3s var(--out);
       cursor: default;
     }
-    .gf-oc:hover { color: var(--gold); border-color: rgba(196,162,98,.4); transform: translateY(-2px); }
-    .gf-oc.gf-hi { border-color: rgba(196,162,98,.2); color: rgba(237,232,223,.7); }
+    .gf-oc:hover { background: rgba(196,162,98,.06); border-color: rgba(237,232,223,.13); }
+    .gf-oc.gf-hi { border-color: rgba(196,162,98,.18); color: rgba(237,232,223,.72); background: rgba(196,162,98,.03); }
     @media (max-width: 768px) {
       #gifts { grid-template-columns: 1fr; padding: 72px 24px; gap: 44px; }
       .gf-p { max-width: 100%; }
@@ -2313,12 +2313,8 @@
   <div class="gf-right">
     <div class="gf-occasions">
       <span class="gf-oc gf-hi">Birthday</span>
-      <span class="gf-oc">Anniversary</span>
       <span class="gf-oc gf-hi">Christmas</span>
-      <span class="gf-oc">Valentine's Day</span>
-      <span class="gf-oc">Graduation</span>
-      <span class="gf-oc gf-hi">Hen Do</span>
-      <span class="gf-oc">New Job</span>
+      <span class="gf-oc">Hen Do</span>
       <span class="gf-oc">Mother's Day</span>
       <span class="gf-oc gf-hi">Just Because</span>
     </div>
