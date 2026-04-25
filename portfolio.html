@@ -277,6 +277,9 @@
     .bc-sub {
       font-size: 1rem; color: var(--fg2); max-width: 440px; line-height: 1.8;
     }
+    .bc-btns {
+      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+    }
     .bc-btn {
       display: inline-flex; align-items: center; gap: 14px;
       font-family: var(--mono); font-size: .72rem;
@@ -290,7 +293,7 @@
       border-color: rgba(196,162,98,.65); background: rgba(196,162,98,.09);
       transform: translateY(-3px);
     }
-    @media (max-width: 768px) { #book-cta { padding: 60px 24px; } }
+    @media (max-width: 768px) { #book-cta { padding: 60px 24px; } .bc-btns { flex-direction: column; align-items: center; } }
 
     /* ── Footer ── */
     footer {
@@ -467,10 +470,16 @@
 <section id="book-cta" aria-label="Booking call to action">
   <h2 class="bc-h2">Like what you <em>see?</em></h2>
   <p class="bc-sub">Start with a message — a reference, a sketch, or just an idea. The design is built from scratch. Consultation is free.</p>
-  <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
-     target="_blank" rel="noopener" class="bc-btn">
-    Enquire via WhatsApp &nbsp;→
-  </a>
+  <div class="bc-btns">
+    <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
+       target="_blank" rel="noopener" class="bc-btn">
+      WhatsApp &nbsp;· +44 7405 979137 &nbsp;→
+    </a>
+    <a href="https://www.instagram.com/emmy.tattoo"
+       target="_blank" rel="noopener" class="bc-btn">
+      Instagram &nbsp;· @emmy.tattoo &nbsp;→
+    </a>
+  </div>
 </section>
 
 <!-- ════ FOOTER ════ -->
