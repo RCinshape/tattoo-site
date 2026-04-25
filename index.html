@@ -601,16 +601,20 @@
     }
     .exp-h2 em { font-style: italic; color: var(--gold); }
     /* ── Expertise — editorial large-type stack ── */
-    .exp-list { list-style: none; }
+    .exp-list { list-style: none; display: flex; flex-direction: column; gap: 12px; padding: 0 var(--pad); }
     .ei {
       position: relative; overflow: hidden;
       display: flex; align-items: center; gap: 0;
       flex-wrap: wrap;
-      min-height: 108px; padding: 30px 0;
-      border-top: 1px solid var(--border);
+      min-height: 108px; padding: 30px 36px;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      background: rgba(255,255,255,.012);
       opacity: 0; cursor: pointer;
+      transition: border-color .35s, background .35s;
     }
-    .ei:last-child { border-bottom: 1px solid var(--border); }
+    .ei:hover { border-color: var(--border-h); background: rgba(255,255,255,.022); }
+    .ei:last-child { border-bottom: 1px solid var(--border); border-bottom-color: var(--border); }
 
     /* Ghost large number — decorative */
     .ei-bg-n {
@@ -776,8 +780,6 @@
 
     @media (max-width: 768px) {
       #exp { padding: 0 24px 80px; }
-      .ei { min-height: 80px; padding: 22px 0; gap: 0; }
-      .ei-desc { display: none; }
       .ei-bg-n { font-size: 4.5rem; }
       .ei-name { font-size: clamp(1.7rem,6vw,2.5rem); }
     }
@@ -1829,23 +1831,10 @@
     /* — Hero blur on scroll — */
     .h-inner { will-change: transform, filter; }
 
-    /* — Horizontal expertise on mobile — */
+    /* — Expertise blocks on mobile — */
     @media (max-width: 768px) {
-      .exp-list {
-        display: flex; flex-direction: row;
-        overflow-x: auto; scroll-snap-type: x mandatory;
-        scrollbar-width: none; gap: 0;
-        padding: 0 24px 24px; margin: 0 -24px;
-        -webkit-overflow-scrolling: touch;
-      }
-      .exp-list::-webkit-scrollbar { display: none; }
-      .ei {
-        flex: 0 0 85vw; scroll-snap-align: start;
-        border: 1px solid var(--border); border-radius: var(--r);
-        padding: 28px 24px; margin-right: 12px;
-        background: rgba(255,255,255,.012);
-      }
-      .ei:last-child { margin-right: 0; }
+      .exp-list { padding: 0 24px; gap: 10px; }
+      .ei { padding: 24px 20px; min-height: auto; }
       .ei-rule { display: none; }
       .ei-accent { display: none; }
     }
@@ -2992,20 +2981,20 @@
           const h = panel.offsetHeight;
           gsap.fromTo(panel,
             { height: 0, overflow: 'hidden' },
-            { height: h, duration: 0.58, ease: 'expo.out',
+            { height: h, duration: 0.32, ease: 'expo.out',
               onComplete() { gsap.set(panel, { height: 'auto' }); } }
           );
           gsap.fromTo(panel.querySelector('.ei-expand-inner'),
-            { opacity: 0, y: 12 },
-            { opacity: 1, y: 0, duration: 0.45, delay: 0.12, ease: 'power3.out' }
+            { opacity: 0, y: 8 },
+            { opacity: 1, y: 0, duration: 0.22, delay: 0.06, ease: 'power3.out' }
           );
-          gsap.to(arr, { rotation: 90, duration: 0.42, ease: 'expo.out' });
+          gsap.to(arr, { rotation: 90, duration: 0.22, ease: 'expo.out' });
         } else {
-          gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.38, ease: 'expo.in' });
+          gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.22, ease: 'expo.in' });
           gsap.to(panel.querySelector('.ei-expand-inner'),
-            { opacity: 0, y: 6, duration: 0.22, ease: 'power2.in' }
+            { opacity: 0, y: 4, duration: 0.14, ease: 'power2.in' }
           );
-          gsap.to(arr, { rotation: 0, duration: 0.32, ease: 'expo.in' });
+          gsap.to(arr, { rotation: 0, duration: 0.18, ease: 'expo.in' });
         }
       });
     });
