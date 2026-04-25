@@ -446,6 +446,7 @@
     .wc {
       break-inside: avoid;
       margin-bottom: 12px;
+      aspect-ratio: 3/4;
       border-radius: var(--r);
       border: 1px solid var(--border);
       overflow: hidden; position: relative;
@@ -455,7 +456,9 @@
     .wc:hover { border-color: var(--border-h); }
     .wc { background: #0a0907; }
     .wc-img {
-      display: block; width: 100%; height: auto;
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
       transition: filter 1.1s, transform .6s var(--out);
       filter: brightness(.9) saturate(.75);
     }
