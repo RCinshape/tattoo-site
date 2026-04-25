@@ -1777,6 +1777,86 @@
       footer { padding: 28px 24px; flex-direction: column; gap: 20px; text-align: center; }
       .ft-links { flex-wrap: wrap; justify-content: center; }
     }
+
+    /* ══════════════════════════════════════════
+       FRAMER ANIMATIONS
+    ══════════════════════════════════════════ */
+
+    /* — Floating CTA — */
+    #float-cta {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 8900; pointer-events: none; opacity: 0;
+    }
+    #float-cta-a {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 15px 30px; border-radius: 100px;
+      background: var(--gold); color: #080705;
+      font-family: var(--mono); font-size: .72rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      text-decoration: none; white-space: nowrap;
+      box-shadow: 0 8px 40px rgba(196,162,98,.4), 0 2px 12px rgba(0,0,0,.55);
+      transition: transform .18s, box-shadow .18s;
+    }
+    #float-cta-a:active {
+      transform: scale(0.94);
+      box-shadow: 0 4px 20px rgba(196,162,98,.25), 0 1px 6px rgba(0,0,0,.4);
+    }
+    @keyframes float-pulse {
+      0%, 100% { box-shadow: 0 8px 40px rgba(196,162,98,.4), 0 2px 12px rgba(0,0,0,.55); }
+      50%       { box-shadow: 0 8px 55px rgba(196,162,98,.65), 0 2px 12px rgba(0,0,0,.55); }
+    }
+    #float-cta-a { animation: float-pulse 2.8s ease-in-out infinite; }
+    @media (min-width: 769px) { #float-cta { display: none; } }
+
+    /* — Spring touch feedback — */
+    .wc          { transition: border-color .4s, transform .22s cubic-bezier(.175,.885,.32,1.275); }
+    .wc:active   { transform: scale(0.95) !important; }
+    .bk-btn:active, .n-btn:active { transform: scale(0.96) translateY(0) !important; transition-duration: .1s !important; }
+    .ei:active   { background: rgba(196,162,98,.04); }
+    .fq-item:active { background: rgba(237,232,223,.02); }
+    .bc-btn:active  { transform: scale(0.96) translateY(0) !important; }
+
+    /* — Clip-path reveal helper — */
+    .cp-hidden { clip-path: inset(0 0 100% 0); }
+
+    /* — Scroll tilt — page-level perspective — */
+    #page-tilt {
+      transform-style: preserve-3d;
+      transition: transform .6s cubic-bezier(.25,.46,.45,.94);
+    }
+
+    /* — Hero blur on scroll — */
+    .h-inner { will-change: transform, filter; }
+
+    /* — Horizontal expertise on mobile — */
+    @media (max-width: 768px) {
+      .exp-list {
+        display: flex; flex-direction: row;
+        overflow-x: auto; scroll-snap-type: x mandatory;
+        scrollbar-width: none; gap: 0;
+        padding: 0 24px 24px; margin: 0 -24px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .exp-list::-webkit-scrollbar { display: none; }
+      .ei {
+        flex: 0 0 85vw; scroll-snap-align: start;
+        border: 1px solid var(--border); border-radius: var(--r);
+        padding: 28px 24px; margin-right: 12px;
+        background: rgba(255,255,255,.012);
+      }
+      .ei:last-child { margin-right: 0; }
+      .ei-rule { display: none; }
+      .ei-accent { display: none; }
+    }
+
+    /* — Section entrance line sweep — */
+    .sec-line {
+      display: block; height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      transform-origin: left; transform: scaleX(0);
+      margin-bottom: 20px; opacity: .5;
+    }
   </style>
 </head>
 <body>
@@ -1828,6 +1908,9 @@
     </a>
   </div>
 </nav>
+
+<!-- ════ MAIN ════ -->
+<main id="page-main">
 
 <!-- ════ HERO ════ -->
 <section id="hero">
@@ -2439,6 +2522,8 @@
   <img id="fl-lb-img" src="" alt="">
 </div>
 
+</main><!-- /#page-main -->
+
 <!-- ════ FOOTER ════ -->
 <footer>
   <div class="ft-logo">Emmy <em>Tattoo</em></div>
@@ -2700,11 +2785,11 @@
       });
     });
 
-    /* ── Work cards cascade in ── */
+    /* ── Work cards — Framer-style blur + clip + scale ── */
     gsap.fromTo('.wc',
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0,
-        stagger: .06, duration: 1, ease: 'expo.out',
+      { opacity: 0, y: 60, scale: .92, filter: 'blur(12px)', clipPath: 'inset(8% 4% 8% 4% round 12px)' },
+      { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', clipPath: 'inset(0% 0% 0% 0% round 12px)',
+        stagger: .1, duration: 1.1, ease: 'expo.out',
         scrollTrigger: { trigger: '#work-outer', start: 'top 85%', once: true } }
     );
 
@@ -2833,22 +2918,22 @@
       });
     });
 
-    /* ── Expertise — clip-path curtain left→right ── */
-    gsap.fromTo('.exp-h2 .tl-i',
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out',
+    /* ── Expertise — Framer clip-path wipe ── */
+    gsap.fromTo('.exp-h2',
+      { clipPath: 'inset(0 100% 0 0)' },
+      { clipPath: 'inset(0 0% 0 0)', duration: 1.3, ease: 'expo.out',
         scrollTrigger: { trigger: '#exp', start: 'top 84%' } }
     );
-    // Row fade-up
+    // Rows — blur+slide on mobile
     gsap.fromTo('.ei',
-      { opacity: 0, y: 28 },
-      { opacity: 1, y: 0, stagger: .09, duration: .85, ease: 'power3.out',
+      { opacity: 0, x: 40, filter: 'blur(6px)' },
+      { opacity: 1, x: 0, filter: 'blur(0px)', stagger: .1, duration: .9, ease: 'expo.out',
         scrollTrigger: { trigger: '.exp-list', start: 'top 82%' } }
     );
-    // FAQ heading
-    gsap.fromTo('.faq-h2 .tl-i',
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out',
+    // FAQ heading — clip-path wipe
+    gsap.fromTo('.faq-h2',
+      { clipPath: 'inset(0 100% 0 0)' },
+      { clipPath: 'inset(0 0% 0 0)', duration: 1.3, ease: 'expo.out',
         scrollTrigger: { trigger: '#faq', start: 'top 84%' } }
     );
     gsap.fromTo('.faq-hd-rule',
@@ -3182,6 +3267,70 @@
       { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .16, delay: .6,
         scrollTrigger: { trigger: '#book', start: 'top 70%' } }
     );
+
+    /* ── Framer: hero content blur on scroll ── */
+    gsap.to('.h-inner', {
+      filter: 'blur(8px)', opacity: 0.3,
+      ease: 'none',
+      scrollTrigger: { trigger: '#hero', start: '40% top', end: 'bottom top', scrub: 1.2 }
+    });
+
+    /* ── Framer: clip-path wipe on booking heading ── */
+    gsap.fromTo('.bk-h2',
+      { clipPath: 'inset(0 0 100% 0)' },
+      { clipPath: 'inset(0 0 0% 0)', duration: 1.4, ease: 'expo.out',
+        scrollTrigger: { trigger: '#book', start: 'top 82%' } }
+    );
+
+    /* ── Framer: section line sweeps ── */
+    document.querySelectorAll('.sec-line').forEach(el => {
+      gsap.to(el, {
+        scaleX: 1, duration: 1.2, ease: 'expo.out',
+        scrollTrigger: { trigger: el, start: 'top 90%' }
+      });
+    });
+
+    /* ── Framer: trust heading clip reveal ── */
+    gsap.fromTo('#trust .tr-h2',
+      { clipPath: 'inset(0 100% 0 0)' },
+      { clipPath: 'inset(0 0% 0 0)', duration: 1.3, ease: 'expo.out',
+        scrollTrigger: { trigger: '#trust', start: 'top 84%' } }
+    );
+
+    /* ── Framer: floating CTA (mobile only) ── */
+    const floatCta = document.getElementById('float-cta');
+    if (floatCta && window.innerWidth <= 768) {
+      gsap.set(floatCta, { y: 80 });
+      ScrollTrigger.create({
+        trigger: '#hero', start: 'bottom 70%',
+        onEnter() {
+          floatCta.style.pointerEvents = 'all';
+          floatCta.setAttribute('aria-hidden', 'false');
+          gsap.to(floatCta, { opacity: 1, y: 0, duration: 0.7, ease: 'back.out(2.2)' });
+        },
+        onLeaveBack() {
+          floatCta.style.pointerEvents = 'none';
+          floatCta.setAttribute('aria-hidden', 'true');
+          gsap.to(floatCta, { opacity: 0, y: 80, duration: 0.35, ease: 'power3.in' });
+        }
+      });
+      ScrollTrigger.create({
+        trigger: '#book', start: 'top 65%',
+        onEnter()    { gsap.to(floatCta, { opacity: 0, y: 40, duration: 0.3, ease: 'power2.in',
+                         onComplete: () => { floatCta.style.pointerEvents = 'none'; } }); },
+        onLeaveBack(){ floatCta.style.pointerEvents = 'all';
+                       gsap.to(floatCta, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(2)' }); }
+      });
+    }
+
+    /* ── Framer: scroll velocity tilt ── */
+    if (!LOW_END) {
+      lenis.on('scroll', ({ velocity }) => {
+        const tilt = Math.max(-2.5, Math.min(2.5, velocity * 0.55));
+        gsap.to('#page-main', { skewY: tilt * 0.07,
+          duration: 0.55, ease: 'power2.out', overwrite: true });
+      });
+    }
   }
 
   /* ── Reviews carousel ── */
@@ -3452,5 +3601,13 @@
     .catch(function(err) { console.error('[Reviews] Fetch failed:', err); });
 })();
 </script>
+
+<!-- Floating CTA (mobile) -->
+<div id="float-cta" aria-hidden="true">
+  <a href="#book" id="float-cta-a">
+    Book a Session
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </a>
+</div>
 </body>
 </html>
