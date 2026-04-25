@@ -14,16 +14,13 @@
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
   <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J8X45ECTLH"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M23QSCSBZ9"></script>
   <script>
-    (function(){
-      var id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
-      var s = document.createElement('script');
-      s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
-      document.head.appendChild(s);
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date()); gtag('config', id);
-    })();
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH');
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
