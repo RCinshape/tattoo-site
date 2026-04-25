@@ -1804,11 +1804,6 @@
       transform: scale(0.94);
       box-shadow: 0 4px 20px rgba(196,162,98,.25), 0 1px 6px rgba(0,0,0,.4);
     }
-    @keyframes float-pulse {
-      0%, 100% { box-shadow: 0 8px 40px rgba(196,162,98,.4), 0 2px 12px rgba(0,0,0,.55); }
-      50%       { box-shadow: 0 8px 55px rgba(196,162,98,.65), 0 2px 12px rgba(0,0,0,.55); }
-    }
-    #float-cta-a { animation: float-pulse 2.8s ease-in-out infinite; }
     @media (min-width: 769px) { #float-cta { display: none; } }
 
     /* — Spring touch feedback — */
@@ -1863,8 +1858,6 @@
       box-shadow: 0 0 8px rgba(196,162,98,.7);
     }
 
-    /* — Floating cards — */
-    .wc { will-change: transform; }
 
     /* — Ken Burns overflow hide — */
     .hero-bg-photo { overflow: hidden; }
@@ -3340,28 +3333,6 @@
 
     /* ══ CRAZY TIER ══════════════════════════════════════ */
 
-    /* — Gyroscope parallax on hero + portfolio cards — */
-    if (window.DeviceOrientationEvent && 'ontouchstart' in window) {
-      let gyroBase = null;
-      const gyroHandler = (e) => {
-        if (gyroBase === null) { gyroBase = { b: e.beta, g: e.gamma }; return; }
-        const dx = Math.max(-20, Math.min(20, (e.gamma - gyroBase.g)));
-        const dy = Math.max(-20, Math.min(20, (e.beta  - gyroBase.b)));
-        gsap.to('.hero-bg-photo img', { x: dx * 1.8, y: dy * 1.2, duration: 0.9, ease: 'power2.out', overwrite: true });
-        gsap.to('.wc-img',            { x: dx * 1.2, y: dy * 0.8, duration: 0.9, ease: 'power2.out', overwrite: true });
-      };
-      // iOS 13+ requires permission
-      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        document.addEventListener('pointerdown', function reqGyro() {
-          DeviceOrientationEvent.requestPermission().then(s => {
-            if (s === 'granted') window.addEventListener('deviceorientation', gyroHandler);
-          }).catch(() => {});
-          document.removeEventListener('pointerdown', reqGyro);
-        }, { once: true });
-      } else {
-        window.addEventListener('deviceorientation', gyroHandler);
-      }
-    }
 
     /* — Tap ripple on cards — */
     document.querySelectorAll('.wc').forEach(card => {
@@ -3474,18 +3445,6 @@
       });
     }
 
-    /* — Continuous float on portfolio grid — */
-    document.querySelectorAll('.wc').forEach((card, i) => {
-      gsap.to(card, {
-        y: -6 - (i % 3) * 3, duration: 2.2 + i * 0.15,
-        ease: 'sine.inOut', repeat: -1, yoyo: true, delay: i * 0.18
-      });
-    });
-
-    /* — Ken Burns on hero image — */
-    gsap.to('.hero-bg-photo img', {
-      scale: 1.08, duration: 14, ease: 'none', repeat: -1, yoyo: true
-    });
 
   }
 
