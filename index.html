@@ -1857,6 +1857,29 @@
       transform-origin: left; transform: scaleX(0);
       margin-bottom: 20px; opacity: .5;
     }
+
+    /* — Tap ripple — */
+    .tap-ripple {
+      position: absolute;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(196,162,98,.38);
+      transform: translate(-50%,-50%) scale(0);
+      pointer-events: none; z-index: 20;
+    }
+
+    /* — Gold particles — */
+    .gold-particle {
+      position: fixed; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); pointer-events: none; z-index: 99999;
+      box-shadow: 0 0 8px rgba(196,162,98,.7);
+    }
+
+    /* — Floating cards — */
+    .wc { will-change: transform; }
+
+    /* — Ken Burns overflow hide — */
+    .hero-bg-photo { overflow: hidden; }
+    .hero-bg-photo img { transform-origin: center center; }
   </style>
 </head>
 <body>
@@ -2785,13 +2808,7 @@
       });
     });
 
-    /* ── Work cards — Framer-style blur + clip + scale ── */
-    gsap.fromTo('.wc',
-      { opacity: 0, y: 60, scale: .92, filter: 'blur(12px)', clipPath: 'inset(8% 4% 8% 4% round 12px)' },
-      { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', clipPath: 'inset(0% 0% 0% 0% round 12px)',
-        stagger: .1, duration: 1.1, ease: 'expo.out',
-        scrollTrigger: { trigger: '#work-outer', start: 'top 85%', once: true } }
-    );
+    /* Work cards entrance handled below by elastic spring */
 
     /* ── Portfolio grid lightbox ── */
     (() => {
@@ -3331,6 +3348,156 @@
           duration: 0.55, ease: 'power2.out', overwrite: true });
       });
     }
+
+    /* ══ CRAZY TIER ══════════════════════════════════════ */
+
+    /* — Gyroscope parallax on hero + portfolio cards — */
+    if (window.DeviceOrientationEvent && 'ontouchstart' in window) {
+      let gyroBase = null;
+      const gyroHandler = (e) => {
+        if (gyroBase === null) { gyroBase = { b: e.beta, g: e.gamma }; return; }
+        const dx = Math.max(-20, Math.min(20, (e.gamma - gyroBase.g)));
+        const dy = Math.max(-20, Math.min(20, (e.beta  - gyroBase.b)));
+        gsap.to('.hero-bg-photo img', { x: dx * 1.8, y: dy * 1.2, duration: 0.9, ease: 'power2.out', overwrite: true });
+        gsap.to('.wc-img',            { x: dx * 1.2, y: dy * 0.8, duration: 0.9, ease: 'power2.out', overwrite: true });
+      };
+      // iOS 13+ requires permission
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        document.addEventListener('pointerdown', function reqGyro() {
+          DeviceOrientationEvent.requestPermission().then(s => {
+            if (s === 'granted') window.addEventListener('deviceorientation', gyroHandler);
+          }).catch(() => {});
+          document.removeEventListener('pointerdown', reqGyro);
+        }, { once: true });
+      } else {
+        window.addEventListener('deviceorientation', gyroHandler);
+      }
+    }
+
+    /* — Tap ripple on cards — */
+    document.querySelectorAll('.wc').forEach(card => {
+      card.addEventListener('pointerdown', e => {
+        const r = card.getBoundingClientRect();
+        const rpl = document.createElement('div');
+        rpl.className = 'tap-ripple';
+        rpl.style.cssText = `left:${e.clientX - r.left}px;top:${e.clientY - r.top}px`;
+        card.appendChild(rpl);
+        gsap.fromTo(rpl,
+          { scale: 0, opacity: 0.55 },
+          { scale: 5, opacity: 0, duration: 0.7, ease: 'power2.out',
+            onComplete: () => rpl.remove() }
+        );
+      });
+    });
+
+    /* — Gold particle burst on Book buttons — */
+    function burstParticles(btn) {
+      const rect = btn.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      for (let i = 0; i < 18; i++) {
+        const p = document.createElement('div');
+        p.className = 'gold-particle';
+        document.body.appendChild(p);
+        const angle = (i / 18) * Math.PI * 2;
+        const dist  = 40 + Math.random() * 60;
+        gsap.set(p, { x: cx, y: cy, xPercent: -50, yPercent: -50 });
+        gsap.to(p, {
+          x: cx + Math.cos(angle) * dist,
+          y: cy + Math.sin(angle) * dist,
+          opacity: 0, scale: Math.random() * 0.8 + 0.4,
+          duration: 0.55 + Math.random() * 0.35,
+          ease: 'power2.out',
+          onComplete: () => p.remove()
+        });
+      }
+    }
+    document.querySelectorAll('.bk-btn, #float-cta-a, .n-btn').forEach(btn => {
+      btn.addEventListener('pointerdown', () => burstParticles(btn));
+    });
+
+    /* — Text scramble on section labels — */
+    const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ✦×◆';
+    function scramble(el) {
+      const final = el.dataset.text || el.textContent;
+      el.dataset.text = final;
+      let frame = 0;
+      const total = 28;
+      const id = setInterval(() => {
+        el.textContent = final.split('').map((ch, i) => {
+          if (ch === ' ') return ' ';
+          if (i < (frame / total) * final.length) return ch;
+          return CHARS[Math.floor(Math.random() * CHARS.length)];
+        }).join('');
+        if (++frame > total) { el.textContent = final; clearInterval(id); }
+      }, 1000 / 40);
+    }
+    document.querySelectorAll('.s-label').forEach(el => {
+      ScrollTrigger.create({
+        trigger: el, start: 'top 88%', once: true,
+        onEnter: () => scramble(el)
+      });
+    });
+
+    /* — Elastic spring entrance on portfolio cards (override expo) — */
+    gsap.fromTo('.wc',
+      { y: 70, opacity: 0, scale: 0.88, rotation: -1.5 },
+      { y: 0, opacity: 1, scale: 1, rotation: 0,
+        stagger: 0.12, duration: 1.6, ease: 'elastic.out(1, 0.55)',
+        scrollTrigger: { trigger: '#work-outer', start: 'top 82%', once: true } }
+    );
+
+    /* — Background gradient morph between sections — */
+    const secColors = [
+      { bg: '#080705' },
+      { bg: '#09080a' },
+      { bg: '#080705' },
+      { bg: '#070a08' },
+      { bg: '#08070a' },
+      { bg: '#080705' }
+    ];
+    ['#hero','#work','#exp','#trust','#book','#faq'].forEach((sel, i) => {
+      const el = document.querySelector(sel);
+      if (!el) return;
+      ScrollTrigger.create({
+        trigger: el, start: 'top 50%',
+        onEnter:     () => gsap.to('body', { backgroundColor: secColors[i].bg, duration: 1.8, ease: 'power2.inOut' }),
+        onLeaveBack: () => gsap.to('body', { backgroundColor: secColors[Math.max(0,i-1)].bg, duration: 1.8, ease: 'power2.inOut' })
+      });
+    });
+
+    /* — Magnetic floating CTA — */
+    if (floatCta) {
+      const magBtn = document.getElementById('float-cta-a');
+      document.addEventListener('pointermove', e => {
+        if (!magBtn || floatCta.style.pointerEvents === 'none') return;
+        const rect = magBtn.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+        const dx = e.clientX - cx, dy = e.clientY - cy;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 90) {
+          const pull = (90 - dist) / 90;
+          gsap.to(magBtn, { x: dx * pull * 0.35, y: dy * pull * 0.35,
+            duration: 0.4, ease: 'power2.out', overwrite: true });
+        } else {
+          gsap.to(magBtn, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.5)', overwrite: true });
+        }
+      });
+    }
+
+    /* — Continuous float on portfolio grid — */
+    document.querySelectorAll('.wc').forEach((card, i) => {
+      gsap.to(card, {
+        y: -6 - (i % 3) * 3, duration: 2.2 + i * 0.15,
+        ease: 'sine.inOut', repeat: -1, yoyo: true, delay: i * 0.18
+      });
+    });
+
+    /* — Ken Burns on hero image — */
+    gsap.to('.hero-bg-photo img', {
+      scale: 1.08, duration: 14, ease: 'none', repeat: -1, yoyo: true
+    });
+
   }
 
   /* ── Reviews carousel ── */
