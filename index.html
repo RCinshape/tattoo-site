@@ -78,7 +78,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/romance-fatal-serif" rel="stylesheet">
 
   <!-- Google Analytics -->
@@ -114,7 +114,7 @@
       --border:   rgba(237,232,223,.07);
       --border-h: rgba(237,232,223,.15);
       --r:        12px;
-      --serif:   'Cormorant Garant', Georgia, serif;
+      --serif:   'Cormorant Garamond', Georgia, serif;
       --display: 'Romance Fatal Serif', Georgia, serif;
       --mono:  'Space Mono', monospace;
       --sans:  'DM Sans', sans-serif;
@@ -613,16 +613,6 @@
     .ei:hover { border-color: var(--border-h); background: rgba(255,255,255,.022); }
     .ei:last-child { border-bottom: 1px solid var(--border); border-bottom-color: var(--border); }
 
-    /* Ghost large number — decorative */
-    .ei-bg-n {
-      position: absolute; right: -4px; top: 50%;
-      transform: translateY(-50%);
-      font-family: var(--serif); font-weight: 600; font-style: italic;
-      font-size: clamp(5.5rem,11vw,9.5rem);
-      color: var(--gold); opacity: .045; line-height: 1;
-      pointer-events: none; user-select: none;
-    }
-
     /* Gold accent bar — springs in from top on hover, GSAP-owned */
     .ei-accent {
       position: absolute; left: 0; top: 0; bottom: 0;
@@ -777,7 +767,6 @@
 
     @media (max-width: 768px) {
       #exp { padding: 0 24px 80px; }
-      .ei-bg-n { font-size: 4.5rem; }
       .ei-name { font-size: clamp(1.7rem,6vw,2.5rem); }
     }
 
@@ -867,72 +856,6 @@
       font-size: .9rem; color: var(--gold);
       letter-spacing: 0; text-transform: none;
     }
-
-    /* Mock IG grid — links through to real profile */
-    .fl-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 6px; align-items: start;
-    }
-    .fl-cell {
-      border-radius: 8px;
-      background: var(--bg2);
-      position: relative; overflow: hidden;
-      display: block; cursor: pointer;
-    }
-    .fl-cell img {
-      width: 100%; height: auto; display: block;
-      filter: brightness(.5) saturate(.35);
-      transition: filter .55s;
-    }
-    .fl-cell:hover img { filter: brightness(.72) saturate(.6); }
-    .fl-cell-overlay {
-      position: absolute; inset: 0; z-index: 2;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 6px;
-      opacity: 0; transition: opacity .35s;
-      background: rgba(8,7,5,.42);
-    }
-    .fl-cell:hover .fl-cell-overlay { opacity: 1; }
-    .fl-cell-overlay svg { color: var(--fg); opacity: .9; }
-    .fl-cell-overlay span {
-      font-family: var(--mono); font-size: .62rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg); opacity: .7;
-    }
-
-    /* Flash grid lightbox */
-    #fl-lb {
-      position: fixed; inset: 0; z-index: 99994;
-      background: rgba(8,7,5,0);
-      display: flex; align-items: center; justify-content: center;
-      padding: clamp(16px,4vw,48px);
-      pointer-events: none;
-      transition: background .4s;
-    }
-    #fl-lb.fl-open { background: rgba(8,7,5,.93); pointer-events: all; }
-    #fl-lb-img {
-      max-width: min(90vw, 740px); max-height: 90vh;
-      width: auto; height: auto;
-      object-fit: contain; display: block;
-      border-radius: 6px;
-      opacity: 0; transform: scale(.88);
-      transition: opacity .42s, transform .52s cubic-bezier(.16,1,.3,1);
-    }
-    #fl-lb.fl-open #fl-lb-img { opacity: 1; transform: scale(1); }
-    #fl-lb-close {
-      position: fixed; top: 20px; right: 20px;
-      width: 42px; height: 42px; border-radius: 50%;
-      background: rgba(8,7,5,.72); backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--border-h);
-      color: var(--fg); cursor: pointer;
-      font-size: .75rem; font-family: var(--mono);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; transition: opacity .3s .1s, background .2s;
-      pointer-events: none;
-    }
-    #fl-lb.fl-open #fl-lb-close { opacity: 1; pointer-events: all; }
-    #fl-lb-close:hover { background: rgba(196,162,98,.18); color: var(--gold); }
 
     /* Leave-a-review CTA strip */
     .tr-review-cta {
@@ -1387,76 +1310,7 @@
     /* ══════════════════════════════════════════
        DECORATIVE ELEMENTS
     ══════════════════════════════════════════ */
-    /* ── Slow-drifting aurora orbs ── */
-    .bg-aurora {
-      position: fixed; inset: 0; z-index: 9993;
-      pointer-events: none; overflow: hidden;
-    }
-    .aur {
-      position: absolute; border-radius: 50%;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: infinite;
-      animation-direction: alternate;
-    }
-    .aur-1 {
-      width: 75vmax; height: 75vmax;
-      top: -25%; left: -18%;
-      background: radial-gradient(circle, rgba(196,162,98,.06) 0%, transparent 65%);
-      filter: blur(80px);
-      animation: aur1 26s ease-in-out infinite alternate;
-    }
-    .aur-2 {
-      width: 60vmax; height: 60vmax;
-      bottom: -18%; right: -12%;
-      background: radial-gradient(circle, rgba(196,162,98,.048) 0%, transparent 65%);
-      filter: blur(96px);
-      animation: aur2 32s ease-in-out infinite alternate;
-    }
-    .aur-3 {
-      width: 48vmax; height: 48vmax;
-      top: 28%; right: 18%;
-      background: radial-gradient(circle, rgba(180,148,88,.038) 0%, transparent 60%);
-      filter: blur(72px);
-      animation: aur3 21s ease-in-out infinite alternate;
-    }
-    .aur-4 {
-      width: 42vmax; height: 42vmax;
-      bottom: 18%; left: 16%;
-      background: radial-gradient(circle, rgba(196,162,98,.032) 0%, transparent 60%);
-      filter: blur(88px);
-      animation: aur4 28s ease-in-out infinite alternate;
-    }
-    @keyframes aur1 {
-      from { transform: translate(0, 0) scale(1); }
-      to   { transform: translate(11vw, 9vh) scale(1.14); }
-    }
-    @keyframes aur2 {
-      from { transform: translate(0, 0) scale(1.06); }
-      to   { transform: translate(-9vw, -7vh) scale(0.94); }
-    }
-    @keyframes aur3 {
-      from { transform: translate(0, 0) scale(0.94); }
-      to   { transform: translate(-7vw, 11vh) scale(1.1); }
-    }
-    @keyframes aur4 {
-      from { transform: translate(0, 0) scale(1); }
-      to   { transform: translate(8vw, -10vh) scale(1.12); }
-    }
-    /* Decorative large quote behind reviews */
-    .trust-deco-quote {
-      position: absolute; top: -20px; left: var(--pad);
-      font-family: var(--display); font-size: clamp(10rem,18vw,18rem);
-      line-height: 1; color: transparent;
-      -webkit-text-stroke: 1px rgba(196,162,98,.05);
-      pointer-events: none; user-select: none; z-index: 0;
-    }
     #trust { position: relative; }
-    /* Animated horizontal rule ornament */
-    .draw-rule {
-      display: block; height: 1px; width: 0;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin: 0 auto;
-    }
 
     /* ══════════════════════════════════════════
        FAQ — editorial accordion
@@ -1729,6 +1583,7 @@
       margin-bottom: 14px; display: block;
     }
     .loc-map-wrap {
+      position: relative;
       width: 100%; aspect-ratio: 16/6; border-radius: var(--r);
       overflow: hidden; border: 1px solid var(--border);
       opacity: 0; transform: translateY(20px);
@@ -1741,6 +1596,12 @@
     .loc-map-wrap iframe {
       width: 100%; height: 100%; border: 0;
     }
+    /* Transparent overlay lets wheel/touch scroll pass to the page (Lenis);
+       click to activate map interaction so the iframe stops trapping scroll. */
+    .loc-map-overlay {
+      position: absolute; inset: 0; z-index: 2; cursor: pointer;
+    }
+    .loc-map-wrap.map-active .loc-map-overlay { display: none; }
     @media (max-width: 768px) {
       #location { padding: 72px 24px 80px; }
       .loc-hd { flex-direction: column; align-items: flex-start; }
@@ -1811,15 +1672,6 @@
     .fq-item:active { background: rgba(237,232,223,.02); }
     .bc-btn:active  { transform: scale(0.96) translateY(0) !important; }
 
-    /* — Clip-path reveal helper — */
-    .cp-hidden { clip-path: inset(0 0 100% 0); }
-
-    /* — Scroll tilt — page-level perspective — */
-    #page-tilt {
-      transform-style: preserve-3d;
-      transition: transform .6s cubic-bezier(.25,.46,.45,.94);
-    }
-
     /* — Hero blur on scroll — */
     .h-inner { will-change: transform, filter; }
 
@@ -1829,14 +1681,6 @@
       .ei { padding: 24px 20px; min-height: auto; }
       .ei-rule { display: none; }
       .ei-accent { display: none; }
-    }
-
-    /* — Section entrance line sweep — */
-    .sec-line {
-      display: block; height: 1px;
-      background: linear-gradient(90deg, var(--gold), transparent);
-      transform-origin: left; transform: scaleX(0);
-      margin-bottom: 20px; opacity: .5;
     }
 
     /* — Tap ripple — */
@@ -1862,6 +1706,13 @@
   </style>
 </head>
 <body>
+
+<!-- ════ SVG ICON SPRITE — referenced via <use href="#…"> ════ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></symbol>
+  <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></symbol>
+</svg>
 
 <div class="vignette"  aria-hidden="true"></div>
 <div id="prog"  aria-hidden="true"></div>
@@ -2129,29 +1980,13 @@
         <span>Leave a Google review</span>
       </a>
       <a href="https://www.facebook.com/EmmaleneTattoo/reviews" target="_blank" rel="noopener" class="tr-review-btn tr-review-btn-fb">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <svg width="16" height="16" aria-hidden="true"><use href="#i-fb"/></svg>
         <span>Recommend on Facebook</span>
       </a>
     </div>
   </div>
 
 </section>
-
-<!-- Review modal -->
-<div id="rv-modal" aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="rvm-back"></div>
-  <div class="rvm-box">
-    <button class="rvm-close" aria-label="Close review">✕ close</button>
-    <div class="rvm-stars">★★★★★</div>
-    <p class="rvm-q"></p>
-    <div class="rvm-author"></div>
-    <div class="rvm-reply" aria-hidden="true">
-      <div class="rvm-reply-divider"></div>
-      <div class="rvm-reply-label">Response from Emmy</div>
-      <p class="rvm-reply-text"></p>
-    </div>
-  </div>
-</div>
 
 <!-- ════ BOOKING ════ -->
 <section id="book">
@@ -2202,7 +2037,7 @@
       <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
          target="_blank" rel="noopener" class="bk-btn bk-btn-wa" id="bkbtn">
         <div class="bk-btn-inner">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <svg width="22" height="22" aria-hidden="true"><use href="#i-wa"/></svg>
           <div class="bk-btn-text">
             <span class="bk-btn-label">Enquire via WhatsApp</span>
           </div>
@@ -2213,7 +2048,7 @@
       <a href="https://ig.me/m/emmy.tattoo"
          target="_blank" rel="noopener" class="bk-btn bk-btn-ig">
         <div class="bk-btn-inner">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          <svg width="22" height="22" aria-hidden="true"><use href="#i-ig"/></svg>
           <div class="bk-btn-text">
             <span class="bk-btn-label">Enquire via Instagram</span>
             <span class="bk-btn-note">DM · @emmy.tattoo</span>
@@ -2359,7 +2194,7 @@
     <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount — no expiry, redeemed when they decide.</p>
     <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
        target="_blank" rel="noopener" class="gf-cta">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>
       <span>Enquire via WhatsApp</span>
     </a>
   </div>
@@ -2437,12 +2272,12 @@
     </ul>
     <div class="fl-btns">
       <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="fl-ig-cta">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        <svg width="18" height="18" aria-hidden="true"><use href="#i-ig"/></svg>
         Follow on Instagram
         <span class="fl-ig-handle">@emmy.tattoo</span>
       </a>
       <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="fl-ig-cta fl-fb-cta">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <svg width="18" height="18" aria-hidden="true"><use href="#i-fb"/></svg>
         Follow on Facebook
         <span class="fl-fb-handle">EmmaleneTattoo</span>
       </a>
@@ -2485,6 +2320,7 @@
     </div>
   </div>
   <div class="loc-map-wrap">
+    <div class="loc-map-overlay" role="button" tabindex="0" aria-label="Activate map" title="Click to interact with the map"></div>
     <iframe
       title="Sainthood Tattoo Studio — Hull"
       src="https://maps.google.com/maps?q=80+Princes+Avenue,+Hull+HU5+3QJ&output=embed&z=17"
@@ -2493,6 +2329,26 @@
     </iframe>
   </div>
 </section>
+
+</main><!-- /#page-main -->
+
+<!-- ════ OVERLAYS — kept outside #page-main so position:fixed anchors to the viewport ════ -->
+
+<!-- Review modal -->
+<div id="rv-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="rvm-back"></div>
+  <div class="rvm-box">
+    <button class="rvm-close" aria-label="Close review">✕ close</button>
+    <div class="rvm-stars">★★★★★</div>
+    <p class="rvm-q"></p>
+    <div class="rvm-author"></div>
+    <div class="rvm-reply" aria-hidden="true">
+      <div class="rvm-reply-divider"></div>
+      <div class="rvm-reply-label">Response from Emmy</div>
+      <p class="rvm-reply-text"></p>
+    </div>
+  </div>
+</div>
 
 <!-- ════ SKILL CAROUSEL MODAL ════ -->
 <div id="sk-modal" role="dialog" aria-modal="true" aria-label="Skill gallery" aria-hidden="true">
@@ -2517,14 +2373,6 @@
   <img id="gal-modal-img" src="" alt="">
   <button id="gal-modal-close" aria-label="Close">✕</button>
 </div>
-
-<!-- ════ FLASH GRID LIGHTBOX ════ -->
-<div id="fl-lb" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Photo">
-  <button id="fl-lb-close" aria-label="Close">✕</button>
-  <img id="fl-lb-img" src="" alt="">
-</div>
-
-</main><!-- /#page-main -->
 
 <!-- ════ FOOTER ════ -->
 <footer>
@@ -2674,9 +2522,6 @@
 
   /* ═══ SCROLL PROGRESS ═══ */
   const progEl = document.getElementById('prog');
-  lenis.on('scroll', ({ scroll, limit }) => {
-    gsap.set(progEl, { scaleX: limit ? scroll / limit : 0 });
-  });
 
   /* ═══ NAV ═══ */
   const navEl = document.getElementById('nav');
@@ -2707,7 +2552,9 @@
     }
   }
 
-  lenis.on('scroll', ({ scroll }) => {
+  /* Single scroll handler: progress bar + nav background toggle */
+  lenis.on('scroll', ({ scroll, limit }) => {
+    gsap.set(progEl, { scaleX: limit ? scroll / limit : 0 });
     navEl.classList.toggle('s', scroll > 80);
   });
 
@@ -2867,53 +2714,6 @@
     })();
 
 
-    /* ── About quote — word by word ── */
-    const qEl = document.getElementById('abq');
-    if (qEl) {
-      const raw = qEl.textContent;
-      qEl.innerHTML = raw.split(' ').map(w =>
-        `<span class="qw"><span class="qi">${w}</span></span>`
-      ).join(' ');
-      gsap.fromTo('.qi',
-        { y: '100%', opacity: 0 },
-        { y: 0, opacity: 1, stagger: .055, duration: 1, ease: 'expo.out',
-          scrollTrigger: { trigger: '#about', start: 'top 72%' } }
-      );
-    }
-
-    /* ── About grid ── */
-    gsap.fromTo('.ab-grid',
-      { opacity: 0, y: 60, scale: .97 },
-      { opacity: 1, y: 0, scale: 1, duration: 1.4, ease: 'expo.out',
-        scrollTrigger: { trigger: '.ab-grid', start: 'top 84%' } }
-    );
-    gsap.from('.ab-bio p', {
-      opacity: 0, y: 22, stagger: .14, duration: .9, ease: 'expo.out',
-      scrollTrigger: { trigger: '.ab-bio', start: 'top 80%' }
-    });
-
-    /* ── Stats ── */
-    document.querySelectorAll('.stat').forEach((el, i) => {
-      const numEl = el.querySelector('.stat-n');
-      const target = parseInt(numEl.dataset.t, 10);
-      const sup    = numEl.dataset.sup || '';
-
-      gsap.to(el, {
-        opacity: 1, x: 0, duration: 1, ease: 'expo.out', delay: i * .13,
-        scrollTrigger: { trigger: '.ab-stats', start: 'top 80%' }
-      });
-      ScrollTrigger.create({
-        trigger: el, start: 'top 85%', once: true,
-        onEnter: () => gsap.to({ n: 0 }, {
-          n: target, duration: 2.2, ease: 'expo.out',
-          onUpdate() {
-            const v = Math.floor(this.targets()[0].n);
-            numEl.innerHTML = sup ? `<sup>${sup}</sup>${v}` : String(v);
-          }
-        })
-      });
-    });
-
     /* ── Expertise — Framer clip-path wipe ── */
     gsap.fromTo('.exp-h2',
       { clipPath: 'inset(0 100% 0 0)' },
@@ -3041,7 +2841,6 @@
       const name  = row.querySelector('.ei-name');
       const arr   = row.querySelector('.ei-arr');
       const rule  = row.querySelector('.ei-rule');
-      const bgN   = row.querySelector('.ei-bg-n');
 
       /* Inject left accent bar once */
       const accent = document.createElement('div');
@@ -3070,10 +2869,6 @@
         /* Rule: instant gold sweep, no spring */
         .to(rule,
           { width: '100%', duration: 0.28, ease: 'expo.out' },
-          0)
-        /* Ghost number: pops into view */
-        .to(bgN,
-          { opacity: 0.13, duration: 0.4, ease: 'power2.out' },
           0);
       });
 
@@ -3087,8 +2882,7 @@
           .to(accent, { scaleY: 0, opacity: 0, duration: 0.26, ease: 'expo.in', transformOrigin: 'top' }, 0)
           .to(name,   { x: 0, color: 'var(--fg)',    duration: 0.32, ease: 'expo.out' }, 0)
           .to(arr,    { x: 0, color: openColor,       duration: 0.28, ease: 'expo.out' }, 0)
-          .to(rule,   { width: 0, duration: 0.28, ease: 'expo.in' }, 0)
-          .to(bgN,    { opacity: 0.045, duration: 0.3, ease: 'power2.out' }, 0);
+          .to(rule,   { width: 0, duration: 0.28, ease: 'expo.in' }, 0);
       });
     });
 
@@ -3186,44 +2980,7 @@
       { opacity: 1, x: 0, duration: 1.1, ease: 'expo.out',
         scrollTrigger: { trigger: '#flash', start: 'top 82%' } }
     );
-    gsap.fromTo('#flash .fl-cell',
-      { opacity: 0, y: 24, scale: .95 },
-      { opacity: 1, y: 0, scale: 1, stagger: .07, duration: .8, ease: 'power3.out',
-        scrollTrigger: { trigger: '#flash', start: 'top 78%' } }
-    );
 
-    /* ── Flash grid lightbox ── */
-    (function() {
-      const lb    = document.getElementById('fl-lb');
-      const lbImg = document.getElementById('fl-lb-img');
-      const lbBtn = document.getElementById('fl-lb-close');
-      if (!lb) return;
-
-      function openFlLb(src) {
-        lbImg.src = src;
-        lb.setAttribute('aria-hidden', 'false');
-        lb.classList.add('fl-open');
-        lenis.stop();
-      }
-      function closeFlLb() {
-        lb.classList.remove('fl-open');
-        lb.setAttribute('aria-hidden', 'true');
-        lenis.start();
-      }
-
-      document.querySelectorAll('.fl-cell').forEach(cell => {
-        cell.addEventListener('click', () => {
-          const img = cell.querySelector('img');
-          if (img) openFlLb(img.src);
-        });
-      });
-
-      lbBtn.addEventListener('click', closeFlLb);
-      lb.addEventListener('click', e => { if (e.target === lb) closeFlLb(); });
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && lb.classList.contains('fl-open')) closeFlLb();
-      });
-    })();
     /* ── Gifts section ── */
     gsap.fromTo('#gifts .gf-left',
       { opacity: 0, x: -32 },
@@ -3278,14 +3035,6 @@
         scrollTrigger: { trigger: '#book', start: 'top 82%' } }
     );
 
-    /* ── Framer: section line sweeps ── */
-    document.querySelectorAll('.sec-line').forEach(el => {
-      gsap.to(el, {
-        scaleX: 1, duration: 1.2, ease: 'expo.out',
-        scrollTrigger: { trigger: el, start: 'top 90%' }
-      });
-    });
-
     /* ── Framer: trust heading clip reveal ── */
     gsap.fromTo('#trust .tr-h2',
       { clipPath: 'inset(0 100% 0 0)' },
@@ -3316,15 +3065,6 @@
                          onComplete: () => { floatCta.style.pointerEvents = 'none'; } }); },
         onLeaveBack(){ floatCta.style.pointerEvents = 'all';
                        gsap.to(floatCta, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(2)' }); }
-      });
-    }
-
-    /* ── Framer: scroll velocity tilt ── */
-    if (!LOW_END) {
-      lenis.on('scroll', ({ velocity }) => {
-        const tilt = Math.max(-2.5, Math.min(2.5, velocity * 0.55));
-        gsap.to('#page-main', { skewY: tilt * 0.07,
-          duration: 0.55, ease: 'power2.out', overwrite: true });
       });
     }
 
@@ -3618,26 +3358,17 @@
     scrollTrigger: { trigger: '#location', start: 'top 78%' }
   });
 
-  /* ═══ DECORATIVE: mouse-following ambient glow ═══ */
+  /* Map overlay: scroll passes through until the user opts in by clicking */
   (() => {
-    const orb = document.getElementById('mouse-glow');
-    if (!orb || window.innerWidth <= 768) { if (orb) orb.style.display = 'none'; return; }
-    let tx = window.innerWidth / 2, ty = window.innerHeight / 2;
-    let cx = tx, cy = ty;
-    document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
-    gsap.ticker.add(() => {
-      cx += (tx - cx) * 0.06;
-      cy += (ty - cy) * 0.06;
-      orb.style.transform = `translate(${cx - 240}px, ${cy - 240}px)`;
+    const mapWrap = document.querySelector('.loc-map-wrap');
+    const overlay = mapWrap && mapWrap.querySelector('.loc-map-overlay');
+    if (!overlay) return;
+    const activate = () => mapWrap.classList.add('map-active');
+    overlay.addEventListener('click', activate);
+    overlay.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); }
     });
   })();
-
-  /* ═══ DECORATIVE: animated section draw-rules ═══ */
-  document.querySelectorAll('.draw-rule').forEach(el => {
-    gsap.to(el, { width: '80px', duration: 1.2, ease: 'expo.out',
-      scrollTrigger: { trigger: el, start: 'top 90%' } });
-  });
-
 
 })();
 </script>
