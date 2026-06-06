@@ -12,6 +12,91 @@
   <meta property="og:url" content="https://emmytattoo.com/portfolio">
   <meta property="og:type" content="website">
 
+  <!-- JSON-LD — Image gallery for image SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    "name": "Emmy Tattoo — Portfolio",
+    "description": "Fine line, fine art and realism tattoos by Emmy at Sainthood Tattoo, Hull.",
+    "url": "https://emmytattoo.com/portfolio",
+    "associatedMedia": [
+      {
+        "@type": "ImageObject",
+        "contentUrl": "https://emmytattoo.com/pictures/surreal-face-snake-hand-tattoo-emmy-tattoo.jpg",
+        "name": "Surreal Face and Snake Hand Tattoo by Emmy Tattoo",
+        "caption": "Custom black and grey surrealist hand tattoo featuring a female portrait and snake detailing. Book your custom dark art and fine line pieces at emmytattoo.com or emmytattoo.co.uk.",
+        "description": "Black and grey surrealism hand tattoo featuring a woman's face with blank eyes and a snake winding through her mouth, designed by Emmy Tattoo.",
+        "creator": { "@type": "Person", "name": "Emmy" }
+      },
+      {
+        "@type": "ImageObject",
+        "contentUrl": "https://emmytattoo.com/pictures/fine-line-spotted-shark-arm-tattoo-emmy-tattoo.jpg",
+        "name": "Fine Line Spotted Shark Arm Tattoo by Emmy Tattoo",
+        "caption": "Finely detailed spotted shark upper arm tattoo utilizing precision dotwork and stippling techniques. View more marine life and fine line blackwork portfolios at emmytattoo.com and emmytattoo.co.uk.",
+        "description": "Fine line blackwork tattoo of a spotted leopard shark using dotwork shading on the back of a woman's upper arm, done by Emmy Tattoo.",
+        "creator": { "@type": "Person", "name": "Emmy" }
+      },
+      {
+        "@type": "ImageObject",
+        "contentUrl": "https://emmytattoo.com/pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg",
+        "name": "Fine Line Abstract Flower Tattoo by Emmy Tattoo",
+        "caption": "Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull.",
+        "creator": { "@type": "Person", "name": "Emmy" }
+      },
+      {
+        "@type": "ImageObject",
+        "contentUrl": "https://emmytattoo.com/pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg",
+        "name": "Wolf Portrait Forearm Tattoo by Emmy Tattoo",
+        "caption": "Wolf portrait with shattered clock and forest forearm half-sleeve by Emmy, Hull.",
+        "creator": { "@type": "Person", "name": "Emmy" }
+      },
+      {
+        "@type": "ImageObject",
+        "contentUrl": "https://emmytattoo.com/pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg",
+        "name": "Flying Barn Owl Tattoo by Emmy Tattoo",
+        "caption": "Flying barn owl black and grey tattoo on upper arm by Emmy, Hull.",
+        "creator": { "@type": "Person", "name": "Emmy" }
+      },
+      {
+        "@type": "ImageObject",
+        "contentUrl": "https://emmytattoo.com/pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg",
+        "name": "Classical Mythology Hermes Fine Art Tattoo by Emmy Tattoo",
+        "caption": "Classical mythology fine art forearm tattoo featuring Hermes by Emmy, Hull.",
+        "creator": { "@type": "Person", "name": "Emmy" }
+      },
+      {
+        "@type": "ImageObject",
+        "contentUrl": "https://emmytattoo.com/pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg",
+        "name": "Pug Portrait Floral Thigh Tattoo by Emmy Tattoo",
+        "caption": "Realistic pug Bonnie portrait with roses and floral accents on thigh by Emmy, Hull.",
+        "creator": { "@type": "Person", "name": "Emmy" }
+      },
+      {
+        "@type": "ImageObject",
+        "contentUrl": "https://emmytattoo.com/pictures/Black-Pug-Portrait-Tattoo-With-Daisies.jpg",
+        "name": "Black Pug Portrait With Daisies Tattoo by Emmy Tattoo",
+        "caption": "Black pug Marley portrait with daisies and roses tattoo by Emmy, Hull.",
+        "creator": { "@type": "Person", "name": "Emmy" }
+      },
+      {
+        "@type": "ImageObject",
+        "contentUrl": "https://emmytattoo.com/pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg",
+        "name": "Realistic Cat Portraits Tattoo by Emmy Tattoo",
+        "caption": "Five realistic cat portraits — Hazel, Ocean, Wolfie, Oreo and Pumpkin — on upper arm by Emmy, Hull.",
+        "creator": { "@type": "Person", "name": "Emmy" }
+      },
+      {
+        "@type": "ImageObject",
+        "contentUrl": "https://emmytattoo.com/pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg",
+        "name": "Realistic Thresher Shark Tattoo by Emmy Tattoo",
+        "caption": "Realistic thresher shark marine life tattoo on upper arm by Emmy, Hull.",
+        "creator": { "@type": "Person", "name": "Emmy" }
+      }
+    ]
+  }
+  </script>
+
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J8X45ECTLH"></script>
@@ -105,6 +190,16 @@
       transition: border-color .38s, background .38s;
     }
     .n-btn:hover { border-color: rgba(196,162,98,.65); background: rgba(196,162,98,.09); }
+    .n-social {
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--dim); text-decoration: none;
+      border: 1px solid var(--border);
+      width: 38px; height: 38px; border-radius: 50%;
+      transition: color .25s, border-color .25s; flex-shrink: 0;
+    }
+    .n-social:hover { color: var(--fg); border-color: var(--border-h); }
+    .n-social span { display: none; }
+    .n-social svg { flex-shrink: 0; }
     @media (max-width: 768px) {
       #nav { padding: 18px 24px; }
       #nav.s { padding: 12px 24px; }
@@ -346,6 +441,21 @@
     <a href="/#faq" class="n-item">FAQ</a>
     <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
        target="_blank" rel="noopener" class="n-btn">Book a Session</a>
+    <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="n-social" aria-label="WhatsApp" style="color:#25D366">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg>
+      <span>WhatsApp</span>
+    </a>
+    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="n-social" aria-label="Instagram">
+      <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="ig-g" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="10%" stop-color="#fdf497"/><stop offset="50%" stop-color="#fd5949"/><stop offset="68%" stop-color="#d6249f"/><stop offset="100%" stop-color="#285AEB"/></radialGradient></defs>
+        <path fill="url(#ig-g)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+      </svg>
+      <span>Instagram</span>
+    </a>
+    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="n-social" aria-label="Facebook">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      <span>Facebook</span>
+    </a>
   </div>
 </nav>
 
@@ -367,6 +477,32 @@
 
 <!-- ════ GRID ════ -->
 <main id="pw-grid" aria-label="Portfolio">
+
+  <div class="pw-item" data-style="fine-art realism"
+       data-src="pictures/surreal-face-snake-hand-tattoo-emmy-tattoo.jpg"
+       data-alt="Black and grey surrealism hand tattoo featuring a woman's face with blank eyes and a snake winding through her mouth, designed by Emmy Tattoo."
+       tabindex="0" role="button" aria-label="View: Surreal face and snake hand tattoo">
+    <img src="pictures/surreal-face-snake-hand-tattoo-emmy-tattoo.jpg"
+         alt="Black and grey surrealism hand tattoo featuring a woman's face with blank eyes and a snake winding through her mouth, designed by Emmy Tattoo."
+         title="Surreal Face and Snake Hand Tattoo by Emmy Tattoo" loading="lazy" decoding="async">
+    <div class="pw-over" aria-hidden="true">
+      <span class="pw-tag">Fine Art · Realism</span>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+    </div>
+  </div>
+
+  <div class="pw-item" data-style="fine-art realism"
+       data-src="pictures/fine-line-spotted-shark-arm-tattoo-emmy-tattoo.jpg"
+       data-alt="Fine line blackwork tattoo of a spotted leopard shark using dotwork shading on the back of a woman's upper arm, done by Emmy Tattoo."
+       tabindex="0" role="button" aria-label="View: Fine line spotted shark arm tattoo">
+    <img src="pictures/fine-line-spotted-shark-arm-tattoo-emmy-tattoo.jpg"
+         alt="Fine line blackwork tattoo of a spotted leopard shark using dotwork shading on the back of a woman's upper arm, done by Emmy Tattoo."
+         title="Fine Line Spotted Shark Arm Tattoo by Emmy Tattoo" loading="lazy" decoding="async">
+    <div class="pw-over" aria-hidden="true">
+      <span class="pw-tag">Fine Art · Realism</span>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+    </div>
+  </div>
 
   <div class="pw-item" data-style="fine-line"
        data-src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg"
@@ -544,7 +680,8 @@
       const f = btn.dataset.filter;
       let visible = 0, delay = 0;
       items.forEach(item => {
-        const match = f === 'all' || item.dataset.style === f;
+        const styles = (item.dataset.style || '').split(/\s+/);
+        const match = f === 'all' || styles.includes(f);
         if (match) {
           item.classList.remove('pw-hidden');
           gsap.fromTo(item, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .4, delay: delay * .05, ease: 'power2.out' });

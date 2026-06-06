@@ -583,7 +583,7 @@
 
     .w-more-wrap {
       display: flex; justify-content: center;
-      padding: 20px var(--pad) 140px;
+      padding: 20px var(--pad) 40px;
     }
     .w-more-btn {
       display: inline-flex; align-items: center; gap: 6px;
@@ -613,7 +613,7 @@
     /* ══════════════════════════════════════════
        EXPERTISE
     ══════════════════════════════════════════ */
-    #exp { padding: 80px var(--pad) 100px; }
+    #exp { padding: 44px var(--pad) 100px; }
     .exp-hd { margin-bottom: 48px; }
     .exp-h2 {
       font-family: var(--serif);
@@ -975,7 +975,8 @@
     .gf-cta svg { color: var(--gold); flex-shrink: 0; }
     /* Occasions cloud */
     .gf-occasions {
-      display: flex; flex-wrap: wrap; gap: 11px; align-content: center;
+      display: flex; flex-wrap: wrap; gap: 11px;
+      align-content: center; justify-content: center;
     }
     .gf-oc {
       font-family: var(--serif); font-style: italic;
@@ -987,6 +988,14 @@
     }
     .gf-oc:hover { background: rgba(196,162,98,.06); border-color: rgba(237,232,223,.13); }
     .gf-oc.gf-hi { border-color: var(--border); color: var(--fg2); background: none; }
+    /* "Just Because" — centered feature chip, larger + gold */
+    .gf-feature { display: flex; justify-content: center; margin-top: 18px; }
+    .gf-oc-big {
+      font-size: clamp(1.7rem, 3.6vw, 2.8rem);
+      color: var(--gold); border-color: rgba(196,162,98,.45);
+      background: rgba(196,162,98,.06); padding: 12px 38px;
+    }
+    .gf-oc-big:hover { background: rgba(196,162,98,.1); border-color: rgba(196,162,98,.6); transform: translateY(-2px); }
     @media (max-width: 768px) {
       #gifts { grid-template-columns: 1fr; padding: 72px 24px; gap: 44px; }
       .gf-p { max-width: 100%; }
@@ -1792,6 +1801,10 @@
     <a href="#trust" class="n-item">Reviews</a>
     <a href="#faq" class="n-item">FAQ</a>
     <a href="#book" class="n-btn">Book a Session</a>
+    <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="n-social" aria-label="WhatsApp" style="color:#25D366">
+      <svg width="17" height="17" aria-hidden="true"><use href="#i-wa"/></svg>
+      <span>WhatsApp</span>
+    </a>
     <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="n-social" aria-label="Instagram">
       <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -1907,12 +1920,12 @@
       {"src":"pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg","alt":"Minimalist fine-line abstract continuous flower tattoo"}
     ]'>
       <div class="ei-nw"><span class="ei-name">Fine Line</span></div>
-      <span class="ei-desc">Single needle · ultra-precise · long-lasting</span>
+      <span class="ei-desc">Soft · Thin · Delicate</span>
       <span class="ei-arr">→</span>
       <div class="ei-rule"></div>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
-          <p class="ei-expand-text">Single-needle work. Ultra-thin lines that hold crisp definition over years without spreading or blurring. Best suited to botanical studies, geometric forms, and script.</p>
+          <p class="ei-expand-text">A delicate, precise style often done with thin lines.</p>
           <div class="ei-img-col">
             <div class="ei-expand-img">
               <img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull." loading="lazy" decoding="async">
@@ -1928,12 +1941,12 @@
       {"src":"pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg","alt":"Classical mythology Hermes fine art tattoo"}
     ]'>
       <div class="ei-nw"><span class="ei-name">Fine Art</span></div>
-      <span class="ei-desc">Illustrative · considered · bespoke</span>
+      <span class="ei-desc">Aesthetic · Illustrative · Emotional</span>
       <span class="ei-arr">→</span>
       <div class="ei-rule"></div>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
-          <p class="ei-expand-text">Illustrative work — botanical, abstract, and figurative pieces drawn from scratch. Designed around your concept and placement.</p>
+          <p class="ei-expand-text">Illustrative work designed around your concept. Think paintings: aesthetic, passionate, really just art for art's sake.</p>
           <div class="ei-img-col">
             <div class="ei-expand-img">
               <img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull." loading="lazy" decoding="async">
@@ -1957,7 +1970,7 @@
       <div class="ei-rule"></div>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
-          <p class="ei-expand-text">A lifelike rendering of anything you can photograph. Depth, tonal range, and texture reproduced accurately — from portraits to natural subjects to still life.</p>
+          <p class="ei-expand-text">A lifelike rendering of anything you want that exists in life: portraits, botanical, landscapes, still life, animals.</p>
           <div class="ei-img-col">
             <div class="ei-expand-img">
               <img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" alt="Wolf portrait clock forest forearm realism tattoo by Emmy, Hull." loading="lazy" decoding="async">
@@ -2089,7 +2102,7 @@
     <div class="bk-rule"></div>
 
     <!-- Body -->
-    <p class="bk-sub">Start with a message. A reference, a sketch, a feeling — or nothing yet. The design is built from scratch. Consultation is free.</p>
+    <p class="bk-sub">Start with a message. A reference, a sketch, a feeling, or nothing yet. The design is built from scratch. Consultation is free.</p>
 
     <!-- 3-step process -->
     <div class="bk-steps">
@@ -2118,18 +2131,6 @@
           <svg width="22" height="22" aria-hidden="true"><use href="#i-wa"/></svg>
           <div class="bk-btn-text">
             <span class="bk-btn-label">Enquire via WhatsApp</span>
-          </div>
-        </div>
-        <span class="bk-btn-arr">→</span>
-      </a>
-
-      <a href="https://ig.me/m/emmy.tattoo"
-         target="_blank" rel="noopener" class="bk-btn bk-btn-ig">
-        <div class="bk-btn-inner">
-          <svg width="22" height="22" aria-hidden="true"><use href="#i-ig"/></svg>
-          <div class="bk-btn-text">
-            <span class="bk-btn-label">Enquire via Instagram</span>
-            <span class="bk-btn-note">DM · @emmy.tattoo</span>
           </div>
         </div>
         <span class="bk-btn-arr">→</span>
@@ -2164,7 +2165,7 @@
       <div class="fq-rule"></div>
       <div class="fq-panel">
         <div class="fq-panel-inner">
-          <p class="fq-answer">I price by piece, not by the hour. Every quote is based on size, complexity, and placement. Message me via WhatsApp or Instagram and I'll give you an honest estimate before anything is agreed. Deposits are non-refundable.</p>
+          <p class="fq-answer">The price of tattoos varies as I price by piece, not by hour. Message me via WhatsApp and I'll be able to give you a quote.<br><br>Deposits are a must and are non-refundable.</p>
         </div>
       </div>
     </li>
@@ -2181,7 +2182,7 @@
       <div class="fq-rule"></div>
       <div class="fq-panel">
         <div class="fq-panel-inner">
-          <p class="fq-answer">Walk-ins are welcome, but a booking guarantees your tattoo. A walk-in depends on availability on the day. If you're nearby and want to try your luck, feel free to come in. A quick message beforehand avoids a wasted trip.</p>
+          <p class="fq-answer">I tend not to do walk-ins as I am usually quite busy. I don't want to waste your time so please book in.</p>
         </div>
       </div>
     </li>
@@ -2199,12 +2200,13 @@
       <div class="fq-panel">
         <div class="fq-panel-inner">
           <ul class="fq-answer-list">
-            <li>— Eat a proper meal beforehand and stay well hydrated</li>
-            <li>— Wear clothing that gives easy access to the area being tattooed</li>
-            <li>— Avoid alcohol for at least 24 hours before your session</li>
-            <li>— Do not book if you are pregnant or breastfeeding</li>
-            <li>— If you are on blood thinners or have a skin condition affecting the area, let me know in advance and I'll advise</li>
-            <li>— Worth bringing: earphones, an iPad, an audiobook, or anything that helps you pass the time. A blanket is welcome too</li>
+            <li>— Eat a proper meal beforehand and stay well hydrated.</li>
+            <li>— Wear clothing that gives easy access to the area being tattooed.</li>
+            <li>— Avoid alcohol for at least 24 hours before your session.</li>
+            <li>— Do not book if you are pregnant or breastfeeding.</li>
+            <li>— If you are on blood thinners or have a skin condition affecting the area, let me know in advance and I'll advise.</li>
+            <li>— Worth bringing: earphones, iPads, audiobooks, or anything that helps you pass the time.</li>
+            <li>— Feel free to let me know if you want a silent appointment.</li>
           </ul>
         </div>
       </div>
@@ -2222,7 +2224,7 @@
       <div class="fq-rule"></div>
       <div class="fq-panel">
         <div class="fq-panel-inner">
-          <p class="fq-answer">Honestly, yes, but it's manageable for most people. Most describe it as uncomfortable rather than unbearable, and you adjust to it quickly. We can take breaks whenever you need them. We go at your pace. If you're worried about a longer session, we can split it into two or more shorter appointments instead.</p>
+          <p class="fq-answer">Yes it hurts, however it is a manageable pain and it is different for everyone. I would say it's uncomfortable rather than unbearable, and you adjust to it quickly.<br><br>To help with this we can take breaks when and as you need, we go at your pace.<br><br>If you are worried about a longer session, let me know and we can split them up into sessions you feel more comfortable with.</p>
         </div>
       </div>
     </li>
@@ -2239,7 +2241,7 @@
       <div class="fq-rule"></div>
       <div class="fq-panel">
         <div class="fq-panel-inner">
-          <p class="fq-answer">It's normal to be nervous. Everyone is the first time. The process is more considered than most people expect, I'll walk you through every step. Take your time choosing the design and placement.</p>
+          <p class="fq-answer">It is normal to be nervous, regardless of if it's your first tattoo or fifth. I will walk you through every step, you can take your time choosing placement, design, colours, anything you need. I like to say getting a tattoo is teamwork, we work together to make the best tattoo for you.</p>
         </div>
       </div>
     </li>
@@ -2256,7 +2258,7 @@
       <div class="fq-rule"></div>
       <div class="fq-panel">
         <div class="fq-panel-inner">
-          <p class="fq-answer">18, strictly. No exceptions regardless of parental consent. Valid photo ID is required on the day. If you can't prove your age, the session cannot go ahead.</p>
+          <p class="fq-answer">18 years old. No exceptions regardless of parental consent. Valid photo ID is required on the day. If you can't prove your age, the session cannot go ahead. Deposit is lost.</p>
         </div>
       </div>
     </li>
@@ -2269,7 +2271,7 @@
   <div class="gf-left">
     <div class="s-label">Gift Cards</div>
     <h2 class="gf-h2">Give someone <em>a tattoo.</em></h2>
-    <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount — no expiry, redeemed when they decide.</p>
+    <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount, no expiry, redeemed when they decide.</p>
     <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
        target="_blank" rel="noopener" class="gf-cta">
       <svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>
@@ -2282,7 +2284,9 @@
       <span class="gf-oc gf-hi">Christmas</span>
       <span class="gf-oc">Hen Do</span>
       <span class="gf-oc">Mother's Day</span>
-      <span class="gf-oc gf-hi">Just Because</span>
+    </div>
+    <div class="gf-feature">
+      <span class="gf-oc gf-oc-big">Just Because</span>
     </div>
   </div>
 </section>
@@ -2332,7 +2336,7 @@
   </div>
   <div class="ac-note" style="margin-left:auto;margin-right:auto;">
     <svg class="ac-note-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message me directly</strong>. Don't wait, it's always better to ask early. Reach me on <a href="https://wa.me/447405979137" style="color:var(--gold);text-decoration:none">WhatsApp</a> or <a href="https://ig.me/m/emmy.tattoo" style="color:var(--gold);text-decoration:none">Instagram</a>.</p>
+    <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message me directly</strong>. Don't wait, it's always better to ask early. Reach me on <a href="https://wa.me/447405979137" style="color:var(--gold);text-decoration:none">WhatsApp</a>.</p>
   </div>
 </section>
 
@@ -2341,7 +2345,7 @@
   <div class="fl-left">
     <div class="fl-badge"><span class="fl-dot"></span> @emmy.tattoo</div>
     <h2 class="fl-h2">Follow the <em>work</em></h2>
-    <p class="fl-p">Instagram is where new work goes first — finished pieces, available slots, flash designs. Updated when something happens, not on a schedule.</p>
+    <p class="fl-p">Instagram is where new work goes first: finished pieces, available slots, flash designs. Updated when something happens, not on a schedule.</p>
     <ul class="fl-reasons">
       <li class="fl-reason">New pieces posted as they're completed</li>
       <li class="fl-reason">Available slots and same-day cancellations when they open</li>
