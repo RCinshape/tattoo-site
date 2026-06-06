@@ -91,9 +91,21 @@
     gtag('config', location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH');
   </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha256-eUny2Hql6qBbqmuoQ60u6ueG2eCZVKQaGygqwCPquug=" crossorigin="anonymous"></script>
+  <!-- If any animation library fails to load, reveal content + dismiss the loader (resilience) -->
+  <script>window.__libFail = function () { document.documentElement.classList.add('libs-failed'); };</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha256-eUny2Hql6qBbqmuoQ60u6ueG2eCZVKQaGygqwCPquug=" crossorigin="anonymous" onerror="__libFail()"></script>
+
+  <!-- No-JS fallback: reveal JS-animated content and remove the loader overlay -->
+  <noscript><style>
+    #loader { display: none !important; }
+    #nav, .tl-i, .h-sub, .h-cta, .s-label, .w-hint, .ei,
+    .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap {
+      opacity: 1 !important; transform: none !important;
+    }
+    #nav { pointer-events: auto !important; }
+  </style></noscript>
 
   <style>
     /* ══════════════════════════════════════════
@@ -368,12 +380,39 @@
     }
     .h-dir svg { flex-shrink: 0; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
     .h-dir:hover svg { transform: translate(1px, -1px); }
+
+    /* Hero primary CTAs — visible via CSS (no JS dependency) */
+    .h-cta {
+      display: flex; flex-wrap: wrap; gap: 14px; margin-top: 38px;
+      opacity: 0; animation: hcta-in .9s var(--out) .85s forwards;
+    }
+    @keyframes hcta-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .h-cta-primary, .h-cta-secondary {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-family: var(--mono); font-size: .74rem;
+      letter-spacing: .16em; text-transform: uppercase;
+      text-decoration: none; border-radius: 100px; padding: 16px 30px;
+      transition: border-color .38s, background .38s, transform .38s var(--out), box-shadow .4s;
+    }
+    .h-cta-primary {
+      color: #080705; background: var(--gold); border: 1px solid var(--gold);
+      box-shadow: 0 8px 36px rgba(196,162,98,.28);
+    }
+    .h-cta-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 48px rgba(196,162,98,.42); }
+    .h-cta-primary svg { flex-shrink: 0; }
+    .h-cta-secondary {
+      color: var(--fg); border: 1px solid rgba(237,232,223,.18); background: rgba(237,232,223,.04);
+    }
+    .h-cta-secondary:hover { border-color: rgba(237,232,223,.4); transform: translateY(-3px); }
     @media (max-width: 768px) {
       #hero { padding: 80px 24px 48px; min-height: auto; }
       .h-title { font-size: clamp(3.4rem,16vw,6rem); }
       .h-dir span { display: none; }
       .h-dir { padding: 9px 11px; }
+      .h-cta { width: 100%; }
+      .h-cta-primary, .h-cta-secondary { flex: 1 1 0; justify-content: center; padding: 15px 18px; }
     }
+    @media (prefers-reduced-motion: reduce) { .h-cta { animation: none; opacity: 1; } }
 
     /* ══════════════════════════════════════════
        SHARED SECTION LABEL
@@ -1690,6 +1729,19 @@
     html.lite #gal-modal-bg { background: rgba(8,7,5,.82); }
     html.lite #sk-modal-bg  { background: rgba(8,7,5,.95); }
     html.lite .rvm-back     { background: rgba(8,7,5,.94); }
+
+    /* ══════════════════════════════════════════
+       RESILIENCE — if animation libs/JS fail, reveal content + drop loader
+    ══════════════════════════════════════════ */
+    html.libs-failed #loader { display: none !important; }
+    html.libs-failed #nav,
+    html.libs-failed .tl-i, html.libs-failed .h-sub, html.libs-failed .h-cta,
+    html.libs-failed .s-label, html.libs-failed .w-hint, html.libs-failed .ei,
+    html.libs-failed .bk-av, html.libs-failed .bk-rule, html.libs-failed .bk-sub,
+    html.libs-failed .bk-btn, html.libs-failed .bk-steps, html.libs-failed .loc-map-wrap {
+      opacity: 1 !important; transform: none !important;
+    }
+    html.libs-failed #nav { pointer-events: auto !important; }
   </style>
 </head>
 <body>
@@ -1768,6 +1820,13 @@
         <span class="h-loc-studio">At Sainthood Tattoo · Princes Ave, Hull<a href="#location" class="h-dir" aria-label="View map for Sainthood Tattoo"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="5 5 19 5 19 19"/></svg><span>Directions</span></a></span>
         <span class="h-loc-hours">Appointment only &nbsp;·&nbsp; Tue–Sat</span>
       </div>
+    </div>
+    <div class="h-cta">
+      <a class="h-cta-primary" href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F" target="_blank" rel="noopener">
+        <svg width="18" height="18" aria-hidden="true"><use href="#i-wa"/></svg>
+        Enquire now
+      </a>
+      <a class="h-cta-secondary" href="#work">View the work</a>
     </div>
   </div>
 </section>
@@ -3392,5 +3451,16 @@
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
   </a>
 </div>
+
+<!-- Resilience watchdog: if the loader is still up after the libs should have run, force-reveal -->
+<script>
+  setTimeout(function () {
+    var l = document.getElementById('loader');
+    if (l && getComputedStyle(l).display !== 'none') {
+      document.documentElement.classList.add('libs-failed');
+      l.style.display = 'none';
+    }
+  }, 4000);
+</script>
 </body>
 </html>
