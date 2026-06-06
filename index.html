@@ -86,6 +86,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
   <link href="https://fonts.cdnfonts.com/css/romance-fatal-serif" rel="stylesheet">
 
   <!-- Google Analytics -->
@@ -126,7 +127,7 @@
       --bg2:      #0d0b09;
       --fg:       #ede8df;
       --fg2:      #b0a89c;
-      --dim:      #635c54;
+      --dim:      #8a8175;
       --gold:     #c4a262;
       --gold-lo:  rgba(196,162,98,.07);
       --gold-md:  rgba(196,162,98,.18);
@@ -280,12 +281,48 @@
     .n-social:hover { color: var(--fg); border-color: var(--border-h); }
     .n-social span { display: none; }
     .n-social svg { flex-shrink: 0; }
+    /* Hamburger toggle (mobile only) */
+    .nav-toggle {
+      display: none; width: 42px; height: 42px; border-radius: 50%;
+      border: 1px solid var(--border); background: rgba(8,7,5,.4);
+      cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+      flex-shrink: 0;
+    }
+    .nav-toggle span { display: block; width: 18px; height: 1.5px; background: var(--fg); }
+    /* Full-screen mobile menu overlay */
+    #mobile-menu {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(8,7,5,.97);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+      opacity: 0; pointer-events: none; transition: opacity .35s;
+    }
+    #mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mm-link {
+      font-family: var(--serif); font-style: italic; font-size: 2rem;
+      color: var(--fg); text-decoration: none; transition: color .25s;
+    }
+    .mm-link:hover { color: var(--gold); }
+    .mm-book {
+      font-family: var(--mono); font-style: normal; font-size: .8rem;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--gold);
+      border: 1px solid rgba(196,162,98,.4); padding: 14px 34px; border-radius: 100px;
+    }
+    .mm-socials { display: flex; gap: 16px; margin-top: 14px; }
+    .mm-close {
+      position: absolute; top: 22px; right: 22px;
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 1px solid var(--border-h); background: rgba(8,7,5,.6);
+      color: var(--fg); font-family: var(--mono); font-size: .8rem; cursor: pointer;
+    }
     @media (max-width: 768px) {
       #nav { padding: 18px 24px; }
       #nav.s { padding: 12px 24px; }
       .n-item { display: none; }
-      .n-links { gap: 12px; }
+      .n-links { display: none; }
+      .nav-toggle { display: flex; }
     }
+    @media (min-width: 769px) { #mobile-menu { display: none; } }
 
     /* ══════════════════════════════════════════
        HERO BACKGROUND IMAGE
@@ -609,6 +646,47 @@
       .w-grid { columns: 1; }
     }
 
+    /* ══════════════════════════════════════════
+       ABOUT
+    ══════════════════════════════════════════ */
+    #about {
+      padding: 70px var(--pad) 90px;
+      border-top: 1px solid var(--border);
+      display: grid; grid-template-columns: .82fr 1.18fr;
+      gap: 64px; align-items: center;
+    }
+    .ab-portrait {
+      aspect-ratio: 4/5; border-radius: var(--r);
+      overflow: hidden; border: 1px solid var(--border);
+    }
+    .ab-portrait img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: grayscale(.45) brightness(.92) contrast(1.02);
+    }
+    .ab-h2 {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+      font-weight: 300; line-height: 1; letter-spacing: -.02em;
+      margin-bottom: 24px;
+    }
+    .ab-h2 em { font-style: italic; color: var(--gold); }
+    .ab-bio p {
+      font-size: 1.05rem; color: var(--fg2); line-height: 1.9;
+      margin-bottom: 18px; max-width: 560px;
+    }
+    .ab-points {
+      list-style: none; display: flex; flex-direction: column; gap: 12px;
+      margin-top: 28px;
+    }
+    .ab-point {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-family: var(--sans); font-size: .95rem; color: var(--fg2); line-height: 1.5;
+    }
+    .ab-point::before { content: '—'; color: var(--gold); flex-shrink: 0; }
+    @media (max-width: 768px) {
+      #about { grid-template-columns: 1fr; gap: 36px; padding: 56px 24px 64px; }
+      .ab-portrait { max-width: 360px; }
+    }
 
     /* ══════════════════════════════════════════
        EXPERTISE
@@ -880,6 +958,21 @@
       font-size: .9rem; color: var(--gold);
       letter-spacing: 0; text-transform: none;
     }
+    /* Instagram proof grid */
+    .ig-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+      width: 100%; max-width: 520px; margin-top: 44px;
+    }
+    .ig-cell {
+      aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--border); position: relative; display: block;
+    }
+    .ig-cell img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: grayscale(.6) brightness(.82);
+      transition: filter .5s, transform .6s var(--out);
+    }
+    .ig-cell:hover img { filter: grayscale(0) brightness(1); transform: scale(1.05); }
 
     /* Leave-a-review CTA strip */
     .tr-review-cta {
@@ -1766,6 +1859,17 @@
       opacity: 1 !important; transform: none !important;
     }
     html.libs-failed #nav { pointer-events: auto !important; }
+
+    /* ══════════════════════════════════════════
+       REDUCED MOTION — keep entrance-revealed content visible + static
+    ══════════════════════════════════════════ */
+    @media (prefers-reduced-motion: reduce) {
+      #nav, .h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .w-hint, .ei,
+      .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap {
+        opacity: 1 !important; transform: none !important;
+      }
+      #nav { pointer-events: auto !important; }
+    }
   </style>
 </head>
 <body>
@@ -1798,6 +1902,7 @@
   <a href="#" class="n-logo">Emmy <em>Tattoo</em></a>
   <div class="n-links">
     <a href="/portfolio" class="n-item">Portfolio</a>
+    <a href="#about" class="n-item">About</a>
     <a href="#trust" class="n-item">Reviews</a>
     <a href="#faq" class="n-item">FAQ</a>
     <a href="#book" class="n-btn">Book a Session</a>
@@ -1827,7 +1932,25 @@
       <span>Facebook</span>
     </a>
   </div>
+  <button id="nav-toggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- ════ MOBILE MENU ════ -->
+<div id="mobile-menu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu">
+  <button class="mm-close" id="mm-close" aria-label="Close menu">✕</button>
+  <a class="mm-link" href="/portfolio">Portfolio</a>
+  <a class="mm-link" href="#about">About</a>
+  <a class="mm-link" href="#trust">Reviews</a>
+  <a class="mm-link" href="#faq">FAQ</a>
+  <a class="mm-link mm-book" href="#book">Book a Session</a>
+  <div class="mm-socials">
+    <a class="n-social" href="https://wa.me/447405979137" target="_blank" rel="noopener" aria-label="WhatsApp" style="color:#25D366"><svg width="18" height="18" aria-hidden="true"><use href="#i-wa"/></svg></a>
+    <a class="n-social" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" aria-hidden="true"><use href="#i-ig"/></svg></a>
+    <a class="n-social" href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" aria-label="Facebook" style="color:#1877F2"><svg width="18" height="18" aria-hidden="true"><use href="#i-fb"/></svg></a>
+  </div>
+</div>
 
 <!-- ════ MAIN ════ -->
 <main id="page-main">
@@ -1907,6 +2030,28 @@
   </div>
 </section>
 </div><!-- /#work-outer -->
+
+<!-- ════ ABOUT ════ -->
+<section id="about">
+  <div class="ab-portrait">
+    <!-- TODO: replace with a real portrait of Emmy -->
+    <img src="pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg" alt="Emmy, tattoo artist at Sainthood Tattoo in Hull, at work." loading="lazy" decoding="async">
+  </div>
+  <div class="ab-text">
+    <div class="s-label">About</div>
+    <h2 class="ab-h2">Meet <em>Emmy</em></h2>
+    <div class="ab-bio">
+      <!-- TODO: replace placeholder bio with Emmy's own words -->
+      <p>I'm Emmy, a tattoo artist based at Sainthood Tattoo on Princes Avenue in Hull. I specialise in fine line, fine art and realism, with every piece drawn from scratch and designed around you.</p>
+      <p>I work by appointment so each session gets my full focus in a calm, relaxed space, with as much time as your idea needs. I like to think of getting tattooed as teamwork.</p>
+      <ul class="ab-points">
+        <li class="ab-point">Fine line, fine art &amp; realism specialist</li>
+        <li class="ab-point">Appointment only, Tuesday to Saturday</li>
+        <li class="ab-point">Licensed, hygienic studio at Sainthood Tattoo, Hull</li>
+      </ul>
+    </div>
+  </div>
+</section>
 
 <!-- ════ EXPERTISE ════ -->
 <section id="exp">
@@ -2079,68 +2224,6 @@
 
 </section>
 
-<!-- ════ BOOKING ════ -->
-<section id="book">
-  <div class="bk-gbg" aria-hidden="true"></div>
-  <div class="bk-wm" aria-hidden="true">Book</div>
-
-  <div class="bk-in">
-
-    <!-- Availability pill -->
-    <div class="bk-av">
-      <span class="bk-avdot"></span>
-      <span class="bk-avtxt">Diary open</span>
-    </div>
-
-    <!-- Heading -->
-    <h2 class="bk-h2">
-      <span class="tl"><span class="tl-i">Book</span></span>
-      <span class="tl"><em class="tl-i">a session.</em></span>
-    </h2>
-
-    <!-- Animated divider -->
-    <div class="bk-rule"></div>
-
-    <!-- Body -->
-    <p class="bk-sub">Start with a message. A reference, a sketch, a feeling, or nothing yet. The design is built from scratch. Consultation is free.</p>
-
-    <!-- 3-step process -->
-    <div class="bk-steps">
-      <div class="bk-step">
-        <span class="bk-step-n">01</span>
-        <span class="bk-step-l">Message</span>
-      </div>
-      <div class="bk-step-div" aria-hidden="true"></div>
-      <div class="bk-step">
-        <span class="bk-step-n">02</span>
-        <span class="bk-step-l">Consult</span>
-      </div>
-      <div class="bk-step-div" aria-hidden="true"></div>
-      <div class="bk-step">
-        <span class="bk-step-n">03</span>
-        <span class="bk-step-l">Create</span>
-      </div>
-    </div>
-
-    <!-- CTA buttons -->
-    <div class="bk-btns">
-
-      <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
-         target="_blank" rel="noopener" class="bk-btn bk-btn-wa" id="bkbtn">
-        <div class="bk-btn-inner">
-          <svg width="22" height="22" aria-hidden="true"><use href="#i-wa"/></svg>
-          <div class="bk-btn-text">
-            <span class="bk-btn-label">Enquire via WhatsApp</span>
-          </div>
-        </div>
-        <span class="bk-btn-arr">→</span>
-      </a>
-
-    </div>
-
-  </div>
-</section>
-
 <!-- ════ FAQ ════ -->
 <section id="faq">
   <div class="faq-hd">
@@ -2266,6 +2349,68 @@
   </ul>
 </section>
 
+<!-- ════ BOOKING ════ -->
+<section id="book">
+  <div class="bk-gbg" aria-hidden="true"></div>
+  <div class="bk-wm" aria-hidden="true">Book</div>
+
+  <div class="bk-in">
+
+    <!-- Availability pill -->
+    <div class="bk-av">
+      <span class="bk-avdot"></span>
+      <span class="bk-avtxt">Diary open</span>
+    </div>
+
+    <!-- Heading -->
+    <h2 class="bk-h2">
+      <span class="tl"><span class="tl-i">Book</span></span>
+      <span class="tl"><em class="tl-i">a session.</em></span>
+    </h2>
+
+    <!-- Animated divider -->
+    <div class="bk-rule"></div>
+
+    <!-- Body -->
+    <p class="bk-sub">Start with a message. A reference, a sketch, a feeling, or nothing yet. The design is built from scratch. Consultation is free.</p>
+
+    <!-- 3-step process -->
+    <div class="bk-steps">
+      <div class="bk-step">
+        <span class="bk-step-n">01</span>
+        <span class="bk-step-l">Message</span>
+      </div>
+      <div class="bk-step-div" aria-hidden="true"></div>
+      <div class="bk-step">
+        <span class="bk-step-n">02</span>
+        <span class="bk-step-l">Consult</span>
+      </div>
+      <div class="bk-step-div" aria-hidden="true"></div>
+      <div class="bk-step">
+        <span class="bk-step-n">03</span>
+        <span class="bk-step-l">Create</span>
+      </div>
+    </div>
+
+    <!-- CTA buttons -->
+    <div class="bk-btns">
+
+      <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
+         target="_blank" rel="noopener" class="bk-btn bk-btn-wa" id="bkbtn">
+        <div class="bk-btn-inner">
+          <svg width="22" height="22" aria-hidden="true"><use href="#i-wa"/></svg>
+          <div class="bk-btn-text">
+            <span class="bk-btn-label">Enquire via WhatsApp</span>
+          </div>
+        </div>
+        <span class="bk-btn-arr">→</span>
+      </a>
+
+    </div>
+
+  </div>
+</section>
+
 <!-- ════ GIFTS ════ -->
 <section id="gifts">
   <div class="gf-left">
@@ -2363,6 +2508,14 @@
         Follow on Facebook
         <span class="fl-fb-handle">EmmaleneTattoo</span>
       </a>
+    </div>
+    <div class="ig-grid" aria-label="Recent work on Instagram">
+      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Surreal face and snake hand tattoo on Instagram"><img src="pictures/surreal-face-snake-hand-tattoo-emmy-tattoo.jpg" alt="Black and grey surreal face and snake hand tattoo by Emmy." loading="lazy" decoding="async"></a>
+      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Wolf portrait forearm tattoo on Instagram"><img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" alt="Black and grey wolf portrait forearm tattoo by Emmy." loading="lazy" decoding="async"></a>
+      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Fine line spotted shark tattoo on Instagram"><img src="pictures/fine-line-spotted-shark-arm-tattoo-emmy-tattoo.jpg" alt="Fine line spotted shark arm tattoo by Emmy." loading="lazy" decoding="async"></a>
+      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Cat portraits tattoo on Instagram"><img src="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg" alt="Realistic cat portraits tattoo by Emmy." loading="lazy" decoding="async"></a>
+      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Flying barn owl tattoo on Instagram"><img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" alt="Flying barn owl black and grey tattoo by Emmy." loading="lazy" decoding="async"></a>
+      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Pug portrait thigh tattoo on Instagram"><img src="pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg" alt="Realistic pug portrait with florals thigh tattoo by Emmy." loading="lazy" decoding="async"></a>
     </div>
   </div>
 </section>
@@ -2618,6 +2771,26 @@
     });
   });
 
+  /* ═══ MOBILE MENU ═══ */
+  (() => {
+    const toggle = document.getElementById('nav-toggle');
+    const menu   = document.getElementById('mobile-menu');
+    const close  = document.getElementById('mm-close');
+    if (!toggle || !menu) return;
+    const openMenu = () => {
+      menu.classList.add('open'); menu.setAttribute('aria-hidden', 'false');
+      toggle.setAttribute('aria-expanded', 'true'); lenis.stop();
+    };
+    const closeMenu = () => {
+      menu.classList.remove('open'); menu.setAttribute('aria-hidden', 'true');
+      toggle.setAttribute('aria-expanded', 'false'); lenis.start();
+    };
+    toggle.addEventListener('click', openMenu);
+    if (close) close.addEventListener('click', closeMenu);
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) closeMenu(); });
+  })();
+
   /* ═══ HERO INIT ═══ */
   function initHero() {
     /* — Char-split hero title with blur-in (different from loader's 3D flip) — */
@@ -2748,9 +2921,35 @@
       });
       galModalBg.addEventListener('click', closeLightbox);
       galClose.addEventListener('click', closeLightbox);
+
+      /* Click the letterbox area (outside the visible contained image) to close */
+      function pointOutsideImg(imgEl, x, y) {
+        const r = imgEl.getBoundingClientRect();
+        const nw = imgEl.naturalWidth, nh = imgEl.naturalHeight;
+        if (!nw || !nh) return true;
+        const scale = Math.min(r.width / nw, r.height / nh);
+        const dw = nw * scale, dh = nh * scale;
+        const x0 = r.left + (r.width - dw) / 2, y0 = r.top + (r.height - dh) / 2;
+        return x < x0 || x > x0 + dw || y < y0 || y > y0 + dh;
+      }
+      galModal.addEventListener('click', e => {
+        if (galClose.contains(e.target)) return;       /* close button has its own handler */
+        if (pointOutsideImg(galModalImg, e.clientX, e.clientY)) closeLightbox();
+      });
+
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && originCard) closeLightbox(); });
     })();
 
+
+    /* ── About — entrance (gsap.from: content stays visible if JS fails) ── */
+    gsap.from('#about .ab-portrait', {
+      opacity: 0, y: 40, duration: 1.1, ease: 'expo.out',
+      scrollTrigger: { trigger: '#about', start: 'top 80%' }
+    });
+    gsap.from('#about .ab-h2, #about .ab-bio > *', {
+      opacity: 0, y: 22, stagger: .1, duration: .9, ease: 'expo.out',
+      scrollTrigger: { trigger: '#about', start: 'top 78%' }
+    });
 
     /* ── Expertise — Framer clip-path wipe ── */
     gsap.fromTo('.exp-h2',
@@ -3184,7 +3383,7 @@
       { bg: '#08070a' },
       { bg: '#080705' }
     ];
-    ['#hero','#work','#exp','#trust','#book','#faq'].forEach((sel, i) => {
+    ['#hero','#work','#exp','#trust','#faq','#book'].forEach((sel, i) => {
       const el = document.querySelector(sel);
       if (!el) return;
       ScrollTrigger.create({
