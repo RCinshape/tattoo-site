@@ -42,6 +42,13 @@
     "priceRange": "££",
     "currenciesAccepted": "GBP",
     "paymentAccepted": "Cash, Bank Transfer",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "reviewCount": "17",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "80 Princes Avenue",
@@ -100,7 +107,7 @@
   <!-- No-JS fallback: reveal JS-animated content and remove the loader overlay -->
   <noscript><style>
     #loader { display: none !important; }
-    #nav, .tl-i, .h-sub, .h-cta, .s-label, .w-hint, .ei,
+    #nav, .h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .w-hint, .ei,
     .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap {
       opacity: 1 !important; transform: none !important;
     }
@@ -331,6 +338,14 @@
     }
     .h-inner { position: relative; z-index: 2; }
     @keyframes dp { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.6); opacity: .5; } }
+    .h-eyebrow {
+      font-family: var(--mono); font-size: clamp(.66rem, 1.4vw, .8rem);
+      letter-spacing: .26em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 22px;
+      text-shadow: 0 1px 12px rgba(8,7,5,.9);
+      opacity: 0; animation: hcta-in .8s var(--out) .5s forwards;
+    }
+    @media (prefers-reduced-motion: reduce) { .h-eyebrow { animation: none; opacity: 1; } }
     .h-title {
       font-family: var(--display);
       font-size: clamp(4rem,13.5vw,13rem);
@@ -1734,7 +1749,7 @@
        RESILIENCE — if animation libs/JS fail, reveal content + drop loader
     ══════════════════════════════════════════ */
     html.libs-failed #loader { display: none !important; }
-    html.libs-failed #nav,
+    html.libs-failed #nav, html.libs-failed .h-eyebrow,
     html.libs-failed .tl-i, html.libs-failed .h-sub, html.libs-failed .h-cta,
     html.libs-failed .s-label, html.libs-failed .w-hint, html.libs-failed .ei,
     html.libs-failed .bk-av, html.libs-failed .bk-rule, html.libs-failed .bk-sub,
@@ -1811,6 +1826,7 @@
   </div>
   <div class="h-vign" aria-hidden="true"></div>
   <div class="h-inner">
+    <p class="h-eyebrow">Fine Line · Realism · Portrait Tattoos — Hull</p>
     <h1 class="h-title">
       <span class="tl"><span class="tl-i">Emmy</span></span>
       <span class="tl"><em class="tl-i">Tattoo</em></span>
@@ -1836,24 +1852,41 @@
 <section id="work">
   <div class="w-grid">
 
-      <article class="wc" aria-label="Work 1" data-full="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg">
+      <article class="wc" aria-label="Realism — Thresher shark" data-full="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg">
         <img class="wc-img" src="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg" alt="Black and grey realism tattoo of a Thresher shark swimming downwards on a client's upper arm." loading="eager" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 2" data-full="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg">
+      <article class="wc" aria-label="Realism — Wolf portrait forearm" data-full="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg">
         <img class="wc-img" src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" alt="Black and grey forearm half-sleeve tattoo featuring a realistic wolf face, a shattered Roman numeral clock, and a forest silhouette with a howling wolf." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
       </article>
 
-      <article class="wc" aria-label="Work 3" data-full="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg">
+      <article class="wc" aria-label="Fine line — Abstract flower" data-full="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg">
         <img class="wc-img" src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" alt="Minimalist fine-line tattoo on an upper arm featuring an abstract, continuous flowing line that forms a delicate flower." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Fine Line</div></div>
       </article>
 
+      <article class="wc" aria-label="Fine art — Flying barn owl" data-full="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg">
+        <img class="wc-img" src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" alt="Black and grey fine art tattoo of a flying barn owl on a client's upper arm." loading="lazy" decoding="async">
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+        <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
+      </article>
+
+      <article class="wc" aria-label="Fine art — Classical mythology Hermes" data-full="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg">
+        <img class="wc-img" src="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg" alt="Fine art forearm tattoo of Hermes from classical mythology in black and grey." loading="lazy" decoding="async">
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+        <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
+      </article>
+
+      <article class="wc" aria-label="Realism — Cat portraits" data-full="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg">
+        <img class="wc-img" src="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg" alt="Realistic black and grey portraits of five cats tattooed on a client's upper arm." loading="lazy" decoding="async">
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+        <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
+      </article>
 
   </div>
   <div class="w-more-wrap">
