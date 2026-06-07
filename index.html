@@ -1364,6 +1364,94 @@
     .tr-sk-w90 { width: 90%; }
     @keyframes sk-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
+    /* ══════════════════════════════════════════
+       REVIEWS — modular variants (#tr-stage)
+    ══════════════════════════════════════════ */
+    #tr-stage { position: relative; }
+    /* shared avatar */
+    .sp-pic, .dk-pic, .sl-pic {
+      width: 46px; height: 46px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      border: 1px solid var(--border); background: var(--bg2);
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .sp-pic img, .dk-pic img, .sl-pic img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(.5); }
+    .sp-pic-ph, .dk-pic-ph, .sl-pic-ph { font-family: var(--serif); color: var(--gold); font-size: 1.1rem; }
+
+    /* ── Style 1: Spotlight ── */
+    .trs-spotlight {
+      position: relative; max-width: 860px; margin: 0 auto; overflow: hidden;
+      padding: 24px var(--pad); text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 26px;
+    }
+    .sp-ghost {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      font-family: var(--display); font-size: clamp(16rem, 40vw, 34rem); line-height: 1;
+      color: var(--gold); opacity: .06; pointer-events: none; user-select: none; z-index: 0;
+    }
+    .trs-spotlight > *:not(.sp-ghost) { position: relative; z-index: 1; }
+    .sp-rating { display: inline-flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--fg2); }
+    .sp-stars { color: var(--gold); letter-spacing: .15em; }
+    .sp-quote { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(1.5rem, 3.6vw, 2.7rem); line-height: 1.4; color: var(--fg); max-width: 760px; margin: 0; cursor: pointer; }
+    .sp-author { display: inline-flex; align-items: center; gap: 14px; }
+    .sp-name { font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg); display: flex; flex-direction: column; gap: 4px; text-align: left; }
+    .sp-sub { color: var(--dim); font-size: .62rem; letter-spacing: .16em; }
+    .sp-nav { display: flex; align-items: center; gap: 20px; }
+    .sp-arrow { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border-h); background: rgba(255,255,255,.02); color: var(--fg); font-size: 1.2rem; cursor: pointer; transition: border-color .25s, color .25s, background .25s; }
+    .sp-arrow:hover { border-color: var(--gold); color: var(--gold); }
+    .sp-dots { display: flex; gap: 9px; }
+    .sp-dot { width: 7px; height: 7px; border-radius: 50%; border: 0; padding: 0; background: var(--dim); opacity: .5; cursor: pointer; transition: opacity .25s, transform .25s, background .25s; }
+    .sp-dot.on { background: var(--gold); opacity: 1; transform: scale(1.3); }
+    .sp-progress { width: 180px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .sp-progress span { display: block; height: 100%; width: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; }
+    @media (max-width: 768px) { .sp-quote { font-size: 1.35rem; } .sp-progress { width: 120px; } }
+
+    /* ── Style 2: Deck ── */
+    .trs-deck { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 20px var(--pad) 8px; }
+    .dk-stack { position: relative; width: min(420px, 86vw); height: 350px; }
+    .dk-card {
+      position: absolute; inset: 0; display: flex; flex-direction: column; gap: 16px;
+      padding: 32px 30px; border: 1px solid var(--border-h); border-radius: var(--r);
+      background: linear-gradient(180deg, #14110d, #0d0b09);
+      box-shadow: 0 20px 50px rgba(0,0,0,.45); cursor: pointer; will-change: transform;
+    }
+    .dk-stars { color: var(--gold); letter-spacing: .12em; }
+    .dk-q { font-family: var(--serif); font-style: italic; font-size: 1.2rem; line-height: 1.6; color: var(--fg); flex: 1; overflow: hidden; }
+    .dk-foot { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+    .dk-name { font-family: var(--mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg); display: flex; flex-direction: column; gap: 3px; }
+    .dk-sub { color: var(--dim); font-size: .6rem; }
+    .dk-count { font-family: var(--mono); font-size: .72rem; letter-spacing: .18em; color: var(--fg2); min-width: 60px; text-align: center; }
+
+    /* ── Style 3: Split ── */
+    .trs-split { display: grid; grid-template-columns: 1.4fr .9fr; gap: 48px; align-items: center; padding: 12px var(--pad); }
+    .sl-quote { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(1.4rem, 3vw, 2.4rem); line-height: 1.45; color: var(--fg); margin: 0 0 24px; cursor: pointer; }
+    .sl-author { display: inline-flex; align-items: center; gap: 14px; }
+    .sl-aname { font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg); display: flex; flex-direction: column; gap: 4px; }
+    .sl-asub { color: var(--dim); font-size: .62rem; }
+    .sl-side { border-left: 1px solid var(--border); padding-left: 40px; display: flex; flex-direction: column; gap: 22px; }
+    .sl-score { display: flex; flex-direction: column; gap: 6px; }
+    .sl-score-val { font-family: var(--serif); font-size: 3rem; font-weight: 300; line-height: 1; color: var(--fg); }
+    .sl-score-stars { color: var(--gold); letter-spacing: .12em; }
+    .sl-score-meta { font-family: var(--mono); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--fg2); }
+    .sl-list { display: flex; flex-direction: column; gap: 2px; }
+    .sl-name { text-align: left; background: none; border: 0; cursor: pointer; padding: 8px 0; font-family: var(--serif); font-style: italic; font-size: 1.05rem; color: var(--fg2); transition: color .25s, padding .25s; }
+    .sl-name:hover { color: var(--fg); }
+    .sl-name.on { color: var(--gold); padding-left: 14px; }
+    @media (max-width: 768px) { .trs-split { grid-template-columns: 1fr; gap: 30px; } .sl-side { border-left: 0; padding-left: 0; border-top: 1px solid var(--border); padding-top: 24px; } }
+
+    /* ── Style 4: Marquee + feature ── */
+    .trs-marquee { display: flex; flex-direction: column; gap: 40px; padding: 12px 0; text-align: center; }
+    .mqf-feature { padding: 0 var(--pad); display: flex; flex-direction: column; align-items: center; gap: 18px; min-height: 160px; justify-content: center; }
+    .mqf-quote { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(1.5rem, 3.4vw, 2.6rem); line-height: 1.4; color: var(--fg); max-width: 820px; margin: 0; cursor: pointer; }
+    .mqf-author { display: flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg2); }
+    .mqf-stars { color: var(--gold); }
+    .mqf-track-wrap { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 16px 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+    .mqf-track { display: inline-flex; align-items: center; white-space: nowrap; animation: mqf-scroll 38s linear infinite; }
+    @keyframes mqf-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .mq-name { background: none; border: 0; cursor: pointer; font-family: var(--serif); font-style: italic; font-size: 1.15rem; color: var(--fg2); transition: color .25s; padding: 0 18px; }
+    .mq-name span { color: var(--gold); font-size: .7rem; }
+    .mq-name:hover, .mq-name.on { color: var(--gold); }
+    .mq-dot { color: var(--dim); }
+
     /* Review expand modal */
     #rv-modal {
       position: fixed; inset: 0; z-index: 999998;
@@ -2131,61 +2219,8 @@
     </div>
   </div>
 
-  <div class="tr-carousel-wrap" id="trcwrap">
-    <div class="tr-carousel" id="trcarousel">
-
-      <div class="tr-card" data-static="true" data-q="Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" data-author="— Jess Dan · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Jess Dunn.jpg" alt="Jess Dan" loading="lazy" decoding="async"></div>
-        <p class="tr-card-q">"Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰"</p>
-        <div class="tr-card-author">— Jess Dan · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" data-author="— Jaime Dale · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/James Dale.jpg" alt="Jaime Dale" loading="lazy" decoding="async"></div>
-        <p class="tr-card-q">"Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)"</p>
-        <div class="tr-card-author">— Jaime Dale · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist" data-author="— Ruby Taylor · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Ruby Taylor.jpg" alt="Ruby Taylor" loading="lazy" decoding="async"></div>
-        <p class="tr-card-q">"Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist"</p>
-        <div class="tr-card-author">— Ruby Taylor · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻" data-author="— Leanne Smith · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Leanne Smith.jpg" alt="Leanne Smith" loading="lazy" decoding="async"></div>
-        <p class="tr-card-q">"Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻"</p>
-        <div class="tr-card-author">— Leanne Smith · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="I'm Matthew on a different account but Emmy did me an absolutely unbelievable full back tattoo, she did it all in one sitting and the experience was unbelievable. So kind and patient and I will be sure to go back to her next time I want a tattoo" data-author="— Matthew Wallace · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Matthew wallace.png" alt="Matthew Wallace" loading="lazy" decoding="async"></div>
-        <p class="tr-card-q">"I'm Matthew on a different account but Emmy did me an absolutely unbelievable full back tattoo, she did it all in one sitting and the experience was unbelievable. So kind and…"</p>
-        <div class="tr-card-author">— Matthew Wallace · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!" data-author="— Sarah Andrew · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Sarah Andrew.png" alt="Sarah Andrew" loading="lazy" decoding="async"></div>
-        <p class="tr-card-q">"Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!"</p>
-        <div class="tr-card-author">— Sarah Andrew · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-      <div class="tr-card" data-static="true" data-q="Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting. Can't wait to get more, so happy with the three I currently have, such beautiful artwork. ❤️" data-author="— Kimberley Rust · Google Review">
-        <div class="tr-card-stars">★★★★★</div>
-        <div class="tr-card-photo"><img src="google.reviews/Kimberely Rust.jpg" alt="Kimberley Rust" loading="lazy" decoding="async"></div>
-        <p class="tr-card-q">"Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting. Can't wait to get more, so happy with the three I currently have, such…"</p>
-        <div class="tr-card-author">— Kimberley Rust · Google Review</div>
-        <div class="tr-card-hint">Read full review →</div>
-      </div>
-
-    </div>
-  </div>
+  <!-- Reviews render here; style chosen by REVIEW_STYLE in the script (1=spotlight 2=deck 3=split 4=marquee) -->
+  <div id="tr-stage" aria-live="polite"></div>
 
   <!-- View-all + leave-a-review strip — inside trust section -->
   <div class="tr-review-cta">
@@ -3399,177 +3434,247 @@
 
   }
 
-  /* ── Reviews carousel ── */
+  /* ══ REVIEWS — modular. Switch REVIEW_STYLE: 1=spotlight 2=deck 3=split 4=marquee ══ */
+  const REVIEW_STYLE = 1;
+
+  let REVIEWS = [
+    { name: 'Jess Dan',        photo: 'google.reviews/Jess Dunn.jpg',     rating: 5, quote: "Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" },
+    { name: 'Jaime Dale',      photo: 'google.reviews/James Dale.jpg',    rating: 5, quote: "Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" },
+    { name: 'Ruby Taylor',     photo: 'google.reviews/Ruby Taylor.jpg',   rating: 5, quote: "Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist" },
+    { name: 'Leanne Smith',    photo: 'google.reviews/Leanne Smith.jpg',  rating: 5, quote: "Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻" },
+    { name: 'Matthew Wallace', photo: 'google.reviews/Matthew wallace.png', rating: 5, quote: "I'm Matthew on a different account but Emmy did me an absolutely unbelievable full back tattoo, she did it all in one sitting and the experience was unbelievable. So kind and patient and I will be sure to go back to her next time I want a tattoo" },
+    { name: 'Sarah Andrew',    photo: 'google.reviews/Sarah Andrew.png',  rating: 5, quote: "Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!" },
+    { name: 'Kimberley Rust',  photo: 'google.reviews/Kimberely Rust.jpg', rating: 5, quote: "Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting. Can't wait to get more, so happy with the three I currently have, such beautiful artwork. ❤️" }
+  ];
+
+  /* Head entrance */
   gsap.fromTo('.tr-head', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
     scrollTrigger: { trigger: '#trust', start: 'top 88%' } });
-  gsap.fromTo('.tr-card',
-    { opacity: 0, y: 32, scale: .97 },
-    { opacity: 1, y: 0, scale: 1, stagger: .07, duration: 1, ease: 'expo.out',
-      scrollTrigger: { trigger: '#trust', start: 'top 82%' } }
-  );
 
-  /* ── Reviews: auto-scroll + bulletproof pointer drag + modal ── */
   (() => {
-    const wrap     = document.getElementById('trcwrap');
-    const carousel = document.getElementById('trcarousel');
-    const modal    = document.getElementById('rv-modal');
-    if (!wrap || !carousel || !modal) return;
+    const stage = document.getElementById('tr-stage');
+    const modal = document.getElementById('rv-modal');
+    if (!stage) return;
 
-    /* Duplicate cards for seamless infinite loop */
-    function cloneAll() {
-      [...carousel.querySelectorAll('.tr-card:not([data-clone])')].forEach(c => {
-        const clone = c.cloneNode(true);
-        clone.setAttribute('aria-hidden', 'true');
-        clone.dataset.clone = 'true';
-        carousel.appendChild(clone);
-      });
+    const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
+    const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const initial = name => (name || '?').trim().charAt(0).toUpperCase();
+    const STATIC = (typeof LOW_END !== 'undefined' && LOW_END);
+
+    /* Shared modal (reuses #rv-modal) */
+    let mq, mauth, mreply, mreplyT;
+    if (modal) {
+      mq = modal.querySelector('.rvm-q');
+      mauth = modal.querySelector('.rvm-author');
+      mreply = modal.querySelector('.rvm-reply');
+      mreplyT = modal.querySelector('.rvm-reply-text');
+      const mback = modal.querySelector('.rvm-back');
+      const mclose = modal.querySelector('.rvm-close');
+      const closeModal = () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); lenis.start(); };
+      if (mback) mback.addEventListener('click', closeModal);
+      if (mclose) mclose.addEventListener('click', closeModal);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     }
-    cloneAll();
-
-    let singleW = 0;
-
-    /* Measure using actual DOM positions — immune to padding/gap edge cases */
-    function measureSingleW() {
-      const cards = [...carousel.querySelectorAll('.tr-card:not([data-clone])')];
-      if (cards.length < 2) return 0;
-      const first = cards[0], last = cards[cards.length - 1];
-      const gap = cards[1].offsetLeft - (cards[0].offsetLeft + cards[0].offsetWidth);
-      return (last.offsetLeft + last.offsetWidth) - first.offsetLeft + gap;
-    }
-
-    /* Double rAF ensures layout is fully committed before measuring */
-    function scheduleMeasure() {
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        singleW = measureSingleW();
-      }));
-    }
-    scheduleMeasure();
-
-    let curX = 0;
-    const SPEED = 0.375;
-    let ptId = null, startX = 0, startCarX = 0, prevX = 0;
-    let dragDist = 0, downCard = null;
-    const velBuf = [];
-
-    /* Called by live Google fetch — keeps static cards, blends in live ones */
-    window.__refreshReviews = function(newCards) {
-      carousel.querySelectorAll('[data-clone]').forEach(c => c.remove());
-      carousel.querySelectorAll('.tr-card:not([data-static])').forEach(c => c.remove());
-      newCards.forEach(c => carousel.appendChild(c));
-      cloneAll();
-      curX = 0;
-      gsap.set(carousel, { x: 0 });
-      scheduleMeasure();
-    };
-
-    /* Always returns a value in [-singleW, 0) */
-    function normalizeX(x) {
-      if (!singleW) return x;
-      x = x % singleW;
-      if (x > 0) x -= singleW;
-      return x;
+    function openModal(r) {
+      if (!modal) return;
+      mq.textContent = '“' + r.quote + '”';
+      mauth.textContent = '— ' + r.name + ' · Google Review';
+      if (r.reply) { mreplyT.textContent = r.reply; mreply.classList.add('visible'); mreply.setAttribute('aria-hidden', 'false'); }
+      else { mreply.classList.remove('visible'); mreply.setAttribute('aria-hidden', 'true'); }
+      modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); lenis.stop();
     }
 
-    /* Auto-scroll — skipped entirely while the carousel is off-screen */
-    let trVisible = true;
+    /* Pause auto-advance when off-screen */
+    let visible = true;
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver(([e]) => { trVisible = e.isIntersecting; }, { rootMargin: '120px' })
-        .observe(wrap);
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { rootMargin: '80px' }).observe(stage);
     }
-    gsap.ticker.add(() => {
-      if (!trVisible || ptId !== null || wrap.classList.contains('tr-paused') || !singleW) return;
-      curX -= SPEED;
-      if (curX <= -singleW) curX += singleW;
-      gsap.set(carousel, { x: curX });
-    });
 
-    /* Pause on hover */
-    wrap.addEventListener('mouseenter', () => wrap.classList.add('tr-paused'));
-    wrap.addEventListener('mouseleave', () => wrap.classList.remove('tr-paused'));
+    function photoEl(r, cls) {
+      return r.photo
+        ? '<span class="' + cls + '"><img src="' + r.photo + '" alt="' + esc(r.name) + '" loading="lazy" decoding="async"></span>'
+        : '<span class="' + cls + ' ' + cls + '-ph">' + initial(r.name) + '</span>';
+    }
 
-    /* ── Pointer drag — setPointerCapture locks tracking regardless of position ── */
-    wrap.addEventListener('pointerdown', e => {
-      if (e.button !== 0 && e.pointerType === 'mouse') return;
-      /* Capture the card NOW, before setPointerCapture redirects all events to wrap */
-      downCard = e.target.closest('.tr-card');
-      wrap.setPointerCapture(e.pointerId);
-      ptId = e.pointerId;
-      startX = prevX = e.clientX;
-      startCarX = curX;
-      dragDist = 0;
-      velBuf.length = 0;
-      gsap.killTweensOf(carousel);
-      wrap.classList.add('tr-dragging');
-    });
-
-    wrap.addEventListener('pointermove', e => {
-      if (e.pointerId !== ptId) return;
-      const delta = e.clientX - prevX;
-      velBuf.push(delta);
-      if (velBuf.length > 8) velBuf.shift();
-      prevX = e.clientX;
-      dragDist = Math.abs(e.clientX - startX);
-      curX = normalizeX(startCarX + (e.clientX - startX));
-      gsap.set(carousel, { x: curX });
-    });
-
-    wrap.addEventListener('pointerup', e => {
-      if (e.pointerId !== ptId) return;
-      ptId = null;
-      wrap.classList.remove('tr-dragging');
-      const vel = velBuf.length ? velBuf.reduce((s, v) => s + v, 0) / velBuf.length : 0;
-      /* Cap throw — prevents animating through multiple loops */
-      const rawThrow = vel * 24;
-      const maxThrow = singleW > 0 ? singleW * 0.8 : 2000;
-      const clampedThrow = Math.max(-maxThrow, Math.min(maxThrow, rawThrow));
-      gsap.to(carousel, {
-        x: curX + clampedThrow, duration: 1.4, ease: 'expo.out',
-        onUpdate() { curX = gsap.getProperty(carousel, 'x'); },
-        onComplete() { curX = normalizeX(curX); gsap.set(carousel, { x: curX }); }
+    /* Lightweight swipe (hoisted) */
+    function addSwipe(el, next, prev) {
+      let x0 = null;
+      el.addEventListener('pointerdown', e => { x0 = e.clientX; });
+      el.addEventListener('pointerup', e => {
+        if (x0 === null) return;
+        const dx = e.clientX - x0; x0 = null;
+        if (Math.abs(dx) > 45) (dx < 0 ? next : prev)();
       });
-      /* Open modal on tap/click — card captured at pointerdown before setPointerCapture */
-      if (dragDist <= 6 && downCard && downCard.dataset.q) {
-        mq.textContent    = '\u201c' + downCard.dataset.q + '\u201d';
-        mauth.textContent = downCard.dataset.author;
-        if (downCard.dataset.reply) {
-          mreplyT.textContent = downCard.dataset.reply;
-          mreply.classList.add('visible');
-          mreply.setAttribute('aria-hidden', 'false');
-        } else {
-          mreply.classList.remove('visible');
-          mreply.setAttribute('aria-hidden', 'true');
-        }
-        modal.classList.add('open');
-        modal.setAttribute('aria-hidden', 'false');
-        lenis.stop();
+    }
+
+    /* ── STYLE 1: Spotlight ── */
+    function buildSpotlight() {
+      stage.className = 'trs-spotlight';
+      stage.innerHTML =
+        '<div class="sp-ghost" aria-hidden="true"></div>' +
+        '<div class="sp-rating"><span class="sp-stars">★★★★★</span><span>5.0 on Google</span></div>' +
+        '<blockquote class="sp-quote"></blockquote>' +
+        '<div class="sp-author"></div>' +
+        '<div class="sp-nav"><button class="sp-arrow sp-prev" aria-label="Previous review">‹</button><div class="sp-dots"></div><button class="sp-arrow sp-next" aria-label="Next review">›</button></div>' +
+        '<div class="sp-progress"><span></span></div>';
+      const qEl = stage.querySelector('.sp-quote');
+      const aEl = stage.querySelector('.sp-author');
+      const ghost = stage.querySelector('.sp-ghost');
+      const dotsEl = stage.querySelector('.sp-dots');
+      const bar = stage.querySelector('.sp-progress span');
+      let i = 0, timer = null;
+      dotsEl.innerHTML = REVIEWS.map((_, k) => '<button class="sp-dot" aria-label="Review ' + (k + 1) + '"></button>').join('');
+      const dots = [...dotsEl.children];
+      function paint(dir) {
+        const r = REVIEWS[i];
+        const tl = gsap.timeline();
+        tl.to([qEl, aEl], { opacity: 0, y: -8 * dir, filter: 'blur(6px)', duration: .26, ease: 'power2.in' })
+          .add(() => {
+            qEl.textContent = '“' + r.quote + '”';
+            aEl.innerHTML = photoEl(r, 'sp-pic') + '<span class="sp-name">' + esc(r.name) + '<span class="sp-sub">Google review</span></span>';
+            ghost.textContent = initial(r.name);
+          })
+          .fromTo([qEl, aEl], { opacity: 0, y: 12 * dir, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .6, ease: 'expo.out', stagger: .06 })
+          .fromTo(ghost, { opacity: 0, scale: .92 }, { opacity: .06, scale: 1, duration: .8, ease: 'expo.out' }, '<');
+        dots.forEach((d, k) => d.classList.toggle('on', k === i));
       }
-      dragDist = 0;
-      downCard = null;
-    });
+      function go(n, dir) { i = (n + REVIEWS.length) % REVIEWS.length; paint(dir); restart(); }
+      function next() { go(i + 1, 1); }
+      function prev() { go(i - 1, -1); }
+      function restart() {
+        if (STATIC) return;
+        clearTimeout(timer);
+        gsap.killTweensOf(bar);
+        gsap.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: 6, ease: 'none', transformOrigin: 'left' });
+        timer = setTimeout(() => { visible ? next() : restart(); }, 6000);
+      }
+      stage.querySelector('.sp-next').addEventListener('click', next);
+      stage.querySelector('.sp-prev').addEventListener('click', prev);
+      dots.forEach((d, k) => d.addEventListener('click', () => go(k, k > i ? 1 : -1)));
+      qEl.addEventListener('click', () => openModal(REVIEWS[i]));
+      addSwipe(stage, next, prev);
+      paint(1); restart();
+    }
 
-    wrap.addEventListener('pointercancel', () => {
-      if (ptId === null) return;
-      ptId = null; wrap.classList.remove('tr-dragging');
-    });
+    /* ── STYLE 2: Deck ── */
+    function buildDeck() {
+      stage.className = 'trs-deck';
+      stage.innerHTML =
+        '<div class="dk-stack"></div>' +
+        '<div class="sp-nav"><button class="sp-arrow sp-prev" aria-label="Previous review">‹</button><div class="dk-count"></div><button class="sp-arrow sp-next" aria-label="Next review">›</button></div>';
+      const stack = stage.querySelector('.dk-stack');
+      const countEl = stage.querySelector('.dk-count');
+      let i = 0, timer = null;
+      const DEPTH = Math.min(4, REVIEWS.length);
+      function card(r) {
+        const el = document.createElement('article');
+        el.className = 'dk-card';
+        el.innerHTML =
+          '<div class="dk-stars">' + stars(r.rating) + '</div>' +
+          '<p class="dk-q">“' + esc(r.quote) + '”</p>' +
+          '<div class="dk-foot">' + photoEl(r, 'dk-pic') + '<span class="dk-name">' + esc(r.name) + '<span class="dk-sub">Google review</span></span></div>';
+        el.addEventListener('click', () => openModal(r));
+        return el;
+      }
+      function layout() {
+        [...stack.children].forEach((el, d) => {
+          gsap.to(el, { y: d * 14, scale: 1 - d * 0.05, opacity: d >= DEPTH ? 0 : 1, zIndex: DEPTH - d, duration: .5, ease: 'expo.out' });
+          el.style.pointerEvents = d === 0 ? 'auto' : 'none';
+        });
+        countEl.textContent = (i % REVIEWS.length + 1) + ' / ' + REVIEWS.length;
+      }
+      function build() {
+        stack.innerHTML = '';
+        for (let d = 0; d < DEPTH; d++) stack.appendChild(card(REVIEWS[(i + d) % REVIEWS.length]));
+        layout();
+      }
+      function next() {
+        const top = stack.children[0];
+        if (!top) return;
+        gsap.to(top, { x: -44, y: -28, rotation: -6, opacity: 0, duration: .45, ease: 'power2.in', onComplete: () => {
+          i = (i + 1) % REVIEWS.length;
+          top.remove();
+          stack.appendChild(card(REVIEWS[(i + DEPTH - 1) % REVIEWS.length]));
+          gsap.fromTo(stack.lastChild, { opacity: 0 }, { opacity: 1, duration: .4 });
+          layout(); restart();
+        }});
+      }
+      function prev() {
+        i = (i - 1 + REVIEWS.length) % REVIEWS.length;
+        const el = card(REVIEWS[i]);
+        gsap.set(el, { x: -44, y: -28, rotation: -6, opacity: 0 });
+        stack.insertBefore(el, stack.firstChild);
+        if (stack.children.length > DEPTH) stack.lastChild.remove();
+        gsap.to(el, { x: 0, y: 0, rotation: 0, opacity: 1, duration: .45, ease: 'expo.out' });
+        layout(); restart();
+      }
+      function restart() { if (STATIC) return; clearTimeout(timer); timer = setTimeout(() => { visible ? next() : restart(); }, 5500); }
+      stage.querySelector('.sp-next').addEventListener('click', next);
+      stage.querySelector('.sp-prev').addEventListener('click', prev);
+      addSwipe(stack, next, prev);
+      build(); restart();
+    }
 
-    /* Modal — opened in pointerup (card captured at pointerdown before setPointerCapture) */
-    const mq      = modal.querySelector('.rvm-q');
-    const mauth   = modal.querySelector('.rvm-author');
-    const mback   = modal.querySelector('.rvm-back');
-    const mclose  = modal.querySelector('.rvm-close');
-    const mreply  = modal.querySelector('.rvm-reply');
-    const mreplyT = modal.querySelector('.rvm-reply-text');
+    /* ── STYLE 3: Split ── */
+    function buildSplit() {
+      stage.className = 'trs-split';
+      stage.innerHTML =
+        '<div class="sl-main"><blockquote class="sl-quote"></blockquote><div class="sl-author"></div></div>' +
+        '<aside class="sl-side"><div class="sl-score"><span class="sl-score-val">5.0</span><span class="sl-score-stars">★★★★★</span><span class="sl-score-meta">17 Google reviews</span></div><div class="sl-list"></div></aside>';
+      const qEl = stage.querySelector('.sl-quote');
+      const aEl = stage.querySelector('.sl-author');
+      const listEl = stage.querySelector('.sl-list');
+      let i = 0, timer = null;
+      listEl.innerHTML = REVIEWS.map((r, k) => '<button class="sl-name" data-k="' + k + '">' + esc(r.name) + '</button>').join('');
+      const names = [...listEl.children];
+      function paint() {
+        const r = REVIEWS[i];
+        qEl.textContent = '“' + r.quote + '”';
+        aEl.innerHTML = photoEl(r, 'sl-pic') + '<span class="sl-aname">' + esc(r.name) + '<span class="sl-asub">Google review</span></span>';
+        gsap.fromTo([qEl, aEl], { opacity: 0, x: -16, filter: 'blur(6px)' }, { opacity: 1, x: 0, filter: 'blur(0px)', duration: .6, ease: 'expo.out', stagger: .05 });
+        names.forEach((n, k) => n.classList.toggle('on', k === i));
+      }
+      function go(n) { i = (n + REVIEWS.length) % REVIEWS.length; paint(); restart(); }
+      function restart() { if (STATIC) return; clearTimeout(timer); timer = setTimeout(() => { visible ? go(i + 1) : restart(); }, 6000); }
+      names.forEach(n => n.addEventListener('click', () => go(+n.dataset.k)));
+      qEl.addEventListener('click', () => openModal(REVIEWS[i]));
+      paint(); restart();
+    }
 
-    const closeModal = () => {
-      modal.classList.remove('open');
-      modal.setAttribute('aria-hidden', 'true');
-      lenis.start();
+    /* ── STYLE 4: Marquee + feature ── */
+    function buildMarquee() {
+      stage.className = 'trs-marquee';
+      const chip = (r, k) => '<button class="mq-name" data-k="' + k + '">' + esc(r.name) + ' <span>★★★★★</span></button>';
+      const seq = REVIEWS.map(chip).join('<span class="mq-dot">·</span>');
+      stage.innerHTML =
+        '<div class="mqf-feature"><blockquote class="mqf-quote"></blockquote><div class="mqf-author"></div></div>' +
+        '<div class="mqf-track-wrap"><div class="mqf-track">' + seq + '<span class="mq-dot">·</span>' + seq + '</div></div>';
+      const qEl = stage.querySelector('.mqf-quote');
+      const aEl = stage.querySelector('.mqf-author');
+      let i = 0, timer = null;
+      function paint() {
+        const r = REVIEWS[i];
+        qEl.textContent = '“' + r.quote + '”';
+        aEl.innerHTML = '<span>— ' + esc(r.name) + '</span><span class="mqf-stars">★★★★★</span>';
+        gsap.fromTo([qEl, aEl], { opacity: 0, y: 14, filter: 'blur(6px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .6, ease: 'expo.out', stagger: .06 });
+        stage.querySelectorAll('.mq-name').forEach(n => n.classList.toggle('on', +n.dataset.k === i));
+      }
+      function go(n) { i = (n + REVIEWS.length) % REVIEWS.length; paint(); restart(); }
+      function restart() { if (STATIC) return; clearTimeout(timer); timer = setTimeout(() => { visible ? go(i + 1) : restart(); }, 5000); }
+      stage.querySelectorAll('.mq-name').forEach(n => n.addEventListener('click', () => go(+n.dataset.k)));
+      qEl.addEventListener('click', () => openModal(REVIEWS[i]));
+      paint(); restart();
+    }
+
+    const BUILDERS = { 1: buildSpotlight, 2: buildDeck, 3: buildSplit, 4: buildMarquee };
+    function renderReviews() { (BUILDERS[REVIEW_STYLE] || buildSpotlight)(); }
+    renderReviews();
+
+    /* Live Google fetch hook — replaces data + re-renders the active style */
+    window.__refreshReviews = function (arr) {
+      if (Array.isArray(arr) && arr.length) { REVIEWS = arr; renderReviews(); }
     };
-    mback.addEventListener('click', closeModal);
-    mclose.addEventListener('click', closeModal);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
   })();
-
 
   /* ═══ LOCATION ═══ */
   gsap.to('.loc-map-wrap', {
@@ -3599,49 +3704,14 @@
 (function() {
   const WORKER_URL = 'https://emmy-reviews.emmalenetattoo.workers.dev';
 
-  function buildCard(r) {
-    const name  = r.authorAttribution?.displayName || 'Google Reviewer';
-    const photo = r.authorAttribution?.photoUri || '';
-    const full  = r.text?.text || '';
-    const short = full.length > 180 ? full.slice(0, 180) + '\u2026' : full;
-    const reply = r.reviewReply?.text || '';
-
-    const card = document.createElement('div');
-    card.className      = 'tr-card';
-    card.dataset.q      = full;
-    card.dataset.author = '\u2014 ' + name + ' \u00b7 Google Review';
-    if (reply) card.dataset.reply = reply;
-
-    const stars = document.createElement('div');
-    stars.className   = 'tr-card-stars';
-    stars.textContent = '\u2605'.repeat(r.rating) + '\u2606'.repeat(5 - r.rating);
-    card.appendChild(stars);
-
-    if (photo) {
-      const wrap = document.createElement('div');
-      wrap.className = 'tr-card-photo';
-      const img = document.createElement('img');
-      img.src = photo; img.alt = name; img.loading = 'lazy';
-      wrap.appendChild(img);
-      card.appendChild(wrap);
-    }
-
-    const q = document.createElement('p');
-    q.className   = 'tr-card-q';
-    q.textContent = '\u201c' + short + '\u201d';
-    card.appendChild(q);
-
-    const auth = document.createElement('div');
-    auth.className   = 'tr-card-author';
-    auth.textContent = '\u2014 ' + name + ' \u00b7 Google Review';
-    card.appendChild(auth);
-
-    const hint = document.createElement('div');
-    hint.className   = 'tr-card-hint';
-    hint.textContent = 'Read full review \u2192';
-    card.appendChild(hint);
-
-    return card;
+  function buildData(r) {
+    return {
+      name:  r.authorAttribution?.displayName || 'Google Reviewer',
+      photo: r.authorAttribution?.photoUri || '',
+      quote: r.text?.text || '',
+      reply: r.reviewReply?.text || '',
+      rating: r.rating || 5
+    };
   }
 
   fetch(WORKER_URL)
@@ -3657,7 +3727,7 @@
         if (platEl) platEl.textContent = data.userRatingCount + ' Google Reviews';
       }
       if (data.reviews && data.reviews.length && window.__refreshReviews) {
-        window.__refreshReviews(data.reviews.map(buildCard));
+        window.__refreshReviews(data.reviews.map(buildData));
       }
     })
     .catch(function(err) { console.error('[Reviews] Fetch failed:', err); });
