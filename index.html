@@ -1379,7 +1379,7 @@
 
     /* ── Style 1: Spotlight ── */
     .trs-spotlight {
-      position: relative; max-width: 820px; margin: 0 auto; overflow: hidden;
+      position: relative; max-width: 980px; margin: 0 auto; overflow: hidden;
       padding: 16px var(--pad); text-align: center;
       display: flex; flex-direction: column; align-items: center; gap: 22px;
     }
@@ -1393,9 +1393,9 @@
     .sp-stars { color: var(--gold); letter-spacing: .15em; }
     .sp-quote {
       font-family: var(--serif); font-style: italic; font-weight: 300;
-      font-size: clamp(1.3rem, 2.4vw, 1.95rem); line-height: 1.5; color: var(--fg);
-      width: min(720px, 100%); margin: 0; cursor: pointer;
-      display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden;
+      font-size: clamp(1.15rem, 1.9vw, 1.6rem); line-height: 1.45; color: var(--fg);
+      width: min(900px, 100%); margin: 0; cursor: pointer;
+      display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
     }
     .sp-author { display: inline-flex; align-items: center; gap: 14px; }
     .sp-name { font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg); display: flex; flex-direction: column; gap: 4px; text-align: left; }
@@ -1408,7 +1408,7 @@
     .sp-dot.on { background: var(--gold); opacity: 1; transform: scale(1.3); }
     .sp-progress { width: 180px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
     .sp-progress span { display: block; height: 100%; width: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; }
-    @media (max-width: 768px) { .sp-quote { font-size: 1.35rem; } .sp-progress { width: 120px; } }
+    @media (max-width: 768px) { .sp-quote { font-size: 1.15rem; } .sp-progress { width: 120px; } }
 
     /* ── Style 2: Deck ── */
     .trs-deck { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 20px var(--pad) 8px; }
@@ -3440,7 +3440,7 @@
   }
 
   /* ══ REVIEWS — modular. Switch REVIEW_STYLE: 1=spotlight 2=deck 3=split 4=marquee ══ */
-  const REVIEW_STYLE = 3;
+  const REVIEW_STYLE = 1;
 
   let REVIEWS = [
     { name: 'Jess Dan',        photo: 'google.reviews/Jess Dunn.jpg',     rating: 5, quote: "Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" },

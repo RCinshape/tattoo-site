@@ -34,8 +34,21 @@
       "WebFetch(domain:developers.cloudflare.com)",
       "Bash(grep -n \"\\\\\\\\\\\\\\\\[*]\" /c/Website/tattoo-site/index.html)",
       "Bash(grep *)",
-      "PowerShell(Rename-Item *)"
+      "PowerShell(Rename-Item *)",
+      "Bash(git rm *)",
+      "Bash(git mv *)",
+      "WebFetch(domain:api.cdnjs.com)",
+      "WebFetch(domain:www.jsdelivr.com)",
+      "WebFetch(domain:data.jsdelivr.com)",
+      "Bash(curl -sI https://www.emmytattoo.co.uk)",
+      "Bash(curl -sI https://emmytattoo.co.uk)",
+      "WebFetch(domain:fonts.googleapis.com)",
+      "Bash(git log *)",
+      "PowerShell(\\(Get-Content index.html | Measure-Object -Line\\).Lines)",
+      "PowerShell(Get-ChildItem -Force | Select-Object Name, Mode; Write-Output '--- pictures ---'; if \\(Test-Path pictures\\) { Get-ChildItem pictures | Select-Object Name, @{n='KB';e={[math]::Round\\($_.Length/1KB\\)}} }; Write-Output '--- google.reviews ---'; if \\(Test-Path google.reviews\\) { Get-ChildItem google.reviews | Select-Object Name })",
+      "PowerShell(Get-ChildItem pictures, google.reviews | ForEach-Object { '{0,8:N0} KB  {1}' -f \\($_.Length/1KB\\), $_.Name }; \\(Get-Content portfolio.html | Measure-Object -Line\\).Lines)",
+      "PowerShell(git *)"
     ]
   },
-  "model": "claude-sonnet-4-6"
+  "model": "opus"
 }
