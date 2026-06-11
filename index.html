@@ -145,7 +145,15 @@
 
     body {
       font-family: var(--sans);
-      background: var(--bg);
+      /* warm-dark tonal wash — shifts between sections as the page scrolls */
+      background:
+        linear-gradient(180deg,
+          #080705 0%,     /* hero / work  — near-black       */
+          #0c0a07 24%,    /* about / exp  — warm umber       */
+          #0f0b06 46%,    /* trust / faq  — faint gold-brown */
+          #0c0a07 64%,    /* book / gifts — back toward warm */
+          #0a0a0c 84%,    /* aftercare / flash / location    */
+          #080705 100%);  /* footer       — near-black       */
       color: var(--fg);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
@@ -612,7 +620,6 @@
     ══════════════════════════════════════════ */
     #about {
       padding: 70px var(--pad) 90px;
-      border-top: 1px solid var(--border);
       display: grid; grid-template-columns: .82fr 1.18fr;
       gap: 64px; align-items: center;
     }
@@ -830,7 +837,6 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      border-top: 1px solid var(--border);
     }
     .fl-badge {
       display: inline-flex; align-items: center; gap: 9px;
@@ -912,7 +918,6 @@
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 20px;
       padding: 36px var(--pad);
-      border-top: 1px solid var(--border);
     }
     .tr-review-btns { display: flex; gap: 12px; flex-wrap: wrap; }
     .tr-review-prompt {
@@ -955,7 +960,6 @@
     ══════════════════════════════════════════ */
     #gifts {
       padding: 90px var(--pad);
-      border-top: 1px solid var(--border);
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 72px; align-items: center;
@@ -1033,7 +1037,6 @@
     #book {
       padding: 130px var(--pad) 110px;
       position: relative; overflow: hidden;
-      border-top: 1px solid var(--border);
     }
     .bk-gbg {
       position: absolute; inset: 0;
@@ -1358,7 +1361,7 @@
     /* ══════════════════════════════════════════
        FAQ — editorial accordion
     ══════════════════════════════════════════ */
-    #faq { padding: 100px var(--pad) 120px; border-top: 1px solid var(--border); }
+    #faq { padding: 100px var(--pad) 120px; }
     .faq-hd {
       display: flex; align-items: flex-end; gap: 2.5rem;
       margin-bottom: 72px;
@@ -1490,7 +1493,6 @@
     ══════════════════════════════════════════ */
     #aftercare {
       padding: 80px var(--pad) 100px;
-      border-top: 1px solid var(--border);
     }
     .ac-hd {
       max-width: 680px; margin-bottom: 64px;
@@ -1575,7 +1577,6 @@
     ══════════════════════════════════════════ */
     #location {
       padding: 90px var(--pad) 100px;
-      border-top: 1px solid var(--border);
     }
     .loc-hd {
       display: flex; align-items: flex-end;
@@ -1653,7 +1654,6 @@
     ══════════════════════════════════════════ */
     footer {
       padding: 36px var(--pad);
-      border-top: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
     }
     .ft-logo {
