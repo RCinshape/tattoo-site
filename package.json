@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "build:images": "node scripts/make-webp-variants.js",
+    "serve": "npx serve ."
+  },
   "devDependencies": {
     "potrace": "^2.1.8",
     "sharp": "^0.34.5"

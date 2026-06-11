@@ -14,8 +14,8 @@
   <meta property="og:title" content="Emmy Tattoo Hull | Fine Line & Realism">
   <meta property="og:description" content="Fine line, realism and portrait tattoos at Sainthood Tattoo, Princes Avenue, Hull. By appointment.">
   <meta property="og:image" content="https://emmytattoo.com/pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:image:width" content="1440">
+  <meta property="og:image:height" content="1921">
   <meta property="og:url" content="https://emmytattoo.com/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_GB">
@@ -42,13 +42,6 @@
     "priceRange": "££",
     "currenciesAccepted": "GBP",
     "paymentAccepted": "Cash, Bank Transfer",
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "5.0",
-      "reviewCount": "17",
-      "bestRating": "5",
-      "worstRating": "1"
-    },
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "80 Princes Avenue",
@@ -89,14 +82,16 @@
   <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
   <link href="https://fonts.cdnfonts.com/css/romance-fatal-serif" rel="stylesheet">
 
-  <!-- Google Analytics -->
+  <!-- Google Analytics — one gtag.js load serves both properties; config picks the ID -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J8X45ECTLH"></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M23QSCSBZ9"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH');
+    /* Skip analytics on local dev so it doesn't pollute production data */
+    if (!/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) {
+      gtag('js', new Date());
+      gtag('config', location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH');
+    }
   </script>
 
   <!-- If any animation library fails to load, reveal content + dismiss the loader (resilience) -->
@@ -108,11 +103,14 @@
   <!-- No-JS fallback: reveal JS-animated content and remove the loader overlay -->
   <noscript><style>
     #loader { display: none !important; }
-    #nav, .h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .w-hint, .ei,
-    .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap {
+    :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .ei,
+        .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap,
+        .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
+        .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-left, .gf-oc,
+        .exp-h2, .faq-h2, .bk-h2, .faq-hd-rule, .faq-hd-count) {
       opacity: 1 !important; transform: none !important;
+      filter: none !important; clip-path: none !important;
     }
-    #nav { pointer-events: auto !important; }
   </style></noscript>
 
   <style>
@@ -234,8 +232,6 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
       padding: 28px var(--pad);
       display: flex; align-items: center; justify-content: space-between;
-      opacity: 0; pointer-events: none;
-      transform: translateY(-110%);
       transition: background .5s, backdrop-filter .5s, padding .35s, border-color .4s;
       border-bottom: 1px solid transparent;
     }
@@ -281,6 +277,10 @@
     .n-social:hover { color: var(--fg); border-color: var(--border-h); }
     .n-social span { display: none; }
     .n-social svg { flex-shrink: 0; }
+    /* Monochrome at rest; brand colour only on hover (one-accent palette) */
+    .n-social.n-wa:hover { color: #25D366; border-color: rgba(37,211,102,.4); }
+    .n-social.n-ig:hover { color: #e1306c; border-color: rgba(225,48,108,.4); }
+    .n-social.n-fb:hover { color: #1877f2; border-color: rgba(24,119,242,.4); }
     /* Hamburger toggle (mobile only) */
     .nav-toggle {
       display: none; width: 42px; height: 42px; border-radius: 50%;
@@ -380,9 +380,12 @@
       letter-spacing: .26em; text-transform: uppercase;
       color: var(--gold); margin-bottom: 22px;
       text-shadow: 0 1px 12px rgba(8,7,5,.9);
-      opacity: 0; animation: hcta-in .8s var(--out) .5s forwards;
+      opacity: 0;
     }
-    @media (prefers-reduced-motion: reduce) { .h-eyebrow { animation: none; opacity: 1; } }
+    /* Entrance gated on .hero-go (added by initHero after the loader) so the
+       sequence reads eyebrow → title → sub → CTA instead of finishing under the loader */
+    html.hero-go .h-eyebrow { animation: hcta-in .8s var(--out) .05s forwards; }
+    @media (prefers-reduced-motion: reduce) { .h-eyebrow, html.hero-go .h-eyebrow { animation: none !important; opacity: 1 !important; } }
     .h-title {
       font-family: var(--display);
       font-size: clamp(4rem,13.5vw,13rem);
@@ -390,7 +393,9 @@
     }
     .tl { display: block; }
     .tl em { font-style: italic; color: var(--gold); }
-    .tl-i { display: block; opacity: 0; }
+    .tl-i { display: block; }
+    /* Only hero + booking titles are JS-revealed; exp/faq titles use clip-path wipes */
+    .h-title .tl-i, .bk-h2 .tl-i { opacity: 0; }
     .htc { display: inline-block; }
     .h-sub {
       margin-top: 44px; opacity: 0;
@@ -436,8 +441,9 @@
     /* Hero primary CTAs — visible via CSS (no JS dependency) */
     .h-cta {
       display: flex; flex-wrap: wrap; gap: 14px; margin-top: 38px;
-      opacity: 0; animation: hcta-in .9s var(--out) .85s forwards;
+      opacity: 0;
     }
+    html.hero-go .h-cta { animation: hcta-in .9s var(--out) .95s forwards; }
     @keyframes hcta-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
     .h-cta-primary, .h-cta-secondary {
       display: inline-flex; align-items: center; gap: 12px;
@@ -464,7 +470,7 @@
       .h-cta { width: 100%; }
       .h-cta-primary, .h-cta-secondary { flex: 1 1 0; justify-content: center; padding: 15px 18px; }
     }
-    @media (prefers-reduced-motion: reduce) { .h-cta { animation: none; opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .h-cta, html.hero-go .h-cta { animation: none !important; opacity: 1 !important; } }
 
     /* ══════════════════════════════════════════
        SHARED SECTION LABEL
@@ -479,35 +485,10 @@
     /* ══════════════════════════════════════════
        WORK
     ══════════════════════════════════════════ */
-    #work-outer { }
     #work {
       padding-top: 52px;
       height: auto; overflow: visible;
     }
-    .w-head {
-      padding: 0 var(--pad) 48px;
-      display: flex; align-items: flex-end; justify-content: space-between;
-    }
-    .w-h2 {
-      font-family: var(--serif);
-      font-size: clamp(2.4rem,5.5vw,4.8rem);
-      font-weight: 300; letter-spacing: -.02em; line-height: 1;
-    }
-    .w-h2 em { font-style: italic; color: var(--gold); }
-    .w-h2 .tl-i { /* inherits */ }
-    .w-hint {
-      font-family: var(--mono); font-size: .64rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--dim); text-align: right; opacity: 0;
-    }
-    .wh-arrows span {
-      display: inline-block;
-      animation: wha 1.4s ease-in-out infinite;
-      opacity: .25;
-    }
-    .wh-arrows span:nth-child(2) { animation-delay: .14s; }
-    .wh-arrows span:nth-child(3) { animation-delay: .28s; }
-    @keyframes wha { 0%,100% { opacity: .15; transform: translateX(0); } 50% { opacity: 1; transform: translateX(5px); } }
 
     /* Gallery — masonry grid */
     .w-grid {
@@ -517,7 +498,6 @@
     .wc {
       break-inside: avoid;
       margin-bottom: 12px;
-      aspect-ratio: 3/4;
       border-radius: var(--r);
       border: 1px solid var(--border);
       overflow: hidden; position: relative;
@@ -527,28 +507,11 @@
     .wc:hover { border-color: var(--border-h); }
     .wc { background: #0a0907; }
     .wc-img {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center;
+      width: 100%; height: auto; display: block; /* height:auto beats the height="" attribute hint — without it images stretch */
       transition: filter 1.1s, transform .6s var(--out);
       filter: brightness(.9) saturate(.75);
     }
     .wc:hover .wc-img { filter: brightness(1) saturate(.9); transform: scale(1.03); }
-
-    /* Placeholder card — shown while waiting for photos */
-    .wc:not(:has(.wc-img)) {
-      background: repeating-linear-gradient(
-        -45deg,
-        transparent, transparent 18px,
-        rgba(237,232,223,.025) 18px, rgba(237,232,223,.025) 19px
-      );
-      cursor: default;
-    }
-    .wc:not(:has(.wc-img)) .wc-view {
-      transform: translate(-50%,-50%) scale(1);
-      font-size: 1.4rem; color: var(--dim);
-      border-color: var(--border);
-    }
 
     /* Shine */
     .wc::after {
@@ -635,9 +598,7 @@
       .w-grid { columns: 2; }
     }
     @media (max-width: 768px) {
-      #work-outer { height: auto !important; }
       #work { position: static; height: auto; overflow: visible; padding-top: 72px; }
-      .w-head { padding: 0 24px 36px; flex-direction: column; align-items: flex-start; gap: 20px; }
       .w-grid { columns: 2; padding: 0 16px 8px; column-gap: 8px; }
       .wc { margin-bottom: 8px; }
       .w-more-wrap { padding: 10px 16px 0; }
@@ -691,7 +652,7 @@
     }
     .exp-h2 em { font-style: italic; color: var(--gold); }
     /* ── Expertise — editorial large-type stack ── */
-    .exp-list { list-style: none; display: flex; flex-direction: column; gap: 12px; padding: 0 var(--pad); }
+    .exp-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
     .ei {
       position: relative; overflow: hidden;
       display: flex; align-items: center; gap: 0;
@@ -704,7 +665,6 @@
       transition: border-color .35s, background .35s;
     }
     .ei:hover { border-color: var(--border-h); background: rgba(255,255,255,.022); }
-    .ei:last-child { border-bottom: 1px solid var(--border); border-bottom-color: var(--border); }
 
     /* Gold accent bar — springs in from top on hover, GSAP-owned */
     .ei-accent {
@@ -732,9 +692,7 @@
       letter-spacing: .14em; text-transform: uppercase;
       color: var(--fg2); max-width: 200px; text-align: right;
       line-height: 2; position: relative; z-index: 1;
-      transition: color .35s;
     }
-    .ei:hover .ei-desc { color: var(--fg2); }
 
     /* Arrow */
     .ei-arr {
@@ -941,7 +899,7 @@
     .fl-fb-cta:hover { border-color: rgba(24,119,242,.5); }
     .fl-fb-handle {
       font-style: italic; font-family: var(--serif);
-      font-size: .9rem; color: #5b9cf6;
+      font-size: .9rem; color: var(--gold);
       letter-spacing: 0; text-transform: none;
     }
     .fl-ig-handle {
@@ -949,22 +907,6 @@
       font-size: .9rem; color: var(--gold);
       letter-spacing: 0; text-transform: none;
     }
-    /* Instagram proof grid */
-    .ig-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-      width: 100%; max-width: 520px; margin-top: 44px;
-    }
-    .ig-cell {
-      aspect-ratio: 1; border-radius: 8px; overflow: hidden;
-      border: 1px solid var(--border); position: relative; display: block;
-    }
-    .ig-cell img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-      filter: grayscale(.6) brightness(.82);
-      transition: filter .5s, transform .6s var(--out);
-    }
-    .ig-cell:hover img { filter: grayscale(0) brightness(1); transform: scale(1.05); }
-
     /* Leave-a-review CTA strip */
     .tr-review-cta {
       display: flex; align-items: center; justify-content: space-between;
@@ -1001,7 +943,6 @@
     .tr-review-btn:hover { color: var(--bg); border-color: var(--gold); }
     .tr-review-btn svg { flex-shrink: 0; }
     .tr-review-btn-fb::before { background: #1877f2; }
-    .tr-review-btn-fb { color: #5b9cf6; border-color: rgba(91,156,246,.35); }
     .tr-review-btn-fb:hover { color: #fff; border-color: #1877f2; }
     @media (max-width: 768px) {
       #flash { padding: 56px 24px 64px; }
@@ -1256,7 +1197,6 @@
       .bk-step  { padding: 0 18px; }
       .bk-step-div { width: 28px; }
       .bk-wm { font-size: clamp(10rem, 28vw, 16rem); }
-      .bk-av-long { display: none; }
     }
 
 
@@ -1297,87 +1237,20 @@
       .tr-head { flex-direction: column; align-items: flex-start; padding: 0 24px 36px; }
       .tr-head-r { text-align: left; }
     }
-    /* Horizontal carousel */
-    .tr-carousel-wrap {
-      overflow: hidden; cursor: grab;
-      padding-bottom: 8px;
-      touch-action: pan-y;
-    }
-    .tr-carousel-wrap.tr-dragging { cursor: grabbing; }
-    .tr-carousel {
-      display: flex; gap: 16px;
-      padding: 0 0 16px var(--pad);
-      width: max-content; user-select: none;
-    }
-    .tr-card {
-      width: 300px; flex-shrink: 0;
-      padding: 26px 24px;
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      background: rgba(255,255,255,.015);
-      cursor: pointer;
-      transition: border-color .35s, transform .35s, box-shadow .35s;
-    }
-    .tr-card:hover { border-color: var(--border-h); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.28); }
-    /* iOS press-down feel */
-    .tr-carousel-wrap.tr-dragging .tr-card { transform: scale(0.987); transition: transform .15s ease; }
-    .tr-card-photo {
-      width: 38px; height: 38px; border-radius: 50%;
-      overflow: hidden; border: 1px solid var(--border);
-      margin-bottom: 14px; flex-shrink: 0;
-    }
-    .tr-card-photo img {
-      width: 100%; height: 100%; object-fit: cover;
-      display: block; filter: grayscale(.6);
-    }
-    .tr-card-stars { color: var(--gold); font-size: .8rem; letter-spacing: .1em; margin-bottom: 12px; }
-    .tr-card-q {
-      font-family: var(--serif); font-style: italic;
-      font-size: 1.05rem; color: var(--fg2);
-      line-height: 1.72; margin-bottom: 14px;
-      display: -webkit-box; -webkit-line-clamp: 5;
-      -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .tr-card-author {
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .14em; text-transform: uppercase; color: var(--fg2);
-    }
-    .tr-card-hint {
-      font-family: var(--mono); font-size: .64rem;
-      letter-spacing: .12em; text-transform: uppercase; color: var(--gold);
-      margin-top: 10px; opacity: 0; transition: opacity .25s;
-    }
-    .tr-card:hover .tr-card-hint { opacity: 1; }
-
-    /* Skeleton loading cards */
-    .tr-card-skeleton { pointer-events: none; gap: 14px; justify-content: center; }
-    .tr-sk-line {
-      height: 12px; border-radius: 6px;
-      background: linear-gradient(90deg, var(--bg2) 25%, rgba(255,255,255,.04) 50%, var(--bg2) 75%);
-      background-size: 200% 100%;
-      animation: sk-shimmer 1.6s infinite;
-    }
-    .tr-sk-w40 { width: 40%; } .tr-sk-w45 { width: 45%; }
-    .tr-sk-w50 { width: 50%; } .tr-sk-w55 { width: 55%; }
-    .tr-sk-w60 { width: 60%; } .tr-sk-w70 { width: 70%; }
-    .tr-sk-w75 { width: 75%; } .tr-sk-w80 { width: 80%; }
-    .tr-sk-w90 { width: 90%; }
-    @keyframes sk-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
     /* ══════════════════════════════════════════
-       REVIEWS — modular variants (#tr-stage)
+       REVIEWS — Spotlight (#tr-stage)
     ══════════════════════════════════════════ */
     #tr-stage { position: relative; }
-    /* shared avatar */
-    .sp-pic, .dk-pic, .sl-pic {
+    /* avatar */
+    .sp-pic {
       width: 46px; height: 46px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
       border: 1px solid var(--border); background: var(--bg2);
       display: inline-flex; align-items: center; justify-content: center;
     }
-    .sp-pic img, .dk-pic img, .sl-pic img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(.5); }
-    .sp-pic-ph, .dk-pic-ph, .sl-pic-ph { font-family: var(--serif); color: var(--gold); font-size: 1.1rem; }
+    .sp-pic img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(.5); }
+    .sp-pic-ph { font-family: var(--serif); color: var(--gold); font-size: 1.1rem; }
 
-    /* ── Style 1: Spotlight ── */
+    /* ── Spotlight ── */
     .trs-spotlight {
       position: relative; max-width: 980px; margin: 0 auto; overflow: hidden;
       padding: 16px var(--pad); text-align: center;
@@ -1409,53 +1282,14 @@
     .sp-progress { width: 180px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
     .sp-progress span { display: block; height: 100%; width: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; }
     @media (max-width: 768px) { .sp-quote { font-size: 1.15rem; } .sp-progress { width: 120px; } }
-
-    /* ── Style 2: Deck ── */
-    .trs-deck { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 20px var(--pad) 8px; }
-    .dk-stack { position: relative; width: min(420px, 86vw); height: 350px; }
-    .dk-card {
-      position: absolute; inset: 0; display: flex; flex-direction: column; gap: 16px;
-      padding: 32px 30px; border: 1px solid var(--border-h); border-radius: var(--r);
-      background: linear-gradient(180deg, #14110d, #0d0b09);
-      box-shadow: 0 20px 50px rgba(0,0,0,.45); cursor: pointer; will-change: transform;
+    .sp-readmore {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--mono); font-size: .66rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); background: none; border: none; padding: 0;
+      cursor: pointer; opacity: .85; transition: opacity .2s;
     }
-    .dk-stars { color: var(--gold); letter-spacing: .12em; }
-    .dk-q { font-family: var(--serif); font-style: italic; font-size: 1.2rem; line-height: 1.6; color: var(--fg); flex: 1; overflow: hidden; }
-    .dk-foot { display: flex; align-items: center; gap: 12px; margin-top: auto; }
-    .dk-name { font-family: var(--mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg); display: flex; flex-direction: column; gap: 3px; }
-    .dk-sub { color: var(--dim); font-size: .6rem; }
-    .dk-count { font-family: var(--mono); font-size: .72rem; letter-spacing: .18em; color: var(--fg2); min-width: 60px; text-align: center; }
-
-    /* ── Style 3: Split ── */
-    .trs-split { display: grid; grid-template-columns: 1.4fr .9fr; gap: 48px; align-items: center; padding: 12px var(--pad); }
-    .sl-quote { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(1.4rem, 3vw, 2.4rem); line-height: 1.45; color: var(--fg); margin: 0 0 24px; cursor: pointer; }
-    .sl-author { display: inline-flex; align-items: center; gap: 14px; }
-    .sl-aname { font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg); display: flex; flex-direction: column; gap: 4px; }
-    .sl-asub { color: var(--dim); font-size: .62rem; }
-    .sl-side { border-left: 1px solid var(--border); padding-left: 40px; display: flex; flex-direction: column; gap: 22px; }
-    .sl-score { display: flex; flex-direction: column; gap: 6px; }
-    .sl-score-val { font-family: var(--serif); font-size: 3rem; font-weight: 300; line-height: 1; color: var(--fg); }
-    .sl-score-stars { color: var(--gold); letter-spacing: .12em; }
-    .sl-score-meta { font-family: var(--mono); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--fg2); }
-    .sl-list { display: flex; flex-direction: column; gap: 2px; }
-    .sl-name { text-align: left; background: none; border: 0; cursor: pointer; padding: 8px 0; font-family: var(--serif); font-style: italic; font-size: 1.05rem; color: var(--fg2); transition: color .25s, padding .25s; }
-    .sl-name:hover { color: var(--fg); }
-    .sl-name.on { color: var(--gold); padding-left: 14px; }
-    @media (max-width: 768px) { .trs-split { grid-template-columns: 1fr; gap: 30px; } .sl-side { border-left: 0; padding-left: 0; border-top: 1px solid var(--border); padding-top: 24px; } }
-
-    /* ── Style 4: Marquee + feature ── */
-    .trs-marquee { display: flex; flex-direction: column; gap: 40px; padding: 12px 0; text-align: center; }
-    .mqf-feature { padding: 0 var(--pad); display: flex; flex-direction: column; align-items: center; gap: 18px; min-height: 160px; justify-content: center; }
-    .mqf-quote { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(1.5rem, 3.4vw, 2.6rem); line-height: 1.4; color: var(--fg); max-width: 820px; margin: 0; cursor: pointer; }
-    .mqf-author { display: flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg2); }
-    .mqf-stars { color: var(--gold); }
-    .mqf-track-wrap { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 16px 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
-    .mqf-track { display: inline-flex; align-items: center; white-space: nowrap; animation: mqf-scroll 38s linear infinite; }
-    @keyframes mqf-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-    .mq-name { background: none; border: 0; cursor: pointer; font-family: var(--serif); font-style: italic; font-size: 1.15rem; color: var(--fg2); transition: color .25s; padding: 0 18px; }
-    .mq-name span { color: var(--gold); font-size: .7rem; }
-    .mq-name:hover, .mq-name.on { color: var(--gold); }
-    .mq-dot { color: var(--dim); }
+    .sp-readmore:hover { opacity: 1; }
 
     /* Review expand modal */
     #rv-modal {
@@ -1513,7 +1347,6 @@
     }
     @media (max-width: 768px) {
       .rvm-box { padding: 40px 28px; }
-      .tr-card { width: 260px; }
     }
 
 
@@ -1557,7 +1390,7 @@
     }
     .fq-item:last-child { border-bottom: 1px solid var(--border); }
 
-    /* Header row — grid: [number] [question+tags] [toggle] */
+    /* Header row — a <button> for keyboard access; grid: [number] [question+tags] [toggle] */
     .fq-trigger {
       display: grid;
       grid-template-columns: 96px 1fr auto;
@@ -1565,6 +1398,8 @@
       gap: 0 2.5rem;
       padding: 36px 0;
       width: 100%;
+      background: none; border: none; color: inherit;
+      font: inherit; text-align: left; cursor: pointer;
     }
 
     /* Large italic number */
@@ -1767,23 +1602,18 @@
       color: var(--fg2); transition: color .25s, border-color .25s, background .25s;
     }
     .loc-btn:hover { color: var(--fg); border-color: var(--border-h); }
-    .loc-btn.loc-btn-waze { border-color: rgba(0,210,255,.25); color: #00d2ff; }
-    .loc-btn.loc-btn-waze:hover { background: rgba(0,210,255,.08); border-color: rgba(0,210,255,.5); }
-    /* Google Maps — multicolor brand gradient border on hover */
-    .loc-btn.loc-btn-gmaps { border-color: rgba(66,133,244,.32); color: #6ba5ff; }
+    /* Neutral at rest; brand colour appears on hover only */
+    .loc-btn.loc-btn-waze:hover { background: rgba(0,210,255,.08); border-color: rgba(0,210,255,.5); color: #00d2ff; }
     .loc-btn.loc-btn-gmaps:hover {
       background: linear-gradient(var(--bg), var(--bg)) padding-box,
                   linear-gradient(90deg, #4285f4 0%, #ea4335 33%, #fbbc05 66%, #34a853 100%) border-box;
       border-color: transparent; color: var(--fg);
     }
-    /* Google Transit (was Moovit) */
-    .loc-btn.loc-btn-transit { border-color: rgba(52,168,83,.28); color: #4caf72; }
     .loc-btn.loc-btn-transit:hover {
       background: linear-gradient(var(--bg), var(--bg)) padding-box,
                   linear-gradient(90deg, #4285f4, #34a853) border-box;
       border-color: transparent; color: var(--fg);
     }
-    .loc-btn.loc-btn-uber { border-color: rgba(255,255,255,.18); color: var(--fg2); }
     .loc-btn.loc-btn-uber:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.3); }
     /* "Find Me" heading */
     .loc-find-label {
@@ -1880,33 +1710,15 @@
     .bk-btn:active, .n-btn:active { transform: scale(0.96) translateY(0) !important; transition-duration: .1s !important; }
     .ei:active   { background: rgba(196,162,98,.04); }
     .fq-item:active { background: rgba(237,232,223,.02); }
-    .bc-btn:active  { transform: scale(0.96) translateY(0) !important; }
 
 
     /* — Expertise blocks on mobile — */
     @media (max-width: 768px) {
-      .exp-list { padding: 0 24px; gap: 10px; }
+      .exp-list { gap: 10px; }
       .ei { padding: 24px 20px; min-height: auto; }
       .ei-rule { display: none; }
       .ei-accent { display: none; }
     }
-
-    /* — Tap ripple — */
-    .tap-ripple {
-      position: absolute;
-      width: 56px; height: 56px; border-radius: 50%;
-      background: rgba(196,162,98,.38);
-      transform: translate(-50%,-50%) scale(0);
-      pointer-events: none; z-index: 20;
-    }
-
-    /* — Gold particles — */
-    .gold-particle {
-      position: fixed; width: 7px; height: 7px; border-radius: 50%;
-      background: var(--gold); pointer-events: none; z-index: 99999;
-      box-shadow: 0 0 8px rgba(196,162,98,.7);
-    }
-
 
     /* — Ken Burns overflow hide — */
     .hero-bg-photo { overflow: hidden; }
@@ -1935,24 +1747,27 @@
        RESILIENCE — if animation libs/JS fail, reveal content + drop loader
     ══════════════════════════════════════════ */
     html.libs-failed #loader { display: none !important; }
-    html.libs-failed #nav, html.libs-failed .h-eyebrow,
-    html.libs-failed .tl-i, html.libs-failed .h-sub, html.libs-failed .h-cta,
-    html.libs-failed .s-label, html.libs-failed .w-hint, html.libs-failed .ei,
-    html.libs-failed .bk-av, html.libs-failed .bk-rule, html.libs-failed .bk-sub,
-    html.libs-failed .bk-btn, html.libs-failed .bk-steps, html.libs-failed .loc-map-wrap {
+    html.libs-failed :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .ei,
+        .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap,
+        .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
+        .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-left, .gf-oc,
+        .exp-h2, .faq-h2, .bk-h2, .faq-hd-rule, .faq-hd-count) {
       opacity: 1 !important; transform: none !important;
+      filter: none !important; clip-path: none !important;
     }
-    html.libs-failed #nav { pointer-events: auto !important; }
 
     /* ══════════════════════════════════════════
        REDUCED MOTION — keep entrance-revealed content visible + static
     ══════════════════════════════════════════ */
     @media (prefers-reduced-motion: reduce) {
-      #nav, .h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .w-hint, .ei,
-      .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap {
+      :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .ei,
+          .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap,
+          .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
+          .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-left, .gf-oc,
+          .exp-h2, .faq-h2, .bk-h2, .faq-hd-rule, .faq-hd-count) {
         opacity: 1 !important; transform: none !important;
+        filter: none !important; clip-path: none !important;
       }
-      #nav { pointer-events: auto !important; }
     }
   </style>
 </head>
@@ -1983,36 +1798,23 @@
 
 <!-- ════ NAV ════ -->
 <nav id="nav">
-  <a href="#" class="n-logo">Emmy <em>Tattoo</em></a>
+  <a href="/" class="n-logo">Emmy <em>Tattoo</em></a>
   <div class="n-links">
     <a href="/portfolio" class="n-item">Portfolio</a>
     <a href="#about" class="n-item">About</a>
     <a href="#trust" class="n-item">Reviews</a>
     <a href="#faq" class="n-item">FAQ</a>
     <a href="#book" class="n-btn">Book a Session</a>
-    <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="n-social" aria-label="WhatsApp" style="color:#25D366">
+    <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="n-social n-wa" aria-label="WhatsApp">
       <svg width="17" height="17" aria-hidden="true"><use href="#i-wa"/></svg>
       <span>WhatsApp</span>
     </a>
-    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="n-social" aria-label="Instagram">
-      <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="ig-g" cx="30%" cy="107%" r="150%">
-            <stop offset="0%"   stop-color="#fdf497"/>
-            <stop offset="10%"  stop-color="#fdf497"/>
-            <stop offset="50%"  stop-color="#fd5949"/>
-            <stop offset="68%"  stop-color="#d6249f"/>
-            <stop offset="100%" stop-color="#285AEB"/>
-          </radialGradient>
-        </defs>
-        <path fill="url(#ig-g)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-      </svg>
+    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="n-social n-ig" aria-label="Instagram">
+      <svg width="17" height="17" aria-hidden="true"><use href="#i-ig"/></svg>
       <span>Instagram</span>
     </a>
-    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="n-social" aria-label="Facebook">
-      <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-      </svg>
+    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="n-social n-fb" aria-label="Facebook">
+      <svg width="17" height="17" aria-hidden="true"><use href="#i-fb"/></svg>
       <span>Facebook</span>
     </a>
   </div>
@@ -2030,9 +1832,9 @@
   <a class="mm-link" href="#faq">FAQ</a>
   <a class="mm-link mm-book" href="#book">Book a Session</a>
   <div class="mm-socials">
-    <a class="n-social" href="https://wa.me/447405979137" target="_blank" rel="noopener" aria-label="WhatsApp" style="color:#25D366"><svg width="18" height="18" aria-hidden="true"><use href="#i-wa"/></svg></a>
-    <a class="n-social" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" aria-hidden="true"><use href="#i-ig"/></svg></a>
-    <a class="n-social" href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" aria-label="Facebook" style="color:#1877F2"><svg width="18" height="18" aria-hidden="true"><use href="#i-fb"/></svg></a>
+    <a class="n-social n-wa" href="https://wa.me/447405979137" target="_blank" rel="noopener" aria-label="WhatsApp"><svg width="18" height="18" aria-hidden="true"><use href="#i-wa"/></svg></a>
+    <a class="n-social n-ig" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" aria-hidden="true"><use href="#i-ig"/></svg></a>
+    <a class="n-social n-fb" href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" aria-label="Facebook"><svg width="18" height="18" aria-hidden="true"><use href="#i-fb"/></svg></a>
   </div>
 </div>
 
@@ -2042,7 +1844,10 @@
 <!-- ════ HERO ════ -->
 <section id="hero">
   <div class="hero-bg-photo" aria-hidden="true">
-    <img src="pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg" alt="A black and white close-up photo of a tattoo artist from Emmy Tattoo working on a client's arm using a rotary tattoo machine." loading="eager" decoding="async">
+    <img src="pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg"
+         srcset="pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-960.webp 960w, pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg 1440w"
+         sizes="100vw" fetchpriority="high"
+         alt="A black and white close-up photo of a tattoo artist from Emmy Tattoo working on a client's arm using a rotary tattoo machine." loading="eager" decoding="async">
   </div>
   <div class="h-vign" aria-hidden="true"></div>
   <div class="h-inner">
@@ -2072,38 +1877,56 @@
 <section id="work">
   <div class="w-grid">
 
-      <article class="wc" aria-label="Realism — Thresher shark" data-full="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg">
-        <img class="wc-img" src="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg" alt="Black and grey realism tattoo of a Thresher shark swimming downwards on a client's upper arm." loading="eager" decoding="async">
+      <article class="wc" tabindex="0" role="button" aria-label="Realism — Thresher shark" data-full="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg">
+        <img class="wc-img" src="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg" width="2002" height="2669"
+             srcset="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-480.webp 480w, pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-960.webp 960w"
+             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+             alt="Black and grey realism tattoo of a Thresher shark swimming downwards on a client's upper arm." loading="eager" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
       </article>
 
-      <article class="wc" aria-label="Realism — Wolf portrait forearm" data-full="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg">
-        <img class="wc-img" src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" alt="Black and grey forearm half-sleeve tattoo featuring a realistic wolf face, a shattered Roman numeral clock, and a forest silhouette with a howling wolf." loading="lazy" decoding="async">
+      <article class="wc" tabindex="0" role="button" aria-label="Realism — Wolf portrait forearm" data-full="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg">
+        <img class="wc-img" src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" width="2160" height="2881"
+             srcset="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-480.webp 480w, pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp 960w"
+             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+             alt="Black and grey forearm half-sleeve tattoo featuring a realistic wolf face, a shattered Roman numeral clock, and a forest silhouette with a howling wolf." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
       </article>
 
-      <article class="wc" aria-label="Fine line — Abstract flower" data-full="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg">
-        <img class="wc-img" src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" alt="Minimalist fine-line tattoo on an upper arm featuring an abstract, continuous flowing line that forms a delicate flower." loading="lazy" decoding="async">
+      <article class="wc" tabindex="0" role="button" aria-label="Fine line — Abstract flower" data-full="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg">
+        <img class="wc-img" src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" width="2160" height="3007"
+             srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w, pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp 960w"
+             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+             alt="Minimalist fine-line tattoo on an upper arm featuring an abstract, continuous flowing line that forms a delicate flower." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Fine Line</div></div>
       </article>
 
-      <article class="wc" aria-label="Fine art — Flying barn owl" data-full="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg">
-        <img class="wc-img" src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" alt="Black and grey fine art tattoo of a flying barn owl on a client's upper arm." loading="lazy" decoding="async">
+      <article class="wc" tabindex="0" role="button" aria-label="Fine art — Flying barn owl" data-full="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg">
+        <img class="wc-img" src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" width="2160" height="2880"
+             srcset="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-480.webp 480w, pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-960.webp 960w"
+             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+             alt="Black and grey fine art tattoo of a flying barn owl on a client's upper arm." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
       </article>
 
-      <article class="wc" aria-label="Fine art — Classical mythology Hermes" data-full="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg">
-        <img class="wc-img" src="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg" alt="Fine art forearm tattoo of Hermes from classical mythology in black and grey." loading="lazy" decoding="async">
+      <article class="wc" tabindex="0" role="button" aria-label="Fine art — Classical mythology Hermes" data-full="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg">
+        <img class="wc-img" src="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg" width="3024" height="4032"
+             srcset="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-480.webp 480w, pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp 960w"
+             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+             alt="Fine art forearm tattoo of Hermes from classical mythology in black and grey." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
       </article>
 
-      <article class="wc" aria-label="Realism — Cat portraits" data-full="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg">
-        <img class="wc-img" src="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg" alt="Realistic black and grey portraits of five cats tattooed on a client's upper arm." loading="lazy" decoding="async">
+      <article class="wc" tabindex="0" role="button" aria-label="Realism — Cat portraits" data-full="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg">
+        <img class="wc-img" src="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg" width="2160" height="2880"
+             srcset="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-480.webp 480w, pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-960.webp 960w"
+             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+             alt="Realistic black and grey portraits of five cats tattooed on a client's upper arm." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
       </article>
@@ -2119,7 +1942,10 @@
 <section id="about">
   <div class="ab-portrait">
     <!-- TODO: replace with a real portrait of Emmy -->
-    <img src="pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg" alt="Emmy, tattoo artist at Sainthood Tattoo in Hull, at work." loading="lazy" decoding="async">
+    <img src="pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg"
+         srcset="pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-480.webp 480w, pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-960.webp 960w"
+         sizes="(max-width: 768px) 100vw, 40vw"
+         alt="Emmy, tattoo artist at Sainthood Tattoo in Hull, at work." loading="lazy" decoding="async">
   </div>
   <div class="ab-text">
     <div class="s-label">About</div>
@@ -2138,7 +1964,7 @@
   </div>
   <ul class="exp-list">
 
-    <li class="ei" data-gallery='[
+    <li class="ei" tabindex="0" role="button" aria-expanded="false" data-gallery='[
       {"src":"pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg","alt":"Minimalist fine-line abstract continuous flower tattoo"}
     ]'>
       <div class="ei-nw"><span class="ei-name">Fine Line</span></div>
@@ -2150,7 +1976,10 @@
           <p class="ei-expand-text">A delicate, precise style often done with thin lines.</p>
           <div class="ei-img-col">
             <div class="ei-expand-img">
-              <img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull." loading="lazy" decoding="async">
+              <img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg"
+                   srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w"
+                   sizes="(max-width: 768px) 100vw, 180px"
+                   alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull." loading="lazy" decoding="async">
             </div>
             <button class="ei-see-more" aria-label="See more fine line work">See more &nbsp;›</button>
           </div>
@@ -2158,7 +1987,7 @@
       </div>
     </li>
 
-    <li class="ei" data-gallery='[
+    <li class="ei" tabindex="0" role="button" aria-expanded="false" data-gallery='[
       {"src":"pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg","alt":"Flying barn owl black and grey tattoo"},
       {"src":"pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg","alt":"Classical mythology Hermes fine art tattoo"}
     ]'>
@@ -2171,7 +2000,10 @@
           <p class="ei-expand-text">Illustrative work designed around your concept. Think paintings: aesthetic, passionate, really just art for art's sake.</p>
           <div class="ei-img-col">
             <div class="ei-expand-img">
-              <img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull." loading="lazy" decoding="async">
+              <img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg"
+                   srcset="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-480.webp 480w"
+                   sizes="(max-width: 768px) 100vw, 180px"
+                   alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull." loading="lazy" decoding="async">
             </div>
             <button class="ei-see-more" aria-label="See more fine art work">See more &nbsp;›</button>
           </div>
@@ -2179,7 +2011,7 @@
       </div>
     </li>
 
-    <li class="ei" data-gallery='[
+    <li class="ei" tabindex="0" role="button" aria-expanded="false" data-gallery='[
       {"src":"pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg","alt":"Wolf portrait clock forest forearm half-sleeve"},
       {"src":"pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg","alt":"Pug Bonnie portrait with roses on thigh"},
       {"src":"pictures/Black-Pug-Portrait-Tattoo-With-Daisies.jpg","alt":"Black pug Marley portrait with daisies"},
@@ -2195,7 +2027,10 @@
           <p class="ei-expand-text">A lifelike rendering of anything you want that exists in life: portraits, botanical, landscapes, still life, animals.</p>
           <div class="ei-img-col">
             <div class="ei-expand-img">
-              <img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" alt="Wolf portrait clock forest forearm realism tattoo by Emmy, Hull." loading="lazy" decoding="async">
+              <img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg"
+                   srcset="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-480.webp 480w"
+                   sizes="(max-width: 768px) 100vw, 180px"
+                   alt="Wolf portrait clock forest forearm realism tattoo by Emmy, Hull." loading="lazy" decoding="async">
             </div>
             <button class="ei-see-more" aria-label="See more realism work">See more &nbsp;›</button>
           </div>
@@ -2224,8 +2059,8 @@
     </div>
   </div>
 
-  <!-- Reviews render here; style chosen by REVIEW_STYLE in the script (1=spotlight 2=deck 3=split 4=marquee) -->
-  <div id="tr-stage" aria-live="polite"></div>
+  <!-- Reviews render here (Spotlight carousel) -->
+  <div id="tr-stage"></div>
 
   <!-- View-all + leave-a-review strip — inside trust section -->
   <div class="tr-review-cta">
@@ -2261,14 +2096,14 @@
   <ul class="fq-list">
 
     <li class="fq-item">
-      <div class="fq-trigger">
+      <button class="fq-trigger" type="button" aria-expanded="false">
         <span class="fq-num">01</span>
         <div class="fq-q-wrap">
           <span class="fq-question">How much does a tattoo cost?</span>
           <span class="fq-tags-row">Pricing · quotes · deposits</span>
         </div>
         <span class="fq-toggle">+</span>
-      </div>
+      </button>
       <div class="fq-rule"></div>
       <div class="fq-panel">
         <div class="fq-panel-inner">
@@ -2278,14 +2113,14 @@
     </li>
 
     <li class="fq-item">
-      <div class="fq-trigger">
+      <button class="fq-trigger" type="button" aria-expanded="false">
         <span class="fq-num">02</span>
         <div class="fq-q-wrap">
           <span class="fq-question">Do you do walk-ins?</span>
           <span class="fq-tags-row">Appointments · walk-ins · availability</span>
         </div>
         <span class="fq-toggle">+</span>
-      </div>
+      </button>
       <div class="fq-rule"></div>
       <div class="fq-panel">
         <div class="fq-panel-inner">
@@ -2295,14 +2130,14 @@
     </li>
 
     <li class="fq-item">
-      <div class="fq-trigger">
+      <button class="fq-trigger" type="button" aria-expanded="false">
         <span class="fq-num">03</span>
         <div class="fq-q-wrap">
           <span class="fq-question">How do I prepare for my appointment?</span>
           <span class="fq-tags-row">Preparation · health · what to bring</span>
         </div>
         <span class="fq-toggle">+</span>
-      </div>
+      </button>
       <div class="fq-rule"></div>
       <div class="fq-panel">
         <div class="fq-panel-inner">
@@ -2320,14 +2155,14 @@
     </li>
 
     <li class="fq-item">
-      <div class="fq-trigger">
+      <button class="fq-trigger" type="button" aria-expanded="false">
         <span class="fq-num">04</span>
         <div class="fq-q-wrap">
           <span class="fq-question">Does it hurt?</span>
           <span class="fq-tags-row">Pain · tolerance · placement</span>
         </div>
         <span class="fq-toggle">+</span>
-      </div>
+      </button>
       <div class="fq-rule"></div>
       <div class="fq-panel">
         <div class="fq-panel-inner">
@@ -2337,14 +2172,14 @@
     </li>
 
     <li class="fq-item">
-      <div class="fq-trigger">
+      <button class="fq-trigger" type="button" aria-expanded="false">
         <span class="fq-num">05</span>
         <div class="fq-q-wrap">
           <span class="fq-question">What should I know before my first tattoo?</span>
           <span class="fq-tags-row">First time · expectations · nerves</span>
         </div>
         <span class="fq-toggle">+</span>
-      </div>
+      </button>
       <div class="fq-rule"></div>
       <div class="fq-panel">
         <div class="fq-panel-inner">
@@ -2354,14 +2189,14 @@
     </li>
 
     <li class="fq-item">
-      <div class="fq-trigger">
+      <button class="fq-trigger" type="button" aria-expanded="false">
         <span class="fq-num">06</span>
         <div class="fq-q-wrap">
           <span class="fq-question">What's the minimum age?</span>
           <span class="fq-tags-row">Age · ID · legal</span>
         </div>
         <span class="fq-toggle">+</span>
-      </div>
+      </button>
       <div class="fq-rule"></div>
       <div class="fq-panel">
         <div class="fq-panel-inner">
@@ -2533,14 +2368,6 @@
         <span class="fl-fb-handle">EmmaleneTattoo</span>
       </a>
     </div>
-    <div class="ig-grid" aria-label="Recent work on Instagram">
-      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Surreal face and snake hand tattoo on Instagram"><img src="pictures/surreal-face-snake-hand-tattoo-emmy-tattoo.jpg" alt="Black and grey surreal face and snake hand tattoo by Emmy." loading="lazy" decoding="async"></a>
-      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Wolf portrait forearm tattoo on Instagram"><img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" alt="Black and grey wolf portrait forearm tattoo by Emmy." loading="lazy" decoding="async"></a>
-      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Fine line spotted shark tattoo on Instagram"><img src="pictures/fine-line-spotted-shark-arm-tattoo-emmy-tattoo.jpg" alt="Fine line spotted shark arm tattoo by Emmy." loading="lazy" decoding="async"></a>
-      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Cat portraits tattoo on Instagram"><img src="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg" alt="Realistic cat portraits tattoo by Emmy." loading="lazy" decoding="async"></a>
-      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Flying barn owl tattoo on Instagram"><img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" alt="Flying barn owl black and grey tattoo by Emmy." loading="lazy" decoding="async"></a>
-      <a class="ig-cell" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Pug portrait thigh tattoo on Instagram"><img src="pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg" alt="Realistic pug portrait with florals thigh tattoo by Emmy." loading="lazy" decoding="async"></a>
-    </div>
   </div>
 </section>
 
@@ -2637,6 +2464,7 @@
 <footer>
   <div class="ft-logo">Emmy <em>Tattoo</em></div>
   <div class="ft-links">
+    <a href="/portfolio" class="ft-a">Portfolio</a>
     <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="ft-a">Instagram</a>
     <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="ft-a">Facebook</a>
     <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="ft-a">WhatsApp</a>
@@ -2656,7 +2484,6 @@
   const LOW_END = navigator.hardwareConcurrency <= 4
     || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (LOW_END) {
-    gsap.globalTimeline.timeScale(1); // keep timing but skip below
     document.documentElement.classList.add('lite'); // CSS drops heavy blur effects
   }
 
@@ -2689,18 +2516,32 @@
   /* ═══ LOADER ═══ */
   const ldr = document.getElementById('loader');
 
-  function exitLoader() {
-    gsap.timeline({
-      onComplete: () => {
-        ldr.style.display = 'none';
-        lenis.start(); /* unlock scroll */
-        initHero();
-      }
-    })
-    .to('.ld-wrap', { opacity: 0, y: -32, duration: 0.55, ease: 'power2.in' })
-    .to(ldr,        { opacity: 0, duration: 0.35, ease: 'power1.inOut' }, '-=0.15');
+  /* Skip the intro for repeat visits within the same session */
+  const SKIP_INTRO = (() => { try { return sessionStorage.getItem('emmy-intro') === '1'; } catch (e) { return false; } })();
+  try { sessionStorage.setItem('emmy-intro', '1'); } catch (e) {}
+
+  function startPage() {
+    ldr.style.display = 'none';
+    lenis.start(); /* unlock scroll */
+    initHero();
+    /* Honour hash deep-links (e.g. /#faq) that the scroll reset wiped out */
+    if (location.hash) {
+      let target = null;
+      try { target = document.querySelector(location.hash); } catch (e) {}
+      if (target) lenis.scrollTo(target, { duration: 1.2 });
+    }
   }
 
+  function exitLoader() {
+    gsap.timeline({ onComplete: startPage })
+      .to('.ld-wrap', { opacity: 0, y: -32, duration: 0.55, ease: 'power2.in' })
+      .to(ldr,        { opacity: 0, duration: 0.35, ease: 'power1.inOut' }, '-=0.15');
+  }
+
+  if (SKIP_INTRO) {
+    ldr.style.display = 'none';
+    document.addEventListener('DOMContentLoaded', startPage);
+  } else
   // Clip-path wipe — letters rise up into view left-to-right
   (() => {
     const nameChars = document.querySelectorAll('.ld-name .ld-c');
@@ -2735,44 +2576,21 @@
     _rzTimer = setTimeout(() => ScrollTrigger.refresh(), 180);
   });
 
+  /* Lazy images change document height after init — recompute trigger positions */
+  window.addEventListener('load', () => ScrollTrigger.refresh());
+
 
 
   /* ═══ SCROLL PROGRESS ═══ */
   const progEl = document.getElementById('prog');
 
-  /* ═══ NAV ═══ */
+  /* ═══ NAV — always visible; gains a blurred background once scrolled ═══ */
   const navEl = document.getElementById('nav');
-
-  function navTo(show) {
-    if (show) {
-      /* iOS drop-in: spring from just above the viewport */
-      gsap.fromTo(navEl,
-        { y: -52, scale: 0.97, opacity: 0 },
-        {
-          y: 0, scale: 1, opacity: 1,
-          duration: 0.46, ease: 'back.out(1.5)',
-          overwrite: true,
-          onStart: () => { navEl.style.pointerEvents = 'all'; }
-        }
-      );
-    } else {
-      /* iOS dismiss: snap up and fade */
-      gsap.to(navEl, {
-        y: -18, scale: 0.97, opacity: 0,
-        duration: 0.28, ease: 'power2.in',
-        overwrite: true,
-        onComplete: () => {
-          navEl.style.pointerEvents = 'none';
-          gsap.set(navEl, { y: -52, scale: 0.97 }); /* park above so next entrance starts consistently */
-        }
-      });
-    }
-  }
 
   /* Single scroll handler: progress bar + nav background toggle */
   lenis.on('scroll', ({ scroll, limit }) => {
     gsap.set(progEl, { scaleX: limit ? scroll / limit : 0 });
-    navEl.classList.toggle('s', scroll > 80);
+    navEl.classList.toggle('s', scroll > 40);
   });
 
   // Smooth anchor scrolling via Lenis (no teleport)
@@ -2817,6 +2635,9 @@
 
   /* ═══ HERO INIT ═══ */
   function initHero() {
+    /* Unlock the CSS-driven eyebrow/CTA entrances so they sequence after the loader */
+    document.documentElement.classList.add('hero-go');
+
     /* — Char-split hero title with blur-in (different from loader's 3D flip) — */
     document.querySelectorAll('.h-title .tl-i').forEach(el => {
       gsap.set(el, { opacity: 1 });
@@ -2839,14 +2660,6 @@
 
   /* ═══ SCROLL ANIMATIONS ═══ */
   function initScrollAnims() {
-
-    /* ── Nav: show once hero title exits, hide when back in hero ── */
-    ScrollTrigger.create({
-      trigger: '.h-title',
-      start: 'bottom top',
-      onEnter:     () => navTo(true),
-      onLeaveBack: () => navTo(false),
-    });
 
     /* ── Hero depth parallax + content blur (skipped on weak hardware) ── */
     if (!LOW_END) {
@@ -2942,6 +2755,9 @@
 
       document.querySelectorAll('.wc').forEach(card => {
         card.addEventListener('click', () => { if (card.querySelector('.wc-img')) openLightbox(card); });
+        card.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+        });
       });
       galModalBg.addEventListener('click', closeLightbox);
       galClose.addEventListener('click', closeLightbox);
@@ -3023,9 +2839,13 @@
       if (!panel || !arr) return;
       let isOpen = false;
 
+      row.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); }
+      });
       row.addEventListener('click', () => {
         isOpen = !isOpen;
         row.classList.toggle('open', isOpen);
+        row.setAttribute('aria-expanded', String(isOpen));
 
         if (isOpen) {
           gsap.set(panel, { height: 'auto', overflow: 'visible' });
@@ -3055,12 +2875,14 @@
       const panel  = item.querySelector('.fq-panel');
       const inner  = item.querySelector('.fq-panel-inner');
       const rule   = item.querySelector('.fq-rule');
+      const trigger = item.querySelector('.fq-trigger');
       if (!panel) return;
       let isOpen = false;
 
       item.addEventListener('click', () => {
         isOpen = !isOpen;
         item.classList.toggle('open', isOpen);
+        if (trigger) trigger.setAttribute('aria-expanded', String(isOpen));
 
         if (isOpen) {
           gsap.set(panel, { height: 'auto', overflow: 'visible' });
@@ -3305,7 +3127,7 @@
         onEnter() {
           floatCta.style.pointerEvents = 'all';
           floatCta.setAttribute('aria-hidden', 'false');
-          gsap.to(floatCta, { opacity: 1, y: 0, duration: 0.7, ease: 'back.out(2.2)' });
+          gsap.to(floatCta, { opacity: 1, y: 0, duration: 0.7, ease: 'expo.out' });
         },
         onLeaveBack() {
           floatCta.style.pointerEvents = 'none';
@@ -3318,83 +3140,15 @@
         onEnter()    { gsap.to(floatCta, { opacity: 0, y: 40, duration: 0.3, ease: 'power2.in',
                          onComplete: () => { floatCta.style.pointerEvents = 'none'; } }); },
         onLeaveBack(){ floatCta.style.pointerEvents = 'all';
-                       gsap.to(floatCta, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(2)' }); }
+                       gsap.to(floatCta, { opacity: 1, y: 0, duration: 0.5, ease: 'expo.out' }); }
       });
     }
 
-    /* ══ CRAZY TIER ══════════════════════════════════════ */
-
-
-    /* — Tap ripple on cards — */
-    document.querySelectorAll('.wc').forEach(card => {
-      card.addEventListener('pointerdown', e => {
-        const r = card.getBoundingClientRect();
-        const rpl = document.createElement('div');
-        rpl.className = 'tap-ripple';
-        rpl.style.cssText = `left:${e.clientX - r.left}px;top:${e.clientY - r.top}px`;
-        card.appendChild(rpl);
-        gsap.fromTo(rpl,
-          { scale: 0, opacity: 0.55 },
-          { scale: 5, opacity: 0, duration: 0.7, ease: 'power2.out',
-            onComplete: () => rpl.remove() }
-        );
-      });
-    });
-
-    /* — Gold particle burst on Book buttons — */
-    function burstParticles(btn) {
-      const rect = btn.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      for (let i = 0; i < 18; i++) {
-        const p = document.createElement('div');
-        p.className = 'gold-particle';
-        document.body.appendChild(p);
-        const angle = (i / 18) * Math.PI * 2;
-        const dist  = 40 + Math.random() * 60;
-        gsap.set(p, { x: cx, y: cy, xPercent: -50, yPercent: -50 });
-        gsap.to(p, {
-          x: cx + Math.cos(angle) * dist,
-          y: cy + Math.sin(angle) * dist,
-          opacity: 0, scale: Math.random() * 0.8 + 0.4,
-          duration: 0.55 + Math.random() * 0.35,
-          ease: 'power2.out',
-          onComplete: () => p.remove()
-        });
-      }
-    }
-    document.querySelectorAll('.bk-btn, #float-cta-a, .n-btn').forEach(btn => {
-      btn.addEventListener('pointerdown', () => burstParticles(btn));
-    });
-
-    /* — Text scramble on section labels — */
-    const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ✦×◆';
-    function scramble(el) {
-      const final = el.dataset.text || el.textContent;
-      el.dataset.text = final;
-      let frame = 0;
-      const total = 28;
-      const id = setInterval(() => {
-        el.textContent = final.split('').map((ch, i) => {
-          if (ch === ' ') return ' ';
-          if (i < (frame / total) * final.length) return ch;
-          return CHARS[Math.floor(Math.random() * CHARS.length)];
-        }).join('');
-        if (++frame > total) { el.textContent = final; clearInterval(id); }
-      }, 1000 / 40);
-    }
-    document.querySelectorAll('.s-label').forEach(el => {
-      ScrollTrigger.create({
-        trigger: el, start: 'top 88%', once: true,
-        onEnter: () => scramble(el)
-      });
-    });
-
-    /* — Elastic spring entrance on portfolio cards (override expo) — */
+    /* — Work cards entrance — smooth, deliberate — */
     gsap.fromTo('.wc',
-      { y: 70, opacity: 0, scale: 0.88, rotation: -1.5 },
-      { y: 0, opacity: 1, scale: 1, rotation: 0,
-        stagger: 0.12, duration: 1.6, ease: 'elastic.out(1, 0.55)',
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1,
+        stagger: 0.08, duration: 1, ease: 'expo.out',
         scrollTrigger: { trigger: '#work-outer', start: 'top 82%', once: true } }
     );
 
@@ -3417,31 +3171,9 @@
       });
     });
 
-    /* — Magnetic floating CTA — */
-    if (floatCta) {
-      const magBtn = document.getElementById('float-cta-a');
-      document.addEventListener('pointermove', e => {
-        if (!magBtn || floatCta.style.pointerEvents === 'none') return;
-        const rect = magBtn.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
-        const dx = e.clientX - cx, dy = e.clientY - cy;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < 90) {
-          const pull = (90 - dist) / 90;
-          gsap.to(magBtn, { x: dx * pull * 0.35, y: dy * pull * 0.35,
-            duration: 0.4, ease: 'power2.out', overwrite: true });
-        } else {
-          gsap.to(magBtn, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.5)', overwrite: true });
-        }
-      });
-    }
-
-
   }
 
-  /* ══ REVIEWS — modular. Switch REVIEW_STYLE: 1=spotlight 2=deck 3=split 4=marquee ══ */
-  const REVIEW_STYLE = 1;
-
+  /* ══ REVIEWS — Spotlight carousel ══ */
   let REVIEWS = [
     { name: 'Jess Dan',        photo: 'google.reviews/Jess Dunn.jpg',     rating: 5, quote: "Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" },
     { name: 'Jaime Dale',      photo: 'google.reviews/James Dale.jpg',    rating: 5, quote: "Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" },
@@ -3466,6 +3198,9 @@
     const initial = name => (name || '?').trim().charAt(0).toUpperCase();
     const STATIC = (typeof LOW_END !== 'undefined' && LOW_END);
 
+    /* Live score/count — updated by the Google fetch before re-render */
+    let META = { rating: '5.0', count: 17 };
+
     /* Shared modal (reuses #rv-modal) */
     let mq, mauth, mreply, mreplyT;
     if (modal) {
@@ -3478,10 +3213,12 @@
       const closeModal = () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); lenis.start(); };
       if (mback) mback.addEventListener('click', closeModal);
       if (mclose) mclose.addEventListener('click', closeModal);
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
     }
     function openModal(r) {
       if (!modal) return;
+      const mstars = modal.querySelector('.rvm-stars');
+      if (mstars) mstars.textContent = stars(r.rating || 5);
       mq.textContent = '“' + r.quote + '”';
       mauth.textContent = '— ' + r.name + ' · Google Review';
       if (r.reply) { mreplyT.textContent = r.reply; mreply.classList.add('visible'); mreply.setAttribute('aria-hidden', 'false'); }
@@ -3504,8 +3241,18 @@
 
     function photoEl(r, cls) {
       return r.photo
-        ? '<span class="' + cls + '"><img src="' + r.photo + '" alt="' + esc(r.name) + '" loading="lazy" decoding="async"></span>'
+        ? '<span class="' + cls + '"><img src="' + esc(r.photo).replace(/"/g, '&quot;') + '" alt="' + esc(r.name) + '" loading="lazy" decoding="async"></span>'
         : '<span class="' + cls + ' ' + cls + '-ph">' + initial(r.name) + '</span>';
+    }
+
+    /* Make a JS-clickable element reachable by keyboard too */
+    function keyClickable(el, label) {
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('role', 'button');
+      if (label) el.setAttribute('aria-label', label);
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+      });
     }
 
     /* Lightweight swipe (hoisted) */
@@ -3519,13 +3266,14 @@
       });
     }
 
-    /* ── STYLE 1: Spotlight ── */
+    /* ── Spotlight ── */
     function buildSpotlight() {
       stage.className = 'trs-spotlight';
       stage.innerHTML =
         '<div class="sp-ghost" aria-hidden="true"></div>' +
-        '<div class="sp-rating"><span class="sp-stars">★★★★★</span><span>5.0 on Google</span></div>' +
+        '<div class="sp-rating"><span class="sp-stars">★★★★★</span><span>' + esc(META.rating) + ' on Google</span></div>' +
         '<blockquote class="sp-quote"></blockquote>' +
+        '<button class="sp-readmore" type="button">Read full review &nbsp;›</button>' +
         '<div class="sp-author"></div>' +
         '<div class="sp-nav"><button class="sp-arrow sp-prev" aria-label="Previous review">‹</button><div class="sp-dots"></div><button class="sp-arrow sp-next" aria-label="Next review">›</button></div>' +
         '<div class="sp-progress"><span></span></div>';
@@ -3564,135 +3312,27 @@
       stage.querySelector('.sp-prev').addEventListener('click', prev);
       dots.forEach((d, k) => d.addEventListener('click', () => go(k, k > i ? 1 : -1)));
       qEl.addEventListener('click', () => openModal(REVIEWS[i]));
+      keyClickable(qEl, 'Read full review');
+      stage.querySelector('.sp-readmore').addEventListener('click', () => openModal(REVIEWS[i]));
       addSwipe(stage, next, prev);
       _pause = () => { clearTimeout(timer); gsap.killTweensOf(bar); };
       _resume = restart;
       paint(1); restart();
     }
 
-    /* ── STYLE 2: Deck ── */
-    function buildDeck() {
-      stage.className = 'trs-deck';
-      stage.innerHTML =
-        '<div class="dk-stack"></div>' +
-        '<div class="sp-nav"><button class="sp-arrow sp-prev" aria-label="Previous review">‹</button><div class="dk-count"></div><button class="sp-arrow sp-next" aria-label="Next review">›</button></div>';
-      const stack = stage.querySelector('.dk-stack');
-      const countEl = stage.querySelector('.dk-count');
-      let i = 0, timer = null;
-      const DEPTH = Math.min(4, REVIEWS.length);
-      function card(r) {
-        const el = document.createElement('article');
-        el.className = 'dk-card';
-        el.innerHTML =
-          '<div class="dk-stars">' + stars(r.rating) + '</div>' +
-          '<p class="dk-q">“' + esc(r.quote) + '”</p>' +
-          '<div class="dk-foot">' + photoEl(r, 'dk-pic') + '<span class="dk-name">' + esc(r.name) + '<span class="dk-sub">Google review</span></span></div>';
-        el.addEventListener('click', () => openModal(r));
-        return el;
-      }
-      function layout() {
-        [...stack.children].forEach((el, d) => {
-          gsap.to(el, { y: d * 14, scale: 1 - d * 0.05, opacity: d >= DEPTH ? 0 : 1, zIndex: DEPTH - d, duration: .5, ease: 'expo.out' });
-          el.style.pointerEvents = d === 0 ? 'auto' : 'none';
-        });
-        countEl.textContent = (i % REVIEWS.length + 1) + ' / ' + REVIEWS.length;
-      }
-      function build() {
-        stack.innerHTML = '';
-        for (let d = 0; d < DEPTH; d++) stack.appendChild(card(REVIEWS[(i + d) % REVIEWS.length]));
-        layout();
-      }
-      function next() {
-        const top = stack.children[0];
-        if (!top) return;
-        gsap.to(top, { x: -44, y: -28, rotation: -6, opacity: 0, duration: .45, ease: 'power2.in', onComplete: () => {
-          i = (i + 1) % REVIEWS.length;
-          top.remove();
-          stack.appendChild(card(REVIEWS[(i + DEPTH - 1) % REVIEWS.length]));
-          gsap.fromTo(stack.lastChild, { opacity: 0 }, { opacity: 1, duration: .4 });
-          layout(); restart();
-        }});
-      }
-      function prev() {
-        i = (i - 1 + REVIEWS.length) % REVIEWS.length;
-        const el = card(REVIEWS[i]);
-        gsap.set(el, { x: -44, y: -28, rotation: -6, opacity: 0 });
-        stack.insertBefore(el, stack.firstChild);
-        if (stack.children.length > DEPTH) stack.lastChild.remove();
-        gsap.to(el, { x: 0, y: 0, rotation: 0, opacity: 1, duration: .45, ease: 'expo.out' });
-        layout(); restart();
-      }
-      function restart() { if (STATIC) return; clearTimeout(timer); timer = setTimeout(() => { visible ? next() : restart(); }, 5500); }
-      stage.querySelector('.sp-next').addEventListener('click', next);
-      stage.querySelector('.sp-prev').addEventListener('click', prev);
-      addSwipe(stack, next, prev);
-      _pause = () => clearTimeout(timer);
-      _resume = restart;
-      build(); restart();
-    }
+    buildSpotlight();
 
-    /* ── STYLE 3: Split ── */
-    function buildSplit() {
-      stage.className = 'trs-split';
-      stage.innerHTML =
-        '<div class="sl-main"><blockquote class="sl-quote"></blockquote><div class="sl-author"></div></div>' +
-        '<aside class="sl-side"><div class="sl-score"><span class="sl-score-val">5.0</span><span class="sl-score-stars">★★★★★</span><span class="sl-score-meta">17 Google reviews</span></div><div class="sl-list"></div></aside>';
-      const qEl = stage.querySelector('.sl-quote');
-      const aEl = stage.querySelector('.sl-author');
-      const listEl = stage.querySelector('.sl-list');
-      let i = 0, timer = null;
-      listEl.innerHTML = REVIEWS.map((r, k) => '<button class="sl-name" data-k="' + k + '">' + esc(r.name) + '</button>').join('');
-      const names = [...listEl.children];
-      function paint() {
-        const r = REVIEWS[i];
-        qEl.textContent = '“' + r.quote + '”';
-        aEl.innerHTML = photoEl(r, 'sl-pic') + '<span class="sl-aname">' + esc(r.name) + '<span class="sl-asub">Google review</span></span>';
-        gsap.fromTo([qEl, aEl], { opacity: 0, x: -16, filter: 'blur(6px)' }, { opacity: 1, x: 0, filter: 'blur(0px)', duration: .6, ease: 'expo.out', stagger: .05 });
-        names.forEach((n, k) => n.classList.toggle('on', k === i));
+    /* Live Google fetch hook — replaces data/meta + re-renders */
+    window.__refreshReviews = function (arr, meta) {
+      if (meta) {
+        if (meta.rating) META.rating = meta.rating;
+        if (meta.count)  META.count  = meta.count;
       }
-      function go(n) { i = (n + REVIEWS.length) % REVIEWS.length; paint(); restart(); }
-      function restart() { if (STATIC) return; clearTimeout(timer); timer = setTimeout(() => { visible ? go(i + 1) : restart(); }, 6000); }
-      names.forEach(n => n.addEventListener('click', () => go(+n.dataset.k)));
-      qEl.addEventListener('click', () => openModal(REVIEWS[i]));
-      _pause = () => clearTimeout(timer);
-      _resume = restart;
-      paint(); restart();
-    }
-
-    /* ── STYLE 4: Marquee + feature ── */
-    function buildMarquee() {
-      stage.className = 'trs-marquee';
-      const chip = (r, k) => '<button class="mq-name" data-k="' + k + '">' + esc(r.name) + ' <span>★★★★★</span></button>';
-      const seq = REVIEWS.map(chip).join('<span class="mq-dot">·</span>');
-      stage.innerHTML =
-        '<div class="mqf-feature"><blockquote class="mqf-quote"></blockquote><div class="mqf-author"></div></div>' +
-        '<div class="mqf-track-wrap"><div class="mqf-track">' + seq + '<span class="mq-dot">·</span>' + seq + '</div></div>';
-      const qEl = stage.querySelector('.mqf-quote');
-      const aEl = stage.querySelector('.mqf-author');
-      let i = 0, timer = null;
-      function paint() {
-        const r = REVIEWS[i];
-        qEl.textContent = '“' + r.quote + '”';
-        aEl.innerHTML = '<span>— ' + esc(r.name) + '</span><span class="mqf-stars">★★★★★</span>';
-        gsap.fromTo([qEl, aEl], { opacity: 0, y: 14, filter: 'blur(6px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .6, ease: 'expo.out', stagger: .06 });
-        stage.querySelectorAll('.mq-name').forEach(n => n.classList.toggle('on', +n.dataset.k === i));
+      if (Array.isArray(arr) && arr.length) {
+        REVIEWS = arr;
+        buildSpotlight();
+        ScrollTrigger.refresh(); /* stage height may have changed */
       }
-      function go(n) { i = (n + REVIEWS.length) % REVIEWS.length; paint(); restart(); }
-      function restart() { if (STATIC) return; clearTimeout(timer); timer = setTimeout(() => { visible ? go(i + 1) : restart(); }, 5000); }
-      stage.querySelectorAll('.mq-name').forEach(n => n.addEventListener('click', () => go(+n.dataset.k)));
-      qEl.addEventListener('click', () => openModal(REVIEWS[i]));
-      _pause = () => clearTimeout(timer);
-      _resume = restart;
-      paint(); restart();
-    }
-
-    const BUILDERS = { 1: buildSpotlight, 2: buildDeck, 3: buildSplit, 4: buildMarquee };
-    function renderReviews() { (BUILDERS[REVIEW_STYLE] || buildSpotlight)(); }
-    renderReviews();
-
-    /* Live Google fetch hook — replaces data + re-renders the active style */
-    window.__refreshReviews = function (arr) {
-      if (Array.isArray(arr) && arr.length) { REVIEWS = arr; renderReviews(); }
     };
   })();
 
@@ -3747,7 +3387,10 @@
         if (platEl) platEl.textContent = data.userRatingCount + ' Google Reviews';
       }
       if (data.reviews && data.reviews.length && window.__refreshReviews) {
-        window.__refreshReviews(data.reviews.map(buildData));
+        window.__refreshReviews(data.reviews.map(buildData), {
+          rating: data.rating ? data.rating.toFixed(1) : null,
+          count: data.userRatingCount || null
+        });
       }
     })
     .catch(function(err) { console.error('[Reviews] Fetch failed:', err); });
@@ -3762,15 +3405,20 @@
   </a>
 </div>
 
-<!-- Resilience watchdog: if the loader is still up after the libs should have run, force-reveal -->
+<!-- Resilience watchdog: if the loader is still up after the libs should have run, force-reveal.
+     Re-arms while the tab is hidden — background tabs throttle rAF, which stalls the loader
+     animation without anything actually being broken. -->
 <script>
-  setTimeout(function () {
-    var l = document.getElementById('loader');
-    if (l && getComputedStyle(l).display !== 'none') {
-      document.documentElement.classList.add('libs-failed');
-      l.style.display = 'none';
-    }
-  }, 4000);
+  (function arm() {
+    setTimeout(function () {
+      if (document.hidden) return arm();
+      var l = document.getElementById('loader');
+      if (l && getComputedStyle(l).display !== 'none') {
+        document.documentElement.classList.add('libs-failed');
+        l.style.display = 'none';
+      }
+    }, 4000);
+  })();
 </script>
 </body>
 </html>

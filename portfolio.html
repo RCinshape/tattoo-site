@@ -98,14 +98,16 @@
   </script>
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
-  <!-- Google Analytics -->
+  <!-- Google Analytics — one gtag.js load serves both properties; config picks the ID -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J8X45ECTLH"></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M23QSCSBZ9"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH');
+    /* Skip analytics on local dev so it doesn't pollute production data */
+    if (!/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) {
+      gtag('js', new Date());
+      gtag('config', location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH');
+    }
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -114,9 +116,16 @@
   <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
   <link href="https://fonts.cdnfonts.com/css/romance-fatal-serif" rel="stylesheet">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha256-eUny2Hql6qBbqmuoQ60u6ueG2eCZVKQaGygqwCPquug=" crossorigin="anonymous"></script>
+  <!-- If any animation library fails to load, reveal content (resilience) -->
+  <script>window.__libFail = function () { document.documentElement.classList.add('libs-failed'); };</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha256-eUny2Hql6qBbqmuoQ60u6ueG2eCZVKQaGygqwCPquug=" crossorigin="anonymous" onerror="__libFail()"></script>
+
+  <!-- No-JS fallback: reveal JS-animated content -->
+  <noscript><style>
+    .h-eyebrow, .h-title, .h-sub, .pw-item { opacity: 1 !important; transform: none !important; }
+  </style></noscript>
 
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -201,6 +210,10 @@
     .n-social:hover { color: var(--fg); border-color: var(--border-h); }
     .n-social span { display: none; }
     .n-social svg { flex-shrink: 0; }
+    /* Monochrome at rest; brand colour only on hover (one-accent palette) */
+    .n-social.n-wa:hover { color: #25D366; border-color: rgba(37,211,102,.4); }
+    .n-social.n-ig:hover { color: #e1306c; border-color: rgba(225,48,108,.4); }
+    .n-social.n-fb:hover { color: #1877f2; border-color: rgba(24,119,242,.4); }
     .nav-toggle {
       display: none; width: 42px; height: 42px; border-radius: 50%;
       border: 1px solid var(--border); background: rgba(8,7,5,.4);
@@ -302,7 +315,7 @@
     }
     .pw-item:hover { border-color: var(--border-h); }
     .pw-item img {
-      width: 100%; display: block;
+      width: 100%; height: auto; display: block; /* height:auto beats the height="" attribute hint — without it images stretch */
       filter: brightness(.85) saturate(.65);
       transition: filter .6s var(--out), transform .7s var(--out);
     }
@@ -420,9 +433,9 @@
     }
     @media (max-width: 768px) { #book-cta { padding: 60px 24px; } .bc-btns { flex-direction: column; align-items: center; } }
 
-    /* ── Footer ── */
+    /* ── Footer (matches index.html) ── */
     footer {
-      padding: 32px var(--pad);
+      padding: 36px var(--pad);
       border-top: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
     }
@@ -433,18 +446,31 @@
     .ft-logo em { font-style: italic; color: var(--gold); }
     .ft-links { display: flex; gap: 22px; }
     .ft-a {
-      font-family: var(--mono); font-size: .68rem;
+      font-family: var(--mono); font-size: .71rem;
       letter-spacing: .18em; text-transform: uppercase;
       color: var(--fg2); text-decoration: none; transition: color .3s;
     }
     .ft-a:hover { color: var(--fg); }
     .ft-copy {
-      font-family: var(--mono); font-size: .63rem;
-      letter-spacing: .1em; color: var(--dim);
+      font-family: var(--mono); font-size: .66rem;
+      letter-spacing: .1em; color: var(--fg2);
     }
     @media (max-width: 768px) {
-      footer { padding: 28px 24px; flex-direction: column; gap: 18px; text-align: center; }
-      .ft-links { justify-content: center; }
+      footer { padding: 28px 24px; flex-direction: column; gap: 20px; text-align: center; }
+      .ft-links { flex-wrap: wrap; justify-content: center; }
+    }
+
+    /* ── Resilience: if animation libs fail, reveal content ── */
+    html.libs-failed .h-eyebrow, html.libs-failed .h-title,
+    html.libs-failed .h-sub, html.libs-failed .pw-item {
+      opacity: 1 !important; transform: none !important;
+    }
+
+    /* ── Reduced motion: keep entrance-revealed content visible ── */
+    @media (prefers-reduced-motion: reduce) {
+      .h-eyebrow, .h-title, .h-sub, .pw-item {
+        opacity: 1 !important; transform: none !important;
+      }
     }
   </style>
 </head>
@@ -457,23 +483,23 @@
   <a href="/" class="n-logo">Emmy <em>Tattoo</em></a>
   <div class="n-links">
     <a href="/" class="n-item">Home</a>
+    <a href="/#about" class="n-item">About</a>
     <a href="/#trust" class="n-item">Reviews</a>
     <a href="/#faq" class="n-item">FAQ</a>
     <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
        target="_blank" rel="noopener" class="n-btn">Book a Session</a>
-    <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="n-social" aria-label="WhatsApp" style="color:#25D366">
+    <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="n-social n-wa" aria-label="WhatsApp">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg>
       <span>WhatsApp</span>
     </a>
-    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="n-social" aria-label="Instagram">
-      <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <defs><radialGradient id="ig-g" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="10%" stop-color="#fdf497"/><stop offset="50%" stop-color="#fd5949"/><stop offset="68%" stop-color="#d6249f"/><stop offset="100%" stop-color="#285AEB"/></radialGradient></defs>
-        <path fill="url(#ig-g)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="n-social n-ig" aria-label="Instagram">
+      <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
       </svg>
       <span>Instagram</span>
     </a>
-    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="n-social" aria-label="Facebook">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="n-social n-fb" aria-label="Facebook">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
       <span>Facebook</span>
     </a>
   </div>
@@ -516,6 +542,8 @@
        data-alt="Black and grey surrealism hand tattoo featuring a woman's face with blank eyes and a snake winding through her mouth, designed by Emmy Tattoo."
        tabindex="0" role="button" aria-label="View: Surreal face and snake hand tattoo">
     <img src="pictures/surreal-face-snake-hand-tattoo-emmy-tattoo.jpg" width="1200" height="1541"
+         srcset="pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-480.webp 480w, pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-960.webp 960w"
+         sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
          alt="Black and grey surrealism hand tattoo featuring a woman's face with blank eyes and a snake winding through her mouth, designed by Emmy Tattoo."
          title="Surreal Face and Snake Hand Tattoo by Emmy Tattoo" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
@@ -529,6 +557,8 @@
        data-alt="Fine line blackwork tattoo of a spotted leopard shark using dotwork shading on the back of a woman's upper arm, done by Emmy Tattoo."
        tabindex="0" role="button" aria-label="View: Fine line spotted shark arm tattoo">
     <img src="pictures/fine-line-spotted-shark-arm-tattoo-emmy-tattoo.jpg" width="1200" height="1600"
+         srcset="pictures/web/fine-line-spotted-shark-arm-tattoo-emmy-tattoo-480.webp 480w, pictures/web/fine-line-spotted-shark-arm-tattoo-emmy-tattoo-960.webp 960w"
+         sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
          alt="Fine line blackwork tattoo of a spotted leopard shark using dotwork shading on the back of a woman's upper arm, done by Emmy Tattoo."
          title="Fine Line Spotted Shark Arm Tattoo by Emmy Tattoo" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
@@ -542,6 +572,8 @@
        data-alt="Minimalist fine-line abstract continuous flower tattoo on upper arm"
        tabindex="0" role="button" aria-label="View: Fine line abstract flower tattoo">
     <img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" width="2160" height="3007"
+         srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w, pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp 960w"
+         sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
          alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Line</span>
@@ -554,6 +586,8 @@
        data-alt="Wolf portrait with shattered clock and forest forearm half-sleeve"
        tabindex="0" role="button" aria-label="View: Wolf portrait forearm tattoo">
     <img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" width="2160" height="2881"
+         srcset="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-480.webp 480w, pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp 960w"
+         sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
          alt="Wolf portrait with shattered clock and forest forearm half-sleeve by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -566,6 +600,8 @@
        data-alt="Flying barn owl black and grey tattoo on upper arm"
        tabindex="0" role="button" aria-label="View: Flying barn owl tattoo">
     <img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" width="2160" height="2880"
+         srcset="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-480.webp 480w, pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-960.webp 960w"
+         sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
          alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Art</span>
@@ -578,6 +614,8 @@
        data-alt="Realistic pug Bonnie portrait with roses on thigh"
        tabindex="0" role="button" aria-label="View: Pug portrait thigh tattoo">
     <img src="pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg" width="2160" height="2880"
+         srcset="pictures/web/Pug-Dog-Portrait-Floral-Thigh-Tattoo-480.webp 480w, pictures/web/Pug-Dog-Portrait-Floral-Thigh-Tattoo-960.webp 960w"
+         sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
          alt="Realistic pug Bonnie portrait with roses and floral accents on thigh by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -590,6 +628,8 @@
        data-alt="Classical mythology Hermes fine art forearm tattoo"
        tabindex="0" role="button" aria-label="View: Classical mythology fine art tattoo">
     <img src="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg" width="3024" height="4032"
+         srcset="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-480.webp 480w, pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp 960w"
+         sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
          alt="Classical mythology fine art forearm tattoo featuring Hermes by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Art</span>
@@ -602,6 +642,8 @@
        data-alt="Five realistic cat portraits on upper arm"
        tabindex="0" role="button" aria-label="View: Five cat portraits tattoo">
     <img src="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg" width="2160" height="2880"
+         srcset="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-480.webp 480w, pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-960.webp 960w"
+         sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
          alt="Five realistic cat portraits — Hazel, Ocean, Wolfie, Oreo and Pumpkin — on upper arm by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -614,6 +656,8 @@
        data-alt="Black pug Marley portrait with daisies and roses"
        tabindex="0" role="button" aria-label="View: Black pug Marley tattoo">
     <img src="pictures/Black-Pug-Portrait-Tattoo-With-Daisies.jpg" width="2160" height="2880"
+         srcset="pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-480.webp 480w, pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-960.webp 960w"
+         sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
          alt="Black pug Marley portrait with daisies and roses tattoo by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -626,6 +670,8 @@
        data-alt="Realistic thresher shark tattoo on upper arm"
        tabindex="0" role="button" aria-label="View: Thresher shark tattoo">
     <img src="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg" width="2002" height="2669"
+         srcset="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-480.webp 480w, pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-960.webp 960w"
+         sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
          alt="Realistic thresher shark marine life tattoo on upper arm by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -666,11 +712,11 @@
   <span class="ft-logo">Emmy <em>Tattoo</em></span>
   <nav class="ft-links" aria-label="Footer navigation">
     <a href="/" class="ft-a">Home</a>
-    <a href="/#book" class="ft-a">Book</a>
-    <a href="/#faq" class="ft-a">FAQ</a>
-    <a href="/#location" class="ft-a">Find Me</a>
+    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="ft-a">Instagram</a>
+    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="ft-a">Facebook</a>
+    <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="ft-a">WhatsApp</a>
   </nav>
-  <span class="ft-copy">© 2026 Emmy Tattoo · Hull</span>
+  <span class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</span>
 </footer>
 
 <script>
@@ -697,6 +743,9 @@
     { opacity: 0, y: 28 },
     { opacity: 1, y: 0, stagger: .06, duration: .65, delay: .45, ease: 'power3.out' }
   );
+
+  // Lazy images change document height after init — recompute trigger positions
+  window.addEventListener('load', () => ScrollTrigger.refresh());
 
   // ── Filter ──
   const items = [...document.querySelectorAll('.pw-item')];
@@ -747,14 +796,17 @@
     const rect = item.getBoundingClientRect();
 
     lb.style.cssText = `top:${rect.top}px;left:${rect.left}px;width:${rect.width}px;height:${rect.height}px;border-radius:var(--r);`;
+    /* reset any fade state left over from navigate() */
+    lbImg.onload = null;
+    gsap.set(lbImg, { clearProps: 'opacity' });
     lbImg.src = item.dataset.src;
     lbImg.alt = item.dataset.alt;
     lb.style.display = 'block';
     lbBg.classList.add('open');
-    [lbClose, lbPrev, lbNext, lbCount].forEach(el => el.style.display = 'flex');
+    [lbClose, lbPrev, lbNext].forEach(el => el.style.display = 'flex');
     lbCount.style.display = 'block';
     lbCount.textContent = (idx + 1) + ' / ' + v.length;
-    document.body.style.overflow = 'hidden';
+    lenis.stop();
 
     gsap.to(lb, {
       top: window.innerHeight * .04, left: window.innerWidth * .04,
@@ -770,7 +822,7 @@
       gsap.set(lb, { clearProps: 'opacity,scale' });
       [lbClose, lbPrev, lbNext].forEach(el => el.style.display = 'none');
       lbCount.style.display = 'none';
-      document.body.style.overflow = '';
+      lenis.start();
     }});
   }
 
@@ -835,6 +887,20 @@
     if (close) close.addEventListener('click', closeMenu);
     menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) closeMenu(); });
+  })();
+</script>
+
+<!-- Resilience watchdog: if the hero is still hidden after the libs should have run, force-reveal.
+     Re-arms while the tab is hidden (background tabs throttle rAF and stall the entrance tweens). -->
+<script>
+  (function arm() {
+    setTimeout(function () {
+      if (document.hidden) return arm();
+      var t = document.querySelector('.h-title');
+      if (t && getComputedStyle(t).opacity === '0') {
+        document.documentElement.classList.add('libs-failed');
+      }
+    }, 4000);
   })();
 </script>
 </body>
