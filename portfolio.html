@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" id="meta-theme-color" content="#0a0a0a">
   <title>My Work | Emmy Tattoo Hull</title>
   <meta name="description" content="Tattoo portfolio — fine line, fine art and realism work by Emmy at Sainthood Tattoo, Princes Avenue, Hull.">
   <link rel="canonical" href="https://emmytattoo.com/portfolio">
@@ -97,7 +98,7 @@
   }
   </script>
 
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c4a262'>✦</text></svg>">
   <!-- Google Analytics — one gtag.js load serves both properties; config picks the ID -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J8X45ECTLH"></script>
   <script>
@@ -118,6 +119,29 @@
 
   <!-- If any animation library fails to load, reveal content (resilience) -->
   <script>window.__libFail = function () { document.documentElement.classList.add('libs-failed'); };</script>
+
+  <!-- Theme resolution before first paint: manual override (localStorage) ?? OS preference -->
+  <script>
+    (function () {
+      var KEY = 'emmy-theme';
+      var mql = window.matchMedia('(prefers-color-scheme: light)');
+      function stored() { try { var v = localStorage.getItem(KEY); return v === 'light' || v === 'dark' ? v : null; } catch (e) { return null; } }
+      function apply(theme) {
+        var r = document.documentElement;
+        r.dataset.theme = theme;
+        r.style.colorScheme = theme;
+        var m = document.getElementById('meta-theme-color');
+        if (m) m.setAttribute('content', theme === 'light' ? '#f4f4f4' : '#0a0a0a');
+        document.dispatchEvent(new Event('themechange'));
+      }
+      window.__theme = {
+        resolve: function () { return stored() || (mql.matches ? 'light' : 'dark'); },
+        set: function (theme) { try { localStorage.setItem(KEY, theme); } catch (e) {} apply(theme); }
+      };
+      apply(window.__theme.resolve());
+      mql.addEventListener('change', function () { if (!stored()) apply(mql.matches ? 'light' : 'dark'); });
+    })();
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
   <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha256-eUny2Hql6qBbqmuoQ60u6ueG2eCZVKQaGygqwCPquug=" crossorigin="anonymous" onerror="__libFail()"></script>
@@ -132,14 +156,28 @@
     html { scroll-behavior: auto; overscroll-behavior: none; }
 
     :root {
-      --bg:      #080705;
-      --bg2:     #0d0b09;
-      --fg:      #ede8df;
-      --fg2:     #b0a89c;
-      --dim:     #8a8175;
-      --gold:    #c4a262;
-      --border:  rgba(237,232,223,.07);
-      --border-h:rgba(237,232,223,.15);
+      color-scheme: dark;
+      --bg:        #0a0a0a;
+      --bg2:       #121212;
+      --fg:        #ededed;
+      --fg2:       #adadad;
+      --dim:       #838383;
+      --gold:      #c4a262;
+      --gold-rgb:  196,162,98;
+      --fg-rgb:    255,255,255;   /* borders + faint washes */
+      --panel-rgb: 10,10,10;      /* nav/menu/lightbox scrims */
+      --on-gold:   #0a0a0a;       /* ink on a gold fill */
+      --ok:        #3da46b;
+      --ok-ink:    #5ec98a;
+      --ok-rgb:    61,164,107;
+      --warn:      #e05555;
+      --warn-rgb:  224,85,85;
+      --border:    rgba(var(--fg-rgb),.07);
+      --border-h:  rgba(var(--fg-rgb),.15);
+      /* photo treatments — flipped per theme so images sit on the page tone */
+      --img-card:   brightness(.9) saturate(.75);
+      --img-card-h: brightness(1) saturate(.9);
+      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23080705' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
       --r:       12px;
       --serif:  'Cormorant Garamond', Georgia, serif;
       --display:'Romance Fatal Serif', Georgia, serif;
@@ -150,12 +188,35 @@
       --pad:    max(48px, calc(50vw - 720px));
     }
 
+    /* Light theme — resolved from OS preference or the manual override, see head script */
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg:        #f4f4f4;
+      --bg2:       #ffffff;
+      --fg:        #151515;
+      --fg2:       #454545;
+      --dim:       #6b6b6b;
+      --gold:      #7a5e1e;
+      --gold-rgb:  122,94,30;
+      --fg-rgb:    20,20,20;
+      --panel-rgb: 255,255,255;
+      --on-gold:   #ffffff;
+      --ok:        #1f7a47;
+      --ok-ink:    #1f7a47;
+      --ok-rgb:    31,122,71;
+      --warn:      #b4322f;
+      --warn-rgb:  180,50,47;
+      --img-card:   brightness(1.02) saturate(.8);
+      --img-card-h: brightness(1.06) saturate(.95);
+      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%237a5e1e' stroke='%23ffffff' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
+    }
+
     body {
       font-family: var(--sans);
       background: var(--bg); color: var(--fg);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden; overscroll-behavior: none;
-      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23080705' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, auto;
+      cursor: var(--cursor) 0 0, auto;
     }
 
     /* ── Progress ── */
@@ -173,7 +234,7 @@
       border-bottom: 1px solid transparent;
     }
     #nav.s {
-      background: rgba(8,7,5,.88); backdrop-filter: blur(24px);
+      background: rgba(var(--panel-rgb),.88); backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       padding-top: 16px; padding-bottom: 16px;
       border-bottom-color: var(--border);
@@ -195,11 +256,11 @@
       font-family: var(--mono); font-size: .72rem;
       letter-spacing: .2em; text-transform: uppercase;
       color: var(--fg); text-decoration: none;
-      border: 1px solid rgba(196,162,98,.32); background: rgba(196,162,98,.04);
+      border: 1px solid rgba(var(--gold-rgb),.32); background: rgba(var(--gold-rgb),.04);
       padding: 14px 32px; border-radius: 100px;
       transition: border-color .38s, background .38s;
     }
-    .n-btn:hover { border-color: rgba(196,162,98,.65); background: rgba(196,162,98,.09); }
+    .n-btn:hover { border-color: rgba(var(--gold-rgb),.65); background: rgba(var(--gold-rgb),.09); }
     .n-social {
       display: inline-flex; align-items: center; justify-content: center;
       color: var(--dim); text-decoration: none;
@@ -216,21 +277,33 @@
     .n-social.n-fb:hover { color: #1877f2; border-color: rgba(24,119,242,.4); }
     .nav-toggle {
       display: none; width: 42px; height: 42px; border-radius: 50%;
-      border: 1px solid var(--border); background: rgba(8,7,5,.4);
+      border: 1px solid var(--border); background: rgba(var(--panel-rgb),.4);
       cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 4px; flex-shrink: 0;
     }
     .nav-toggle span { display: block; width: 18px; height: 1.5px; background: var(--fg); }
+    /* Nav right-hand actions group — theme toggle + hamburger, last flex child at every width */
+    .n-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .n-links { margin-left: auto; }
+    #theme-toggle {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid var(--border); background: rgba(var(--panel-rgb),.4);
+      color: var(--dim); cursor: pointer; flex-shrink: 0;
+      transition: color .25s, border-color .25s;
+    }
+    #theme-toggle:hover { color: var(--gold); border-color: var(--border-h); }
+    #theme-toggle svg { flex-shrink: 0; }
     #mobile-menu {
       position: fixed; inset: 0; z-index: 10000;
-      background: rgba(8,7,5,.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      background: rgba(var(--panel-rgb),.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
       opacity: 0; pointer-events: none; transition: opacity .35s;
     }
     #mobile-menu.open { opacity: 1; pointer-events: all; }
     .mm-link { font-family: var(--serif); font-style: italic; font-size: 2rem; color: var(--fg); text-decoration: none; transition: color .25s; }
     .mm-link:hover { color: var(--gold); }
-    .mm-book { font-family: var(--mono); font-style: normal; font-size: .8rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(196,162,98,.4); padding: 14px 34px; border-radius: 100px; }
-    .mm-close { position: absolute; top: 22px; right: 22px; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--border-h); background: rgba(8,7,5,.6); color: var(--fg); font-family: var(--mono); font-size: .8rem; cursor: pointer; }
+    .mm-book { font-family: var(--mono); font-style: normal; font-size: .8rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(var(--gold-rgb),.4); padding: 14px 34px; border-radius: 100px; }
+    .mm-close { position: absolute; top: 22px; right: 22px; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--border-h); background: rgba(var(--panel-rgb),.6); color: var(--fg); font-family: var(--mono); font-size: .8rem; cursor: pointer; }
     @media (max-width: 768px) {
       #nav { padding: 18px 24px; }
       #nav.s { padding: 12px 24px; }
@@ -272,7 +345,7 @@
       position: sticky; top: 0; z-index: 100;
       padding: 16px var(--pad);
       display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-      background: rgba(8,7,5,.92);
+      background: rgba(var(--panel-rgb),.92);
       backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
     }
@@ -286,8 +359,8 @@
     }
     .f-btn:hover { color: var(--fg); border-color: var(--border-h); }
     .f-btn.active {
-      color: var(--gold); border-color: rgba(196,162,98,.4);
-      background: rgba(196,162,98,.06);
+      color: var(--gold); border-color: rgba(var(--gold-rgb),.4);
+      background: rgba(var(--gold-rgb),.06);
     }
     .f-count {
       font-family: var(--mono); font-size: .62rem;
@@ -316,17 +389,17 @@
     .pw-item:hover { border-color: var(--border-h); }
     .pw-item img {
       width: 100%; height: auto; display: block; /* height:auto beats the height="" attribute hint — without it images stretch */
-      filter: brightness(.85) saturate(.65);
+      filter: var(--img-card);
       transition: filter .6s var(--out), transform .7s var(--out);
     }
     .pw-item:hover img {
-      filter: brightness(1) saturate(.88);
+      filter: var(--img-card-h);
       transform: scale(1.04);
     }
     /* Hover overlay */
     .pw-over {
       position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(8,7,5,.75) 0%, transparent 55%);
+      background: linear-gradient(to top, rgba(var(--panel-rgb),.75) 0%, transparent 55%);
       opacity: 0; transition: opacity .4s;
       display: flex; align-items: flex-end; justify-content: space-between;
       padding: 16px 18px;
@@ -339,13 +412,14 @@
     /* Magnifier */
     .pw-zoom {
       width: 40px; height: 40px; border-radius: 50%;
-      border: 1px solid rgba(196,162,98,.45);
-      background: rgba(8,7,5,.58);
+      border: 1px solid rgba(var(--gold-rgb),.45);
+      background: rgba(var(--panel-rgb),.58);
       display: flex; align-items: center; justify-content: center;
       transform: scale(0); transition: transform .35s var(--sp);
     }
     .pw-item:hover .pw-zoom { transform: scale(1); }
     .pw-zoom svg { width: 18px; height: 18px; }
+    .pw-zoom svg { color: var(--gold); }
 
     .pw-item.pw-hidden { display: none; }
 
@@ -358,7 +432,7 @@
     #lb-bg {
       position: fixed; inset: 0; z-index: 99990;
       pointer-events: none; opacity: 0;
-      background: rgba(8,7,5,.62);
+      background: rgba(var(--panel-rgb),.62);
       backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
       transition: opacity .3s;
     }
@@ -372,17 +446,17 @@
     #lb-close {
       position: fixed; top: 20px; right: 20px; z-index: 99992;
       width: 44px; height: 44px; border-radius: 50%;
-      background: rgba(8,7,5,.72); backdrop-filter: blur(14px);
+      background: rgba(var(--panel-rgb),.72); backdrop-filter: blur(14px);
       border: 1px solid var(--border-h); color: var(--fg);
       font-size: .68rem; font-family: var(--mono); letter-spacing: .1em;
       display: none; align-items: center; justify-content: center;
       cursor: pointer; transition: background .2s;
     }
-    #lb-close:hover { background: rgba(196,162,98,.15); color: var(--gold); }
+    #lb-close:hover { background: rgba(var(--gold-rgb),.15); color: var(--gold); }
     #lb-prev, #lb-next {
       position: fixed; top: 50%; z-index: 99992;
       width: 44px; height: 44px; border-radius: 50%;
-      background: rgba(8,7,5,.72); backdrop-filter: blur(14px);
+      background: rgba(var(--panel-rgb),.72); backdrop-filter: blur(14px);
       border: 1px solid var(--border-h); color: var(--fg);
       display: none; align-items: center; justify-content: center;
       cursor: pointer; transform: translateY(-50%);
@@ -390,12 +464,12 @@
     }
     #lb-prev { left: 20px; }
     #lb-next { right: 20px; }
-    #lb-prev:hover, #lb-next:hover { background: rgba(196,162,98,.15); color: var(--gold); }
+    #lb-prev:hover, #lb-next:hover { background: rgba(var(--gold-rgb),.15); color: var(--gold); }
     #lb-counter {
       position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
       z-index: 99992; display: none;
       font-family: var(--mono); font-size: .66rem; letter-spacing: .18em; color: var(--fg2);
-      background: rgba(8,7,5,.65); backdrop-filter: blur(10px);
+      background: rgba(var(--panel-rgb),.65); backdrop-filter: blur(10px);
       padding: 8px 18px; border-radius: 100px; border: 1px solid var(--border);
     }
 
@@ -423,12 +497,12 @@
       font-family: var(--mono); font-size: .72rem;
       letter-spacing: .2em; text-transform: uppercase;
       color: var(--fg); text-decoration: none;
-      border: 1px solid rgba(196,162,98,.32); background: rgba(196,162,98,.04);
+      border: 1px solid rgba(var(--gold-rgb),.32); background: rgba(var(--gold-rgb),.04);
       padding: 18px 40px; border-radius: 100px;
       transition: border-color .38s, background .38s, transform .38s var(--out);
     }
     .bc-btn:hover {
-      border-color: rgba(196,162,98,.65); background: rgba(196,162,98,.09);
+      border-color: rgba(var(--gold-rgb),.65); background: rgba(var(--gold-rgb),.09);
       transform: translateY(-3px);
     }
     @media (max-width: 768px) { #book-cta { padding: 60px 24px; } .bc-btns { flex-direction: column; align-items: center; } }
@@ -458,6 +532,13 @@
     @media (max-width: 768px) {
       footer { padding: 28px 24px; flex-direction: column; gap: 20px; text-align: center; }
       .ft-links { flex-wrap: wrap; justify-content: center; }
+    }
+
+    /* ── Always-dark islands: chrome drawn over photography ── */
+    .pw-over, .pw-zoom {
+      --fg: #ededed; --fg2: #adadad; --dim: #838383;
+      --fg-rgb: 255,255,255; --panel-rgb: 10,10,10;
+      --gold: #c4a262; --gold-rgb: 196,162,98;
     }
 
     /* ── Resilience: if animation libs fail, reveal content ── */
@@ -503,9 +584,14 @@
       <span>Facebook</span>
     </a>
   </div>
-  <button id="nav-toggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
-    <span></span><span></span><span></span>
-  </button>
+  <div class="n-actions">
+    <button id="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false" title="Toggle light / dark">
+      <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3a9 9 0 010 18z" fill="currentColor"/></svg>
+    </button>
+    <button id="nav-toggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </nav>
 
 <!-- ════ MOBILE MENU ════ -->
@@ -548,7 +634,7 @@
          title="Surreal Face and Snake Hand Tattoo by Emmy Tattoo" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Art · Realism</span>
-      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
     </div>
   </div>
 
@@ -563,7 +649,7 @@
          title="Fine Line Spotted Shark Arm Tattoo by Emmy Tattoo" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Art · Realism</span>
-      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
     </div>
   </div>
 
@@ -577,7 +663,7 @@
          alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Line</span>
-      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
     </div>
   </div>
 
@@ -591,7 +677,7 @@
          alt="Wolf portrait with shattered clock and forest forearm half-sleeve by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
-      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
     </div>
   </div>
 
@@ -605,7 +691,7 @@
          alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Art</span>
-      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
     </div>
   </div>
 
@@ -619,7 +705,7 @@
          alt="Realistic pug Bonnie portrait with roses and floral accents on thigh by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
-      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
     </div>
   </div>
 
@@ -633,7 +719,7 @@
          alt="Classical mythology fine art forearm tattoo featuring Hermes by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Art</span>
-      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
     </div>
   </div>
 
@@ -647,7 +733,7 @@
          alt="Five realistic cat portraits — Hazel, Ocean, Wolfie, Oreo and Pumpkin — on upper arm by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
-      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
     </div>
   </div>
 
@@ -661,7 +747,7 @@
          alt="Black pug Marley portrait with daisies and roses tattoo by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
-      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
     </div>
   </div>
 
@@ -675,7 +761,7 @@
          alt="Realistic thresher shark marine life tattoo on upper arm by Emmy, Hull" loading="lazy">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
-      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="#c4a262" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+      <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
     </div>
   </div>
 
@@ -887,6 +973,22 @@
     if (close) close.addEventListener('click', closeMenu);
     menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) closeMenu(); });
+  })();
+
+  /* ═══ THEME TOGGLE ═══ */
+  (() => {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn || !window.__theme) return;
+    const sync = () => {
+      const light = document.documentElement.dataset.theme === 'light';
+      btn.setAttribute('aria-pressed', light ? 'true' : 'false');
+      btn.setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme');
+    };
+    sync();
+    document.addEventListener('themechange', sync);
+    btn.addEventListener('click', () => {
+      window.__theme.set(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+    });
   })();
 </script>
 

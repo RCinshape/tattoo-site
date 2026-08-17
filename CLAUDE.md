@@ -16,6 +16,13 @@ Single-file HTML tattoo portfolio with rich animations and scroll effects.
 - Everything lives in one `index.html`: inline `<style>`, inline `<script>`, no external local files unless explicitly requested.
 - CDN links go in `<head>` before any scripts that depend on them.
 
+### Theming (dark default + OS light mode)
+- Both pages carry two token blocks in their inline `<style>`: `:root` (dark) and `:root[data-theme="light"]`. Every surface colour comes from a token — never write a raw colour literal in a rule.
+- Alpha surfaces compose from RGB-triplet tokens: `rgba(var(--panel-rgb),.88)`, `rgba(var(--fg-rgb),.07)`, `rgba(var(--gold-rgb),.4)`. `--on-gold` is the ink on a gold fill; `--ok*`/`--warn*` are the status colours; `--img-*` are the per-theme photo filters.
+- The head script (before the CDN `<script src>` tags) resolves `localStorage['emmy-theme'] ?? matchMedia('(prefers-color-scheme: light)')` pre-paint, writes `data-theme` + `color-scheme` on `<html>`, updates `#meta-theme-color`, and fires a `themechange` event. `#theme-toggle` in `.n-actions` flips and persists it.
+- Chrome drawn over photography stays dark in both themes by re-declaring tokens on the subtree (`#loader, .wc-lbl, .wc-view` in `index.html`; `.pw-over, .pw-zoom` in `portfolio.html`) — never by pinning individual literals.
+- Never animate `backgroundColor` on `<body>` or any themed surface: an inline style outranks the tokens and strands the page in one theme. Third-party brand colours (WhatsApp/Instagram/Facebook/Google) and black photo scrims are the only sanctioned literals.
+
 ### GSAP / ScrollTrigger
 - Always initialize Lenis first, then sync it with GSAP ticker via `gsap.ticker.add((time) => lenis.raf(time * 1000))` and `gsap.ticker.lagSmoothing(0)`.
 - Register all GSAP plugins at the top of the script: `gsap.registerPlugin(ScrollTrigger, ...)`.
@@ -56,7 +63,7 @@ npx serve .
 ```
 
 ## Design Aesthetic
-- Dark background (near-black), high contrast
+- Follows the OS colour scheme: neutral `#0a0a0a` dark (default) or `#f4f4f4` light, with a manual nav toggle; gold `#c4a262` / `#7a5e1e` is the single accent
 - Minimal UI — let artwork breathe
 - Smooth, deliberate animations — nothing snappy or bouncy
 - Monochrome or desaturated palette with one accent color
