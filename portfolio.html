@@ -131,7 +131,7 @@
         r.dataset.theme = theme;
         r.style.colorScheme = theme;
         var m = document.getElementById('meta-theme-color');
-        if (m) m.setAttribute('content', theme === 'light' ? '#f4f4f4' : '#0a0a0a');
+        if (m) m.setAttribute('content', theme === 'light' ? '#f4f1ea' : '#0a0a0a');
         document.dispatchEvent(new Event('themechange'));
       }
       window.__theme = {
@@ -164,9 +164,7 @@
       --dim:       #838383;
       --gold:      #c4a262;
       --gold-rgb:  196,162,98;
-      /* Display-size gold. Dark mode needs no split; light mode does, because a
-         gold light enough to read as gold cannot also clear 4.5:1 on #f4f4f4. */
-      --gold-display: #c4a262;
+      /* Exactly one gold per palette — no display/text split. */
       --fg-rgb:    255,255,255;   /* borders + faint washes */
       --panel-rgb: 10,10,10;      /* nav/menu/lightbox scrims */
       --on-gold:   #0a0a0a;       /* ink on a gold fill */
@@ -178,7 +176,7 @@
       --border:    rgba(var(--fg-rgb),.07);
       --border-h:  rgba(var(--fg-rgb),.15);
       /* Icon-button chrome. Both themes are pinned to the same measured ratios:
-         .34 white on #0a0a0a and .46 dark ink on #f4f4f4 are both 3.02:1, the
+         .34 white on #0a0a0a is 3.02:1 and .48 warm ink on #f4f1ea is 3.13:1 —
          WCAG non-text minimum. Dark sat at .07 = 1.15:1 — an invisible ring. */
       --btn-ring:   rgba(var(--fg-rgb),.34);
       --btn-ring-h: rgba(var(--fg-rgb),.50);
@@ -202,31 +200,33 @@
     /* Light theme — resolved from OS preference or the manual override, see head script */
     :root[data-theme="light"] {
       color-scheme: light;
-      --bg:        #f4f4f4;
-      --bg2:       #ffffff;
-      --fg:        #151515;
-      --fg2:       #454545;
-      --dim:       #6b6b6b;
-      --gold:      #8a6a10;
-      --gold-rgb:  138,106,16;
-      /* #8a6a10 = 4.60:1 on #f4f4f4 (AA, all text). #a88220 = 3.25:1 (AA, large text). */
-      --gold-display: #a88220;
-      --fg-rgb:    20,20,20;
-      --panel-rgb: 255,255,255;
-      --on-gold:   #ffffff;
+      --bg:        #f4f1ea;
+      --bg2:       #fbf9f5;
+      --fg:        #191712;
+      --fg2:       #4a453c;
+      --dim:       #6a6459;
+      /* One gold, every element, every size. #a9821f = 3.16:1 on #f4f1ea (AA
+         large text + non-text). Gold never colours text under 18.66px on a
+         themed surface: small labels use --fg/--fg2 and carry gold as a rule,
+         ring or glyph instead. Matches index.html. */
+      --gold:      #a9821f;
+      --gold-rgb:  169,130,31;
+      --fg-rgb:    25,23,18;
+      --panel-rgb: 251,249,245;
+      --on-gold:   #191712;       /* 5.03:1 on gold; white would be 3.56:1 */
       --ok:        #1f7a47;
       --ok-ink:    #1f7a47;
       --ok-rgb:    31,122,71;
       --warn:      #b4322f;
       --warn-rgb:  180,50,47;
-      --btn-ring:   rgba(var(--fg-rgb),.46);
-      --btn-ring-h: rgba(var(--fg-rgb),.62);
+      --btn-ring:   rgba(var(--fg-rgb),.48);
+      --btn-ring-h: rgba(var(--fg-rgb),.64);
       --btn-fill:   rgba(var(--panel-rgb),1);
-      --gold-ring:   rgba(var(--gold-rgb),.58);
-      --gold-ring-h: rgba(var(--gold-rgb),.85);
+      --gold-ring:   rgba(var(--gold-rgb),.85);
+      --gold-ring-h: rgba(var(--gold-rgb),1);
       --img-card:   brightness(1.02) saturate(.8);
       --img-card-h: brightness(1.06) saturate(.95);
-      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%238a6a10' stroke='%23ffffff' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
+      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23a9821f' stroke='%23fbf9f5' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
     }
 
     /* One gutter for every section on a phone — matches index.html. */
@@ -267,7 +267,7 @@
       font-weight: 400; letter-spacing: .07em;
       text-decoration: none; color: var(--fg);
     }
-    .n-logo em { font-style: italic; color: var(--gold-display); }
+    .n-logo em { font-style: italic; color: var(--gold); }
     .n-links { display: flex; align-items: center; gap: 26px; }
     /* Icon buttons (socials + theme toggle) read as one cluster on a tighter rhythm */
     .n-socials { display: flex; align-items: center; gap: 16px; }
@@ -327,8 +327,8 @@
     }
     #mobile-menu.open { opacity: 1; pointer-events: all; }
     .mm-link { font-family: var(--serif); font-style: italic; font-size: 2rem; color: var(--fg); text-decoration: none; transition: color .25s; }
-    .mm-link:hover { color: var(--gold-display); }
-    .mm-book { font-family: var(--mono); font-style: normal; font-size: .8rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(var(--gold-rgb),.4); padding: 14px 34px; border-radius: 100px; }
+    .mm-link:hover { color: var(--gold); }
+    .mm-book { font-family: var(--mono); font-style: normal; font-size: .8rem; letter-spacing: .2em; text-transform: uppercase; color: var(--fg); border: 1px solid rgba(var(--gold-rgb),.4); padding: 14px 34px; border-radius: 100px; }
     .mm-close { position: absolute; top: 22px; right: 22px; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--border-h); background: rgba(var(--panel-rgb),.6); color: var(--fg); font-family: var(--mono); font-size: .8rem; cursor: pointer; }
     @media (max-width: 768px) {
       #nav { padding: 18px var(--pad); }
@@ -347,7 +347,12 @@
     .h-eyebrow {
       font-family: var(--mono); font-size: .74rem;
       letter-spacing: .28em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 20px; opacity: 0;
+      color: var(--fg2); margin-bottom: 20px; opacity: 0;
+    }
+    /* Gold survives at label size as a rule, never as the ink — matches index.html */
+    .h-eyebrow { display: inline-flex; align-items: center; gap: 12px; }
+    .h-eyebrow::before {
+      content: ''; width: 22px; height: 1px; flex: none; background: var(--gold);
     }
     .h-title {
       font-family: var(--display);
@@ -355,7 +360,7 @@
       font-weight: 400; line-height: .9; letter-spacing: -.02em;
       opacity: 0;
     }
-    .h-title em { font-style: italic; color: var(--gold-display); }
+    .h-title em { font-style: italic; color: var(--gold); }
     .h-sub {
       font-family: var(--serif); font-style: italic;
       font-size: clamp(.95rem,1.7vw,1.2rem);
@@ -385,7 +390,7 @@
     }
     .f-btn:hover { color: var(--fg); border-color: var(--border-h); }
     .f-btn.active {
-      color: var(--gold); border-color: rgba(var(--gold-rgb),.4);
+      color: var(--fg); border-color: rgba(var(--gold-rgb),.4);
       background: rgba(var(--gold-rgb),.06);
     }
     .f-count {
@@ -548,12 +553,20 @@
       margin-top: auto;
     }
     .pf-proof-all {
-      font-family: var(--mono); font-size: .7rem;
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--mono); font-size: .72rem;
       letter-spacing: .18em; text-transform: uppercase;
-      color: var(--gold); text-decoration: none;
-      transition: opacity .25s;
+      color: var(--fg); text-decoration: none;
+      padding: 16px 34px; border-radius: 100px;
+      border: 1px solid var(--gold-ring);
+      background: rgba(var(--gold-rgb),.04);
+      transition: border-color .38s, background .38s, transform .38s var(--out);
     }
-    .pf-proof-all:hover { opacity: .7; }
+    .pf-proof-all:hover {
+      border-color: var(--gold-ring-h);
+      background: rgba(var(--gold-rgb),.09);
+      transform: translateY(-3px);
+    }
     @media (max-width: 768px) {
       #pf-proof { padding: 56px var(--pad) 52px; gap: 26px; }
       .pf-proof-list { grid-template-columns: 1fr; gap: 14px; }
@@ -572,7 +585,7 @@
       font-size: clamp(2.2rem,5vw,4rem);
       font-weight: 300; letter-spacing: -.02em; line-height: 1;
     }
-    .bc-h2 em { font-style: italic; color: var(--gold-display); }
+    .bc-h2 em { font-style: italic; color: var(--gold); }
     .bc-sub {
       font-size: 1rem; color: var(--fg2); max-width: 440px; line-height: 1.8;
     }
@@ -602,9 +615,9 @@
     }
     .ft-logo {
       font-family: var(--display); font-size: 1.2rem;
-      font-weight: 400; color: var(--dim);
+      font-weight: 400; color: var(--fg);
     }
-    .ft-logo em { font-style: italic; color: var(--gold-display); }
+    .ft-logo em { font-style: italic; color: var(--gold); }
     .ft-links { display: flex; gap: 22px; }
     .ft-a {
       font-family: var(--mono); font-size: .71rem;
@@ -613,7 +626,7 @@
     }
     .ft-a:hover { color: var(--fg); }
     .ft-copy {
-      font-family: var(--mono); font-size: .66rem;
+      font-family: var(--mono); font-size: .7rem;
       letter-spacing: .1em; color: var(--fg2);
     }
     @media (max-width: 768px) {
@@ -625,7 +638,7 @@
     .pw-over, .pw-zoom {
       --fg: #ededed; --fg2: #adadad; --dim: #838383;
       --fg-rgb: 255,255,255; --panel-rgb: 10,10,10;
-      --gold: #c4a262; --gold-rgb: 196,162,98; --gold-display: #c4a262;
+      --gold: #c4a262; --gold-rgb: 196,162,98;
     }
 
     /* ══════════════════════════════════════════

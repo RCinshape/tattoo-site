@@ -68,8 +68,9 @@ npx serve .
 ```
 
 ## Design Aesthetic
-- Follows the OS colour scheme: neutral `#0a0a0a` dark (default) or `#f4f4f4` light, with a manual nav toggle; gold is the single accent
-- Gold is two tokens, because one light-mode value cannot be both AA-legible and perceptibly golden: `--gold` (`#c4a262` dark / `#8a6a10` light, 4.60:1 — everything, including small mono labels and every `--gold-rgb` border/fill) and `--gold-display` (`#c4a262` dark / `#a88220` light, 3.25:1 — display-size text only: `em` accents in section headings, the hero title, `.n-logo`/`.ft-logo`, `.bk-step-n`, `.sp-ghost`). Anything under 18.66px MUST use `--gold`.
+- Follows the OS colour scheme: neutral `#0a0a0a` dark (default) or warm paper `#f4f1ea` light, with a manual nav toggle; gold is the single accent
+- Gold is ONE token per palette — `--gold` (`#c4a262` dark / `#a9821f` light). There is no `--gold-display`; never reintroduce a second gold. The light value stays golden because gold never colours a run of text under 18.66px on a themed surface: small mono labels, eyebrows and tiny links use `--fg`/`--fg2` and carry gold as a rule (`.s-label::before`), ring, border or glyph instead. Gold text is allowed at display sizes (`em` accents in headings, hero title, `.n-logo`/`.ft-logo`, `.bk-step-n`), and icon/star/arrow glyphs keep gold at any size (non-text, 3:1). Always-dark islands re-declare the dark palette wholesale, so gold text of any size is fine inside them.
+- Decorative gold ink carries its alpha in a token, not in `opacity`: `--ghost-ink` (`.sp-ghost`) and `--wm-ink` (`.bk-wm`), because GSAP writes inline `opacity` that outranks CSS.
 - Minimal UI — let artwork breathe
 - Smooth, deliberate animations — nothing snappy or bouncy
 - Monochrome or desaturated palette with one accent color

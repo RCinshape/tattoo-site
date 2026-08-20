@@ -109,7 +109,7 @@
         r.dataset.theme = theme;
         r.style.colorScheme = theme;
         var m = document.getElementById('meta-theme-color');
-        if (m) m.setAttribute('content', theme === 'light' ? '#f4f4f4' : '#0a0a0a');
+        if (m) m.setAttribute('content', theme === 'light' ? '#f4f1ea' : '#0a0a0a');
         document.dispatchEvent(new Event('themechange'));
       }
       window.__theme = {
@@ -153,9 +153,11 @@
       --dim:       #838383;
       --gold:      #c4a262;
       --gold-rgb:  196,162,98;
-      /* Display-size gold. Dark mode needs no split; light mode does, because a
-         gold light enough to read as gold cannot also clear 4.5:1 on #f4f4f4. */
-      --gold-display: #c4a262;
+      /* Exactly one gold per palette — no display/text split. Decorative gold
+         ink carries its alpha in the token because GSAP writes inline opacity
+         on .sp-ghost, which outranks any CSS opacity rule. */
+      --ghost-ink: rgba(var(--gold-rgb),.07);
+      --wm-ink:    rgba(var(--gold-rgb),.06);
       --fg-rgb:    255,255,255;   /* borders + faint washes */
       --panel-rgb: 10,10,10;      /* nav/menu/modal scrims, text shadows */
       --on-gold:   #0a0a0a;       /* ink on a gold fill */
@@ -168,11 +170,11 @@
       --border-h:  rgba(var(--fg-rgb),.15);
       /* Page-tone RGB. Layers that fade content INTO the page (photo scrims,
          vignette, text halos) MUST use this, never --panel-rgb: in light the
-         panel is #fff while the page is #f4f4f4, and that 11-level mismatch
+         panel is #fbf9f5 while the page is #f4f1ea, and that mismatch
          paints visible white/grey shapes. */
       --bg-rgb: 10,10,10;
       /* Icon-button chrome. Both themes are pinned to the same measured ratios:
-         .34 white on #0a0a0a and .46 dark ink on #f4f4f4 are both 3.02:1, the
+         .34 white on #0a0a0a is 3.02:1 and .48 warm ink on #f4f1ea is 3.13:1 —
          WCAG non-text minimum. Dark sat at .07 = 1.15:1 — an invisible ring. */
       --btn-ring:   rgba(var(--fg-rgb),.34);
       --btn-ring-h: rgba(var(--fg-rgb),.50);
@@ -186,7 +188,7 @@
       --gold-ring-h: rgba(var(--gold-rgb),.65);
       /* Decorative layers, resolved per theme as complete values. Gold ambient
          washes glow on a dark page but stain and band on a light one, and a
-         fixed vignette over #f4f4f4 leaves a visible grey ellipse. */
+         fixed vignette over #f4f1ea leaves a visible grey ellipse. */
       --vignette: radial-gradient(ellipse 110% 110% at 50% 50%, transparent 40%, rgba(var(--bg-rgb),.38) 70%, rgba(var(--bg-rgb),.62) 100%);
       --ambient-hero:
         radial-gradient(ellipse at 50% -5%, rgba(var(--gold-rgb),.035), transparent 55%),
@@ -233,32 +235,34 @@
     /* Light theme — resolved from OS preference or the manual override, see head script */
     :root[data-theme="light"] {
       color-scheme: light;
-      --bg:        #f4f4f4;
-      --bg2:       #ffffff;
-      --fg:        #151515;
-      --fg2:       #454545;
-      --dim:       #6b6b6b;
-      --gold:      #8a6a10;
-      --gold-rgb:  138,106,16;
-      /* #8a6a10 = 4.60:1 on #f4f4f4 (AA, all text). #a88220 = 3.25:1 (AA, large text). */
-      --gold-display: #a88220;
-      --fg-rgb:    20,20,20;
-      --panel-rgb: 255,255,255;
-      --on-gold:   #ffffff;
+      --bg:        #f4f1ea;
+      --bg2:       #fbf9f5;
+      --fg:        #191712;
+      --fg2:       #4a453c;
+      --dim:       #6a6459;
+      /* One gold, every element, every size. #a9821f = 3.16:1 on #f4f1ea (AA
+         large text + non-text). Gold never colours text under 18.66px on a
+         themed surface: small labels use --fg/--fg2 and carry gold as a rule,
+         ring or glyph instead. That is what lets this gold stay golden. */
+      --gold:      #a9821f;
+      --gold-rgb:  169,130,31;
+      --fg-rgb:    25,23,18;
+      --panel-rgb: 251,249,245;
+      --on-gold:   #191712;       /* 5.03:1 on gold; white would be 3.56:1 */
       --ok:        #1f7a47;
       --ok-ink:    #1f7a47;
       --ok-rgb:    31,122,71;
       --warn:      #b4322f;
       --warn-rgb:  180,50,47;
-      --bg-rgb: 244,244,244;
-      /* .46 puts the ring at ~rgb(141) = 3.0:1 against #f4f4f4 (WCAG non-text min) */
-      --btn-ring:   rgba(var(--fg-rgb),.46);
-      --btn-ring-h: rgba(var(--fg-rgb),.62);
+      --bg-rgb: 244,241,234;
+      /* .48 puts the ring at 3.13:1 against #f4f1ea (WCAG non-text minimum) */
+      --btn-ring:   rgba(var(--fg-rgb),.48);
+      --btn-ring-h: rgba(var(--fg-rgb),.64);
       --btn-fill:   rgba(var(--panel-rgb),1);
       --photo-ring:   rgba(var(--fg-rgb),.62);
       --photo-ring-h: rgba(var(--fg-rgb),.82);
-      --gold-ring:   rgba(var(--gold-rgb),.58);
-      --gold-ring-h: rgba(var(--gold-rgb),.85);
+      --gold-ring:   rgba(var(--gold-rgb),.85);
+      --gold-ring-h: rgba(var(--gold-rgb),1);
       /* No vignette on a light page: the effect needs ~7 code values across half
          the screen, which bands on 8-bit SDR panels and reads as a grey ellipse. */
       --vignette: none;
@@ -268,15 +272,17 @@
       --ambient-book: none;
       --cta-shadow:   0 8px 28px rgba(var(--gold-rgb),.30), 0 2px 10px rgba(var(--fg-rgb),.18);
       --cta-shadow-a: 0 4px 16px rgba(var(--gold-rgb),.20), 0 1px 6px rgba(var(--fg-rgb),.12);
-      --gold-faint: rgba(var(--gold-rgb),.50);
-      --gold-soft:  rgba(var(--gold-rgb),.78);
-      --img-hero:     grayscale(1) brightness(1.22) contrast(.88);
+      --gold-faint: rgba(var(--gold-rgb),.55);
+      --gold-soft:  rgba(var(--gold-rgb),.85);
+      --ghost-ink:  rgba(var(--gold-rgb),.12);
+      --wm-ink:     rgba(var(--gold-rgb),.16);
+      --img-hero:     grayscale(1) sepia(.15) brightness(1.18) contrast(.9);
       --img-card:     brightness(1.02) saturate(.8);
       --img-card-h:   brightness(1.06) saturate(.95);
       --img-exp:      brightness(1) saturate(.8);
       --img-exp-open: brightness(1.04) saturate(.9);
       --img-avatar:   grayscale(.5);
-      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%238a6a10' stroke='%23ffffff' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
+      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23a9821f' stroke='%23fbf9f5' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
     }
 
     /* One gutter for every section on a phone. Sections used to hardcode this
@@ -405,7 +411,7 @@
       font-weight: 400; letter-spacing: .07em;
       text-decoration: none; color: var(--fg);
     }
-    .n-logo em { font-style: italic; color: var(--gold-display); }
+    .n-logo em { font-style: italic; color: var(--gold); }
     .n-links { display: flex; align-items: center; gap: 26px; }
     /* Icon buttons (socials + theme toggle) read as one cluster on a tighter rhythm */
     .n-socials { display: flex; align-items: center; gap: 16px; }
@@ -475,10 +481,10 @@
       font-family: var(--serif); font-style: italic; font-size: 2rem;
       color: var(--fg); text-decoration: none; transition: color .25s;
     }
-    .mm-link:hover { color: var(--gold-display); }
+    .mm-link:hover { color: var(--gold); }
     .mm-book {
       font-family: var(--mono); font-style: normal; font-size: .8rem;
-      letter-spacing: .2em; text-transform: uppercase; color: var(--gold);
+      letter-spacing: .2em; text-transform: uppercase; color: var(--fg);
       border: 1px solid rgba(var(--gold-rgb),.4); padding: 14px 34px; border-radius: 100px;
     }
     .mm-socials { display: flex; gap: 16px; margin-top: 14px; }
@@ -548,7 +554,7 @@
     .h-eyebrow {
       font-family: var(--mono); font-size: clamp(.66rem, 1.4vw, .8rem);
       letter-spacing: .26em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 22px;
+      color: var(--fg); margin-bottom: 22px;
       text-shadow: 0 1px 12px rgba(var(--panel-rgb),.9);
       opacity: 0;
     }
@@ -562,7 +568,7 @@
       font-weight: 400; line-height: .87; letter-spacing: -.03em;
     }
     .tl { display: block; }
-    .tl em { font-style: italic; color: var(--gold-display); }
+    .tl em { font-style: italic; color: var(--gold); }
     .tl-i { display: block; }
     /* Only hero + booking titles are JS-revealed; exp/faq titles use clip-path wipes */
     .h-title .tl-i, .bk-h2 .tl-i { opacity: 0; }
@@ -573,7 +579,7 @@
     .h-loc {
       font-family: var(--serif); font-style: italic; font-weight: 300;
       font-size: clamp(.95rem, 1.7vw, 1.1rem);
-      color: rgba(var(--fg-rgb),.62);
+      color: rgba(var(--fg-rgb),.86);
       line-height: 1.75;
       text-shadow: 0 0 28px rgba(var(--panel-rgb),1), 0 1px 6px rgba(var(--panel-rgb),.85);
       display: flex; flex-direction: column; gap: 0;
@@ -592,7 +598,7 @@
       -webkit-backdrop-filter: blur(16px) saturate(1.4);
       font-family: var(--sans); font-size: .7rem;
       letter-spacing: .06em; text-transform: uppercase;
-      color: rgba(var(--fg-rgb),.78);
+      color: var(--fg);
       text-decoration: none; white-space: nowrap;
       transition: background .35s, border-color .35s, color .35s,
                   transform .45s cubic-bezier(.34,1.56,.64,1),
@@ -601,7 +607,7 @@
     .h-dir:hover {
       background: rgba(var(--gold-rgb),.13);
       border-color: rgba(var(--gold-rgb),.35);
-      color: rgba(var(--gold-rgb),.95);
+      color: var(--fg);
       transform: scale(1.06);
       box-shadow: 0 2px 20px rgba(var(--gold-rgb),.1);
     }
@@ -648,8 +654,14 @@
     .s-label {
       font-family: var(--mono); font-size: .74rem;
       letter-spacing: .28em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 16px;
+      color: var(--fg2); margin-bottom: 16px;
       opacity: 0; transform: translateY(10px);
+    }
+    /* Gold survives at label size as a rule, never as the ink: 11.8px gold is
+       3.16:1 in light, which fails AA for text but clears the non-text 3:1. */
+    .s-label, .h-eyebrow { display: inline-flex; align-items: center; gap: 12px; }
+    .s-label::before, .h-eyebrow::before {
+      content: ''; width: 22px; height: 1px; flex: none; background: var(--gold);
     }
 
     /* ══════════════════════════════════════════
@@ -761,13 +773,20 @@
       padding: 20px var(--pad) 40px;
     }
     .w-more-btn {
-      display: inline-flex; align-items: center; gap: 6px;
+      display: inline-flex; align-items: center; gap: 8px;
       font-family: var(--mono); font-size: .72rem;
       letter-spacing: .18em; text-transform: uppercase;
-      color: var(--gold); text-decoration: none;
-      transition: opacity .2s;
+      color: var(--fg); text-decoration: none;
+      padding: 16px 34px; border-radius: 100px;
+      border: 1px solid var(--gold-ring);
+      background: rgba(var(--gold-rgb),.04);
+      transition: border-color .38s, background .38s, transform .38s var(--out);
     }
-    .w-more-btn:hover { opacity: .7; }
+    .w-more-btn:hover {
+      border-color: var(--gold-ring-h);
+      background: rgba(var(--gold-rgb),.09);
+      transform: translateY(-3px);
+    }
 
     @media (max-width: 1024px) {
       .w-grid { grid-template-columns: repeat(2, 1fr); }
@@ -794,7 +813,12 @@
     }
     .ab-portrait {
       aspect-ratio: 4/5; border-radius: var(--r);
-      overflow: hidden; border: 1px solid var(--border);
+      overflow: hidden;
+      /* Half the previous rendered width, centred in its grid column, with the
+         edges dissolved into the page — a border would redraw the hard edge. */
+      width: 50%; justify-self: center;
+      -webkit-mask-image: radial-gradient(ellipse 92% 92% at 50% 50%, #000 62%, rgba(0,0,0,.35) 88%, transparent 100%);
+              mask-image: radial-gradient(ellipse 92% 92% at 50% 50%, #000 62%, rgba(0,0,0,.35) 88%, transparent 100%);
     }
     .ab-portrait img {
       width: 100%; height: 100%; object-fit: cover; display: block;
@@ -805,14 +829,14 @@
       font-weight: 300; line-height: 1; letter-spacing: -.02em;
       margin-bottom: 24px;
     }
-    .ab-h2 em { font-style: italic; color: var(--gold-display); }
+    .ab-h2 em { font-style: italic; color: var(--gold); }
     .ab-bio p {
       font-size: 1.05rem; color: var(--fg2); line-height: 1.9;
       margin-bottom: 18px; max-width: 560px;
     }
     @media (max-width: 768px) {
       #about { grid-template-columns: 1fr; gap: 36px; padding: 56px var(--pad) 64px; }
-      .ab-portrait { max-width: 360px; justify-self: center; }
+      .ab-portrait { max-width: 180px; justify-self: center; }
     }
 
     /* ══════════════════════════════════════════
@@ -830,7 +854,7 @@
       font-size: clamp(1.9rem,4.5vw,3.8rem);
       font-weight: 300; letter-spacing: -.02em; line-height: 1;
     }
-    .exp-h2 em { font-style: italic; color: var(--gold-display); }
+    .exp-h2 em { font-style: italic; color: var(--gold); }
     /* ── Expertise — editorial large-type stack ── */
     .exp-list {
       list-style: none; display: flex; flex-direction: column; gap: 12px;
@@ -942,7 +966,7 @@
       margin-top: auto; padding: 28px 0 0;
       font-family: var(--mono); font-size: .72rem;
       letter-spacing: .18em; text-transform: uppercase;
-      color: var(--gold); text-decoration: none;
+      color: var(--fg); text-decoration: none;
       cursor: pointer; background: none; border: none;
       width: fit-content;
       transition: opacity .2s;
@@ -1063,7 +1087,7 @@
       display: inline-flex; align-items: center; gap: 9px;
       font-family: var(--mono); font-size: .62rem;
       letter-spacing: .2em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 22px;
+      color: var(--fg2); margin-bottom: 22px;
     }
     .fl-dot {
       width: 7px; height: 7px; border-radius: 50%;
@@ -1077,7 +1101,7 @@
       font-weight: 300; line-height: 1; letter-spacing: -.02em;
       margin-bottom: 22px;
     }
-    .fl-h2 em { font-style: italic; color: var(--gold-display); }
+    .fl-h2 em { font-style: italic; color: var(--gold); }
     .fl-p {
       font-size: 1rem; color: var(--fg2);
       line-height: 1.85; max-width: 520px;
@@ -1126,12 +1150,12 @@
     .fl-fb-cta:hover { border-color: rgba(24,119,242,.5); }
     .fl-fb-handle {
       font-style: italic; font-family: var(--serif);
-      font-size: .9rem; color: var(--gold);
+      font-size: .9rem; color: var(--fg2);
       letter-spacing: 0; text-transform: none;
     }
     .fl-ig-handle {
       font-style: italic; font-family: var(--serif);
-      font-size: .9rem; color: var(--gold);
+      font-size: .9rem; color: var(--fg2);
       letter-spacing: 0; text-transform: none;
     }
     /* Leave-a-review CTA strip */
@@ -1152,10 +1176,10 @@
     .tr-review-prompt em { color: var(--fg); font-style: italic; }
     .tr-review-btn {
       display: inline-flex; align-items: center; gap: 10px;
-      font-family: var(--mono); font-size: .68rem;
+      font-family: var(--mono); font-size: .72rem;
       letter-spacing: .2em; text-transform: uppercase;
-      color: var(--gold); text-decoration: none;
-      border: 1px solid rgba(var(--gold-rgb),.35);
+      color: var(--fg); text-decoration: none;
+      border: 1px solid var(--gold-ring);
       padding: 15px 30px; border-radius: 100px;
       position: relative; overflow: hidden;
       transition: border-color .4s, color .4s;
@@ -1203,7 +1227,7 @@
       font-weight: 300; line-height: 1; letter-spacing: -.02em;
       margin-bottom: 22px; margin-top: 12px;
     }
-    .gf-h2 em { font-style: italic; color: var(--gold-display); }
+    .gf-h2 em { font-style: italic; color: var(--gold); }
     .gf-p {
       font-size: 1rem; color: var(--fg2);
       line-height: 1.9; max-width: 440px; margin-bottom: 18px;
@@ -1265,7 +1289,7 @@
       font-size: clamp(16rem, 30vw, 28rem);
       font-weight: 400; line-height: 1;
       color: transparent;
-      -webkit-text-stroke: 1px rgba(var(--gold-rgb),.045);
+      -webkit-text-stroke: 1px var(--wm-ink);
       pointer-events: none; user-select: none; z-index: 0;
       letter-spacing: -.04em; white-space: nowrap;
     }
@@ -1300,7 +1324,7 @@
       font-weight: 300; letter-spacing: -.025em;
       line-height: .97; margin-bottom: 0;
     }
-    .bk-h2 em { font-style: italic; color: var(--gold-display); }
+    .bk-h2 em { font-style: italic; color: var(--gold); }
     /* Thin animated rule between heading and body */
     .bk-rule {
       width: 56px; height: 1px;
@@ -1394,7 +1418,7 @@
       font-family: var(--serif);
       font-size: clamp(1.8rem, 3.5vw, 2.8rem);
       font-weight: 300; letter-spacing: -.02em;
-      color: var(--gold-display); line-height: 1;
+      color: var(--gold); line-height: 1;
     }
     .bk-step-l {
       font-family: var(--mono); font-size: .71rem;
@@ -1438,7 +1462,7 @@
       font-weight: 300; font-style: italic; line-height: 1;
       margin-top: 12px;
     }
-    .tr-h2 em { color: var(--gold-display); font-style: italic; }
+    .tr-h2 em { color: var(--gold); font-style: italic; }
     .tr-head-r { flex-shrink: 0; }
     .tr-score-badge {
       display: inline-flex; align-items: center; gap: 11px;
@@ -1475,14 +1499,14 @@
 
     /* ── Spotlight ── */
     .trs-spotlight {
-      position: relative; max-width: 980px; margin: 0 auto; overflow: hidden;
+      position: relative; max-width: 980px; margin: 0 auto; overflow: visible;
       padding: 16px var(--pad); text-align: center;
       display: flex; flex-direction: column; align-items: center; gap: 22px;
     }
     .sp-ghost {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      font-family: var(--display); font-size: clamp(11rem, 28vw, 22rem); line-height: 1;
-      color: var(--gold-display); opacity: .05; pointer-events: none; user-select: none; z-index: 0;
+      font-family: var(--display); font-size: clamp(8rem, 16vw, 14rem); line-height: 1;
+      color: var(--ghost-ink); opacity: 1; pointer-events: none; user-select: none; z-index: 0;
     }
     .trs-spotlight > *:not(.sp-ghost) { position: relative; z-index: 1; }
     .sp-rating { display: inline-flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--fg2); }
@@ -1509,10 +1533,10 @@
       display: inline-flex; align-items: center; gap: 6px;
       font-family: var(--mono); font-size: .66rem;
       letter-spacing: .18em; text-transform: uppercase;
-      color: var(--gold); background: none; border: none; padding: 0;
-      cursor: pointer; opacity: .85; transition: opacity .2s;
+      color: var(--fg); background: none; border: none; padding: 0;
+      cursor: pointer; transition: color .2s;
     }
-    .sp-readmore:hover { opacity: 1; }
+    .sp-readmore:hover { color: var(--gold); }
 
     /* Review expand modal */
     #rv-modal {
@@ -1561,7 +1585,7 @@
     }
     .rvm-reply-label {
       font-family: var(--mono); font-size: .6rem;
-      letter-spacing: .18em; text-transform: uppercase; color: var(--gold);
+      letter-spacing: .18em; text-transform: uppercase; color: var(--fg2);
       margin-bottom: 10px;
     }
     .rvm-reply-text {
@@ -1597,7 +1621,7 @@
       font-size: clamp(2.6rem,5.5vw,5rem);
       font-weight: 300; letter-spacing: -.03em; line-height: 1;
     }
-    .faq-h2 em { font-style: italic; color: var(--gold-display); }
+    .faq-h2 em { font-style: italic; color: var(--gold); }
     .faq-hd-rule {
       flex: 1; height: 1px;
       background: var(--border);
@@ -1650,14 +1674,14 @@
       font-weight: 300; letter-spacing: -.015em; line-height: 1.2;
       color: var(--fg); transition: color .3s ease;
     }
-    .fq-item.open .fq-question { color: var(--gold); }
+    .fq-item.open .fq-question { color: var(--fg); }
     .fq-tags-row {
       font-family: var(--mono); font-size: .62rem;
       color: var(--dim); letter-spacing: .1em; text-transform: uppercase;
       transition: color .3s ease;
     }
     .fq-item:hover .fq-tags-row,
-    .fq-item.open  .fq-tags-row { color: rgba(var(--gold-rgb),.5); }
+    .fq-item.open  .fq-tags-row { color: var(--fg2); }
 
     /* Circular toggle (+→×) */
     .fq-toggle {
@@ -1731,7 +1755,7 @@
       font-weight: 300; letter-spacing: -.02em; line-height: 1.1;
       margin-bottom: 20px;
     }
-    .ac-h2 em { font-style: italic; color: var(--gold-display); }
+    .ac-h2 em { font-style: italic; color: var(--gold); }
     .ac-sub {
       font-family: var(--sans); font-size: 1rem;
       color: var(--fg2); line-height: 1.8; max-width: 520px;
@@ -1750,7 +1774,7 @@
     .ac-phase-tag {
       font-family: var(--mono); font-size: .68rem;
       letter-spacing: .18em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 14px; display: block;
+      color: var(--fg2); margin-bottom: 14px; display: block;
     }
     .ac-phase-title {
       font-family: var(--serif); font-size: 1.45rem;
@@ -1790,6 +1814,10 @@
       color: var(--fg2); line-height: 1.8;
     }
     .ac-note-text strong { color: var(--fg); font-weight: 400; }
+    .ac-note-text a {
+      color: var(--fg); text-decoration: underline;
+      text-decoration-color: var(--gold); text-underline-offset: 3px;
+    }
     @media (max-width: 768px) {
       #aftercare { padding: 60px var(--pad) 80px; }
       .ac-phases { grid-template-columns: 1fr; }
@@ -1818,7 +1846,7 @@
       font-family: var(--serif); font-size: clamp(1.6rem, 3vw, 2.4rem);
       font-weight: 300; line-height: 1.3;
     }
-    .loc-addr em { font-style: italic; color: var(--gold-display); }
+    .loc-addr em { font-style: italic; color: var(--gold); }
     .loc-meta {
       font-family: var(--mono); font-size: .74rem;
       letter-spacing: .18em; text-transform: uppercase;
@@ -1849,7 +1877,7 @@
     .loc-btn.loc-btn-uber:hover { background: rgba(var(--fg-rgb),.06); border-color: rgba(var(--fg-rgb),.3); }
     /* "Find Me" heading */
     .loc-find-label {
-      font-family: var(--serif); font-size: clamp(1.1rem, 2.5vw, 1.7rem);
+      font-family: var(--serif); font-size: clamp(1.2rem, 2.5vw, 1.7rem);
       font-weight: 300; font-style: italic;
       letter-spacing: .04em; color: var(--gold);
       margin-bottom: 14px; display: block;
@@ -1896,9 +1924,9 @@
     }
     .ft-logo {
       font-family: var(--display); font-size: 1.2rem;
-      font-weight: 400; color: var(--dim);
+      font-weight: 400; color: var(--fg);
     }
-    .ft-logo em { font-style: italic; color: var(--gold-display); }
+    .ft-logo em { font-style: italic; color: var(--gold); }
     .ft-links { display: flex; gap: 22px; }
     .ft-a {
       font-family: var(--mono); font-size: .71rem;
@@ -1908,7 +1936,7 @@
     }
     .ft-a:hover { color: var(--fg); }
     .ft-copy {
-      font-family: var(--mono); font-size: .66rem;
+      font-family: var(--mono); font-size: .7rem;
       letter-spacing: .1em; color: var(--fg2);
     }
     @media (max-width: 768px) {
@@ -1945,7 +1973,7 @@
     /* — Spring touch feedback — */
     .wc          { transition: border-color .4s, transform .22s cubic-bezier(.175,.885,.32,1.275); }
     .wc:active   { transform: scale(0.95) !important; }
-    .bk-btn:active, .n-btn:active { transform: scale(0.96) translateY(0) !important; transition-duration: .1s !important; }
+    .bk-btn:active, .n-btn:active, .w-more-btn:active { transform: scale(0.96) translateY(0) !important; transition-duration: .1s !important; }
     .ei:active   { background: rgba(var(--gold-rgb),.04); transform: scale(.985); }
     .fq-item:active { background: rgba(var(--fg-rgb),.02); }
 
@@ -1994,7 +2022,7 @@
     .wc-view {
       --fg: #ededed; --fg2: #adadad; --dim: #838383;
       --fg-rgb: 255,255,255; --panel-rgb: 10,10,10;
-      --gold: #c4a262; --gold-rgb: 196,162,98; --gold-display: #c4a262;
+      --gold: #c4a262; --gold-rgb: 196,162,98;
     }
     #loader { background: #0a0a0a; }
 
@@ -2238,7 +2266,7 @@
   <div class="ab-portrait">
     <img src="pictures/web/Emmy-Selfie-Colorful-960.webp" width="1696" height="2496"
          srcset="pictures/web/Emmy-Selfie-Colorful-480.webp 480w, pictures/web/Emmy-Selfie-Colorful-960.webp 960w"
-         sizes="(max-width: 768px) 100vw, 40vw"
+         sizes="(max-width: 768px) 50vw, 20vw"
          alt="Emmy, fine line and realism tattoo artist at Sainthood Tattoo in Hull." loading="lazy" decoding="async">
   </div>
   <div class="ab-text">
@@ -2360,10 +2388,6 @@
   <div class="tr-review-cta">
     <p class="tr-review-prompt">Reviews are genuinely appreciated. <em>They help people find their way here.</em></p>
     <div class="tr-review-btns">
-      <a href="https://g.page/r/CVRweODDPiBwEAI" target="_blank" rel="noopener" class="tr-review-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span>See all Google reviews</span>
-      </a>
       <a href="https://g.page/r/CVRweODDPiBwEAI/review" target="_blank" rel="noopener" class="tr-review-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
         <span>Leave a Google review</span>
@@ -2371,6 +2395,10 @@
       <a href="https://www.facebook.com/EmmaleneTattoo/reviews" target="_blank" rel="noopener" class="tr-review-btn tr-review-btn-fb">
         <svg width="16" height="16" aria-hidden="true"><use href="#i-fb"/></svg>
         <span>Recommend on Facebook</span>
+      </a>
+      <a href="https://g.page/r/CVRweODDPiBwEAI" target="_blank" rel="noopener" class="tr-review-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>See all Google reviews</span>
       </a>
     </div>
   </div>
@@ -2624,7 +2652,7 @@
   </div>
   <div class="ac-note" style="margin-left:auto;margin-right:auto;">
     <svg class="ac-note-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message me directly</strong>. Don't wait, it's always better to ask early. Reach me on <a href="https://wa.me/447405979137" style="color:var(--gold);text-decoration:none">WhatsApp</a>.</p>
+    <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message me directly</strong>. Don't wait, it's always better to ask early. Reach me on <a href="https://wa.me/447405979137">WhatsApp</a>.</p>
   </div>
 </section>
 
@@ -3594,7 +3622,7 @@
             ghost.textContent = initial(r.name);
           })
           .fromTo([qEl, aEl], { opacity: 0, y: 12 * dir, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .6, ease: 'expo.out', stagger: .06 })
-          .fromTo(ghost, { opacity: 0, scale: .92 }, { opacity: .06, scale: 1, duration: .8, ease: 'expo.out' }, '<');
+          .fromTo(ghost, { opacity: 0, scale: .92 }, { opacity: 1, scale: 1, duration: .8, ease: 'expo.out' }, '<');
         dots.forEach((d, k) => d.classList.toggle('on', k === i));
       }
       function go(n, dir) { i = (n + REVIEWS.length) % REVIEWS.length; paint(dir); restart(); }
