@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Generates responsive WebP variants for every JPG in /pictures into /pictures/web/.
+// Generates responsive WebP variants for every JPG/PNG in /pictures into /pictures/web/.
 // Originals are untouched (they remain the lightbox full-size sources).
 // Run: node scripts/make-webp-variants.js
 const sharp = require('sharp');
@@ -13,10 +13,10 @@ const WIDTHS = [480, 960];
 if (!fs.existsSync(OUT)) fs.mkdirSync(OUT);
 
 (async () => {
-  const files = fs.readdirSync(PICS).filter(f => /\.jpe?g$/i.test(f));
+  const files = fs.readdirSync(PICS).filter(f => /\.(jpe?g|png)$/i.test(f));
   for (const file of files) {
     const input = path.join(PICS, file);
-    const base  = file.replace(/\.jpe?g$/i, '');
+    const base  = file.replace(/\.(jpe?g|png)$/i, '');
     for (const w of WIDTHS) {
       const out = path.join(OUT, `${base}-${w}.webp`);
       if (fs.existsSync(out)) continue;
