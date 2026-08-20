@@ -153,6 +153,9 @@
       --dim:       #838383;
       --gold:      #c4a262;
       --gold-rgb:  196,162,98;
+      /* Display-size gold. Dark mode needs no split; light mode does, because a
+         gold light enough to read as gold cannot also clear 4.5:1 on #f4f4f4. */
+      --gold-display: #c4a262;
       --fg-rgb:    255,255,255;   /* borders + faint washes */
       --panel-rgb: 10,10,10;      /* nav/menu/modal scrims, text shadows */
       --on-gold:   #0a0a0a;       /* ink on a gold fill */
@@ -229,8 +232,10 @@
       --fg:        #151515;
       --fg2:       #454545;
       --dim:       #6b6b6b;
-      --gold:      #7a5e1e;
-      --gold-rgb:  122,94,30;
+      --gold:      #8a6a10;
+      --gold-rgb:  138,106,16;
+      /* #8a6a10 = 4.60:1 on #f4f4f4 (AA, all text). #a88220 = 3.25:1 (AA, large text). */
+      --gold-display: #a88220;
       --fg-rgb:    20,20,20;
       --panel-rgb: 255,255,255;
       --on-gold:   #ffffff;
@@ -263,7 +268,13 @@
       --img-exp:      brightness(1) saturate(.8);
       --img-exp-open: brightness(1.04) saturate(.9);
       --img-avatar:   grayscale(.5);
-      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%237a5e1e' stroke='%23ffffff' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
+      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%238a6a10' stroke='%23ffffff' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
+    }
+
+    /* One gutter for every section on a phone. Sections used to hardcode this
+       per-rule, which is how .w-grid drifted to 16px and .trs-spotlight to 48px. */
+    @media (max-width: 768px) {
+      :root { --pad: 24px; }
     }
 
     body {
@@ -358,6 +369,21 @@
       transition: background .5s, padding .35s, border-color .4s;
       border-bottom: 1px solid transparent;
     }
+    /* The unscrolled nav paints straight onto the hero photo, whose light-mode
+       filter spans rgb(15)–rgb(240) under one 94px band. A page-tone scrim gives
+       every child a stable plate; it fades out as #nav.s brings its own surface. */
+    #nav::before {
+      content: '';
+      position: absolute; left: 0; right: 0; top: 0;
+      height: 200%;
+      background: linear-gradient(to bottom,
+        rgba(var(--panel-rgb),.78) 0%,
+        rgba(var(--panel-rgb),.55) 40%,
+        rgba(var(--panel-rgb),.18) 72%,
+        transparent 100%);
+      pointer-events: none; z-index: -1;
+      transition: opacity .45s;
+    }
     #nav.s {
       background: rgba(var(--panel-rgb),.88);
       backdrop-filter: blur(24px);
@@ -365,12 +391,13 @@
       padding-top: 16px; padding-bottom: 16px;
       border-bottom-color: var(--border);
     }
+    #nav.s::before { opacity: 0; }
     .n-logo {
-      font-family: var(--display); font-size: 1.15rem;
+      font-family: var(--display); font-size: 1.2rem;
       font-weight: 400; letter-spacing: .07em;
       text-decoration: none; color: var(--fg);
     }
-    .n-logo em { font-style: italic; color: var(--gold); }
+    .n-logo em { font-style: italic; color: var(--gold-display); }
     .n-links { display: flex; align-items: center; gap: 26px; }
     /* Icon buttons (socials + theme toggle) read as one cluster on a tighter rhythm */
     .n-socials { display: flex; align-items: center; gap: 16px; }
@@ -440,7 +467,7 @@
       font-family: var(--serif); font-style: italic; font-size: 2rem;
       color: var(--fg); text-decoration: none; transition: color .25s;
     }
-    .mm-link:hover { color: var(--gold); }
+    .mm-link:hover { color: var(--gold-display); }
     .mm-book {
       font-family: var(--mono); font-style: normal; font-size: .8rem;
       letter-spacing: .2em; text-transform: uppercase; color: var(--gold);
@@ -454,8 +481,8 @@
       color: var(--fg); font-family: var(--mono); font-size: .8rem; cursor: pointer;
     }
     @media (max-width: 768px) {
-      #nav { padding: 18px 24px; }
-      #nav.s { padding: 12px 24px; }
+      #nav { padding: 18px var(--pad); }
+      #nav.s { padding: 12px var(--pad); }
       .n-item { display: none; }
       .n-links { display: none; }
       .nav-toggle { display: flex; }
@@ -527,7 +554,7 @@
       font-weight: 400; line-height: .87; letter-spacing: -.03em;
     }
     .tl { display: block; }
-    .tl em { font-style: italic; color: var(--gold); }
+    .tl em { font-style: italic; color: var(--gold-display); }
     .tl-i { display: block; }
     /* Only hero + booking titles are JS-revealed; exp/faq titles use clip-path wipes */
     .h-title .tl-i, .bk-h2 .tl-i { opacity: 0; }
@@ -598,12 +625,12 @@
     }
     .h-cta-secondary:hover { border-color: rgba(var(--fg-rgb),.4); transform: translateY(-3px); }
     @media (max-width: 768px) {
-      #hero { padding: 80px 24px 48px; min-height: auto; }
+      #hero { padding: 80px var(--pad) 48px; min-height: auto; }
       .h-title { font-size: clamp(3.4rem,16vw,6rem); }
       .h-dir span { display: none; }
       .h-dir { padding: 9px 11px; }
-      .h-cta { width: 100%; }
-      .h-cta-primary, .h-cta-secondary { flex: 1 1 0; justify-content: center; padding: 15px 18px; }
+      .h-cta { width: 100%; flex-direction: column; }
+      .h-cta-primary, .h-cta-secondary { flex: none; width: 100%; justify-content: center; padding: 17px 22px; }
     }
     @media (prefers-reduced-motion: reduce) { .h-cta, html.hero-go .h-cta { animation: none !important; opacity: 1 !important; } }
 
@@ -739,8 +766,8 @@
     }
     @media (max-width: 768px) {
       #work { position: static; height: auto; overflow: visible; padding-top: 72px; }
-      .w-grid { grid-template-columns: repeat(2, 1fr); padding: 0 16px 8px; gap: 8px; }
-      .w-more-wrap { padding: 10px 16px 0; }
+      .w-grid { grid-template-columns: repeat(2, 1fr); padding: 0 var(--pad) 8px; gap: 8px; }
+      .w-more-wrap { padding: 10px var(--pad) 0; }
     }
     @media (max-width: 480px) {
       .w-grid { grid-template-columns: 1fr; }
@@ -770,14 +797,14 @@
       font-weight: 300; line-height: 1; letter-spacing: -.02em;
       margin-bottom: 24px;
     }
-    .ab-h2 em { font-style: italic; color: var(--gold); }
+    .ab-h2 em { font-style: italic; color: var(--gold-display); }
     .ab-bio p {
       font-size: 1.05rem; color: var(--fg2); line-height: 1.9;
       margin-bottom: 18px; max-width: 560px;
     }
     @media (max-width: 768px) {
-      #about { grid-template-columns: 1fr; gap: 36px; padding: 56px 24px 64px; }
-      .ab-portrait { max-width: 360px; }
+      #about { grid-template-columns: 1fr; gap: 36px; padding: 56px var(--pad) 64px; }
+      .ab-portrait { max-width: 360px; justify-self: center; }
     }
 
     /* ══════════════════════════════════════════
@@ -795,19 +822,19 @@
       font-size: clamp(1.9rem,4.5vw,3.8rem);
       font-weight: 300; letter-spacing: -.02em; line-height: 1;
     }
-    .exp-h2 em { font-style: italic; color: var(--gold); }
+    .exp-h2 em { font-style: italic; color: var(--gold-display); }
     /* ── Expertise — editorial large-type stack ── */
     .exp-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
     .ei {
       position: relative; overflow: hidden;
-      display: flex; align-items: center; gap: 0;
+      display: flex; align-items: center; gap: 0 32px;
       flex-wrap: wrap;
       min-height: 108px; padding: 30px 36px;
       border: 1px solid var(--border);
       border-radius: var(--r);
       background: rgba(var(--fg-rgb),.012);
       opacity: 0; cursor: pointer;
-      transition: border-color .35s, background .35s;
+      transition: border-color .35s, background .35s, transform .18s var(--sp);
     }
     .ei:hover { border-color: var(--border-h); background: rgba(var(--fg-rgb),.022); }
 
@@ -821,8 +848,11 @@
     }
 
 
-    /* Name wrapper — clip reveal target */
-    .ei-nw { flex: 1; overflow: visible; position: relative; z-index: 1; }
+    /* Name wrapper — clip reveal target. Fixed basis, not flex:1 — a growing
+       name wrapper was what shoved the tags and arrow to the right border. A
+       fixed width also lines the three rows' tag text up on one x, which a
+       shrink-to-fit column would not. */
+    .ei-nw { flex: 0 0 auto; width: clamp(200px, 24vw, 340px); overflow: visible; position: relative; z-index: 1; }
     .ei-name {
       display: block;
       font-family: var(--serif);
@@ -831,18 +861,20 @@
       color: var(--fg); line-height: 1;
     }
 
-    /* Description tags */
+    /* Description tags — fixed basis for the same reason as .ei-nw: the three
+       strings differ by 115px, so an auto width leaves the arrows ragged. */
     .ei-desc {
       font-family: var(--mono); font-size: .68rem;
       letter-spacing: .14em; text-transform: uppercase;
-      color: var(--fg2); max-width: 200px; text-align: right;
+      color: var(--fg2); text-align: left; white-space: nowrap;
+      flex: 0 0 auto; width: clamp(180px, 22vw, 300px); max-width: none;
       line-height: 2; position: relative; z-index: 1;
     }
 
     /* Arrow */
     .ei-arr {
       font-size: 1rem; color: var(--dim);
-      margin-left: 22px; position: relative; z-index: 1;
+      margin-left: 0; position: relative; z-index: 1;
       display: inline-block;
     }
     .ei.open .ei-arr { color: var(--gold); }
@@ -962,7 +994,7 @@
     }
 
     @media (max-width: 768px) {
-      #exp { padding: 0 24px 80px; }
+      #exp { padding: 0 var(--pad) 80px; }
       .ei-name { font-size: clamp(1.7rem,6vw,2.5rem); }
     }
 
@@ -997,7 +1029,7 @@
       font-weight: 300; line-height: 1; letter-spacing: -.02em;
       margin-bottom: 22px;
     }
-    .fl-h2 em { font-style: italic; color: var(--gold); }
+    .fl-h2 em { font-style: italic; color: var(--gold-display); }
     .fl-p {
       font-size: 1rem; color: var(--fg2);
       line-height: 1.85; max-width: 520px;
@@ -1093,9 +1125,14 @@
     .tr-review-btn-fb::before { background: #1877f2; }
     .tr-review-btn-fb:hover { color: #fff; border-color: #1877f2; }
     @media (max-width: 768px) {
-      #flash { padding: 56px 24px 64px; }
-      .tr-review-cta { flex-direction: column; align-items: flex-start; padding: 32px 24px; }
-      .tr-review-btns { flex-direction: column; }
+      #flash { padding: 56px var(--pad) 64px; }
+      .tr-review-cta { flex-direction: column; align-items: stretch; padding: 32px var(--pad); }
+      .tr-review-btns { flex-direction: column; width: 100%; }
+      .tr-review-btn { justify-content: flex-start; }
+      .fl-btns { flex-direction: column; }
+      .fl-ig-cta { width: 100%; justify-content: center; }
+      /* The button label already says the network; the handle is what forces the wrap. */
+      .fl-ig-handle, .fl-fb-handle { display: none; }
     }
 
     /* ══════════════════════════════════════════
@@ -1118,7 +1155,7 @@
       font-weight: 300; line-height: 1; letter-spacing: -.02em;
       margin-bottom: 22px; margin-top: 12px;
     }
-    .gf-h2 em { font-style: italic; color: var(--gold); }
+    .gf-h2 em { font-style: italic; color: var(--gold-display); }
     .gf-p {
       font-size: 1rem; color: var(--fg2);
       line-height: 1.9; max-width: 440px; margin-bottom: 18px;
@@ -1154,7 +1191,7 @@
     }
     .gf-cta svg { color: var(--gold); flex-shrink: 0; }
     @media (max-width: 768px) {
-      #gifts { padding: 76px 24px 84px; }
+      #gifts { padding: 76px var(--pad) 84px; }
       .gf-p { max-width: 100%; }
     }
 
@@ -1215,7 +1252,7 @@
       font-weight: 300; letter-spacing: -.025em;
       line-height: .97; margin-bottom: 0;
     }
-    .bk-h2 em { font-style: italic; color: var(--gold); }
+    .bk-h2 em { font-style: italic; color: var(--gold-display); }
     /* Thin animated rule between heading and body */
     .bk-rule {
       width: 56px; height: 1px;
@@ -1309,7 +1346,7 @@
       font-family: var(--serif);
       font-size: clamp(1.8rem, 3.5vw, 2.8rem);
       font-weight: 300; letter-spacing: -.02em;
-      color: var(--gold); line-height: 1;
+      color: var(--gold-display); line-height: 1;
     }
     .bk-step-l {
       font-family: var(--mono); font-size: .71rem;
@@ -1322,7 +1359,7 @@
     }
 
     @media (max-width: 768px) {
-      #book { padding: 88px 24px 80px; }
+      #book { padding: 88px var(--pad) 80px; }
       .bk-h2 { font-size: clamp(2.6rem, 11vw, 4.2rem); }
       .bk-btns { flex-direction: column; align-items: stretch; gap: 14px; }
       .bk-btn-wa, .bk-btn-ig { justify-content: center; padding: 20px 36px; }
@@ -1353,7 +1390,7 @@
       font-weight: 300; font-style: italic; line-height: 1;
       margin-top: 12px;
     }
-    .tr-h2 em { color: var(--gold); font-style: italic; }
+    .tr-h2 em { color: var(--gold-display); font-style: italic; }
     .tr-head-r { flex-shrink: 0; }
     .tr-score-badge {
       display: inline-flex; align-items: center; gap: 11px;
@@ -1372,7 +1409,7 @@
       letter-spacing: .16em; text-transform: uppercase; color: var(--fg2);
     }
     @media (max-width: 768px) {
-      .tr-head { flex-direction: column; align-items: flex-start; padding: 0 24px 36px; }
+      .tr-head { flex-direction: column; align-items: flex-start; padding: 0 var(--pad) 36px; }
       .tr-head-r { text-align: left; }
     }
     /* ══════════════════════════════════════════
@@ -1397,7 +1434,7 @@
     .sp-ghost {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       font-family: var(--display); font-size: clamp(11rem, 28vw, 22rem); line-height: 1;
-      color: var(--gold); opacity: .05; pointer-events: none; user-select: none; z-index: 0;
+      color: var(--gold-display); opacity: .05; pointer-events: none; user-select: none; z-index: 0;
     }
     .trs-spotlight > *:not(.sp-ghost) { position: relative; z-index: 1; }
     .sp-rating { display: inline-flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--fg2); }
@@ -1512,7 +1549,7 @@
       font-size: clamp(2.6rem,5.5vw,5rem);
       font-weight: 300; letter-spacing: -.03em; line-height: 1;
     }
-    .faq-h2 em { font-style: italic; color: var(--gold); }
+    .faq-h2 em { font-style: italic; color: var(--gold-display); }
     .faq-hd-rule {
       flex: 1; height: 1px;
       background: var(--border);
@@ -1617,7 +1654,7 @@
     }
 
     @media (max-width: 768px) {
-      #faq { padding: 60px 24px 80px; }
+      #faq { padding: 60px var(--pad) 80px; }
       .faq-hd { flex-direction: column; align-items: flex-start; gap: 8px; }
       .faq-hd-rule, .faq-hd-count { display: none; }
       .fq-trigger { grid-template-columns: 52px 1fr auto; gap: 0 1.25rem; padding: 24px 0; }
@@ -1646,7 +1683,7 @@
       font-weight: 300; letter-spacing: -.02em; line-height: 1.1;
       margin-bottom: 20px;
     }
-    .ac-h2 em { font-style: italic; color: var(--gold); }
+    .ac-h2 em { font-style: italic; color: var(--gold-display); }
     .ac-sub {
       font-family: var(--sans); font-size: 1rem;
       color: var(--fg2); line-height: 1.8; max-width: 520px;
@@ -1706,7 +1743,7 @@
     }
     .ac-note-text strong { color: var(--fg); font-weight: 400; }
     @media (max-width: 768px) {
-      #aftercare { padding: 60px 24px 80px; }
+      #aftercare { padding: 60px var(--pad) 80px; }
       .ac-phases { grid-template-columns: 1fr; }
       .ac-phase {
         border-left: none; padding-left: 0;
@@ -1733,7 +1770,7 @@
       font-family: var(--serif); font-size: clamp(1.6rem, 3vw, 2.4rem);
       font-weight: 300; line-height: 1.3;
     }
-    .loc-addr em { font-style: italic; color: var(--gold); }
+    .loc-addr em { font-style: italic; color: var(--gold-display); }
     .loc-meta {
       font-family: var(--mono); font-size: .74rem;
       letter-spacing: .18em; text-transform: uppercase;
@@ -1790,7 +1827,11 @@
     }
     .loc-map-wrap.map-active .loc-map-overlay { display: none; }
     @media (max-width: 768px) {
-      #location { padding: 72px 24px 80px; }
+      #location { padding: 72px var(--pad) 80px; }
+      /* .loc-hd is align-items:flex-start, so the stack shrink-wraps to its
+         widest button (279px in a 342px box) without an explicit width. */
+      .loc-btns { flex-direction: column; width: 100%; }
+      .loc-btn { width: 100%; justify-content: flex-start; }
       .loc-hd { flex-direction: column; align-items: flex-start; }
       .loc-map-wrap { aspect-ratio: 4/3; }
     }
@@ -1806,10 +1847,10 @@
       display: flex; align-items: center; justify-content: space-between;
     }
     .ft-logo {
-      font-family: var(--display); font-size: 1.05rem;
+      font-family: var(--display); font-size: 1.2rem;
       font-weight: 400; color: var(--dim);
     }
-    .ft-logo em { font-style: italic; color: var(--gold); }
+    .ft-logo em { font-style: italic; color: var(--gold-display); }
     .ft-links { display: flex; gap: 22px; }
     .ft-a {
       font-family: var(--mono); font-size: .71rem;
@@ -1823,7 +1864,7 @@
       letter-spacing: .1em; color: var(--fg2);
     }
     @media (max-width: 768px) {
-      footer { padding: 28px 24px; flex-direction: column; gap: 20px; text-align: center; }
+      footer { padding: 28px var(--pad); flex-direction: column; gap: 20px; text-align: center; }
       .ft-links { flex-wrap: wrap; justify-content: center; }
     }
 
@@ -1857,15 +1898,37 @@
     .wc          { transition: border-color .4s, transform .22s cubic-bezier(.175,.885,.32,1.275); }
     .wc:active   { transform: scale(0.95) !important; }
     .bk-btn:active, .n-btn:active { transform: scale(0.96) translateY(0) !important; transition-duration: .1s !important; }
-    .ei:active   { background: rgba(var(--gold-rgb),.04); }
+    .ei:active   { background: rgba(var(--gold-rgb),.04); transform: scale(.985); }
     .fq-item:active { background: rgba(var(--fg-rgb),.02); }
 
 
     /* — Expertise blocks on mobile — */
     @media (max-width: 768px) {
       .exp-list { gap: 10px; }
-      .ei { padding: 24px 20px; min-height: auto; }
-      .ei-rule { display: none; }
+      /* iOS list row: title over subtitle on the left, chevron pinned right.
+         Grid rather than flex so the arrow can span both text rows instead of
+         wrapping under them, which is what it did on the longest row. */
+      .ei {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        /* No row-gap: the collapsed .ei-expand still occupies row 3, so a
+           row-gap would push the two text rows 3px above the arrow's centre.
+           The title/subtitle spacing lives on .ei-desc instead. */
+        gap: 0 14px;
+        padding: 20px; min-height: auto;
+      }
+      .ei-nw   { grid-column: 1; grid-row: 1; width: auto; }
+      .ei-desc {
+        grid-column: 1; grid-row: 2;
+        width: auto; max-width: none; text-align: left; white-space: normal;
+        font-size: .58rem; letter-spacing: .1em; line-height: 1.5;
+        margin-top: 6px;
+      }
+      .ei-arr    { grid-column: 2; grid-row: 1 / span 2; justify-self: end; align-self: center; margin-left: 0; }
+      /* flex:0 0 100% does nothing on a grid item */
+      .ei-expand { grid-column: 1 / -1; grid-row: 3; }
+      .ei-rule   { display: none; }
       .ei-accent { display: none; }
     }
 
@@ -1883,7 +1946,7 @@
     .wc-view {
       --fg: #ededed; --fg2: #adadad; --dim: #838383;
       --fg-rgb: 255,255,255; --panel-rgb: 10,10,10;
-      --gold: #c4a262; --gold-rgb: 196,162,98;
+      --gold: #c4a262; --gold-rgb: 196,162,98; --gold-display: #c4a262;
     }
     #loader { background: #0a0a0a; }
 
@@ -3043,26 +3106,28 @@
         isOpen = !isOpen;
         row.classList.toggle('open', isOpen);
         row.setAttribute('aria-expanded', String(isOpen));
+        panel.setAttribute('aria-hidden', String(!isOpen));
 
         if (isOpen) {
           gsap.set(panel, { height: 'auto', overflow: 'visible' });
           const h = panel.offsetHeight;
           gsap.fromTo(panel,
             { height: 0, overflow: 'hidden' },
-            { height: h, duration: 0.32, ease: 'expo.out',
+            { height: h, duration: 0.38, ease: 'power3.out',
               onComplete() { gsap.set(panel, { height: 'auto' }); } }
           );
           gsap.fromTo(panel.querySelector('.ei-expand-inner'),
             { opacity: 0, y: 8 },
             { opacity: 1, y: 0, duration: 0.22, delay: 0.06, ease: 'power3.out' }
           );
-          gsap.to(arr, { rotation: 90, duration: 0.22, ease: 'expo.out' });
+          // back.out(1.6) ≈ the --sp spring token the rest of the site uses
+          gsap.to(arr, { rotation: 90, duration: 0.42, ease: 'back.out(1.6)' });
         } else {
-          gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.22, ease: 'expo.in' });
+          gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.28, ease: 'power2.inOut' });
           gsap.to(panel.querySelector('.ei-expand-inner'),
             { opacity: 0, y: 4, duration: 0.14, ease: 'power2.in' }
           );
-          gsap.to(arr, { rotation: 0, duration: 0.18, ease: 'expo.in' });
+          gsap.to(arr, { rotation: 0, duration: 0.3, ease: 'power2.inOut' });
         }
       });
     });
@@ -3117,6 +3182,11 @@
     });
 
     /* ── iOS-spring hover (expertise only) ── */
+    /* mouseenter fires on tap, so on a touch device this timeline strands every
+       tapped row at x:18 and gold with no mouseleave to undo it. Disqualify on a
+       positive coarse-pointer reading rather than requiring hover+fine: that
+       fails open, so any agent that reports neither keeps the desktop path. */
+    const IS_TOUCH = window.matchMedia('(pointer: coarse)').matches;
     document.querySelectorAll('.ei').forEach(row => {
       const name  = row.querySelector('.ei-name');
       const arr   = row.querySelector('.ei-arr');
@@ -3126,6 +3196,8 @@
       const accent = document.createElement('div');
       accent.className = 'ei-accent';
       row.insertBefore(accent, row.firstChild);
+
+      if (IS_TOUCH) return;
 
       let hTl = null;
 
@@ -3312,7 +3384,9 @@
 
     /* ── Framer: floating CTA (mobile only) ── */
     const floatCta = document.getElementById('float-cta');
-    if (floatCta && window.innerWidth <= 768) {
+    /* No width test: @media (min-width:769px) already hides #float-cta, and a
+       one-shot innerWidth check left the CTA dead after a rotation into range. */
+    if (floatCta) {
       gsap.set(floatCta, { y: 80 });
       ScrollTrigger.create({
         trigger: '#hero', start: 'bottom 70%',

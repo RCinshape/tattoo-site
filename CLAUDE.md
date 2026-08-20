@@ -23,6 +23,11 @@ Single-file HTML tattoo portfolio with rich animations and scroll effects.
 - Chrome drawn over photography stays dark in both themes by re-declaring tokens on the subtree (`#loader, .wc-lbl, .wc-view` in `index.html`; `.pw-over, .pw-zoom` in `portfolio.html`) — never by pinning individual literals.
 - Never animate `backgroundColor` on `<body>` or any themed surface: an inline style outranks the tokens and strands the page in one theme. Third-party brand colours (WhatsApp/Instagram/Facebook/Google) and black photo scrims are the only sanctioned literals.
 
+### Responsive gutters
+- One token owns the horizontal page gutter: `--pad` (`max(48px, calc(50vw - 720px))`, narrowed to `24px` by a single `@media (max-width: 768px) { :root { --pad: 24px; } }` right after the light token block in both pages).
+- Section rules MUST write `padding: <v> var(--pad) <v>`, never a literal. Hardcoding it per-rule is how `.w-grid` drifted to 16px and `.trs-spotlight` to 48px while every sibling sat at 24px.
+- A `max-width`-capped child of a single-column grid needs `justify-self: center`, and a button stack inside an `align-items: flex-start` parent needs `width: 100%` — otherwise both shrink-wrap and read as drift.
+
 ### GSAP / ScrollTrigger
 - Always initialize Lenis first, then sync it with GSAP ticker via `gsap.ticker.add((time) => lenis.raf(time * 1000))` and `gsap.ticker.lagSmoothing(0)`.
 - Register all GSAP plugins at the top of the script: `gsap.registerPlugin(ScrollTrigger, ...)`.
@@ -63,7 +68,8 @@ npx serve .
 ```
 
 ## Design Aesthetic
-- Follows the OS colour scheme: neutral `#0a0a0a` dark (default) or `#f4f4f4` light, with a manual nav toggle; gold `#c4a262` / `#7a5e1e` is the single accent
+- Follows the OS colour scheme: neutral `#0a0a0a` dark (default) or `#f4f4f4` light, with a manual nav toggle; gold is the single accent
+- Gold is two tokens, because one light-mode value cannot be both AA-legible and perceptibly golden: `--gold` (`#c4a262` dark / `#8a6a10` light, 4.60:1 — everything, including small mono labels and every `--gold-rgb` border/fill) and `--gold-display` (`#c4a262` dark / `#a88220` light, 3.25:1 — display-size text only: `em` accents in section headings, the hero title, `.n-logo`/`.ft-logo`, `.bk-step-n`, `.sp-ghost`). Anything under 18.66px MUST use `--gold`.
 - Minimal UI — let artwork breathe
 - Smooth, deliberate animations — nothing snappy or bouncy
 - Monochrome or desaturated palette with one accent color
