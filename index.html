@@ -171,11 +171,17 @@
          panel is #fff while the page is #f4f4f4, and that 11-level mismatch
          paints visible white/grey shapes. */
       --bg-rgb: 10,10,10;
-      /* Icon-button chrome. Light needs far more alpha: the ink is dark there,
-         so .07 that reads as a bright hairline on #0a0a0a collapses to 1.15:1. */
-      --btn-ring:   rgba(var(--fg-rgb),.07);
-      --btn-ring-h: rgba(var(--fg-rgb),.15);
+      /* Icon-button chrome. Both themes are pinned to the same measured ratios:
+         .34 white on #0a0a0a and .46 dark ink on #f4f4f4 are both 3.02:1, the
+         WCAG non-text minimum. Dark sat at .07 = 1.15:1 — an invisible ring. */
+      --btn-ring:   rgba(var(--fg-rgb),.34);
+      --btn-ring-h: rgba(var(--fg-rgb),.50);
       --btn-fill:   rgba(var(--panel-rgb),.4);
+      /* Hero chrome sits on the hero photograph, not the page, so it needs its
+         own pair: the light hero treatment lifts the backdrop to ~rgb(133),
+         where dark ink needs ~1.8x the alpha white needs on the dark render. */
+      --photo-ring:   rgba(var(--fg-rgb),.34);
+      --photo-ring-h: rgba(var(--fg-rgb),.55);
       --gold-ring:   rgba(var(--gold-rgb),.32);
       --gold-ring-h: rgba(var(--gold-rgb),.65);
       /* Decorative layers, resolved per theme as complete values. Gold ambient
@@ -249,6 +255,8 @@
       --btn-ring:   rgba(var(--fg-rgb),.46);
       --btn-ring-h: rgba(var(--fg-rgb),.62);
       --btn-fill:   rgba(var(--panel-rgb),1);
+      --photo-ring:   rgba(var(--fg-rgb),.62);
+      --photo-ring-h: rgba(var(--fg-rgb),.82);
       --gold-ring:   rgba(var(--gold-rgb),.58);
       --gold-ring-h: rgba(var(--gold-rgb),.85);
       /* No vignette on a light page: the effect needs ~7 code values across half
@@ -578,13 +586,13 @@
       display: inline-flex; align-items: center; gap: 7px;
       padding: 6px 13px 6px 9px;
       border-radius: 999px;
-      background: rgba(var(--fg-rgb),.07);
-      border: 1px solid rgba(var(--fg-rgb),.14);
+      background: rgba(var(--fg-rgb),.10);
+      border: 1px solid var(--photo-ring);
       backdrop-filter: blur(16px) saturate(1.4);
       -webkit-backdrop-filter: blur(16px) saturate(1.4);
       font-family: var(--sans); font-size: .7rem;
       letter-spacing: .06em; text-transform: uppercase;
-      color: rgba(var(--fg-rgb),.65);
+      color: rgba(var(--fg-rgb),.78);
       text-decoration: none; white-space: nowrap;
       transition: background .35s, border-color .35s, color .35s,
                   transform .45s cubic-bezier(.34,1.56,.64,1),
@@ -621,9 +629,9 @@
     .h-cta-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 48px rgba(var(--gold-rgb),.42); }
     .h-cta-primary svg { flex-shrink: 0; }
     .h-cta-secondary {
-      color: var(--fg); border: 1px solid rgba(var(--fg-rgb),.18); background: rgba(var(--fg-rgb),.04);
+      color: var(--fg); border: 1px solid var(--photo-ring); background: rgba(var(--fg-rgb),.10);
     }
-    .h-cta-secondary:hover { border-color: rgba(var(--fg-rgb),.4); transform: translateY(-3px); }
+    .h-cta-secondary:hover { border-color: var(--photo-ring-h); transform: translateY(-3px); }
     @media (max-width: 768px) {
       #hero { padding: 80px var(--pad) 48px; min-height: auto; }
       .h-title { font-size: clamp(3.4rem,16vw,6rem); }
@@ -824,7 +832,13 @@
     }
     .exp-h2 em { font-style: italic; color: var(--gold-display); }
     /* ── Expertise — editorial large-type stack ── */
-    .exp-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .exp-list {
+      list-style: none; display: flex; flex-direction: column; gap: 12px;
+      /* Row content — title, tags, connector, arrow — needs ~750px. At the full
+         1344px content width the remainder was dead space inside the card.
+         Precedent: .trs-spotlight 980px, .fq-answer-inner 800px. */
+      max-width: 1080px;
+    }
     .ei {
       position: relative; overflow: hidden;
       display: flex; align-items: center; gap: 0 32px;
@@ -867,7 +881,11 @@
       font-family: var(--mono); font-size: .68rem;
       letter-spacing: .14em; text-transform: uppercase;
       color: var(--fg2); text-align: left; white-space: nowrap;
-      flex: 0 0 auto; width: clamp(180px, 22vw, 300px); max-width: none;
+      /* Flat 300px, no clamp: "Aesthetic · Illustrative · Emotional" measures
+         295px at .68rem/.14em and the column is nowrap, so any fluid lower bound
+         under 295 (22vw does that below 1341px) overflows into the connector.
+         The connector absorbs the width this column no longer gives up. */
+      flex: 0 0 auto; width: 300px; max-width: none;
       line-height: 2; position: relative; z-index: 1;
     }
 
@@ -886,39 +904,50 @@
     }
     .ei-expand-inner {
       display: grid;
-      grid-template-columns: 1fr 180px;
-      gap: 36px; align-items: start;
-      padding: 28px 0 36px 44px;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 44px; align-items: stretch;
+      padding: 30px 0 32px;
+      border-top: 1px solid var(--border);
     }
     .ei-expand-text {
       font-family: var(--sans);
-      font-size: 1rem; color: var(--fg2);
-      line-height: 1.9;
+      font-size: 1.05rem; color: var(--fg2);
+      /* 50ch, not 56 — DM Sans's `0` advance is 11.5px at this size (~1.4x its
+         average lowercase width), so 56ch measured 645px / 76 characters a line.
+         50ch lands at 576px, the measure this was specced for. */
+      line-height: 1.9; max-width: 50ch;
     }
-    .ei-img-col {
-      display: flex; flex-direction: column; align-items: center; gap: 0;
+    /* Copy at the top, CTA pushed to the bottom, so the text column brackets the
+       image's full height instead of leaving a void under one short sentence. */
+    .ei-expand-body {
+      display: flex; flex-direction: column; align-items: flex-start;
     }
+    /* align-self:start against the grid's align-items:stretch keeps the image at
+       exactly 240×320 while the body stretches to the row height — otherwise a
+       taller body would stretch the box and object-fit:cover would crop art. */
     .ei-expand-img {
       width: 100%; aspect-ratio: 3/4; border-radius: var(--r);
       overflow: hidden; border: 1px solid var(--border);
+      align-self: start;
     }
     .ei-expand-img img {
-      width: 100%; height: 100%; object-fit: contain; display: block;
+      width: 100%; height: 100%; object-fit: cover; display: block;
       filter: var(--img-exp);
       transition: filter .8s var(--out);
     }
     .ei.open .ei-expand-img img { filter: var(--img-exp-open); }
 
     .ei-see-more {
-      display: flex; align-items: center; gap: 6px;
-      margin: 10px auto 0;
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: auto; padding: 28px 0 0;
       font-family: var(--mono); font-size: .72rem;
       letter-spacing: .18em; text-transform: uppercase;
       color: var(--gold); text-decoration: none;
-      cursor: pointer; background: none; border: none; padding: 0;
+      cursor: pointer; background: none; border: none;
       width: fit-content;
       transition: opacity .2s;
     }
+    .ei-see-more::after { content: '\203A'; }
     .ei-see-more:hover { opacity: .7; }
 
     /* ── Skill gallery carousel modal ── */
@@ -982,16 +1011,35 @@
     }
 
     @media (max-width: 768px) {
-      .ei-expand-inner { grid-template-columns: 1fr; padding-left: 0; }
-      .ei-expand-img { aspect-ratio: 3/4; }
+      .ei-expand-inner {
+        grid-template-columns: 1fr;
+        gap: 22px; padding: 22px 0 24px;
+      }
+      .ei-expand-img { align-self: stretch; }
+      /* Single column: the body is content-height, so margin-top:auto is inert
+         and the CTA needs an explicit gap instead. */
+      .ei-see-more { margin-top: 0; padding-top: 16px; }
       #sk-modal-img-wrap { aspect-ratio: 4/5; }
     }
 
-    /* Animated bottom rule — GSAP-owned */
+    /* In-flow connector: absorbs the row's slack so the arrow pins to the right
+       edge, matching .fq-trigger's `96px 1fr auto` in the section below. The
+       gold sweep is a CSS transition now, not a GSAP tween, so it cannot strand
+       an inline style across a theme flip. min-width:0 keeps it from forcing a
+       wrap in the flex-wrap row. */
     .ei-rule {
-      position: absolute; bottom: -1px; left: 0;
-      height: 1px; width: 0; background: var(--gold);
+      flex: 1 1 auto; min-width: 0; height: 1px;
+      background: var(--border);
+      position: relative; overflow: hidden;
     }
+    .ei-rule::after {
+      content: ''; position: absolute; inset: 0;
+      background: var(--gold);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .45s var(--out);
+    }
+    .ei:hover .ei-rule::after,
+    .ei.open  .ei-rule::after { transform: scaleX(1); }
 
     @media (max-width: 768px) {
       #exp { padding: 0 var(--pad) 80px; }
@@ -2215,19 +2263,19 @@
     ]'>
       <div class="ei-nw"><span class="ei-name">Fine Line</span></div>
       <span class="ei-desc">Soft · Thin · Delicate</span>
-      <span class="ei-arr">→</span>
       <div class="ei-rule"></div>
+      <span class="ei-arr">→</span>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
-          <p class="ei-expand-text">A delicate, precise style often done with thin lines.</p>
-          <div class="ei-img-col">
-            <div class="ei-expand-img">
-              <img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg"
-                   srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w"
-                   sizes="(max-width: 768px) 100vw, 180px"
-                   alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull." loading="lazy" decoding="async">
-            </div>
-            <button class="ei-see-more" aria-label="See more fine line work">See more &nbsp;›</button>
+          <div class="ei-expand-img">
+            <img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg"
+                 srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w"
+                 sizes="(max-width: 768px) 100vw, 240px"
+                 alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull." loading="lazy" decoding="async">
+          </div>
+          <div class="ei-expand-body">
+            <p class="ei-expand-text">A delicate, precise style often done with thin lines.</p>
+            <button class="ei-see-more">See more</button>
           </div>
         </div>
       </div>
@@ -2239,19 +2287,19 @@
     ]'>
       <div class="ei-nw"><span class="ei-name">Fine Art</span></div>
       <span class="ei-desc">Aesthetic · Illustrative · Emotional</span>
-      <span class="ei-arr">→</span>
       <div class="ei-rule"></div>
+      <span class="ei-arr">→</span>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
-          <p class="ei-expand-text">Illustrative work designed around your concept. Think paintings: aesthetic, passionate, really just art for art's sake.</p>
-          <div class="ei-img-col">
-            <div class="ei-expand-img">
-              <img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg"
-                   srcset="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-480.webp 480w"
-                   sizes="(max-width: 768px) 100vw, 180px"
-                   alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull." loading="lazy" decoding="async">
-            </div>
-            <button class="ei-see-more" aria-label="See more fine art work">See more &nbsp;›</button>
+          <div class="ei-expand-img">
+            <img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg"
+                 srcset="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-480.webp 480w"
+                 sizes="(max-width: 768px) 100vw, 240px"
+                 alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull." loading="lazy" decoding="async">
+          </div>
+          <div class="ei-expand-body">
+            <p class="ei-expand-text">Illustrative work designed around your concept. Think paintings: aesthetic, passionate, really just art for art's sake.</p>
+            <button class="ei-see-more">See more</button>
           </div>
         </div>
       </div>
@@ -2266,19 +2314,19 @@
     ]'>
       <div class="ei-nw"><span class="ei-name">Realism</span></div>
       <span class="ei-desc">Lifelike · detailed · accurate</span>
-      <span class="ei-arr">→</span>
       <div class="ei-rule"></div>
+      <span class="ei-arr">→</span>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
-          <p class="ei-expand-text">A lifelike rendering of anything you want that exists in life: portraits, botanical, landscapes, still life, animals.</p>
-          <div class="ei-img-col">
-            <div class="ei-expand-img">
-              <img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg"
-                   srcset="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-480.webp 480w"
-                   sizes="(max-width: 768px) 100vw, 180px"
-                   alt="Wolf portrait clock forest forearm realism tattoo by Emmy, Hull." loading="lazy" decoding="async">
-            </div>
-            <button class="ei-see-more" aria-label="See more realism work">See more &nbsp;›</button>
+          <div class="ei-expand-img">
+            <img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg"
+                 srcset="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-480.webp 480w"
+                 sizes="(max-width: 768px) 100vw, 240px"
+                 alt="Wolf portrait clock forest forearm realism tattoo by Emmy, Hull." loading="lazy" decoding="async">
+          </div>
+          <div class="ei-expand-body">
+            <p class="ei-expand-text">A lifelike rendering of anything you want that exists in life: portraits, botanical, landscapes, still life, animals.</p>
+            <button class="ei-see-more">See more</button>
           </div>
         </div>
       </div>
@@ -3190,7 +3238,6 @@
     document.querySelectorAll('.ei').forEach(row => {
       const name  = row.querySelector('.ei-name');
       const arr   = row.querySelector('.ei-arr');
-      const rule  = row.querySelector('.ei-rule');
 
       /* Inject left accent bar once */
       const accent = document.createElement('div');
@@ -3214,14 +3261,11 @@
         .to(name,
           { x: 18, color: 'var(--gold)', duration: 0.4, ease: 'power3.out' },
           0)
-        /* Arrow: clean slide right */
+        /* Arrow: clean slide right. x:8, not 14 — the arrow now sits at the row's
+           right edge inside 36px of padding, so the old travel nearly hit the border. */
         .to(arr,
-          { x: 14, color: 'var(--gold)', duration: 0.35, ease: 'power3.out' },
-          0.03)
-        /* Rule: instant gold sweep, no spring */
-        .to(rule,
-          { width: '100%', duration: 0.28, ease: 'expo.out' },
-          0);
+          { x: 8, color: 'var(--gold)', duration: 0.35, ease: 'power3.out' },
+          0.03);
       });
 
       row.addEventListener('mouseleave', () => {
@@ -3233,8 +3277,7 @@
         hTl
           .to(accent, { scaleY: 0, opacity: 0, duration: 0.26, ease: 'expo.in', transformOrigin: 'top' }, 0)
           .to(name,   { x: 0, color: 'var(--fg)',    duration: 0.32, ease: 'expo.out' }, 0)
-          .to(arr,    { x: 0, color: openColor,       duration: 0.28, ease: 'expo.out' }, 0)
-          .to(rule,   { width: 0, duration: 0.28, ease: 'expo.in' }, 0);
+          .to(arr,    { x: 0, color: openColor,       duration: 0.28, ease: 'expo.out' }, 0);
       });
     });
 
@@ -3282,9 +3325,18 @@
       }
 
       document.querySelectorAll('.ei-see-more').forEach(btn => {
+        const row  = btn.closest('.ei');
+        const name = row.querySelector('.ei-name')?.textContent.trim() || 'work';
+        let n = 0;
+        try { n = JSON.parse(row.dataset.gallery || '[]').length; } catch (e) { n = 0; }
+        /* textContent wipes text children only, so the ::after chevron survives. */
+        btn.textContent = n > 1 ? `See all ${n}` : 'View larger';
+        btn.setAttribute('aria-label', n > 1
+          ? `See all ${n} ${name} tattoos`
+          : `View this ${name} tattoo larger`);
         btn.addEventListener('click', e => {
           e.stopPropagation();
-          open(btn.closest('.ei'));
+          open(row);
         });
       });
 

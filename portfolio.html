@@ -177,8 +177,11 @@
       --warn-rgb:  224,85,85;
       --border:    rgba(var(--fg-rgb),.07);
       --border-h:  rgba(var(--fg-rgb),.15);
-      --btn-ring:   rgba(var(--fg-rgb),.07);
-      --btn-ring-h: rgba(var(--fg-rgb),.15);
+      /* Icon-button chrome. Both themes are pinned to the same measured ratios:
+         .34 white on #0a0a0a and .46 dark ink on #f4f4f4 are both 3.02:1, the
+         WCAG non-text minimum. Dark sat at .07 = 1.15:1 — an invisible ring. */
+      --btn-ring:   rgba(var(--fg-rgb),.34);
+      --btn-ring-h: rgba(var(--fg-rgb),.50);
       --btn-fill:   rgba(var(--panel-rgb),.4);
       --gold-ring:   rgba(var(--gold-rgb),.32);
       --gold-ring-h: rgba(var(--gold-rgb),.65);
@@ -496,6 +499,65 @@
       font-family: var(--mono); font-size: .66rem; letter-spacing: .18em; color: var(--fg2);
       background: rgba(var(--panel-rgb),.65); backdrop-filter: blur(10px);
       padding: 8px 18px; border-radius: 100px; border: 1px solid var(--border);
+    }
+
+    /* ── Client proof strip — static quotes; live carousel is on /#trust ── */
+    #pf-proof {
+      padding: 76px var(--pad) 72px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; gap: 34px;
+    }
+    .pf-proof-badge {
+      display: inline-flex; align-items: center; gap: 11px;
+      padding: 13px 22px; border-radius: 100px;
+      border: 1px solid var(--border); background: rgba(var(--fg-rgb),.018);
+      text-decoration: none;
+      transition: border-color .3s, background .3s;
+    }
+    .pf-proof-badge:hover { border-color: var(--gold-ring); background: rgba(var(--gold-rgb),.05); }
+    .pf-proof-stars { color: var(--gold); font-size: .8rem; letter-spacing: .1em; }
+    .pf-proof-val {
+      font-family: var(--serif); font-size: 1.15rem;
+      font-weight: 300; color: var(--fg); line-height: 1;
+    }
+    .pf-proof-sep { color: var(--dim); font-size: .8rem; }
+    .pf-proof-src {
+      font-family: var(--mono); font-size: .63rem;
+      letter-spacing: .16em; text-transform: uppercase; color: var(--fg2);
+    }
+    .pf-proof-list {
+      list-style: none;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 30px; width: 100%; max-width: 1080px;
+    }
+    .pf-proof-item {
+      display: flex; flex-direction: column; gap: 16px;
+      padding: 26px 28px;
+      border: 1px solid var(--border); border-radius: var(--r);
+      background: rgba(var(--fg-rgb),.012);
+    }
+    .pf-proof-q {
+      font-family: var(--serif); font-style: italic; font-weight: 300;
+      font-size: 1.08rem; line-height: 1.65; color: var(--fg);
+    }
+    /* margin-top:auto keeps the three attributions on one line despite uneven
+       quote lengths — the same trick the expertise CTA uses on index.html. */
+    .pf-proof-by {
+      font-family: var(--mono); font-size: .62rem;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
+      margin-top: auto;
+    }
+    .pf-proof-all {
+      font-family: var(--mono); font-size: .7rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      transition: opacity .25s;
+    }
+    .pf-proof-all:hover { opacity: .7; }
+    @media (max-width: 768px) {
+      #pf-proof { padding: 56px var(--pad) 52px; gap: 26px; }
+      .pf-proof-list { grid-template-columns: 1fr; gap: 14px; }
+      .pf-proof-item { padding: 22px; }
     }
 
     /* ── Book CTA ── */
@@ -828,6 +890,32 @@
 <button id="lb-prev" aria-label="Previous image">‹</button>
 <button id="lb-next" aria-label="Next image">›</button>
 <div id="lb-counter" aria-live="polite"></div>
+
+<!-- ════ CLIENT PROOF — static; the live carousel lives on /#trust ════ -->
+<section id="pf-proof" aria-label="Client reviews">
+  <a class="pf-proof-badge" href="https://g.page/r/CVRweODDPiBwEAI" target="_blank" rel="noopener"
+     aria-label="Rated 5.0 out of 5 on Google — read the reviews">
+    <span class="pf-proof-stars" aria-hidden="true">★★★★★</span>
+    <span class="pf-proof-val">5.0</span>
+    <span class="pf-proof-sep" aria-hidden="true">·</span>
+    <span class="pf-proof-src">on Google</span>
+  </a>
+  <ul class="pf-proof-list">
+    <li class="pf-proof-item">
+      <blockquote class="pf-proof-q">Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)</blockquote>
+      <span class="pf-proof-by">Jaime Dale</span>
+    </li>
+    <li class="pf-proof-item">
+      <blockquote class="pf-proof-q">Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻</blockquote>
+      <span class="pf-proof-by">Leanne Smith</span>
+    </li>
+    <li class="pf-proof-item">
+      <blockquote class="pf-proof-q">Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰</blockquote>
+      <span class="pf-proof-by">Jess Dan</span>
+    </li>
+  </ul>
+  <a class="pf-proof-all" href="/#trust">Read all reviews &nbsp;→</a>
+</section>
 
 <!-- ════ BOOK CTA ════ -->
 <section id="book-cta" aria-label="Booking call to action">
