@@ -642,13 +642,14 @@
     }
     .ft-logo em { font-style: italic; color: var(--gold); }
     .ft-links { display: flex; gap: 22px; }
+    /* Bare button wearing .ft-a's look — declared first so .ft-a wins the tie. */
+    .ft-btn { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; }
     .ft-a {
       font-family: var(--mono); font-size: .71rem;
       letter-spacing: .18em; text-transform: uppercase;
       color: var(--fg2); text-decoration: none; transition: color .3s;
     }
     .ft-a:hover { color: var(--fg); }
-    .ft-btn { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; }
     .ft-copy {
       font-family: var(--mono); font-size: .7rem;
       letter-spacing: .1em; color: var(--fg2);
@@ -666,9 +667,12 @@
       padding: 16px 20px; border-radius: var(--r);
       background: rgba(var(--panel-rgb),.97); border: 1px solid var(--border-h);
       box-shadow: 0 18px 60px rgba(0,0,0,.35);
-      opacity: 0; transition: opacity .3s, transform .3s var(--out);
+      opacity: 0; pointer-events: none; transition: opacity .3s, transform .3s var(--out);
     }
-    #cookie-bar.on { opacity: 1; transform: translate(-50%, 0); }
+    /* `hidden` alone loses to the ID selector above; without this the invisible
+       bar stays in the layer stack and swallows footer clicks. */
+    #cookie-bar[hidden] { display: none; }
+    #cookie-bar.on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
     .ck-text { font-family: var(--sans); font-size: .82rem; line-height: 1.6; color: var(--fg2); flex: 1 1 260px; }
     .ck-text a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
     .ck-btns { display: flex; gap: 10px; flex-shrink: 0; }
@@ -993,10 +997,6 @@
   <span class="ft-logo">Emmy <em>Tattoo</em></span>
   <nav class="ft-links" aria-label="Footer navigation">
     <a href="/" class="ft-a">Home</a>
-    <a href="/#about" class="ft-a">About</a>
-    <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="ft-a">Instagram</a>
-    <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="ft-a">Facebook</a>
-    <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="ft-a">WhatsApp</a>
     <a href="/legal" class="ft-a">Privacy &amp; Cookies</a>
     <a href="/legal#terms" class="ft-a">Terms</a>
     <button type="button" class="ft-a ft-btn" data-cookie-settings>Cookie settings</button>

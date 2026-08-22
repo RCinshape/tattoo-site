@@ -90,6 +90,12 @@ The brand loader is kept in `index.html` but disabled by `window.__INTRO = false
 
 Google Analytics is never loaded until the visitor presses Accept in `#cookie-bar`. `window.__consent` (head script, all three pages) owns the `emmy-consent` key and injects gtag only on `granted`. Footer "Cookie settings" (`[data-cookie-settings]`) clears the key and re-opens the bar.
 
+`#cookie-bar` is `position: fixed` with `display: flex`, which outranks the UA `[hidden] { display: none }` — so each page also carries `#cookie-bar[hidden] { display: none; }` plus `pointer-events: none` off-state. Without them the invisible bar sits over the bottom-centre of the viewport and swallows every footer click. Never drop those two rules.
+
+## Footer
+
+The footer carries legal links only — Privacy & Cookies, Terms, Cookie settings (subpages prefix a Home link). Social, portfolio and about links live in the nav and the hero pill, not here. `.ft-btn` is declared **before** `.ft-a` in every stylesheet: its `font`/`letter-spacing`/`text-transform: inherit` resets would otherwise beat `.ft-a` on the equal-specificity tie and drop the Cookie settings button out of mono/uppercase.
+
 ## Design Aesthetic
 - Follows the OS colour scheme: neutral `#0a0a0a` dark (default) or warm paper `#f4f1ea` light, with a manual nav toggle; gold is the single accent
 - Gold is ONE token, `#c4a262`, in BOTH palettes — `--gold` / `--gold-rgb: 196,162,98`. There is no `--gold-display` and no per-theme gold; never reintroduce a second value. On the light page that measures 2.1:1, under the WCAG 3:1 non-text floor: a deliberate brand decision, so gold stays decorative in light mode and never carries a run of text under 18.66px. Small mono labels and tiny links use `--fg`/`--fg2` and carry gold as a rule (`.h-eyebrow::before`), ring, border or glyph. Gold text is allowed at display sizes (`em` accents in headings, hero title, `.ft-logo`, `.bk-step-n`); icon/star/arrow glyphs keep gold at any size. Section eyebrows (`.s-label`) are gone — headings lead their sections.
