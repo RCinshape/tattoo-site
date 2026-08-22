@@ -67,6 +67,9 @@
   </script>
 
   <style>
+    /* Cross-document view transition — both documents must opt in. */
+    @view-transition { navigation: auto; }
+
     /* Self-hosted display face — matches index.html. */
     @font-face {
       font-family: 'Romance Fatal Serif';
@@ -148,7 +151,7 @@
     #nav {
       position: sticky; top: 0; z-index: 1000;
       padding: 20px var(--pad);
-      display: flex; align-items: center; justify-content: space-between; gap: 26px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
       background: rgba(var(--panel-rgb),.92);
       backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
@@ -179,7 +182,7 @@
     .n-social span { display: none; }
     .n-social.n-ig:hover { color: #e1306c; border-color: rgba(225,48,108,.4); }
     .n-social.n-fb:hover { color: #1877f2; border-color: rgba(24,119,242,.4); }
-    .n-actions { display: flex; align-items: center; gap: 16px; margin-left: 16px; flex-shrink: 0; }
+    .n-actions { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
     #theme-toggle {
       display: inline-flex; align-items: center; justify-content: center;
       width: 38px; height: 38px; border-radius: 50%;

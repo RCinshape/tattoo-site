@@ -92,11 +92,21 @@ Google Analytics 4 loads on first paint from an inline head script on all three 
 
 ## Nav
 
-The nav is bare over the hero and becomes a bar — blurred surface, bottom border, `Emmy Tattoo` wordmark at top left — exactly when the first section seam (`#work`'s top border) reaches it. That swap is a `ScrollTrigger` on `#work-outer` with `start: 'top <--nav-h>'`, not a scroll-offset threshold: `#nav` owns `--nav-h` (94px desktop, 78px at ≤768px) and the trigger re-reads it on every refresh, so the breakpoint needs no second number. `.n-logo` is `opacity: 0` until `#nav.s`; it keeps its box either way, so nothing shifts. `#nav` has no `::before` scrim — over the hero the nav sits on `.hero-bg-photo::after`. `html.libs-failed` and the `<noscript>` block pin the bar on, because with no scroll observer the alternative is a nav that never gets a background.
+The nav is bare over the hero and becomes a bar — blurred surface, bottom border, `Emmy Tattoo` wordmark at top left — exactly when the first section seam (`#work`'s top border) reaches it. That swap is a `ScrollTrigger` on `#work-outer` with `start: 'top <--nav-h>'`, not a scroll-offset threshold: `#nav` owns `--nav-h` (94px desktop, 78px at ≤768px) and the trigger re-reads it on every refresh, so the breakpoint needs no second number. `.n-logo` is `opacity: 0` until `#nav.s`; it keeps its box either way, so nothing shifts. `#nav` has no `::before` scrim — over the hero the nav sits on `.hero-bg-photo::after`, and `#nav:not(.s) .n-item` carries the hero text-shadow plate. `html.libs-failed` and the `<noscript>` block pin the bar on, because with no scroll observer the alternative is a nav that never gets a background.
+
+Every nav icon sits on one 16px rhythm: `#nav { gap: 16px }` and `.n-actions { gap: 16px }` with no `margin-left` on `.n-actions` — that margin plus a 26px nav gap is what once left the theme toggle 42px from Facebook. Text links keep `.n-links { gap: 26px }`.
 
 ## Footer
 
-The footer carries legal links only — Privacy & Cookies, Terms (subpages prefix a Home link). Social, portfolio and about links live in the nav and the hero pill, not here. There are no buttons in the footer, so no `.ft-btn` rule exists any more.
+The footer carries legal links only — Privacy & Cookies, Terms (subpages prefix a Home link). Social, portfolio and about links live in the nav, not here. There are no buttons in the footer, so no `.ft-btn` rule exists any more.
+
+## Attention budget
+
+The page spends attention in one direction: intrigue → work → reviews → ask. Enforced by three rules.
+
+1. **The hero has no CTA.** No enquiry pill, no "view the work" button — only `.h-scroll` ("See the work", a 34px gold rule plus a mono label, `href="#work"`). The always-available quiet contact is the nav's Instagram/Facebook icons; the loud ask is `#book`, which sits after Reviews and FAQ in the markup. Do not re-add a hero button or a sticky enquiry bar.
+2. **`#work` shows one row, then a gate.** `.w-grid` holds three interactive `.wc` cards (the third is `display: none` at ≤1024px, where the grid is 2-up, so it is always exactly one row; ≤480px shows two stacked). `.w-peek` follows: three decorative `<img>` under `aria-hidden` + `pointer-events: none`, clipped to `clamp(64px, 6vw, 96px)` and masked to transparent, with `.w-more` (gold ring, bobbing down-arrow, "See all work") pulled `-28px` up so it straddles the fade. That gate is the only CTA in the section — never put a second button below the grid. Navigation to `/portfolio` is a native `@view-transition { navigation: auto; }` cross-fade declared in all three documents; never hand-roll it in JS.
+3. **One left rail, two staged centres.** Every eyebrow, heading, paragraph and list starts at the `--pad` gutter so the eye learns one vertical line. `text-align: center` is allowed only for the reviews spotlight quote (`.trs-spotlight`), the booking close (`.bk-in`), and the work gate (a symbol on the fade's axis). `#flash` and `#gifts` were centred and are now on the rail; adding a third centred text block is a regression.
 
 ## Design Aesthetic
 - Follows the OS colour scheme: neutral `#0a0a0a` dark (default) or warm paper `#f4f1ea` light, with a manual nav toggle; gold is the single accent
