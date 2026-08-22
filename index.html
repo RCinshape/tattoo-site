@@ -163,7 +163,7 @@
   <!-- No-JS fallback: reveal JS-animated content and remove the loader overlay -->
   <noscript><style>
     #loader { display: none !important; }
-    :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .ei,
+    :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
         .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
@@ -523,11 +523,11 @@
     }
     #theme-toggle:hover { color: var(--gold); border-color: var(--btn-ring-h); }
     #theme-toggle svg { flex-shrink: 0; }
-    /* Three-state control: the icon shows the state the button is IN. */
+    /* Two states on screen: the icon shows the theme the button switches TO.
+       'system' is the unclicked default and borrows the icon of whatever the OS resolved. */
     #theme-toggle .ti { display: none; }
-    :root[data-pref="system"] #theme-toggle .ti-auto { display: block; }
-    :root[data-pref="light"]  #theme-toggle .ti-sun  { display: block; }
-    :root[data-pref="dark"]   #theme-toggle .ti-moon { display: block; }
+    :root[data-theme="dark"]  #theme-toggle .ti-sun  { display: block; }
+    :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
     /* Full-screen mobile menu overlay */
     #mobile-menu {
       position: fixed; inset: 0; z-index: 10000;
@@ -667,29 +667,21 @@
       box-shadow: 0 2px 20px rgba(var(--gold-rgb),.1);
     }
     .h-dir svg { flex-shrink: 0; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
-    .h-dir:hover svg { transform: translate(1px, -1px); }
+    .h-dir:hover svg { transform: translateY(-1px) scale(1.06); }
 
     /* Hero primary CTAs — visible via CSS (no JS dependency) */
     .h-cta {
-      display: flex; flex-wrap: wrap; gap: 14px; margin-top: 38px;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 38px;
       opacity: 0;
     }
     html.hero-go .h-cta { animation: hcta-in .24s var(--out) .05s forwards; }
     @keyframes hcta-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-    .h-cta-primary, .h-cta-secondary {
+    .h-cta-secondary {
       display: inline-flex; align-items: center; gap: 12px;
       font-family: var(--mono); font-size: .74rem;
       letter-spacing: .16em; text-transform: uppercase;
       text-decoration: none; border-radius: 100px; padding: 16px 30px;
       transition: border-color .38s, background .38s, transform .38s var(--out), box-shadow .4s;
-    }
-    .h-cta-primary {
-      color: var(--on-gold); background: var(--gold); border: 1px solid var(--gold);
-      box-shadow: 0 8px 36px rgba(var(--gold-rgb),.28);
-    }
-    .h-cta-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 48px rgba(var(--gold-rgb),.42); }
-    .h-cta-primary svg { flex-shrink: 0; }
-    .h-cta-secondary {
       color: var(--fg); border: 1px solid var(--photo-ring); background: rgba(var(--fg-rgb),.10);
     }
     .h-cta-secondary:hover { border-color: var(--photo-ring-h); transform: translateY(-3px); }
@@ -698,24 +690,18 @@
       .h-title { font-size: clamp(3.4rem,16vw,6rem); }
       .h-dir span { display: none; }
       .h-dir { padding: 9px 11px; }
-      .h-cta { width: 100%; flex-direction: column; }
-      .h-cta-primary, .h-cta-secondary { flex: none; width: 100%; justify-content: center; padding: 17px 22px; }
+      .h-cta { width: 100%; flex-direction: column; align-items: stretch; }
+      .h-cta-secondary { flex: none; width: 100%; justify-content: center; padding: 17px 22px; }
     }
     @media (prefers-reduced-motion: reduce) { .h-cta, html.hero-go .h-cta { animation: none !important; opacity: 1 !important; } }
 
     /* ══════════════════════════════════════════
-       SHARED SECTION LABEL
+       HERO EYEBROW
     ══════════════════════════════════════════ */
-    .s-label {
-      font-family: var(--mono); font-size: .74rem;
-      letter-spacing: .28em; text-transform: uppercase;
-      color: var(--fg2); margin-bottom: 16px;
-      opacity: 0; transform: translateY(10px);
-    }
     /* Gold survives at label size as a rule, never as the ink: 11.8px gold is
        3.16:1 in light, which fails AA for text but clears the non-text 3:1. */
-    .s-label, .h-eyebrow { display: inline-flex; align-items: center; gap: 12px; }
-    .s-label::before, .h-eyebrow::before {
+    .h-eyebrow { display: inline-flex; align-items: center; gap: 12px; }
+    .h-eyebrow::before {
       content: ''; width: 22px; height: 1px; flex: none; background: var(--gold);
     }
 
@@ -1433,6 +1419,10 @@
     .bk-split-div { width: 1px; align-self: stretch; background: var(--gold-ring); flex: none; }
     /* Coarse pointers never get the glow — see the (pointer: coarse) guard in the JS */
     html.no-hover .bk-split-glow { display: none; }
+    /* Hero copy of the pill — same control, 35% shorter, and opaque from first
+       paint because the hero entrance is CSS on .h-cta, not the #book tween. */
+    .bk-split-sm { opacity: 1; }
+    .bk-split-sm .bk-split-half { padding: 12px 22px; font-size: .62rem; letter-spacing: .16em; gap: 8px; }
 
     /* ── 3-step process ── */
     .bk-steps {
@@ -1465,6 +1455,7 @@
       .bk-h2 { font-size: clamp(2.6rem, 11vw, 4.2rem); }
       .bk-split { width: 100%; }
       .bk-split-half { flex: 1; padding: 18px 12px; font-size: .68rem; letter-spacing: .14em; gap: 8px; }
+      .bk-split-sm .bk-split-half { padding: 12px 10px; font-size: .6rem; }
       .bk-steps { gap: 0; }
       .bk-step  { padding: 0 18px; }
       .bk-step-div { width: 28px; }
@@ -1556,9 +1547,7 @@
     .sp-dots { display: flex; gap: 9px; }
     .sp-dot { width: 7px; height: 7px; border-radius: 50%; border: 0; padding: 0; background: var(--dim); opacity: .5; cursor: pointer; transition: opacity .25s, transform .25s, background .25s; }
     .sp-dot.on { background: var(--gold); opacity: 1; transform: scale(1.3); }
-    .sp-progress { width: 180px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
-    .sp-progress span { display: block; height: 100%; width: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; }
-    @media (max-width: 768px) { .sp-quote { font-size: 1.15rem; } .sp-progress { width: 120px; } }
+    @media (max-width: 768px) { .sp-quote { font-size: 1.15rem; } }
     .sp-readmore {
       display: inline-flex; align-items: center; gap: 6px;
       font-family: var(--mono); font-size: .66rem;
@@ -2093,7 +2082,7 @@
        RESILIENCE — if animation libs/JS fail, reveal content + drop loader
     ══════════════════════════════════════════ */
     html.libs-failed #loader { display: none !important; }
-    html.libs-failed :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .ei,
+    html.libs-failed :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
         .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
@@ -2106,7 +2095,7 @@
        REDUCED MOTION — keep entrance-revealed content visible + static
     ══════════════════════════════════════════ */
     @media (prefers-reduced-motion: reduce) {
-      :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .ei,
+      :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
           .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
           .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
           .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
@@ -2155,7 +2144,6 @@
   <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="2.4" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.6" y2="12"/><line x1="5.2" y1="5.2" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5.2" y2="18.8"/></g></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
-  <symbol id="i-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3.6a8.4 8.4 0 0 1 0 16.8z" fill="currentColor"/></symbol>
 </svg>
 
 <div class="vignette"  aria-hidden="true"></div>
@@ -2191,8 +2179,7 @@
     </div>
   </div>
   <div class="n-actions">
-    <button id="theme-toggle" type="button" title="Theme" aria-label="Theme: following system. Switch to light">
-      <svg class="ti ti-auto" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-auto"/></svg>
+    <button id="theme-toggle" type="button" title="Switch to light theme" aria-label="Switch to light theme">
       <svg class="ti ti-sun" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg>
       <svg class="ti ti-moon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-moon"/></svg>
     </button>
@@ -2236,15 +2223,27 @@
     </h1>
     <div class="h-sub">
       <div class="h-loc">
-        <span class="h-loc-studio">At Sainthood Tattoo · Princes Ave, Hull<a href="#location" class="h-dir" aria-label="View map for Sainthood Tattoo"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="5 5 19 5 19 19"/></svg><span>Directions</span></a></span>
+        <span class="h-loc-studio">At Sainthood Tattoo · Princes Ave, Hull<a href="#location" class="h-dir" aria-label="View map for Sainthood Tattoo"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-5.686-7-11a7 7 0 0 1 14 0c.5 5.314-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span>Directions</span></a></span>
         <span class="h-loc-hours">Appointment only &nbsp;·&nbsp; Tue–Sat</span>
       </div>
     </div>
     <div class="h-cta">
-      <a class="h-cta-primary" href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F" target="_blank" rel="noopener">
-        <svg width="18" height="18" aria-hidden="true"><use href="#i-wa"/></svg>
-        Enquire now
-      </a>
+      <div class="bk-split bk-split-sm" id="hero-split">
+        <span class="bk-split-glow" aria-hidden="true"></span>
+        <a class="bk-split-half bk-half-wa"
+           href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
+           target="_blank" rel="noopener" aria-label="Enquire via WhatsApp">
+          <svg width="15" height="15" aria-hidden="true"><use href="#i-wa"/></svg>
+          WhatsApp
+        </a>
+        <span class="bk-split-div" aria-hidden="true"></span>
+        <a class="bk-split-half bk-half-ig"
+           href="https://instagram.com/emmy.tattoo"
+           target="_blank" rel="noopener" aria-label="Enquire via Instagram">
+          <svg width="15" height="15" aria-hidden="true"><use href="#i-ig"/></svg>
+          Instagram
+        </a>
+      </div>
       <a class="h-cta-secondary" href="/portfolio">View the work</a>
     </div>
   </div>
@@ -2463,7 +2462,6 @@
 <section id="faq">
   <div class="faq-hd">
     <div class="faq-hd-text">
-      <div class="s-label">FAQ</div>
       <h2 class="faq-h2"><span class="tl"><span class="tl-i">Frequently Asked <em>Questions</em></span></span></h2>
     </div>
     <div class="faq-hd-rule"></div>
@@ -2998,16 +2996,12 @@ function __boot() {
   (() => {
     const btn = document.getElementById('theme-toggle');
     if (!btn || !window.__theme) return;
-    const NEXT  = { system: 'light', light: 'dark', dark: 'system' };
-    const LABEL = {
-      system: 'Theme: following system. Switch to light',
-      light:  'Theme: light. Switch to dark',
-      dark:   'Theme: dark. Follow system'
-    };
+    /* The control is binary on screen - it always names the theme it switches to. */
+    const target = () => document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
     const sync = () => {
-      const p = window.__theme.pref();
-      btn.setAttribute('aria-label', LABEL[p]);
-      btn.setAttribute('title', LABEL[p]);
+      const label = 'Switch to ' + target() + ' theme';
+      btn.setAttribute('aria-label', label);
+      btn.setAttribute('title', label);
     };
     sync();
     document.addEventListener('themechange', () => {
@@ -3015,7 +3009,7 @@ function __boot() {
       /* GSAP hover tweens leave resolved inline colours behind — drop them so the new theme applies */
       gsap.set('.ei-name, .ei-arr', { clearProps: 'color' });
     });
-    btn.addEventListener('click', () => window.__theme.set(NEXT[window.__theme.pref()]));
+    btn.addEventListener('click', () => window.__theme.set(target()));
   })();
 
   /* ═══ HERO INIT ═══ */
@@ -3051,14 +3045,6 @@ function __boot() {
       });
     }
 
-
-    /* ── Section labels ── */
-    gsap.utils.toArray('.s-label').forEach(el => {
-      gsap.to(el, {
-        opacity: 1, y: 0, duration: .9, ease: 'expo.out',
-        scrollTrigger: { trigger: el, start: 'top 92%', once: true }
-      });
-    });
 
     /* Work cards entrance handled below by elastic spring */
 
@@ -3485,7 +3471,7 @@ function __boot() {
       opacity: 1, y: 0, duration: .9, ease: 'expo.out', delay: .44,
       scrollTrigger: { trigger: '#book', start: 'top 74%', once: true }
     });
-    gsap.fromTo('.bk-split',
+    gsap.fromTo('#bk-split',
       { opacity: 0, y: 28 },
       { opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: .6,
         scrollTrigger: { trigger: '#book', start: 'top 70%', once: true } }
@@ -3515,21 +3501,21 @@ function __boot() {
 
     /* ── Enquiry pill: pointer-tracked tint ── */
     (() => {
-      const split = document.getElementById('bk-split');
-      if (!split) return;
       if (window.matchMedia('(pointer: coarse)').matches) {
         document.documentElement.classList.add('no-hover');
         return;
       }
-      split.addEventListener('pointermove', e => {
-        const r = split.getBoundingClientRect();
-        split.style.setProperty('--bk-mx', (e.clientX - r.left) + 'px');
-        const side = e.target.closest('.bk-half-ig') ? 'ig' : e.target.closest('.bk-half-wa') ? 'wa' : null;
-        if (side) split.dataset.side = side;
-      });
-      split.addEventListener('pointerleave', () => split.removeAttribute('data-side'));
-      split.querySelectorAll('.bk-split-half').forEach(h => {
-        h.addEventListener('focus', () => { split.dataset.side = h.classList.contains('bk-half-ig') ? 'ig' : 'wa'; });
+      document.querySelectorAll('.bk-split').forEach(split => {
+        split.addEventListener('pointermove', e => {
+          const r = split.getBoundingClientRect();
+          split.style.setProperty('--bk-mx', (e.clientX - r.left) + 'px');
+          const side = e.target.closest('.bk-half-ig') ? 'ig' : e.target.closest('.bk-half-wa') ? 'wa' : null;
+          if (side) split.dataset.side = side;
+        });
+        split.addEventListener('pointerleave', () => split.removeAttribute('data-side'));
+        split.querySelectorAll('.bk-split-half').forEach(h => {
+          h.addEventListener('focus', () => { split.dataset.side = h.classList.contains('bk-half-ig') ? 'ig' : 'wa'; });
+        });
       });
     })();
 
@@ -3642,13 +3628,11 @@ function __boot() {
         '<blockquote class="sp-quote"></blockquote>' +
         '<button class="sp-readmore" type="button">Read full review &nbsp;›</button>' +
         '<div class="sp-author"></div>' +
-        '<div class="sp-nav"><button class="sp-arrow sp-prev" aria-label="Previous review">‹</button><div class="sp-dots"></div><button class="sp-arrow sp-next" aria-label="Next review">›</button></div>' +
-        '<div class="sp-progress"><span></span></div>';
+        '<div class="sp-nav"><button class="sp-arrow sp-prev" aria-label="Previous review">‹</button><div class="sp-dots"></div><button class="sp-arrow sp-next" aria-label="Next review">›</button></div>';
       const qEl = stage.querySelector('.sp-quote');
       const aEl = stage.querySelector('.sp-author');
       const ghost = stage.querySelector('.sp-ghost');
       const dotsEl = stage.querySelector('.sp-dots');
-      const bar = stage.querySelector('.sp-progress span');
       let i = 0, timer = null;
       dotsEl.innerHTML = REVIEWS.map((_, k) => '<button class="sp-dot" aria-label="Review ' + (k + 1) + '"></button>').join('');
       const dots = [...dotsEl.children];
@@ -3672,10 +3656,8 @@ function __boot() {
       function next() { go(i + 1, 1); }
       function prev() { go(i - 1, -1); }
       function restart() {
-        if (STATIC || !visible) { clearTimeout(timer); gsap.killTweensOf(bar); return; }
+        if (STATIC || !visible) { clearTimeout(timer); return; }
         clearTimeout(timer);
-        gsap.killTweensOf(bar);
-        gsap.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: 6, ease: 'none', transformOrigin: 'left' });
         timer = setTimeout(() => { if (visible) next(); }, 6000);
       }
       stage.querySelector('.sp-next').addEventListener('click', next);
@@ -3685,7 +3667,7 @@ function __boot() {
       keyClickable(qEl, 'Read full review');
       stage.querySelector('.sp-readmore').addEventListener('click', () => openModal(REVIEWS[i]));
       addSwipe(stage, next, prev);
-      _pause = () => { clearTimeout(timer); gsap.killTweensOf(bar); };
+      _pause = () => clearTimeout(timer);
       _resume = restart;
       _onVisible = restart;
       paint(1); restart();
