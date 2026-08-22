@@ -90,41 +90,70 @@
         imagesizes="100vw">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
 
-  <!-- Google Analytics — one gtag.js load serves both properties; config picks the ID -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J8X45ECTLH"></script>
+  <!-- Analytics is consent-gated: nothing loads until the visitor accepts. -->
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    /* Skip analytics on local dev so it doesn't pollute production data */
-    if (!/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) {
-      gtag('js', new Date());
-      gtag('config', location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH');
-    }
+    (function () {
+      var KEY = 'emmy-consent';
+      function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+      function loadGA() {
+        if (window.__gaLoaded) return;
+        if (/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) return;
+        window.__gaLoaded = true;
+        var id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
+        var s = document.createElement('script');
+        s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', id);
+      }
+      window.__consent = {
+        get: stored,
+        set: function (v) { try { localStorage.setItem(KEY, v); } catch (e) {} if (v === 'granted') loadGA(); },
+        clear: function () { try { localStorage.removeItem(KEY); } catch (e) {} }
+      };
+      if (stored() === 'granted') loadGA();
+    })();
   </script>
 
   <!-- If any animation library fails to load, reveal content + dismiss the loader (resilience) -->
   <script>window.__libFail = function () { document.documentElement.classList.add('libs-failed'); };</script>
+
+  <!-- Brand intro is kept in the repo but disabled. Flip to true to bring it back. -->
+  <script>window.__INTRO = false; if (window.__INTRO) document.documentElement.classList.add('intro-on');</script>
 
   <!-- Theme resolution before first paint: manual override (localStorage) ?? OS preference -->
   <script>
     (function () {
       var KEY = 'emmy-theme';
       var mql = window.matchMedia('(prefers-color-scheme: light)');
-      function stored() { try { var v = localStorage.getItem(KEY); return v === 'light' || v === 'dark' ? v : null; } catch (e) { return null; } }
-      function apply(theme) {
+      /* Three states: 'system' (no key stored), 'light', 'dark'. */
+      function pref() {
+        try { var v = localStorage.getItem(KEY); return v === 'light' || v === 'dark' ? v : 'system'; }
+        catch (e) { return 'system'; }
+      }
+      function resolve(p) { return p === 'system' ? (mql.matches ? 'light' : 'dark') : p; }
+      function apply(p) {
+        var theme = resolve(p);
         var r = document.documentElement;
         r.dataset.theme = theme;
+        r.dataset.pref = p;
         r.style.colorScheme = theme;
         var m = document.getElementById('meta-theme-color');
         if (m) m.setAttribute('content', theme === 'light' ? '#f4f1ea' : '#0a0a0a');
         document.dispatchEvent(new Event('themechange'));
       }
       window.__theme = {
-        resolve: function () { return stored() || (mql.matches ? 'light' : 'dark'); },
-        set: function (theme) { try { localStorage.setItem(KEY, theme); } catch (e) {} apply(theme); }
+        pref: pref,
+        resolve: function () { return resolve(pref()); },
+        set: function (p) {
+          try { p === 'system' ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, p); } catch (e) {}
+          apply(p);
+        }
       };
-      apply(window.__theme.resolve());
-      mql.addEventListener('change', function () { if (!stored()) apply(mql.matches ? 'light' : 'dark'); });
+      apply(pref());
+      mql.addEventListener('change', function () { if (pref() === 'system') apply('system'); });
     })();
   </script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
@@ -134,9 +163,8 @@
   <!-- No-JS fallback: reveal JS-animated content and remove the loader overlay -->
   <noscript><style>
     #loader { display: none !important; }
-    #nav .n-logo { opacity: 1 !important; }
     :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .ei,
-        .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap,
+        .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
         .exp-h2, .faq-h2, .bk-h2, .faq-hd-rule, .faq-hd-count) {
@@ -258,12 +286,11 @@
       --fg:        #191712;
       --fg2:       #4a453c;
       --dim:       #6a6459;
-      /* One gold, every element, every size. #a9821f = 3.16:1 on #f4f1ea (AA
-         large text + non-text). Gold never colours text under 18.66px on a
-         themed surface: small labels use --fg/--fg2 and carry gold as a rule,
-         ring or glyph instead. That is what lets this gold stay golden. */
-      --gold:      #a9821f;
-      --gold-rgb:  169,130,31;
+      /* One gold, both themes: #c4a262 everywhere. On #f4f1ea it measures 2.1:1,
+         below the WCAG 3:1 non-text floor — a deliberate brand choice, so gold
+         stays decorative here and never carries small text. */
+      --gold:      #c4a262;
+      --gold-rgb:  196,162,98;
       --fg-rgb:    25,23,18;
       --panel-rgb: 251,249,245;
       --on-gold:   #191712;       /* 5.03:1 on gold; white would be 3.56:1 */
@@ -279,7 +306,7 @@
       --btn-fill:   rgba(var(--panel-rgb),1);
       --photo-ring:   rgba(var(--fg-rgb),.62);
       --photo-ring-h: rgba(var(--fg-rgb),.82);
-      --gold-ring:   rgba(var(--gold-rgb),.85);
+      --gold-ring:   rgba(var(--gold-rgb),.9);
       --gold-ring-h: rgba(var(--gold-rgb),1);
       /* No vignette on a light page: the effect needs ~7 code values across half
          the screen, which bands on 8-bit SDR panels and reads as a grey ellipse. */
@@ -290,17 +317,17 @@
       --ambient-book: none;
       --cta-shadow:   0 8px 28px rgba(var(--gold-rgb),.30), 0 2px 10px rgba(var(--fg-rgb),.18);
       --cta-shadow-a: 0 4px 16px rgba(var(--gold-rgb),.20), 0 1px 6px rgba(var(--fg-rgb),.12);
-      --gold-faint: rgba(var(--gold-rgb),.55);
-      --gold-soft:  rgba(var(--gold-rgb),.85);
-      --ghost-ink:  rgba(var(--gold-rgb),.12);
-      --wm-ink:     rgba(var(--gold-rgb),.16);
+      --gold-faint: rgba(var(--gold-rgb),.8);
+      --gold-soft:  rgba(var(--gold-rgb),.95);
+      --ghost-ink:  rgba(var(--gold-rgb),.28);
+      --wm-ink:     rgba(var(--gold-rgb),.3);
       --img-hero:     grayscale(1) sepia(.15) brightness(1.18) contrast(.9);
       --img-card:     brightness(1.02) saturate(.8);
       --img-card-h:   brightness(1.06) saturate(.95);
       --img-exp:      brightness(1) saturate(.8);
       --img-exp-open: brightness(1.04) saturate(.9);
       --img-avatar:   grayscale(.5);
-      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23a9821f' stroke='%23fbf9f5' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
+      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23fbf9f5' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
     }
 
     /* One gutter for every section on a phone. Sections used to hardcode this
@@ -344,13 +371,15 @@
        LOADER
     ══════════════════════════════════════════ */
     /* The intro is CSS-driven so it starts at first paint instead of waiting for
-       the deferred GSAP bundle; JS only ends it (see exitLoader). */
+       the deferred GSAP bundle; JS only ends it (see exitLoader). It is disabled
+       site-wide by window.__INTRO — the markup, CSS and JS all stay in the repo. */
     #loader {
       position: fixed; inset: 0; z-index: 999999;
       background: var(--bg);
-      display: flex; align-items: center; justify-content: center;
+      display: none; align-items: center; justify-content: center;
       transition: opacity .1s linear;
     }
+    html.intro-on #loader { display: flex; }
     #loader.ld-out { opacity: 0; }
 
     .ld-wrap {
@@ -448,12 +477,6 @@
       border-bottom-color: var(--border);
     }
     #nav.s::before { opacity: 0; }
-    .n-logo {
-      font-family: var(--display); font-size: 1.2rem;
-      font-weight: 400; letter-spacing: .07em;
-      text-decoration: none; color: var(--fg);
-    }
-    .n-logo em { font-style: italic; color: var(--gold); }
     .n-links { display: flex; align-items: center; gap: 26px; }
     /* Icon buttons (socials + theme toggle) read as one cluster on a tighter rhythm */
     .n-socials { display: flex; align-items: center; gap: 16px; }
@@ -464,16 +487,6 @@
       transition: color .3s;
     }
     .n-item:hover { color: var(--fg); }
-    .n-btn {
-      font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .2em; text-transform: uppercase;
-      color: var(--fg); text-decoration: none;
-      border: 1px solid var(--gold-ring);
-      background: rgba(var(--gold-rgb),.04);
-      padding: 14px 32px; border-radius: 100px;
-      transition: border-color .38s, background .38s, color .38s;
-    }
-    .n-btn:hover { border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09); color: var(--fg); }
     .n-social {
       display: inline-flex; align-items: center; justify-content: center;
       color: var(--dim); text-decoration: none;
@@ -510,10 +523,11 @@
     }
     #theme-toggle:hover { color: var(--gold); border-color: var(--btn-ring-h); }
     #theme-toggle svg { flex-shrink: 0; }
-    /* Sun while dark (the theme the button switches to), half-moon while light */
-    #theme-toggle .ti-moon { display: none; }
-    :root[data-theme="light"] #theme-toggle .ti-sun  { display: none; }
-    :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
+    /* Three-state control: the icon shows the state the button is IN. */
+    #theme-toggle .ti { display: none; }
+    :root[data-pref="system"] #theme-toggle .ti-auto { display: block; }
+    :root[data-pref="light"]  #theme-toggle .ti-sun  { display: block; }
+    :root[data-pref="dark"]   #theme-toggle .ti-moon { display: block; }
     /* Full-screen mobile menu overlay */
     #mobile-menu {
       position: fixed; inset: 0; z-index: 10000;
@@ -528,11 +542,6 @@
       color: var(--fg); text-decoration: none; transition: color .25s;
     }
     .mm-link:hover { color: var(--gold); }
-    .mm-book {
-      font-family: var(--mono); font-style: normal; font-size: .8rem;
-      letter-spacing: .2em; text-transform: uppercase; color: var(--fg);
-      border: 1px solid rgba(var(--gold-rgb),.4); padding: 14px 34px; border-radius: 100px;
-    }
     .mm-socials { display: flex; gap: 16px; margin-top: 14px; }
     .mm-close {
       position: absolute; top: 22px; right: 22px;
@@ -546,10 +555,6 @@
       .n-item { display: none; }
       .n-links { display: none; }
       .nav-toggle { display: flex; }
-      /* The hero H1 already reads "Emmy Tattoo"; show the nav wordmark only
-         once the hero has scrolled away (html.hero-out, set by IntersectionObserver). */
-      .n-logo { opacity: 0; pointer-events: none; transition: opacity .3s var(--out); }
-      html.hero-out .n-logo, html.libs-failed .n-logo { opacity: 1; pointer-events: auto; }
     }
     @media (min-width: 769px) { #mobile-menu { display: none; } }
 
@@ -844,7 +849,7 @@
     @media (max-width: 768px) {
       #work { position: static; height: auto; overflow: visible; padding-top: 72px; }
       .w-grid { grid-template-columns: repeat(2, 1fr); padding: 0 var(--pad) 8px; gap: 8px; }
-      .w-more-wrap { padding: 10px var(--pad) 0; }
+      .w-more-wrap { padding: 28px var(--pad) 64px; }
     }
     @media (max-width: 480px) {
       .w-grid { grid-template-columns: 1fr; }
@@ -1116,7 +1121,7 @@
     .ei.open  .ei-rule::after { transform: scaleX(1); }
 
     @media (max-width: 768px) {
-      #exp { padding: 0 var(--pad) 80px; }
+      #exp { padding: 64px var(--pad) 80px; }
       .ei-name { font-size: clamp(1.7rem,6vw,2.5rem); }
     }
 
@@ -1275,7 +1280,7 @@
       font-family: var(--serif);
       font-size: clamp(2.4rem,5vw,4.2rem);
       font-weight: 300; line-height: 1; letter-spacing: -.02em;
-      margin-bottom: 22px; margin-top: 12px;
+      margin-bottom: 22px; margin-top: 0;
     }
     .gf-h2 em { font-style: italic; color: var(--gold); }
     .gf-p {
@@ -1388,71 +1393,46 @@
       margin-bottom: 60px; text-align: center;
       opacity: 0; transform: translateY(14px);
     }
-    /* ── Button group ── */
-    .bk-btns {
-      display: flex; gap: 18px; flex-wrap: wrap;
-      justify-content: center; margin-bottom: 0;
+    /* ── Enquiry pill — two halves in one box, cursor-tracked tint ── */
+    .bk-btns { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .bk-split-lead {
+      font-family: var(--mono); font-size: .68rem;
+      letter-spacing: .28em; text-transform: uppercase; color: var(--fg2);
     }
-    /* Base reset for both buttons */
-    .bk-btn {
-      display: inline-flex; align-items: center;
-      text-decoration: none; border-radius: 100px;
-      opacity: 0; overflow: hidden; position: relative;
-      transition: transform .38s var(--out), box-shadow .4s;
-      cursor: pointer;
-    }
-    .bk-btn:hover { transform: translateY(-4px); }
-    .bk-btn-inner {
-      display: flex; align-items: center; gap: 16px;
-      position: relative; z-index: 1;
-    }
-    .bk-btn-text { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
-    .bk-btn-label {
-      font-family: var(--mono); font-size: .78rem;
-      letter-spacing: .22em; text-transform: uppercase;
-      line-height: 1; white-space: nowrap;
-    }
-    .bk-btn-note {
-      font-family: var(--serif); font-style: italic;
-      font-size: .88rem; letter-spacing: 0;
-      text-transform: none; line-height: 1;
-      opacity: .7;
-    }
-    .bk-btn-arr {
-      font-size: 1.2rem; flex-shrink: 0;
-      transition: transform .32s var(--sp);
-      position: relative; z-index: 1;
-    }
-    .bk-btn:hover .bk-btn-arr { transform: translateX(5px); }
-
-    /* Both enquiry buttons — identical outlined gold pills */
-    .bk-btn-wa,
-    .bk-btn-ig {
-      padding: 22px 48px 22px 40px;
-      border: 1px solid var(--gold-ring);
+    .bk-split {
+      position: relative; display: flex; align-items: stretch;
+      border: 1px solid var(--gold-ring); border-radius: 100px;
       background: rgba(var(--gold-rgb),.04);
-      transition: border-color .38s, background .38s, transform .38s var(--out), box-shadow .4s;
+      overflow: hidden; opacity: 0;                 /* revealed by the entrance tween */
+      transition: border-color .38s, box-shadow .4s;
+      --bk-mx: 50%;
     }
-    .bk-btn-wa:hover,
-    .bk-btn-ig:hover {
-      border-color: var(--gold-ring-h);
-      background: rgba(var(--gold-rgb),.09);
-      box-shadow: 0 10px 48px rgba(var(--gold-rgb),.12);
+    .bk-split:hover { border-color: var(--gold-ring-h); box-shadow: 0 10px 48px rgba(var(--gold-rgb),.12); }
+    /* One glow layer: colour swaps with the hovered half, position follows the
+       pointer through --bk-mx (written by JS — the only such binding in the file). */
+    .bk-split-glow {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(220px circle at var(--bk-mx) 50%, var(--bk-tint, transparent) 0%, transparent 72%);
+      opacity: 0; transition: opacity .35s, background .35s;
     }
-    /* Shimmer sweep — same for both */
-    .bk-btn-wa::before,
-    .bk-btn-ig::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(115deg, transparent 30%, rgba(var(--gold-rgb),.08) 50%, transparent 70%);
-      transform: translateX(-110%); transition: transform .7s var(--out);
-      pointer-events: none;
+    .bk-split:hover .bk-split-glow { opacity: 1; }
+    .bk-split[data-side="wa"] { --bk-tint: rgba(37,211,102,.30); }
+    .bk-split[data-side="ig"] { --bk-tint: rgba(225,48,108,.28); }
+    .bk-split-half {
+      position: relative; z-index: 1;
+      display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+      padding: 20px 34px; text-decoration: none; color: var(--fg);
+      font-family: var(--mono); font-size: .74rem;
+      letter-spacing: .2em; text-transform: uppercase; white-space: nowrap;
+      transition: color .3s;
     }
-    .bk-btn-wa:hover::before,
-    .bk-btn-ig:hover::before { transform: translateX(110%); }
-    .bk-btn-wa .bk-btn-label, .bk-btn-ig .bk-btn-label { color: var(--fg); }
-    .bk-btn-wa .bk-btn-note,  .bk-btn-ig .bk-btn-note  { color: var(--fg2); }
-    .bk-btn-wa .bk-btn-arr,   .bk-btn-ig .bk-btn-arr   { color: var(--gold); }
-    .bk-btn-wa svg, .bk-btn-ig svg { color: var(--gold); flex-shrink: 0; }
+    .bk-split-half svg { flex-shrink: 0; color: var(--gold); transition: color .3s, transform .3s var(--sp); }
+    .bk-split-half:hover svg { transform: scale(1.08); }
+    .bk-half-wa:hover svg { color: #25D366; }
+    .bk-half-ig:hover svg { color: #e1306c; }
+    .bk-split-div { width: 1px; align-self: stretch; background: var(--gold-ring); flex: none; }
+    /* Coarse pointers never get the glow — see the (pointer: coarse) guard in the JS */
+    html.no-hover .bk-split-glow { display: none; }
 
     /* ── 3-step process ── */
     .bk-steps {
@@ -1483,8 +1463,8 @@
     @media (max-width: 768px) {
       #book { padding: 88px var(--pad) 80px; }
       .bk-h2 { font-size: clamp(2.6rem, 11vw, 4.2rem); }
-      .bk-btns { flex-direction: column; align-items: stretch; gap: 14px; }
-      .bk-btn-wa, .bk-btn-ig { justify-content: center; padding: 20px 36px; }
+      .bk-split { width: 100%; }
+      .bk-split-half { flex: 1; padding: 18px 12px; font-size: .68rem; letter-spacing: .14em; gap: 8px; }
       .bk-steps { gap: 0; }
       .bk-step  { padding: 0 18px; }
       .bk-step-div { width: 28px; }
@@ -2004,6 +1984,7 @@
       transition: color .3s;
     }
     .ft-a:hover { color: var(--fg); }
+    .ft-btn { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; }
     .ft-copy {
       font-family: var(--mono); font-size: .7rem;
       letter-spacing: .1em; color: var(--fg2);
@@ -2017,32 +1998,11 @@
        FRAMER ANIMATIONS
     ══════════════════════════════════════════ */
 
-    /* — Floating CTA — */
-    #float-cta {
-      position: fixed; bottom: 28px; left: 50%;
-      transform: translateX(-50%);
-      z-index: 8900; pointer-events: none; opacity: 0;
-    }
-    #float-cta-a {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 15px 30px; border-radius: 100px;
-      background: var(--gold); color: var(--on-gold);
-      font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      text-decoration: none; white-space: nowrap;
-      box-shadow: var(--cta-shadow);
-      transition: transform .18s, box-shadow .18s;
-    }
-    #float-cta-a:active {
-      transform: scale(0.94);
-      box-shadow: var(--cta-shadow-a);
-    }
-    @media (min-width: 769px) { #float-cta { display: none; } }
 
     /* — Spring touch feedback — */
     .wc          { transition: border-color .4s, transform .22s cubic-bezier(.175,.885,.32,1.275); }
     .wc:active   { transform: scale(0.95) !important; }
-    .bk-btn:active, .n-btn:active, .w-more-btn:active { transform: scale(0.96) translateY(0) !important; transition-duration: .1s !important; }
+    .bk-split-half:active, .w-more-btn:active { transform: scale(0.96) translateY(0) !important; transition-duration: .1s !important; }
     .ei:active   { background: rgba(var(--gold-rgb),.04); transform: scale(.985); }
     .fq-item:active { background: rgba(var(--fg-rgb),.02); }
 
@@ -2124,7 +2084,6 @@
     html.lite .wc-img { transition: transform .6s var(--out); }
     html.lite .ei-expand-img img { transition: none; }
     /* Animated box-shadow on fixed / always-visible elements. */
-    html.lite #float-cta-a,
     html.lite .loc-map-wrap { transition: none; }
     /* Infinite pulses keep the compositor awake even off-screen. */
     html.lite .fl-dot, html.lite .bk-avdot { animation: none; }
@@ -2135,7 +2094,7 @@
     ══════════════════════════════════════════ */
     html.libs-failed #loader { display: none !important; }
     html.libs-failed :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .ei,
-        .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap,
+        .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
         .exp-h2, .faq-h2, .bk-h2, .faq-hd-rule, .faq-hd-count) {
@@ -2148,13 +2107,42 @@
     ══════════════════════════════════════════ */
     @media (prefers-reduced-motion: reduce) {
       :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .ei,
-          .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap,
+          .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
           .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
           .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
           .exp-h2, .faq-h2, .bk-h2, .faq-hd-rule, .faq-hd-count) {
         opacity: 1 !important; transform: none !important;
         filter: none !important; clip-path: none !important;
       }
+    }
+
+    /* ══════════════════════════════════════════
+       COOKIE CONSENT BAR
+    ══════════════════════════════════════════ */
+    #cookie-bar {
+      position: fixed; left: 50%; bottom: 18px; transform: translate(-50%, 16px);
+      z-index: 9500; width: min(680px, calc(100vw - 32px));
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+      padding: 16px 20px; border-radius: var(--r);
+      background: rgba(var(--panel-rgb),.97); border: 1px solid var(--border-h);
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      opacity: 0; transition: opacity .3s, transform .3s var(--out);
+    }
+    #cookie-bar.on { opacity: 1; transform: translate(-50%, 0); }
+    .ck-text { font-family: var(--sans); font-size: .82rem; line-height: 1.6; color: var(--fg2); flex: 1 1 260px; }
+    .ck-text a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
+    .ck-btns { display: flex; gap: 10px; flex-shrink: 0; }
+    .ck-btn {
+      font-family: var(--mono); font-size: .66rem; letter-spacing: .16em; text-transform: uppercase;
+      padding: 11px 20px; border-radius: 100px; cursor: pointer; border: 1px solid var(--gold-ring);
+      background: rgba(var(--gold-rgb),.04); color: var(--fg); transition: border-color .3s, background .3s;
+    }
+    .ck-btn:hover { border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09); }
+    .ck-accept { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+    @media (max-width: 768px) {
+      #cookie-bar { bottom: 12px; padding: 14px 16px; }
+      .ck-btns { width: 100%; }
+      .ck-btn { flex: 1; text-align: center; }
     }
   </style>
 </head>
@@ -2167,6 +2155,7 @@
   <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="2.4" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.6" y2="12"/><line x1="5.2" y1="5.2" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5.2" y2="18.8"/></g></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3.6a8.4 8.4 0 0 1 0 16.8z" fill="currentColor"/></symbol>
 </svg>
 
 <div class="vignette"  aria-hidden="true"></div>
@@ -2186,19 +2175,11 @@
 </div>
 
 <!-- ════ NAV ════ -->
-<nav id="nav">
-  <a href="/" class="n-logo">Emmy <em>Tattoo</em></a>
+<nav id="nav" aria-label="Site navigation">
   <div class="n-links">
-    <a href="/portfolio" class="n-item">Portfolio</a>
-    <a href="#about" class="n-item">About</a>
     <a href="#trust" class="n-item">Reviews</a>
     <a href="#faq" class="n-item">FAQ</a>
-    <a href="#book" class="n-btn">Book a Session</a>
     <div class="n-socials">
-      <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="n-social n-wa" aria-label="WhatsApp">
-        <svg width="17" height="17" aria-hidden="true"><use href="#i-wa"/></svg>
-        <span>WhatsApp</span>
-      </a>
       <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="n-social n-ig" aria-label="Instagram">
         <svg width="17" height="17" aria-hidden="true"><use href="#i-ig"/></svg>
         <span>Instagram</span>
@@ -2210,7 +2191,8 @@
     </div>
   </div>
   <div class="n-actions">
-    <button id="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false" title="Toggle light / dark">
+    <button id="theme-toggle" type="button" title="Theme" aria-label="Theme: following system. Switch to light">
+      <svg class="ti ti-auto" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-auto"/></svg>
       <svg class="ti ti-sun" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg>
       <svg class="ti ti-moon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-moon"/></svg>
     </button>
@@ -2227,7 +2209,6 @@
   <a class="mm-link" href="#about">About</a>
   <a class="mm-link" href="#trust">Reviews</a>
   <a class="mm-link" href="#faq">FAQ</a>
-  <a class="mm-link mm-book" href="#book">Book a Session</a>
   <div class="mm-socials">
     <a class="n-social n-wa" href="https://wa.me/447405979137" target="_blank" rel="noopener" aria-label="WhatsApp"><svg width="18" height="18" aria-hidden="true"><use href="#i-wa"/></svg></a>
     <a class="n-social n-ig" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" aria-hidden="true"><use href="#i-ig"/></svg></a>
@@ -2344,7 +2325,6 @@
          alt="Emmy, fine line and realism tattoo artist at Sainthood Tattoo in Hull." loading="lazy" decoding="async">
   </div>
   <div class="ab-text">
-    <div class="s-label">About</div>
     <h2 class="ab-h2">Meet <em>Emmy</em></h2>
     <div class="ab-bio">
       <p>I'm Emmy, a fine line, fine art and realism tattoo artist, working from Sainthood Tattoo on Princes Avenue, Hull.</p>
@@ -2647,20 +2627,25 @@
       </div>
     </div>
 
-    <!-- CTA buttons -->
+    <!-- CTA — one pill, two halves; the tint follows the cursor across them -->
     <div class="bk-btns">
-
-      <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
-         target="_blank" rel="noopener" class="bk-btn bk-btn-wa" id="bkbtn">
-        <div class="bk-btn-inner">
-          <svg width="22" height="22" aria-hidden="true"><use href="#i-wa"/></svg>
-          <div class="bk-btn-text">
-            <span class="bk-btn-label">Enquire via WhatsApp</span>
-          </div>
-        </div>
-        <span class="bk-btn-arr">→</span>
-      </a>
-
+      <p class="bk-split-lead">Enquire via</p>
+      <div class="bk-split" id="bk-split">
+        <span class="bk-split-glow" aria-hidden="true"></span>
+        <a class="bk-split-half bk-half-wa"
+           href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
+           target="_blank" rel="noopener">
+          <svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>
+          <span>WhatsApp</span>
+        </a>
+        <span class="bk-split-div" aria-hidden="true"></span>
+        <a class="bk-split-half bk-half-ig"
+           href="https://instagram.com/emmy.tattoo"
+           target="_blank" rel="noopener">
+          <svg width="20" height="20" aria-hidden="true"><use href="#i-ig"/></svg>
+          <span>Instagram</span>
+        </a>
+      </div>
     </div>
 
   </div>
@@ -2669,7 +2654,6 @@
 <!-- ════ GIFTS ════ -->
 <section id="gifts">
   <div class="gf-body">
-    <div class="s-label">Gift Cards</div>
     <h2 class="gf-h2">Give someone <em>a tattoo.</em></h2>
     <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount, no expiry, redeemed when they decide.</p>
     <p class="gf-occ">Birthdays · Christmas · Anniversaries · Just because</p>
@@ -2684,7 +2668,6 @@
 <!-- ════ AFTERCARE ════ -->
 <section id="aftercare">
   <div class="ac-hd">
-    <div class="s-label">Aftercare</div>
     <h2 class="ac-h2">Keep it <em>clean.</em><br>Let it heal.</h2>
     <p class="ac-sub">A new tattoo is an open wound. How you treat it in the first few days determines how it looks for the rest of your life. Get it right and it'll stay sharp for decades.</p>
   </div>
@@ -2850,9 +2833,13 @@
   <div class="ft-logo">Emmy <em>Tattoo</em></div>
   <div class="ft-links">
     <a href="/portfolio" class="ft-a">Portfolio</a>
+    <a href="#about" class="ft-a">About</a>
     <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="ft-a">Instagram</a>
     <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="ft-a">Facebook</a>
     <a href="https://wa.me/447405979137" target="_blank" rel="noopener" class="ft-a">WhatsApp</a>
+    <a href="/legal" class="ft-a">Privacy &amp; Cookies</a>
+    <a href="/legal#terms" class="ft-a">Terms</a>
+    <button type="button" class="ft-a ft-btn" data-cookie-settings>Cookie settings</button>
   </div>
   <div class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</div>
 </footer>
@@ -2907,8 +2894,8 @@ function __boot() {
   /* ═══ LOADER ═══ */
   const ldr = document.getElementById('loader');
 
-  /* Skip the intro for repeat visits within the same session */
-  const SKIP_INTRO = (() => { try { return sessionStorage.getItem('emmy-intro') === '1'; } catch (e) { return false; } })();
+  /* Intro disabled by window.__INTRO; also skipped for repeat visits in a session */
+  const SKIP_INTRO = !window.__INTRO || (() => { try { return sessionStorage.getItem('emmy-intro') === '1'; } catch (e) { return false; } })();
   try { sessionStorage.setItem('emmy-intro', '1'); } catch (e) {}
 
   function startPage() {
@@ -3011,10 +2998,16 @@ function __boot() {
   (() => {
     const btn = document.getElementById('theme-toggle');
     if (!btn || !window.__theme) return;
+    const NEXT  = { system: 'light', light: 'dark', dark: 'system' };
+    const LABEL = {
+      system: 'Theme: following system. Switch to light',
+      light:  'Theme: light. Switch to dark',
+      dark:   'Theme: dark. Follow system'
+    };
     const sync = () => {
-      const light = document.documentElement.dataset.theme === 'light';
-      btn.setAttribute('aria-pressed', light ? 'true' : 'false');
-      btn.setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme');
+      const p = window.__theme.pref();
+      btn.setAttribute('aria-label', LABEL[p]);
+      btn.setAttribute('title', LABEL[p]);
     };
     sync();
     document.addEventListener('themechange', () => {
@@ -3022,9 +3015,7 @@ function __boot() {
       /* GSAP hover tweens leave resolved inline colours behind — drop them so the new theme applies */
       gsap.set('.ei-name, .ei-arr', { clearProps: 'color' });
     });
-    btn.addEventListener('click', () => {
-      window.__theme.set(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
-    });
+    btn.addEventListener('click', () => window.__theme.set(NEXT[window.__theme.pref()]));
   })();
 
   /* ═══ HERO INIT ═══ */
@@ -3494,9 +3485,9 @@ function __boot() {
       opacity: 1, y: 0, duration: .9, ease: 'expo.out', delay: .44,
       scrollTrigger: { trigger: '#book', start: 'top 74%', once: true }
     });
-    gsap.fromTo('.bk-btn',
+    gsap.fromTo('.bk-split',
       { opacity: 0, y: 28 },
-      { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .16, delay: .6,
+      { opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: .6,
         scrollTrigger: { trigger: '#book', start: 'top 70%', once: true } }
     );
 
@@ -3514,34 +3505,6 @@ function __boot() {
         scrollTrigger: { trigger: '#trust', start: 'top 84%', once: true } }
     );
 
-    /* ── Framer: floating CTA (mobile only) ── */
-    const floatCta = document.getElementById('float-cta');
-    /* No width test: @media (min-width:769px) already hides #float-cta, and a
-       one-shot innerWidth check left the CTA dead after a rotation into range. */
-    if (floatCta) {
-      gsap.set(floatCta, { y: 80 });
-      ScrollTrigger.create({
-        trigger: '#hero', start: 'bottom top',
-        onEnter() {
-          floatCta.style.pointerEvents = 'all';
-          floatCta.setAttribute('aria-hidden', 'false');
-          gsap.to(floatCta, { opacity: 1, y: 0, duration: 0.7, ease: 'expo.out' });
-        },
-        onLeaveBack() {
-          floatCta.style.pointerEvents = 'none';
-          floatCta.setAttribute('aria-hidden', 'true');
-          gsap.to(floatCta, { opacity: 0, y: 80, duration: 0.35, ease: 'power3.in' });
-        }
-      });
-      ScrollTrigger.create({
-        trigger: '#book', start: 'top 65%',
-        onEnter()    { gsap.to(floatCta, { opacity: 0, y: 40, duration: 0.3, ease: 'power2.in',
-                         onComplete: () => { floatCta.style.pointerEvents = 'none'; } }); },
-        onLeaveBack(){ floatCta.style.pointerEvents = 'all';
-                       gsap.to(floatCta, { opacity: 1, y: 0, duration: 0.5, ease: 'expo.out' }); }
-      });
-    }
-
     /* — Work cards entrance — smooth, deliberate — */
     gsap.fromTo('.wc',
       { y: 40, opacity: 0 },
@@ -3550,13 +3513,25 @@ function __boot() {
         scrollTrigger: { trigger: '#work-outer', start: 'top 82%', once: true } }
     );
 
-    /* ── Mobile: nav wordmark only once the hero H1 has left the screen ── */
-    const heroEl = document.getElementById('hero');
-    if (heroEl && 'IntersectionObserver' in window) {
-      new IntersectionObserver(([e]) => {
-        document.documentElement.classList.toggle('hero-out', !e.isIntersecting);
-      }, { rootMargin: '-60px 0px 0px 0px', threshold: 0 }).observe(heroEl);
-    }
+    /* ── Enquiry pill: pointer-tracked tint ── */
+    (() => {
+      const split = document.getElementById('bk-split');
+      if (!split) return;
+      if (window.matchMedia('(pointer: coarse)').matches) {
+        document.documentElement.classList.add('no-hover');
+        return;
+      }
+      split.addEventListener('pointermove', e => {
+        const r = split.getBoundingClientRect();
+        split.style.setProperty('--bk-mx', (e.clientX - r.left) + 'px');
+        const side = e.target.closest('.bk-half-ig') ? 'ig' : e.target.closest('.bk-half-wa') ? 'wa' : null;
+        if (side) split.dataset.side = side;
+      });
+      split.addEventListener('pointerleave', () => split.removeAttribute('data-side'));
+      split.querySelectorAll('.bk-split-half').forEach(h => {
+        h.addEventListener('focus', () => { split.dataset.side = h.classList.contains('bk-half-ig') ? 'ig' : 'wa'; });
+      });
+    })();
 
   }
 
@@ -3810,13 +3785,28 @@ else __boot();
 })();
 </script>
 
-<!-- Floating CTA (mobile) -->
-<div id="float-cta" aria-hidden="true">
-  <a href="#book" id="float-cta-a">
-    Book a Session
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-  </a>
+<!-- Cookie consent — analytics stays unloaded until Accept -->
+<div id="cookie-bar" role="region" aria-label="Cookie choices" hidden>
+  <p class="ck-text">This site uses Google Analytics cookies to count visits. Nothing is set unless you accept. <a href="/legal">Privacy &amp; cookies</a></p>
+  <div class="ck-btns">
+    <button type="button" id="ck-accept" class="ck-btn ck-accept">Accept</button>
+    <button type="button" id="ck-reject" class="ck-btn ck-reject">Reject</button>
+  </div>
 </div>
+<script>
+  (function () {
+    var bar = document.getElementById('cookie-bar');
+    if (!bar || !window.__consent) return;
+    function show() { bar.hidden = false; requestAnimationFrame(function () { bar.classList.add('on'); }); }
+    function hide() { bar.classList.remove('on'); setTimeout(function () { bar.hidden = true; }, 300); }
+    if (!window.__consent.get()) show();
+    document.getElementById('ck-accept').addEventListener('click', function () { window.__consent.set('granted'); hide(); });
+    document.getElementById('ck-reject').addEventListener('click', function () { window.__consent.set('denied'); hide(); });
+    document.querySelectorAll('[data-cookie-settings]').forEach(function (el) {
+      el.addEventListener('click', function (e) { e.preventDefault(); window.__consent.clear(); show(); });
+    });
+  })();
+</script>
 
 <!-- Resilience watchdog: if the loader is still up after the libs should have run, force-reveal.
      Re-arms while the tab is hidden — background tabs throttle rAF, which stalls the loader

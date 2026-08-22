@@ -67,9 +67,31 @@ npx live-server --port=3000 --open=index.html
 npx serve .
 ```
 
+## Stable snapshot
+
+`latest-stable` is a branch that points at the last known-good commit of `main`.
+
+- Mark the current `main` as stable: `git branch -f latest-stable main && git push -f origin latest-stable`
+- Restore the site to it: `git fetch origin && git reset --hard origin/latest-stable && git push --force-with-lease origin main`
+- Inspect it without moving anything: `git log --oneline origin/latest-stable -5`
+
+The live site is whatever `main` points at, so restoring means force-moving `main` back onto `latest-stable`.
+
+## Pages
+
+`index.html`, `portfolio.html` (`/portfolio`) and `legal.html` (`/legal` — privacy, cookies and website terms). The legal page carries its own minimal stylesheet and a copy of the theme + consent scripts; it deliberately does NOT duplicate the site CSS.
+
+## Intro
+
+The brand loader is kept in `index.html` but disabled by `window.__INTRO = false` in the head. Setting it to `true` re-enables the CSS intro (`html.intro-on #loader`); nothing else needs changing.
+
+## Analytics consent
+
+Google Analytics is never loaded until the visitor presses Accept in `#cookie-bar`. `window.__consent` (head script, all three pages) owns the `emmy-consent` key and injects gtag only on `granted`. Footer "Cookie settings" (`[data-cookie-settings]`) clears the key and re-opens the bar.
+
 ## Design Aesthetic
 - Follows the OS colour scheme: neutral `#0a0a0a` dark (default) or warm paper `#f4f1ea` light, with a manual nav toggle; gold is the single accent
-- Gold is ONE token per palette — `--gold` (`#c4a262` dark / `#a9821f` light). There is no `--gold-display`; never reintroduce a second gold. The light value stays golden because gold never colours a run of text under 18.66px on a themed surface: small mono labels, eyebrows and tiny links use `--fg`/`--fg2` and carry gold as a rule (`.s-label::before`), ring, border or glyph instead. Gold text is allowed at display sizes (`em` accents in headings, hero title, `.n-logo`/`.ft-logo`, `.bk-step-n`), and icon/star/arrow glyphs keep gold at any size (non-text, 3:1). Always-dark islands re-declare the dark palette wholesale, so gold text of any size is fine inside them.
+- Gold is ONE token, `#c4a262`, in BOTH palettes — `--gold` / `--gold-rgb: 196,162,98`. There is no `--gold-display` and no per-theme gold; never reintroduce a second value. On the light page that measures 2.1:1, under the WCAG 3:1 non-text floor: a deliberate brand decision, so gold stays decorative in light mode and never carries a run of text under 18.66px. Small mono labels, eyebrows and tiny links use `--fg`/`--fg2` and carry gold as a rule (`.s-label::before`), ring, border or glyph. Gold text is allowed at display sizes (`em` accents in headings, hero title, `.ft-logo`, `.bk-step-n`); icon/star/arrow glyphs keep gold at any size.
 - Decorative gold ink carries its alpha in a token, not in `opacity`: `--ghost-ink` (`.sp-ghost`) and `--wm-ink` (`.bk-wm`), because GSAP writes inline `opacity` that outranks CSS.
 - Minimal UI — let artwork breathe
 - Smooth, deliberate animations — nothing snappy or bouncy
