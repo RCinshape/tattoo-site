@@ -1946,15 +1946,31 @@
     .loc-map-wrap iframe {
       width: 100%; height: 100%; border: 0;
     }
-    /* Transparent overlay lets wheel/touch scroll pass to the page (Lenis);
-       click to activate map interaction so the iframe stops trapping scroll. */
+    /* Click-to-load facade: the Maps embed is only fetched on demand, and the
+       click doubles as the opt-in that stops the iframe trapping Lenis scroll. */
     .loc-map-overlay {
       position: absolute; inset: 0; z-index: 2; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
+      background: var(--bg2); border: 0; padding: 0;
+      transition: background .3s;
+    }
+    .loc-map-overlay:hover { background: rgba(var(--gold-rgb),.05); }
+    .loc-map-cue {
+      display: inline-flex; align-items: center; gap: 10px;
       font-family: var(--mono); font-size: .7rem;
       letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg); background: var(--bg2); border: 0;
+      color: var(--fg);
+      padding: 14px 28px; border-radius: 100px;
+      border: 1px solid var(--gold-ring);
+      background: rgba(var(--gold-rgb),.04);
+      transition: border-color .38s, background .38s, transform .38s var(--out);
     }
+    .loc-map-overlay:hover .loc-map-cue {
+      border-color: var(--gold-ring-h);
+      background: rgba(var(--gold-rgb),.09);
+      transform: translateY(-2px);
+    }
+    .loc-map-cue svg { flex-shrink: 0; color: var(--gold); }
     @media (max-width: 768px) {
       #location { padding: 72px var(--pad) 80px; }
       /* .loc-hd is align-items:flex-start, so the stack shrink-wraps to its
@@ -2776,7 +2792,12 @@
     </div>
   </div>
   <div class="loc-map-wrap" id="loc-map-wrap" data-map="https://maps.google.com/maps?q=80+Princes+Avenue,+Hull+HU5+3QJ&output=embed&z=17">
-    <button type="button" class="loc-map-overlay" id="loc-map-load" aria-label="Load interactive map of Sainthood Tattoo">Load map</button>
+    <button type="button" class="loc-map-overlay" id="loc-map-load" aria-label="Load interactive map of Sainthood Tattoo">
+      <span class="loc-map-cue">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.686 7-11a7 7 0 1 0-14 0c0 5.314 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        Load map
+      </span>
+    </button>
   </div>
 </section>
 
