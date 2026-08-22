@@ -113,9 +113,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
-  <link href="https://fonts.cdnfonts.com/css/romance-fatal-serif" rel="stylesheet">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <!-- Display face is self-hosted: one origin fewer and font-display:swap instead of cdnfonts' 3s block -->
+  <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
 
   <!-- If any animation library fails to load, reveal content (resilience) -->
   <script>window.__libFail = function () { document.documentElement.classList.add('libs-failed'); };</script>
@@ -142,9 +144,9 @@
       mql.addEventListener('change', function () { if (!stored()) apply(mql.matches ? 'light' : 'dark'); });
     })();
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha256-eUny2Hql6qBbqmuoQ60u6ueG2eCZVKQaGygqwCPquug=" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha256-eUny2Hql6qBbqmuoQ60u6ueG2eCZVKQaGygqwCPquug=" crossorigin="anonymous" onerror="__libFail()"></script>
 
   <!-- No-JS fallback: reveal JS-animated content -->
   <noscript><style>
@@ -152,6 +154,15 @@
   </style></noscript>
 
   <style>
+    /* Self-hosted display face — matches index.html. */
+    @font-face {
+      font-family: 'Romance Fatal Serif';
+      src: url('/fonts/Rom_Ftl_Srif.woff') format('woff');
+      font-weight: 400 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: auto; overscroll-behavior: none; }
 
@@ -319,6 +330,10 @@
     }
     #theme-toggle:hover { color: var(--gold); border-color: var(--btn-ring-h); }
     #theme-toggle svg { flex-shrink: 0; }
+    /* Sun while dark (the theme the button switches to), half-moon while light */
+    #theme-toggle .ti-moon { display: none; }
+    :root[data-theme="light"] #theme-toggle .ti-sun  { display: none; }
+    :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
     #mobile-menu {
       position: fixed; inset: 0; z-index: 10000;
       background: rgba(var(--panel-rgb),.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -713,7 +728,8 @@
   </div>
   <div class="n-actions">
     <button id="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false" title="Toggle light / dark">
-      <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3a9 9 0 010 18z" fill="currentColor"/></svg>
+      <svg class="ti ti-sun" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="2.4" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.6" y2="12"/><line x1="5.2" y1="5.2" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5.2" y2="18.8"/></g></svg>
+      <svg class="ti ti-moon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
     </button>
     <button id="nav-toggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
       <span></span><span></span><span></span>
@@ -751,7 +767,7 @@
 <main id="pw-grid" aria-label="Portfolio">
 
   <div class="pw-item" data-style="fine-art realism"
-       data-src="pictures/surreal-face-snake-hand-tattoo-emmy-tattoo.jpg"
+       data-src="pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-1440.webp"
        data-alt="Black and grey surrealism hand tattoo featuring a woman's face with blank eyes and a snake winding through her mouth, designed by Emmy Tattoo."
        tabindex="0" role="button" aria-label="View: Surreal face and snake hand tattoo">
     <img src="pictures/surreal-face-snake-hand-tattoo-emmy-tattoo.jpg" width="1200" height="1541"
@@ -766,14 +782,14 @@
   </div>
 
   <div class="pw-item" data-style="fine-art realism"
-       data-src="pictures/fine-line-spotted-shark-arm-tattoo-emmy-tattoo.jpg"
+       data-src="pictures/web/fine-line-spotted-shark-arm-tattoo-emmy-tattoo-1440.webp"
        data-alt="Fine line blackwork tattoo of a spotted leopard shark using dotwork shading on the back of a woman's upper arm, done by Emmy Tattoo."
        tabindex="0" role="button" aria-label="View: Fine line spotted shark arm tattoo">
     <img src="pictures/fine-line-spotted-shark-arm-tattoo-emmy-tattoo.jpg" width="1200" height="1600"
          srcset="pictures/web/fine-line-spotted-shark-arm-tattoo-emmy-tattoo-480.webp 480w, pictures/web/fine-line-spotted-shark-arm-tattoo-emmy-tattoo-960.webp 960w"
          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
          alt="Fine line blackwork tattoo of a spotted leopard shark using dotwork shading on the back of a woman's upper arm, done by Emmy Tattoo."
-         title="Fine Line Spotted Shark Arm Tattoo by Emmy Tattoo" decoding="async">
+         title="Fine Line Spotted Shark Arm Tattoo by Emmy Tattoo" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Art · Realism</span>
       <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
@@ -781,13 +797,13 @@
   </div>
 
   <div class="pw-item" data-style="fine-line"
-       data-src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg"
+       data-src="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-1440.webp"
        data-alt="Minimalist fine-line abstract continuous flower tattoo on upper arm"
        tabindex="0" role="button" aria-label="View: Fine line abstract flower tattoo">
     <img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" width="2160" height="3007"
          srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w, pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp 960w"
          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-         alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull" decoding="async">
+         alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Line</span>
       <div class="pw-zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
@@ -795,7 +811,7 @@
   </div>
 
   <div class="pw-item" data-style="realism"
-       data-src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg"
+       data-src="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-1440.webp"
        data-alt="Wolf portrait with shattered clock and forest forearm half-sleeve"
        tabindex="0" role="button" aria-label="View: Wolf portrait forearm tattoo">
     <img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" width="2160" height="2881"
@@ -809,7 +825,7 @@
   </div>
 
   <div class="pw-item" data-style="fine-art"
-       data-src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg"
+       data-src="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-1440.webp"
        data-alt="Flying barn owl black and grey tattoo on upper arm"
        tabindex="0" role="button" aria-label="View: Flying barn owl tattoo">
     <img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" width="2160" height="2880"
@@ -823,7 +839,7 @@
   </div>
 
   <div class="pw-item" data-style="realism"
-       data-src="pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg"
+       data-src="pictures/web/Pug-Dog-Portrait-Floral-Thigh-Tattoo-1440.webp"
        data-alt="Realistic pug Bonnie portrait with roses on thigh"
        tabindex="0" role="button" aria-label="View: Pug portrait thigh tattoo">
     <img src="pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg" width="2160" height="2880"
@@ -837,7 +853,7 @@
   </div>
 
   <div class="pw-item" data-style="fine-art"
-       data-src="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg"
+       data-src="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-1440.webp"
        data-alt="Classical mythology Hermes fine art forearm tattoo"
        tabindex="0" role="button" aria-label="View: Classical mythology fine art tattoo">
     <img src="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg" width="3024" height="4032"
@@ -851,7 +867,7 @@
   </div>
 
   <div class="pw-item" data-style="realism"
-       data-src="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg"
+       data-src="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-1440.webp"
        data-alt="Five realistic cat portraits on upper arm"
        tabindex="0" role="button" aria-label="View: Five cat portraits tattoo">
     <img src="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg" width="2160" height="2880"
@@ -865,7 +881,7 @@
   </div>
 
   <div class="pw-item" data-style="realism"
-       data-src="pictures/Black-Pug-Portrait-Tattoo-With-Daisies.jpg"
+       data-src="pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-1440.webp"
        data-alt="Black pug Marley portrait with daisies and roses"
        tabindex="0" role="button" aria-label="View: Black pug Marley tattoo">
     <img src="pictures/Black-Pug-Portrait-Tattoo-With-Daisies.jpg" width="2160" height="2880"
@@ -879,7 +895,7 @@
   </div>
 
   <div class="pw-item" data-style="realism"
-       data-src="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg"
+       data-src="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-1440.webp"
        data-alt="Realistic thresher shark tattoo on upper arm"
        tabindex="0" role="button" aria-label="View: Thresher shark tattoo">
     <img src="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg" width="2002" height="2669"
@@ -959,6 +975,10 @@
 </footer>
 
 <script>
+/* Runs after the deferred GSAP/Lenis bundles, on DOMContentLoaded (see tail). */
+function __boot() {
+  if (!window.gsap || !window.Lenis) { document.documentElement.classList.add('libs-failed'); return; }
+
   /* ═══ LOW-END DEVICE DETECTION ═══ (mirrors index.html) */
   const LOW_END = navigator.hardwareConcurrency <= 4
     || (navigator.deviceMemory && navigator.deviceMemory <= 4)
@@ -973,10 +993,12 @@
   gsap.ticker.add(t => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
 
-  // Progress + nav
+  // Progress + nav — elements cached; this runs on every scroll frame
+  const progEl = document.getElementById('prog');
+  const navEl  = document.getElementById('nav');
   lenis.on('scroll', ({ progress, scroll }) => {
-    gsap.set('#prog', { scaleX: progress });
-    document.getElementById('nav').classList.toggle('s', scroll > 40);
+    gsap.set(progEl, { scaleX: progress });
+    navEl.classList.toggle('s', scroll > 40);
   });
 
   // Hero entrance
@@ -984,14 +1006,24 @@
   gsap.fromTo('.h-title',   { opacity: 0, y: 32 }, { opacity: 1, y: 0, duration: 1,  delay: .3,  ease: 'expo.out' });
   gsap.fromTo('.h-sub',     { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .9, delay: .5,  ease: 'expo.out' });
 
-  // Grid entrance (staggered)
+  // Grid entrance — tied to the grid entering view instead of firing for all 10 on load
   gsap.fromTo('.pw-item',
     { opacity: 0, y: 28 },
-    { opacity: 1, y: 0, stagger: .06, duration: .65, delay: .45, ease: 'power3.out' }
+    { opacity: 1, y: 0, stagger: .06, duration: .65, ease: 'power3.out',
+      scrollTrigger: { trigger: '#pw-grid', start: 'top 88%', once: true } }
   );
 
   // Lazy images change document height after init — recompute trigger positions
   window.addEventListener('load', () => ScrollTrigger.refresh());
+  let _rzTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(_rzTimer);
+    _rzTimer = setTimeout(() => ScrollTrigger.refresh(), 180);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) gsap.ticker.sleep(); else gsap.ticker.wake();
+  });
 
   // ── Filter ──
   const items = [...document.querySelectorAll('.pw-item')];
@@ -1150,6 +1182,9 @@
       window.__theme.set(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
     });
   })();
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', __boot);
+else __boot();
 </script>
 
 <!-- Resilience watchdog: if the hero is still hidden after the libs should have run, force-reveal.

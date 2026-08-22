@@ -79,9 +79,16 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
-  <link href="https://fonts.cdnfonts.com/css/romance-fatal-serif" rel="stylesheet">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="https://emmy-reviews.emmalenetattoo.workers.dev">
+  <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
+  <!-- Display face is self-hosted: one origin fewer and font-display:swap instead of cdnfonts' 3s block -->
+  <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
+  <link rel="preload" as="image" fetchpriority="high"
+        imagesrcset="pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-480.webp 480w, pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-960.webp 960w, pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-1440.webp 1440w"
+        imagesizes="100vw">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
 
   <!-- Google Analytics — one gtag.js load serves both properties; config picks the ID -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J8X45ECTLH"></script>
@@ -120,13 +127,14 @@
       mql.addEventListener('change', function () { if (!stored()) apply(mql.matches ? 'light' : 'dark'); });
     })();
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha256-eUny2Hql6qBbqmuoQ60u6ueG2eCZVKQaGygqwCPquug=" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha256-eUny2Hql6qBbqmuoQ60u6ueG2eCZVKQaGygqwCPquug=" crossorigin="anonymous" onerror="__libFail()"></script>
 
   <!-- No-JS fallback: reveal JS-animated content and remove the loader overlay -->
   <noscript><style>
     #loader { display: none !important; }
+    #nav .n-logo { opacity: 1 !important; }
     :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .s-label, .ei,
         .bk-av, .bk-rule, .bk-sub, .bk-btn, .bk-steps, .loc-map-wrap,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
@@ -138,6 +146,16 @@
   </style></noscript>
 
   <style>
+    /* Self-hosted display face. The cdnfonts copy shipped without font-display,
+       which gave the loader wordmark and hero H1 a ~3s block period. */
+    @font-face {
+      font-family: 'Romance Fatal Serif';
+      src: url('/fonts/Rom_Ftl_Srif.woff') format('woff');
+      font-weight: 400 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
     /* ══════════════════════════════════════════
        RESET + TOKENS
     ══════════════════════════════════════════ */
@@ -325,11 +343,15 @@
     /* ══════════════════════════════════════════
        LOADER
     ══════════════════════════════════════════ */
+    /* The intro is CSS-driven so it starts at first paint instead of waiting for
+       the deferred GSAP bundle; JS only ends it (see exitLoader). */
     #loader {
       position: fixed; inset: 0; z-index: 999999;
       background: var(--bg);
       display: flex; align-items: center; justify-content: center;
+      transition: opacity .1s linear;
     }
+    #loader.ld-out { opacity: 0; }
 
     .ld-wrap {
       text-align: center;
@@ -351,7 +373,11 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       filter: drop-shadow(0 2px 24px rgba(var(--gold-rgb),.28));
+      animation: ld-rise .24s cubic-bezier(.16,1,.3,1) both;
     }
+    .ld-name .ld-c:nth-child(2) { animation-delay: .02s; }
+    .ld-name .ld-c:nth-child(3) { animation-delay: .04s; }
+    .ld-name .ld-c:nth-child(4) { animation-delay: .06s; }
     .ld-rule {
       width: 72px; height: 1px;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
@@ -370,7 +396,23 @@
     }
     .ld-sub .ld-c {
       display: inline-block;
-      will-change: transform, opacity;
+      animation: ld-fade .18s var(--out) both;
+    }
+    .ld-sub .ld-c:nth-child(1) { animation-delay: .10s; }
+    .ld-sub .ld-c:nth-child(2) { animation-delay: .112s; }
+    .ld-sub .ld-c:nth-child(3) { animation-delay: .124s; }
+    .ld-sub .ld-c:nth-child(4) { animation-delay: .136s; }
+    .ld-sub .ld-c:nth-child(5) { animation-delay: .148s; }
+    .ld-sub .ld-c:nth-child(6) { animation-delay: .16s; }
+    .ld-rule { animation: ld-rule .18s var(--out) .08s both; }
+    @keyframes ld-rise {
+      from { clip-path: inset(115% -10% -10% -10%); transform: translateY(18px); }
+      to   { clip-path: inset(-10% -10% -10% -10%); transform: none; }
+    }
+    @keyframes ld-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes ld-rule { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) {
+      .ld-name .ld-c, .ld-sub .ld-c, .ld-rule { animation: none !important; }
     }
 
     /* ══════════════════════════════════════════
@@ -468,6 +510,10 @@
     }
     #theme-toggle:hover { color: var(--gold); border-color: var(--btn-ring-h); }
     #theme-toggle svg { flex-shrink: 0; }
+    /* Sun while dark (the theme the button switches to), half-moon while light */
+    #theme-toggle .ti-moon { display: none; }
+    :root[data-theme="light"] #theme-toggle .ti-sun  { display: none; }
+    :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
     /* Full-screen mobile menu overlay */
     #mobile-menu {
       position: fixed; inset: 0; z-index: 10000;
@@ -500,6 +546,10 @@
       .n-item { display: none; }
       .n-links { display: none; }
       .nav-toggle { display: flex; }
+      /* The hero H1 already reads "Emmy Tattoo"; show the nav wordmark only
+         once the hero has scrolled away (html.hero-out, set by IntersectionObserver). */
+      .n-logo { opacity: 0; pointer-events: none; transition: opacity .3s var(--out); }
+      html.hero-out .n-logo, html.libs-failed .n-logo { opacity: 1; pointer-events: auto; }
     }
     @media (min-width: 769px) { #mobile-menu { display: none; } }
 
@@ -560,7 +610,7 @@
     }
     /* Entrance gated on .hero-go (added by initHero after the loader) so the
        sequence reads eyebrow → title → sub → CTA instead of finishing under the loader */
-    html.hero-go .h-eyebrow { animation: hcta-in .8s var(--out) .05s forwards; }
+    html.hero-go .h-eyebrow { animation: hcta-in .28s var(--out) 0s forwards; }
     @media (prefers-reduced-motion: reduce) { .h-eyebrow, html.hero-go .h-eyebrow { animation: none !important; opacity: 1 !important; } }
     .h-title {
       font-family: var(--display);
@@ -619,7 +669,7 @@
       display: flex; flex-wrap: wrap; gap: 14px; margin-top: 38px;
       opacity: 0;
     }
-    html.hero-go .h-cta { animation: hcta-in .9s var(--out) .95s forwards; }
+    html.hero-go .h-cta { animation: hcta-in .24s var(--out) .05s forwards; }
     @keyframes hcta-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
     .h-cta-primary, .h-cta-secondary {
       display: inline-flex; align-items: center; gap: 12px;
@@ -1900,8 +1950,11 @@
        click to activate map interaction so the iframe stops trapping scroll. */
     .loc-map-overlay {
       position: absolute; inset: 0; z-index: 2; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: .7rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--fg); background: var(--bg2); border: 0;
     }
-    .loc-map-wrap.map-active .loc-map-overlay { display: none; }
     @media (max-width: 768px) {
       #location { padding: 72px var(--pad) 80px; }
       /* .loc-hd is align-items:flex-start, so the stack shrink-wraps to its
@@ -2057,6 +2110,9 @@
     /* Animated box-shadow on fixed / always-visible elements. */
     html.lite #float-cta-a,
     html.lite .loc-map-wrap { transition: none; }
+    /* Infinite pulses keep the compositor awake even off-screen. */
+    html.lite .fl-dot, html.lite .bk-avdot { animation: none; }
+    @media (prefers-reduced-motion: reduce) { .fl-dot, .bk-avdot { animation: none; } }
 
     /* ══════════════════════════════════════════
        RESILIENCE — if animation libs/JS fail, reveal content + drop loader
@@ -2093,7 +2149,8 @@
   <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></symbol>
   <symbol id="i-ig" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></symbol>
   <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></symbol>
-  <symbol id="i-theme" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3a9 9 0 010 18z" fill="currentColor"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="2.4" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.6" y2="12"/><line x1="5.2" y1="5.2" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5.2" y2="18.8"/></g></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
 </svg>
 
 <div class="vignette"  aria-hidden="true"></div>
@@ -2138,7 +2195,8 @@
   </div>
   <div class="n-actions">
     <button id="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false" title="Toggle light / dark">
-      <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-theme"/></svg>
+      <svg class="ti ti-sun" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg>
+      <svg class="ti ti-moon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-moon"/></svg>
     </button>
     <button id="nav-toggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
       <span></span><span></span><span></span>
@@ -2167,9 +2225,9 @@
 <!-- ════ HERO ════ -->
 <section id="hero">
   <div class="hero-bg-photo" aria-hidden="true">
-    <img src="pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg"
-         srcset="pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-960.webp 960w, pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg 1440w"
-         sizes="100vw" fetchpriority="high"
+    <img src="pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-960.webp"
+         srcset="pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-480.webp 480w, pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-960.webp 960w, pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-1440.webp 1440w"
+         sizes="100vw" width="1440" height="1921" fetchpriority="high"
          alt="A black and white close-up photo of a tattoo artist from Emmy Tattoo working on a client's arm using a rotary tattoo machine." loading="eager" decoding="async">
   </div>
   <div class="h-vign" aria-hidden="true"></div>
@@ -2190,7 +2248,7 @@
         <svg width="18" height="18" aria-hidden="true"><use href="#i-wa"/></svg>
         Enquire now
       </a>
-      <a class="h-cta-secondary" href="#work">View the work</a>
+      <a class="h-cta-secondary" href="/portfolio">View the work</a>
     </div>
   </div>
 </section>
@@ -2200,16 +2258,16 @@
 <section id="work">
   <div class="w-grid">
 
-      <article class="wc" tabindex="0" role="button" aria-label="Realism — Thresher shark" data-full="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg">
+      <article class="wc" tabindex="0" role="button" aria-label="Realism — Thresher shark" data-full="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-1440.webp">
         <img class="wc-img" src="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg" width="2002" height="2669"
              srcset="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-480.webp 480w, pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-960.webp 960w"
              sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
-             alt="Black and grey realism tattoo of a Thresher shark swimming downwards on a client's upper arm." loading="eager" decoding="async">
+             alt="Black and grey realism tattoo of a Thresher shark swimming downwards on a client's upper arm." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
       </article>
 
-      <article class="wc" tabindex="0" role="button" aria-label="Realism — Wolf portrait forearm" data-full="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg">
+      <article class="wc" tabindex="0" role="button" aria-label="Realism — Wolf portrait forearm" data-full="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-1440.webp">
         <img class="wc-img" src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" width="2160" height="2881"
              srcset="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-480.webp 480w, pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp 960w"
              sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -2218,7 +2276,7 @@
         <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
       </article>
 
-      <article class="wc" tabindex="0" role="button" aria-label="Fine line — Abstract flower" data-full="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg">
+      <article class="wc" tabindex="0" role="button" aria-label="Fine line — Abstract flower" data-full="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-1440.webp">
         <img class="wc-img" src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" width="2160" height="3007"
              srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w, pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp 960w"
              sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -2227,7 +2285,7 @@
         <div class="wc-lbl"><div class="wc-sub">Fine Line</div></div>
       </article>
 
-      <article class="wc" tabindex="0" role="button" aria-label="Fine art — Flying barn owl" data-full="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg">
+      <article class="wc" tabindex="0" role="button" aria-label="Fine art — Flying barn owl" data-full="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-1440.webp">
         <img class="wc-img" src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" width="2160" height="2880"
              srcset="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-480.webp 480w, pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-960.webp 960w"
              sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -2236,7 +2294,7 @@
         <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
       </article>
 
-      <article class="wc" tabindex="0" role="button" aria-label="Fine art — Classical mythology Hermes" data-full="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg">
+      <article class="wc" tabindex="0" role="button" aria-label="Fine art — Classical mythology Hermes" data-full="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-1440.webp">
         <img class="wc-img" src="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg" width="3024" height="4032"
              srcset="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-480.webp 480w, pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp 960w"
              sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -2245,7 +2303,7 @@
         <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
       </article>
 
-      <article class="wc" tabindex="0" role="button" aria-label="Realism — Cat portraits" data-full="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg">
+      <article class="wc" tabindex="0" role="button" aria-label="Realism — Cat portraits" data-full="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-1440.webp">
         <img class="wc-img" src="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg" width="2160" height="2880"
              srcset="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-480.webp 480w, pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-960.webp 960w"
              sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -2717,14 +2775,8 @@
       </a>
     </div>
   </div>
-  <div class="loc-map-wrap">
-    <div class="loc-map-overlay" role="button" tabindex="0" aria-label="Activate map" title="Click to interact with the map"></div>
-    <iframe
-      title="Sainthood Tattoo Studio — Hull"
-      src="https://maps.google.com/maps?q=80+Princes+Avenue,+Hull+HU5+3QJ&output=embed&z=17"
-      allowfullscreen="" loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade">
-    </iframe>
+  <div class="loc-map-wrap" id="loc-map-wrap" data-map="https://maps.google.com/maps?q=80+Princes+Avenue,+Hull+HU5+3QJ&output=embed&z=17">
+    <button type="button" class="loc-map-overlay" id="loc-map-load" aria-label="Load interactive map of Sainthood Tattoo">Load map</button>
   </div>
 </section>
 
@@ -2785,8 +2837,10 @@
 </footer>
 
 <script>
-(function () {
+/* Runs after the deferred GSAP/Lenis bundles, on DOMContentLoaded (see tail). */
+function __boot() {
   'use strict';
+  if (!window.gsap || !window.Lenis) { document.documentElement.classList.add('libs-failed'); return; }
 
   /* ═══ AVAILABILITY TOGGLE ═══
      Set to false when not taking bookings — updates pill text + colour */
@@ -2848,43 +2902,26 @@
     }
   }
 
+  /* The intro itself is CSS (see #loader keyframes) so it plays while the libs
+     stream in; this only ends it, never earlier than INTRO_MS after navigation. */
+  const INTRO_MS = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 280;
+
   function exitLoader() {
-    gsap.timeline({ onComplete: startPage })
-      .to('.ld-wrap', { opacity: 0, y: -32, duration: 0.55, ease: 'power2.in' })
-      .to(ldr,        { opacity: 0, duration: 0.35, ease: 'power1.inOut' }, '-=0.15');
+    ldr.classList.add('ld-out');
+    setTimeout(startPage, 100);
   }
 
   if (SKIP_INTRO) {
     ldr.style.display = 'none';
-    document.addEventListener('DOMContentLoaded', startPage);
-  } else
-  // Clip-path wipe — letters rise up into view left-to-right
-  (() => {
-    const nameChars = document.querySelectorAll('.ld-name .ld-c');
-    const subChars  = document.querySelectorAll('.ld-sub  .ld-c');
-    const rule      = document.querySelector('.ld-rule');
+    startPage();
+  } else {
+    setTimeout(exitLoader, Math.max(0, INTRO_MS - performance.now()));
+  }
 
-    gsap.set(nameChars, { clipPath: 'inset(115% -10% -10% -10%)', y: 22 });
-    gsap.set(subChars,  { opacity: 0, y: 10 });
-    gsap.set(rule,      { scaleX: 0, opacity: 0, transformOrigin: '50% 50%' });
-
-    gsap.timeline({ onComplete: () => {
-      document.querySelectorAll('.ld-c').forEach(el => el.style.willChange = 'auto');
-      setTimeout(exitLoader, 130);
-    } })
-      .to(nameChars, {
-        clipPath: 'inset(-10% -10% -10% -10%)',
-        y: 0,
-        duration: 1.0, ease: 'expo.out',
-        stagger: { amount: 0.26, from: 'start' }
-      })
-      .to(rule, { scaleX: 1, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.5')
-      .to(subChars, {
-        opacity: 1, y: 0,
-        duration: 0.65, ease: 'power3.out',
-        stagger: { amount: 0.18, from: 'center' }
-      }, '-=0.28');
-  })();
+  /* Background tabs get no ticker: GSAP keeps tweens live otherwise. */
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) gsap.ticker.sleep(); else gsap.ticker.wake();
+  });
 
   let _rzTimer;
   window.addEventListener('resize', () => {
@@ -2982,14 +3019,11 @@
       ).join('');
     });
     const htChars = document.querySelectorAll('.h-title .htc');
-    gsap.set(htChars, { opacity: 0, scale: 1.38, filter: 'blur(14px)', transformOrigin: '50% 100%' });
+    gsap.set(htChars, { opacity: 0, scale: 1.18, y: 10, transformOrigin: '50% 100%' });
 
     gsap.timeline({ defaults: { ease: 'power3.out' } })
-      .to(htChars,   {
-        opacity: 1, scale: 1, filter: 'blur(0px)',
-        duration: 1.35, delay: .1, stagger: { amount: 0.5, from: 'start' }
-      })
-      .to('.h-sub',    { opacity: 1, duration: 1.2          }, '-=.5');
+      .to(htChars, { opacity: 1, scale: 1, y: 0, duration: .24, stagger: { amount: 0.07, from: 'start' } })
+      .to('.h-sub', { opacity: 1, duration: .26 }, '-=.12');
 
     initScrollAnims();
   }
@@ -2997,15 +3031,11 @@
   /* ═══ SCROLL ANIMATIONS ═══ */
   function initScrollAnims() {
 
-    /* ── Hero depth parallax + content blur (skipped on weak hardware) ── */
+    /* ── Hero depth parallax (skipped on weak hardware) ── */
     if (!LOW_END) {
       gsap.to('.h-inner', {
-        yPercent: -20, ease: 'none',
+        yPercent: -20, opacity: 0.3, ease: 'none',
         scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
-      });
-      gsap.to('.h-inner', {
-        filter: 'blur(8px)', opacity: 0.3, ease: 'none',
-        scrollTrigger: { trigger: '#hero', start: '40% top', end: 'bottom top', scrub: 1.2 }
       });
     }
 
@@ -3014,7 +3044,7 @@
     gsap.utils.toArray('.s-label').forEach(el => {
       gsap.to(el, {
         opacity: 1, y: 0, duration: .9, ease: 'expo.out',
-        scrollTrigger: { trigger: el, start: 'top 92%' }
+        scrollTrigger: { trigger: el, start: 'top 92%', once: true }
       });
     });
 
@@ -3120,52 +3150,53 @@
     /* ── About — entrance (gsap.from: content stays visible if JS fails) ── */
     gsap.from('#about .ab-portrait', {
       opacity: 0, y: 40, duration: 1.1, ease: 'expo.out',
-      scrollTrigger: { trigger: '#about', start: 'top 80%' }
+      scrollTrigger: { trigger: '#about', start: 'top 80%', once: true }
     });
     gsap.from('#about .ab-h2, #about .ab-bio > *', {
       opacity: 0, y: 22, stagger: .1, duration: .9, ease: 'expo.out',
-      scrollTrigger: { trigger: '#about', start: 'top 78%' }
+      scrollTrigger: { trigger: '#about', start: 'top 78%', once: true }
     });
 
     /* ── Expertise — Framer clip-path wipe ── */
     gsap.fromTo('.exp-h2',
       { clipPath: 'inset(0 100% 0 0)' },
       { clipPath: 'inset(0 0% 0 0)', duration: 1.3, ease: 'expo.out',
-        scrollTrigger: { trigger: '#exp', start: 'top 84%' } }
+        scrollTrigger: { trigger: '#exp', start: 'top 84%', once: true } }
     );
     // Rows — blur+slide on mobile
+    /* Blur costs a re-raster per frame; weak hardware gets slide-only. */
     gsap.fromTo('.ei',
-      { opacity: 0, x: 40, filter: 'blur(6px)' },
+      LOW_END ? { opacity: 0, x: -18 } : { opacity: 0, x: -18, filter: 'blur(6px)' },
       { opacity: 1, x: 0, filter: 'blur(0px)', stagger: .1, duration: .9, ease: 'expo.out',
-        scrollTrigger: { trigger: '.exp-list', start: 'top 82%' } }
+        scrollTrigger: { trigger: '.exp-list', start: 'top 82%', once: true } }
     );
     // FAQ heading — clip-path wipe
     gsap.fromTo('.faq-h2',
       { clipPath: 'inset(0 100% 0 0)' },
       { clipPath: 'inset(0 0% 0 0)', duration: 1.3, ease: 'expo.out',
-        scrollTrigger: { trigger: '#faq', start: 'top 84%' } }
+        scrollTrigger: { trigger: '#faq', start: 'top 84%', once: true } }
     );
     gsap.fromTo('.faq-hd-rule',
       { scaleX: 0, transformOrigin: 'left' },
       { scaleX: 1, duration: 1.4, ease: 'expo.out',
-        scrollTrigger: { trigger: '#faq', start: 'top 84%' } }
+        scrollTrigger: { trigger: '#faq', start: 'top 84%', once: true } }
     );
     gsap.fromTo('.faq-hd-count',
       { opacity: 0 },
       { opacity: 1, duration: .8, delay: .5, ease: 'power2.out',
-        scrollTrigger: { trigger: '#faq', start: 'top 84%' } }
+        scrollTrigger: { trigger: '#faq', start: 'top 84%', once: true } }
     );
     // FAQ items scroll-in: slide from left
     gsap.fromTo('.fq-item',
       { opacity: 0, x: -32 },
       { opacity: 1, x: 0, stagger: .08, duration: .8, ease: 'power3.out',
-        scrollTrigger: { trigger: '.fq-list', start: 'top 82%' } }
+        scrollTrigger: { trigger: '.fq-list', start: 'top 82%', once: true } }
     );
     // Numbers reveal
     gsap.fromTo('.fq-num',
       { opacity: 0, y: 16 },
       { opacity: 1, y: 0, stagger: .08, duration: .7, ease: 'expo.out',
-        scrollTrigger: { trigger: '.fq-list', start: 'top 82%' } }
+        scrollTrigger: { trigger: '.fq-list', start: 'top 82%', once: true } }
     );
 
     /* ── Accordion (expertise only) ── */
@@ -3393,73 +3424,73 @@
     gsap.fromTo('#aftercare .ac-hd',
       { opacity: 0, y: 28 },
       { opacity: 1, y: 0, duration: 1, ease: 'expo.out',
-        scrollTrigger: { trigger: '#aftercare', start: 'top 82%' } }
+        scrollTrigger: { trigger: '#aftercare', start: 'top 82%', once: true } }
     );
     gsap.fromTo('#aftercare .ac-phase',
       { opacity: 0, y: 32 },
       { opacity: 1, y: 0, stagger: .12, duration: .85, ease: 'power3.out',
-        scrollTrigger: { trigger: '#aftercare .ac-phases', start: 'top 84%' } }
+        scrollTrigger: { trigger: '#aftercare .ac-phases', start: 'top 84%', once: true } }
     );
     gsap.fromTo('#aftercare .ac-note',
       { opacity: 0, y: 20 },
       { opacity: 1, y: 0, duration: .8, ease: 'power3.out',
-        scrollTrigger: { trigger: '#aftercare .ac-note', start: 'top 90%' } }
+        scrollTrigger: { trigger: '#aftercare .ac-note', start: 'top 90%', once: true } }
     );
 
     /* ── Flash Days ── */
     gsap.fromTo('#flash .fl-left',
       { opacity: 0, x: -32 },
       { opacity: 1, x: 0, duration: 1.1, ease: 'expo.out',
-        scrollTrigger: { trigger: '#flash', start: 'top 82%' } }
+        scrollTrigger: { trigger: '#flash', start: 'top 82%', once: true } }
     );
 
     /* ── Gifts section ── */
     gsap.fromTo('#gifts .gf-body',
       { opacity: 0, y: 28 },
       { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
-        scrollTrigger: { trigger: '#gifts', start: 'top 82%' } }
+        scrollTrigger: { trigger: '#gifts', start: 'top 82%', once: true } }
     );
 
     /* ── Booking — staggered reveal ── */
     gsap.to('.bk-av', {
       opacity: 1, y: 0, duration: .9, ease: 'expo.out',
-      scrollTrigger: { trigger: '#book', start: 'top 82%' }
+      scrollTrigger: { trigger: '#book', start: 'top 82%', once: true }
     });
     gsap.fromTo('.bk-h2 .tl-i',
       { y: 52, opacity: 0 },
       { y: 0, opacity: 1, stagger: .13, duration: 1.3, ease: 'expo.out', delay: .1,
-        scrollTrigger: { trigger: '#book', start: 'top 80%' } }
+        scrollTrigger: { trigger: '#book', start: 'top 80%', once: true } }
     );
     gsap.to('.bk-rule', {
       opacity: 1, scaleX: 1, duration: .9, ease: 'expo.out', delay: .4,
-      scrollTrigger: { trigger: '#book', start: 'top 76%' }
+      scrollTrigger: { trigger: '#book', start: 'top 76%', once: true }
     });
     gsap.to('.bk-sub', {
       opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: .32,
-      scrollTrigger: { trigger: '#book', start: 'top 76%' }
+      scrollTrigger: { trigger: '#book', start: 'top 76%', once: true }
     });
     gsap.to('.bk-steps', {
       opacity: 1, y: 0, duration: .9, ease: 'expo.out', delay: .44,
-      scrollTrigger: { trigger: '#book', start: 'top 74%' }
+      scrollTrigger: { trigger: '#book', start: 'top 74%', once: true }
     });
     gsap.fromTo('.bk-btn',
       { opacity: 0, y: 28 },
       { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .16, delay: .6,
-        scrollTrigger: { trigger: '#book', start: 'top 70%' } }
+        scrollTrigger: { trigger: '#book', start: 'top 70%', once: true } }
     );
 
     /* ── Framer: clip-path wipe on booking heading ── */
     gsap.fromTo('.bk-h2',
       { clipPath: 'inset(0 0 100% 0)' },
       { clipPath: 'inset(0 0 0% 0)', duration: 1.4, ease: 'expo.out',
-        scrollTrigger: { trigger: '#book', start: 'top 82%' } }
+        scrollTrigger: { trigger: '#book', start: 'top 82%', once: true } }
     );
 
     /* ── Framer: trust heading clip reveal ── */
     gsap.fromTo('#trust .tr-h2',
       { clipPath: 'inset(0 100% 0 0)' },
       { clipPath: 'inset(0 0% 0 0)', duration: 1.3, ease: 'expo.out',
-        scrollTrigger: { trigger: '#trust', start: 'top 84%' } }
+        scrollTrigger: { trigger: '#trust', start: 'top 84%', once: true } }
     );
 
     /* ── Framer: floating CTA (mobile only) ── */
@@ -3469,7 +3500,7 @@
     if (floatCta) {
       gsap.set(floatCta, { y: 80 });
       ScrollTrigger.create({
-        trigger: '#hero', start: 'bottom 70%',
+        trigger: '#hero', start: 'bottom top',
         onEnter() {
           floatCta.style.pointerEvents = 'all';
           floatCta.setAttribute('aria-hidden', 'false');
@@ -3498,6 +3529,14 @@
         scrollTrigger: { trigger: '#work-outer', start: 'top 82%', once: true } }
     );
 
+    /* ── Mobile: nav wordmark only once the hero H1 has left the screen ── */
+    const heroEl = document.getElementById('hero');
+    if (heroEl && 'IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => {
+        document.documentElement.classList.toggle('hero-out', !e.isIntersecting);
+      }, { rootMargin: '-60px 0px 0px 0px', threshold: 0 }).observe(heroEl);
+    }
+
   }
 
   /* ══ REVIEWS — Spotlight carousel ══ */
@@ -3513,7 +3552,7 @@
 
   /* Head entrance */
   gsap.fromTo('.tr-head', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
-    scrollTrigger: { trigger: '#trust', start: 'top 88%' } });
+    scrollTrigger: { trigger: '#trust', start: 'top 88%', once: true } });
 
   (() => {
     const stage = document.getElementById('tr-stage');
@@ -3553,10 +3592,15 @@
       modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); lenis.stop();
     }
 
-    /* Pause auto-advance when off-screen */
+    /* Pause auto-advance when off-screen. The progress tween is only re-armed on
+       re-entry, so an off-screen carousel costs nothing. */
     let visible = true;
+    let _onVisible = () => {};
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { rootMargin: '80px' }).observe(stage);
+      new IntersectionObserver(([e]) => {
+        visible = e.isIntersecting;
+        if (visible) _onVisible();
+      }, { rootMargin: '80px' }).observe(stage);
     }
 
     /* Pause auto-advance while the visitor hovers/reads; each builder registers its pause/resume */
@@ -3615,13 +3659,16 @@
       function paint(dir) {
         const r = REVIEWS[i];
         const tl = gsap.timeline();
-        tl.to([qEl, aEl], { opacity: 0, y: -8 * dir, filter: 'blur(6px)', duration: .26, ease: 'power2.in' })
+        tl.to([qEl, aEl], STATIC ? { opacity: 0, y: -8 * dir, duration: .26, ease: 'power2.in' }
+                                 : { opacity: 0, y: -8 * dir, filter: 'blur(6px)', duration: .26, ease: 'power2.in' })
           .add(() => {
             qEl.textContent = '“' + r.quote + '”';
             aEl.innerHTML = photoEl(r, 'sp-pic') + '<span class="sp-name">' + esc(r.name) + '<span class="sp-sub">Google review</span></span>';
             ghost.textContent = initial(r.name);
           })
-          .fromTo([qEl, aEl], { opacity: 0, y: 12 * dir, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .6, ease: 'expo.out', stagger: .06 })
+          .fromTo([qEl, aEl], STATIC ? { opacity: 0, y: 12 * dir } : { opacity: 0, y: 12 * dir, filter: 'blur(8px)' },
+                  STATIC ? { opacity: 1, y: 0, duration: .6, ease: 'expo.out', stagger: .06 }
+                         : { opacity: 1, y: 0, filter: 'blur(0px)', duration: .6, ease: 'expo.out', stagger: .06 })
           .fromTo(ghost, { opacity: 0, scale: .92 }, { opacity: 1, scale: 1, duration: .8, ease: 'expo.out' }, '<');
         dots.forEach((d, k) => d.classList.toggle('on', k === i));
       }
@@ -3629,11 +3676,11 @@
       function next() { go(i + 1, 1); }
       function prev() { go(i - 1, -1); }
       function restart() {
-        if (STATIC) return;
+        if (STATIC || !visible) { clearTimeout(timer); gsap.killTweensOf(bar); return; }
         clearTimeout(timer);
         gsap.killTweensOf(bar);
         gsap.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: 6, ease: 'none', transformOrigin: 'left' });
-        timer = setTimeout(() => { visible ? next() : restart(); }, 6000);
+        timer = setTimeout(() => { if (visible) next(); }, 6000);
       }
       stage.querySelector('.sp-next').addEventListener('click', next);
       stage.querySelector('.sp-prev').addEventListener('click', prev);
@@ -3644,6 +3691,7 @@
       addSwipe(stage, next, prev);
       _pause = () => { clearTimeout(timer); gsap.killTweensOf(bar); };
       _resume = restart;
+      _onVisible = restart;
       paint(1); restart();
     }
 
@@ -3666,22 +3714,29 @@
   /* ═══ LOCATION ═══ */
   gsap.to('.loc-map-wrap', {
     opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
-    scrollTrigger: { trigger: '#location', start: 'top 78%' }
+    scrollTrigger: { trigger: '#location', start: 'top 78%', once: true }
   });
 
-  /* Map overlay: scroll passes through until the user opts in by clicking */
+  /* Map facade: the embed boots a ~1 MB Maps client, so it is only injected on
+     an explicit click — which doubles as the opt-in that stops it trapping scroll. */
   (() => {
-    const mapWrap = document.querySelector('.loc-map-wrap');
-    const overlay = mapWrap && mapWrap.querySelector('.loc-map-overlay');
-    if (!overlay) return;
-    const activate = () => mapWrap.classList.add('map-active');
-    overlay.addEventListener('click', activate);
-    overlay.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); }
-    });
+    const mapBtn = document.getElementById('loc-map-load');
+    if (!mapBtn) return;
+    mapBtn.addEventListener('click', () => {
+      const wrap = document.getElementById('loc-map-wrap');
+      const f = document.createElement('iframe');
+      f.title = 'Sainthood Tattoo Studio — Hull';
+      f.src = wrap.dataset.map;
+      f.allowFullscreen = true;
+      f.referrerPolicy = 'no-referrer-when-downgrade';
+      wrap.appendChild(f);
+      mapBtn.remove();
+    }, { once: true });
   })();
 
-})();
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', __boot);
+else __boot();
 </script>
 
 <!-- ════ GOOGLE REVIEWS — LIVE FETCH via Cloudflare Worker proxy ════ -->
@@ -3701,6 +3756,7 @@
     };
   }
 
+  function loadReviews() {
   fetch(WORKER_URL)
     .then(function(res) { return res.json(); })
     .then(function(data) {
@@ -3721,6 +3777,15 @@
       }
     })
     .catch(function(err) { console.error('[Reviews] Fetch failed:', err); });
+  }
+  /* Seeded reviews render immediately, so the live copy is only a refresh: wait
+     for load, then idle, so it never competes with the hero for bandwidth. */
+  function schedule() {
+    if ('requestIdleCallback' in window) requestIdleCallback(loadReviews, { timeout: 3000 });
+    else setTimeout(loadReviews, 1200);
+  }
+  if (document.readyState === 'complete') schedule();
+  else window.addEventListener('load', schedule);
 })();
 </script>
 
@@ -3744,7 +3809,7 @@
         document.documentElement.classList.add('libs-failed');
         l.style.display = 'none';
       }
-    }, 4000);
+    }, 1500);
   })();
 </script>
 </body>
