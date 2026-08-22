@@ -11,30 +11,19 @@
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c4a262'>✦</text></svg>">
 
-  <!-- Analytics is consent-gated: nothing loads until the visitor accepts. -->
+  <!-- Analytics: GA4 page views only, loaded straight away. No consent gate —
+       measurement-only GA4 is the least intrusive setup that still counts visits. -->
   <script>
     (function () {
-      var KEY = 'emmy-consent';
-      function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
-      function loadGA() {
-        if (window.__gaLoaded) return;
-        if (/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) return;
-        window.__gaLoaded = true;
-        var id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
-        var s = document.createElement('script');
-        s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
-        document.head.appendChild(s);
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function () { dataLayer.push(arguments); };
-        gtag('js', new Date());
-        gtag('config', id);
-      }
-      window.__consent = {
-        get: stored,
-        set: function (v) { try { localStorage.setItem(KEY, v); } catch (e) {} if (v === 'granted') loadGA(); },
-        clear: function () { try { localStorage.removeItem(KEY); } catch (e) {} }
-      };
-      if (stored() === 'granted') loadGA();
+      if (/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) return;
+      var id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
+      var s = document.createElement('script');
+      s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { dataLayer.push(arguments); };
+      gtag('js', new Date());
+      gtag('config', id);
     })();
   </script>
 
@@ -159,11 +148,18 @@
     #nav {
       position: sticky; top: 0; z-index: 1000;
       padding: 20px var(--pad);
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between; gap: 26px;
       background: rgba(var(--panel-rgb),.92);
       backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
     }
+    /* Wordmark: always on here — this page has no hero to sit over. */
+    .n-logo {
+      font-family: var(--display); font-size: 1.2rem;
+      font-weight: 400; letter-spacing: .07em;
+      text-decoration: none; color: var(--fg);
+    }
+    .n-logo em { font-style: italic; color: var(--gold); }
     .n-links { display: flex; align-items: center; gap: 26px; margin-left: auto; }
     .n-socials { display: flex; align-items: center; gap: 16px; }
     .n-item {
@@ -244,8 +240,6 @@
     .ft-logo { font-family: var(--display); font-size: 1.2rem; font-weight: 400; color: var(--fg); }
     .ft-logo em { font-style: italic; color: var(--gold); }
     .ft-links { display: flex; gap: 22px; flex-wrap: wrap; }
-    /* Bare button wearing .ft-a's look — declared first so .ft-a wins the tie. */
-    .ft-btn { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; }
     .ft-a {
       font-family: var(--mono); font-size: .71rem;
       letter-spacing: .18em; text-transform: uppercase;
@@ -257,41 +251,12 @@
       footer { padding: 28px var(--pad); flex-direction: column; text-align: center; }
       .ft-links { justify-content: center; }
     }
-
-    /* ── Cookie consent bar (matches index.html) ── */
-    #cookie-bar {
-      position: fixed; left: 50%; bottom: 18px; transform: translate(-50%, 16px);
-      z-index: 9500; width: min(680px, calc(100vw - 32px));
-      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
-      padding: 16px 20px; border-radius: var(--r);
-      background: rgba(var(--panel-rgb),.97); border: 1px solid var(--border-h);
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-      opacity: 0; pointer-events: none; transition: opacity .3s, transform .3s var(--out);
-    }
-    /* `hidden` alone loses to the ID selector above; without this the invisible
-       bar stays in the layer stack and swallows footer clicks. */
-    #cookie-bar[hidden] { display: none; }
-    #cookie-bar.on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
-    .ck-text { font-family: var(--sans); font-size: .82rem; line-height: 1.6; color: var(--fg2); flex: 1 1 260px; }
-    .ck-text a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
-    .ck-btns { display: flex; gap: 10px; flex-shrink: 0; }
-    .ck-btn {
-      font-family: var(--mono); font-size: .66rem; letter-spacing: .16em; text-transform: uppercase;
-      padding: 11px 20px; border-radius: 100px; cursor: pointer; border: 1px solid var(--gold-ring);
-      background: rgba(var(--gold-rgb),.04); color: var(--fg); transition: border-color .3s, background .3s;
-    }
-    .ck-btn:hover { border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09); }
-    .ck-accept { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
-    @media (max-width: 768px) {
-      #cookie-bar { bottom: 12px; padding: 14px 16px; }
-      .ck-btns { width: 100%; }
-      .ck-btn { flex: 1; text-align: center; }
-    }
   </style>
 </head>
 <body>
 
 <nav id="nav" aria-label="Site navigation">
+  <a href="/" class="n-logo">Emmy <em>Tattoo</em></a>
   <div class="n-links">
     <a href="/#trust" class="n-item">Reviews</a>
     <a href="/#faq" class="n-item">FAQ</a>
@@ -329,13 +294,13 @@
     <p>Nothing directly. There is no contact form, no account and no newsletter on this website. Enquiries happen in WhatsApp or Instagram, where those companies' own privacy policies apply to the conversation.</p>
 
     <h3 class="lg-h3">Cookies and analytics</h3>
-    <p>With your consent the site loads Google Analytics 4, which sets cookies to count visits and see which pages are read. Analytics does not load until you press Accept, and pressing Reject stops it loading at all.</p>
-    <p>Your choice is remembered in your browser's local storage under <code>emmy-consent</code>. You can change it at any time with the <button type="button" class="ft-btn" data-cookie-settings style="text-decoration:underline">Cookie settings</button> link in the footer.</p>
+    <p>The site loads Google Analytics 4, which sets cookies to count visits and see which pages are read. It is configured for page-view measurement only — no advertising, no remarketing and no profiling — and we never see anything that identifies you personally.</p>
+    <p>If you would rather not be counted, block cookies for this site in your browser settings, or read the site in a private/incognito window.</p>
 
     <h3 class="lg-h3">Other things stored in your browser</h3>
     <ul>
-      <li><code>emmy-theme</code> remembers whether you chose light, dark or system appearance.</li>
-      <li><code>emmy-intro</code> remembers that you have already seen the opening animation in this browsing session.</li>
+      <li><code>emmy-theme</code>, in local storage, remembers whether you chose light, dark or system appearance.</li>
+      <li><code>emmy-intro</code>, in session storage, remembers that the opening animation has already played in this tab.</li>
     </ul>
     <p>Neither key is sent anywhere; both stay on your device.</p>
 
@@ -381,33 +346,10 @@
   <span class="ft-logo">Emmy <em>Tattoo</em></span>
   <nav class="ft-links" aria-label="Footer navigation">
     <a href="/" class="ft-a">Home</a>
-    <button type="button" class="ft-a ft-btn" data-cookie-settings>Cookie settings</button>
   </nav>
   <span class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</span>
 </footer>
 
-<!-- Cookie consent — analytics stays unloaded until Accept -->
-<div id="cookie-bar" role="region" aria-label="Cookie choices" hidden>
-  <p class="ck-text">This site uses Google Analytics cookies to count visits. Nothing is set unless you accept. <a href="/legal">Privacy &amp; cookies</a></p>
-  <div class="ck-btns">
-    <button type="button" id="ck-accept" class="ck-btn ck-accept">Accept</button>
-    <button type="button" id="ck-reject" class="ck-btn ck-reject">Reject</button>
-  </div>
-</div>
-<script>
-  (function () {
-    var bar = document.getElementById('cookie-bar');
-    if (!bar || !window.__consent) return;
-    function show() { bar.hidden = false; requestAnimationFrame(function () { bar.classList.add('on'); }); }
-    function hide() { bar.classList.remove('on'); setTimeout(function () { bar.hidden = true; }, 300); }
-    if (!window.__consent.get()) show();
-    document.getElementById('ck-accept').addEventListener('click', function () { window.__consent.set('granted'); hide(); });
-    document.getElementById('ck-reject').addEventListener('click', function () { window.__consent.set('denied'); hide(); });
-    document.querySelectorAll('[data-cookie-settings]').forEach(function (el) {
-      el.addEventListener('click', function (e) { e.preventDefault(); window.__consent.clear(); show(); });
-    });
-  })();
-</script>
 <script>
   /* ═══ THEME TOGGLE ═══ (matches index.html) */
   (function () {

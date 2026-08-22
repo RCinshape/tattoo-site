@@ -90,30 +90,19 @@
         imagesizes="100vw">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
 
-  <!-- Analytics is consent-gated: nothing loads until the visitor accepts. -->
+  <!-- Analytics: GA4 page views only, loaded straight away. No consent gate —
+       measurement-only GA4 is the least intrusive setup that still counts visits. -->
   <script>
     (function () {
-      var KEY = 'emmy-consent';
-      function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
-      function loadGA() {
-        if (window.__gaLoaded) return;
-        if (/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) return;
-        window.__gaLoaded = true;
-        var id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
-        var s = document.createElement('script');
-        s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
-        document.head.appendChild(s);
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function () { dataLayer.push(arguments); };
-        gtag('js', new Date());
-        gtag('config', id);
-      }
-      window.__consent = {
-        get: stored,
-        set: function (v) { try { localStorage.setItem(KEY, v); } catch (e) {} if (v === 'granted') loadGA(); },
-        clear: function () { try { localStorage.removeItem(KEY); } catch (e) {} }
-      };
-      if (stored() === 'granted') loadGA();
+      if (/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) return;
+      var id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
+      var s = document.createElement('script');
+      s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { dataLayer.push(arguments); };
+      gtag('js', new Date());
+      gtag('config', id);
     })();
   </script>
 
@@ -163,11 +152,13 @@
   <!-- No-JS fallback: reveal JS-animated content and remove the loader overlay -->
   <noscript><style>
     #loader { display: none !important; }
+    #nav { background: rgba(var(--panel-rgb),.92) !important; border-bottom-color: var(--border) !important; }
+    #nav .n-logo { opacity: 1 !important; pointer-events: auto !important; }
     :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
         .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
-        .exp-h2, .faq-h2, .bk-h2, .faq-hd-rule, .faq-hd-count) {
+        .exp-h2, .faq-h2, .bk-h2) {
       opacity: 1 !important; transform: none !important;
       filter: none !important; clip-path: none !important;
     }
@@ -315,6 +306,14 @@
          into warm-grey stains at rgb(237,235,231) against the 244 page. */
       --ambient-hero: radial-gradient(ellipse at 50% 110%, rgba(var(--bg-rgb),.6), transparent 60%);
       --ambient-book: none;
+      /* Seams are alpha-tuned per theme: .16 ink on #f4f1ea is invisible, so the
+         light seam runs near-black at the ends into a solid gold centre. */
+      --seam: linear-gradient(90deg,
+                transparent 4%,
+                rgba(var(--fg-rgb),.42) 28%,
+                rgba(var(--gold-rgb),1) 50%,
+                rgba(var(--fg-rgb),.42) 72%,
+                transparent 96%);
       --cta-shadow:   0 8px 28px rgba(var(--gold-rgb),.30), 0 2px 10px rgba(var(--fg-rgb),.18);
       --cta-shadow-a: 0 4px 16px rgba(var(--gold-rgb),.20), 0 1px 6px rgba(var(--fg-rgb),.12);
       --gold-faint: rgba(var(--gold-rgb),.8);
@@ -448,26 +447,12 @@
        NAV
     ══════════════════════════════════════════ */
     #nav {
+      --nav-h: 94px;
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
       padding: 28px var(--pad);
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between; gap: 26px;
       transition: background .5s, padding .35s, border-color .4s;
       border-bottom: 1px solid transparent;
-    }
-    /* The unscrolled nav paints straight onto the hero photo, whose light-mode
-       filter spans rgb(15)–rgb(240) under one 94px band. A page-tone scrim gives
-       every child a stable plate; it fades out as #nav.s brings its own surface. */
-    #nav::before {
-      content: '';
-      position: absolute; left: 0; right: 0; top: 0;
-      height: 200%;
-      background: linear-gradient(to bottom,
-        rgba(var(--panel-rgb),.78) 0%,
-        rgba(var(--panel-rgb),.55) 40%,
-        rgba(var(--panel-rgb),.18) 72%,
-        transparent 100%);
-      pointer-events: none; z-index: -1;
-      transition: opacity .45s;
     }
     #nav.s {
       background: rgba(var(--panel-rgb),.88);
@@ -476,7 +461,27 @@
       padding-top: 16px; padding-bottom: 16px;
       border-bottom-color: var(--border);
     }
-    #nav.s::before { opacity: 0; }
+    /* The wordmark belongs to the bar state: it fades in with the surface, once
+       the first section seam has scrolled up under the nav. margin-right keeps
+       links + actions together on the right whether or not it is visible. */
+    .n-logo {
+      font-family: var(--display); font-size: 1.2rem;
+      font-weight: 400; letter-spacing: .07em;
+      text-decoration: none; color: var(--fg); margin-right: auto;
+      opacity: 0; pointer-events: none; transition: opacity .35s var(--out);
+    }
+    .n-logo em { font-style: italic; color: var(--gold); }
+    #nav.s .n-logo { opacity: 1; pointer-events: auto; }
+    /* No libs = no scroll observer, so pin the bar on rather than never show it. */
+    html.libs-failed #nav { background: rgba(var(--panel-rgb),.92); border-bottom-color: var(--border); }
+    html.libs-failed .n-logo { opacity: 1; pointer-events: auto; }
+    /* Without the bar surface the links sit straight on the photo, whose
+       light-mode filter runs to rgb(240) in places. Same text-shadow plate the
+       hero copy uses; dropped as soon as #nav.s brings a real background. */
+    #nav:not(.s) .n-item {
+      color: var(--fg);
+      text-shadow: 0 0 20px rgba(var(--panel-rgb),1), 0 1px 5px rgba(var(--panel-rgb),.92);
+    }
     .n-links { display: flex; align-items: center; gap: 26px; }
     /* Icon buttons (socials + theme toggle) read as one cluster on a tighter rhythm */
     .n-socials { display: flex; align-items: center; gap: 16px; }
@@ -550,7 +555,7 @@
       color: var(--fg); font-family: var(--mono); font-size: .8rem; cursor: pointer;
     }
     @media (max-width: 768px) {
-      #nav { padding: 18px var(--pad); }
+      #nav { --nav-h: 78px; padding: 18px var(--pad); }
       #nav.s { padding: 12px var(--pad); }
       .n-item { display: none; }
       .n-links { display: none; }
@@ -655,19 +660,10 @@
       letter-spacing: .06em; text-transform: uppercase;
       color: var(--fg);
       text-decoration: none; white-space: nowrap;
-      transition: background .35s, border-color .35s, color .35s,
-                  transform .45s cubic-bezier(.34,1.56,.64,1),
-                  box-shadow .35s;
+      transition: border-color .38s, background .38s, transform .38s var(--out), box-shadow .4s;
     }
-    .h-dir:hover {
-      background: rgba(var(--gold-rgb),.13);
-      border-color: rgba(var(--gold-rgb),.35);
-      color: var(--fg);
-      transform: scale(1.06);
-      box-shadow: 0 2px 20px rgba(var(--gold-rgb),.1);
-    }
-    .h-dir svg { flex-shrink: 0; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
-    .h-dir:hover svg { transform: translateY(-1px) scale(1.06); }
+    .h-dir:hover { border-color: var(--photo-ring-h); transform: translateY(-3px); }
+    .h-dir svg { flex-shrink: 0; }
 
     /* Hero primary CTAs — visible via CSS (no JS dependency) */
     .h-cta {
@@ -1204,8 +1200,6 @@
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 20px;
       padding: 36px var(--pad);
-      border-top: 1px solid transparent;
-      border-image: var(--seam) 1;
     }
     .tr-review-btns { display: flex; gap: 12px; flex-wrap: wrap; }
     .tr-review-prompt {
@@ -1419,10 +1413,11 @@
     .bk-split-div { width: 1px; align-self: stretch; background: var(--gold-ring); flex: none; }
     /* Coarse pointers never get the glow — see the (pointer: coarse) guard in the JS */
     html.no-hover .bk-split-glow { display: none; }
-    /* Hero copy of the pill — same control, 35% shorter, and opaque from first
-       paint because the hero entrance is CSS on .h-cta, not the #book tween. */
+    /* Hero copy of the pill — same control, sized to match .h-cta-secondary
+       beside it, and opaque from first paint because the hero entrance is CSS
+       on .h-cta, not the #book tween. */
     .bk-split-sm { opacity: 1; }
-    .bk-split-sm .bk-split-half { padding: 12px 22px; font-size: .62rem; letter-spacing: .16em; gap: 8px; }
+    .bk-split-sm .bk-split-half { padding: 16px 30px; font-size: .74rem; letter-spacing: .16em; gap: 12px; }
 
     /* ── 3-step process ── */
     .bk-steps {
@@ -1455,7 +1450,7 @@
       .bk-h2 { font-size: clamp(2.6rem, 11vw, 4.2rem); }
       .bk-split { width: 100%; }
       .bk-split-half { flex: 1; padding: 18px 12px; font-size: .68rem; letter-spacing: .14em; gap: 8px; }
-      .bk-split-sm .bk-split-half { padding: 12px 10px; font-size: .6rem; }
+      .bk-split-sm .bk-split-half { padding: 17px 12px; font-size: .74rem; letter-spacing: .16em; gap: 12px; }
       .bk-steps { gap: 0; }
       .bk-step  { padding: 0 18px; }
       .bk-step-div { width: 28px; }
@@ -1630,27 +1625,13 @@
       border-top: 1px solid transparent;
       border-image: var(--seam) 1;
     }
-    .faq-hd {
-      display: flex; align-items: flex-end; gap: 2.5rem;
-      margin-bottom: 72px;
-    }
-    .faq-hd-text { flex: none; }
+    .faq-hd { margin-bottom: 72px; }
     .faq-h2 {
       font-family: var(--serif);
       font-size: clamp(2.6rem,5.5vw,5rem);
       font-weight: 300; letter-spacing: -.03em; line-height: 1;
     }
     .faq-h2 em { font-style: italic; color: var(--gold); }
-    .faq-hd-rule {
-      flex: 1; height: 1px;
-      background: var(--border);
-      margin-bottom: .55rem;
-    }
-    .faq-hd-count {
-      font-family: var(--mono); font-size: .65rem;
-      color: var(--dim); letter-spacing: .14em; text-transform: uppercase;
-      white-space: nowrap; margin-bottom: .4rem; flex: none;
-    }
     .fq-list { list-style: none; }
 
     /* Item wrapper */
@@ -1746,8 +1727,6 @@
 
     @media (max-width: 768px) {
       #faq { padding: 60px var(--pad) 80px; }
-      .faq-hd { flex-direction: column; align-items: flex-start; gap: 8px; }
-      .faq-hd-rule, .faq-hd-count { display: none; }
       .fq-trigger { grid-template-columns: 52px 1fr auto; gap: 0 1.25rem; padding: 24px 0; }
       .fq-num { font-size: 2rem; }
       .fq-question { font-size: 1.1rem; }
@@ -1966,8 +1945,6 @@
     }
     .ft-logo em { font-style: italic; color: var(--gold); }
     .ft-links { display: flex; gap: 22px; }
-    /* Bare button wearing .ft-a's look — declared first so .ft-a wins the tie. */
-    .ft-btn { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; }
     .ft-a {
       font-family: var(--mono); font-size: .71rem;
       letter-spacing: .18em; text-transform: uppercase;
@@ -2087,7 +2064,7 @@
         .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
-        .exp-h2, .faq-h2, .bk-h2, .faq-hd-rule, .faq-hd-count) {
+        .exp-h2, .faq-h2, .bk-h2) {
       opacity: 1 !important; transform: none !important;
       filter: none !important; clip-path: none !important;
     }
@@ -2100,43 +2077,12 @@
           .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
           .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
           .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
-          .exp-h2, .faq-h2, .bk-h2, .faq-hd-rule, .faq-hd-count) {
+          .exp-h2, .faq-h2, .bk-h2) {
         opacity: 1 !important; transform: none !important;
         filter: none !important; clip-path: none !important;
       }
     }
 
-    /* ══════════════════════════════════════════
-       COOKIE CONSENT BAR
-    ══════════════════════════════════════════ */
-    #cookie-bar {
-      position: fixed; left: 50%; bottom: 18px; transform: translate(-50%, 16px);
-      z-index: 9500; width: min(680px, calc(100vw - 32px));
-      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
-      padding: 16px 20px; border-radius: var(--r);
-      background: rgba(var(--panel-rgb),.97); border: 1px solid var(--border-h);
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-      opacity: 0; pointer-events: none; transition: opacity .3s, transform .3s var(--out);
-    }
-    /* `hidden` alone loses to the ID selector above; without this the invisible
-       bar stays in the layer stack and swallows footer clicks. */
-    #cookie-bar[hidden] { display: none; }
-    #cookie-bar.on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
-    .ck-text { font-family: var(--sans); font-size: .82rem; line-height: 1.6; color: var(--fg2); flex: 1 1 260px; }
-    .ck-text a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
-    .ck-btns { display: flex; gap: 10px; flex-shrink: 0; }
-    .ck-btn {
-      font-family: var(--mono); font-size: .66rem; letter-spacing: .16em; text-transform: uppercase;
-      padding: 11px 20px; border-radius: 100px; cursor: pointer; border: 1px solid var(--gold-ring);
-      background: rgba(var(--gold-rgb),.04); color: var(--fg); transition: border-color .3s, background .3s;
-    }
-    .ck-btn:hover { border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09); }
-    .ck-accept { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
-    @media (max-width: 768px) {
-      #cookie-bar { bottom: 12px; padding: 14px 16px; }
-      .ck-btns { width: 100%; }
-      .ck-btn { flex: 1; text-align: center; }
-    }
   </style>
 </head>
 <body>
@@ -2168,6 +2114,7 @@
 
 <!-- ════ NAV ════ -->
 <nav id="nav" aria-label="Site navigation">
+  <a href="/" class="n-logo">Emmy <em>Tattoo</em></a>
   <div class="n-links">
     <a href="#trust" class="n-item">Reviews</a>
     <a href="#faq" class="n-item">FAQ</a>
@@ -2220,7 +2167,7 @@
   </div>
   <div class="h-vign" aria-hidden="true"></div>
   <div class="h-inner">
-    <p class="h-eyebrow">Fine Line · Realism · Portrait Tattoos — Hull</p>
+    <p class="h-eyebrow">Fine Line Fine Art</p>
     <h1 class="h-title">
       <span class="tl"><span class="tl-i">Emmy</span></span>
       <span class="tl"><em class="tl-i">Tattoo</em></span>
@@ -2465,11 +2412,7 @@
 <!-- ════ FAQ ════ -->
 <section id="faq">
   <div class="faq-hd">
-    <div class="faq-hd-text">
-      <h2 class="faq-h2"><span class="tl"><span class="tl-i">Frequently Asked <em>Questions</em></span></span></h2>
-    </div>
-    <div class="faq-hd-rule"></div>
-
+    <h2 class="faq-h2"><span class="tl"><span class="tl-i">Frequently Asked <em>Questions</em></span></span></h2>
   </div>
   <ul class="fq-list">
 
@@ -2836,7 +2779,6 @@
   <div class="ft-links">
     <a href="/legal" class="ft-a">Privacy &amp; Cookies</a>
     <a href="/legal#terms" class="ft-a">Terms</a>
-    <button type="button" class="ft-a ft-btn" data-cookie-settings>Cookie settings</button>
   </div>
   <div class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</div>
 </footer>
@@ -2942,13 +2884,22 @@ function __boot() {
   /* ═══ SCROLL PROGRESS ═══ */
   const progEl = document.getElementById('prog');
 
-  /* ═══ NAV — always visible; gains a blurred background once scrolled ═══ */
+  /* ═══ NAV — bare over the hero, a bar from the first seam down ═══ */
   const navEl = document.getElementById('nav');
 
-  /* Single scroll handler: progress bar + nav background toggle */
+  /* Progress bar only; the nav surface is seam-driven, not offset-driven. */
   lenis.on('scroll', ({ scroll, limit }) => {
     gsap.set(progEl, { scaleX: limit ? scroll / limit : 0 });
-    navEl.classList.toggle('s', scroll > 40);
+  });
+
+  /* The bar (surface + wordmark) arrives exactly as the first section seam —
+     #work's gold top border — slides under the nav. --nav-h is read on every
+     refresh, so the 768px padding change needs no second number here. */
+  ScrollTrigger.create({
+    trigger: '#work-outer',
+    start: () => 'top ' + getComputedStyle(navEl).getPropertyValue('--nav-h').trim(),
+    onEnter:     () => navEl.classList.add('s'),
+    onLeaveBack: () => navEl.classList.remove('s')
   });
 
   // Smooth anchor scrolling via Lenis (no teleport)
@@ -3171,16 +3122,6 @@ function __boot() {
     gsap.fromTo('.faq-h2',
       { clipPath: 'inset(0 100% 0 0)' },
       { clipPath: 'inset(0 0% 0 0)', duration: 1.3, ease: 'expo.out',
-        scrollTrigger: { trigger: '#faq', start: 'top 84%', once: true } }
-    );
-    gsap.fromTo('.faq-hd-rule',
-      { scaleX: 0, transformOrigin: 'left' },
-      { scaleX: 1, duration: 1.4, ease: 'expo.out',
-        scrollTrigger: { trigger: '#faq', start: 'top 84%', once: true } }
-    );
-    gsap.fromTo('.faq-hd-count',
-      { opacity: 0 },
-      { opacity: 1, duration: .8, delay: .5, ease: 'power2.out',
         scrollTrigger: { trigger: '#faq', start: 'top 84%', once: true } }
     );
     // FAQ items scroll-in: slide from left
@@ -3764,29 +3705,6 @@ else __boot();
   if (document.readyState === 'complete') schedule();
   else window.addEventListener('load', schedule);
 })();
-</script>
-
-<!-- Cookie consent — analytics stays unloaded until Accept -->
-<div id="cookie-bar" role="region" aria-label="Cookie choices" hidden>
-  <p class="ck-text">This site uses Google Analytics cookies to count visits. Nothing is set unless you accept. <a href="/legal">Privacy &amp; cookies</a></p>
-  <div class="ck-btns">
-    <button type="button" id="ck-accept" class="ck-btn ck-accept">Accept</button>
-    <button type="button" id="ck-reject" class="ck-btn ck-reject">Reject</button>
-  </div>
-</div>
-<script>
-  (function () {
-    var bar = document.getElementById('cookie-bar');
-    if (!bar || !window.__consent) return;
-    function show() { bar.hidden = false; requestAnimationFrame(function () { bar.classList.add('on'); }); }
-    function hide() { bar.classList.remove('on'); setTimeout(function () { bar.hidden = true; }, 300); }
-    if (!window.__consent.get()) show();
-    document.getElementById('ck-accept').addEventListener('click', function () { window.__consent.set('granted'); hide(); });
-    document.getElementById('ck-reject').addEventListener('click', function () { window.__consent.set('denied'); hide(); });
-    document.querySelectorAll('[data-cookie-settings]').forEach(function (el) {
-      el.addEventListener('click', function (e) { e.preventDefault(); window.__consent.clear(); show(); });
-    });
-  })();
 </script>
 
 <!-- Resilience watchdog: if the loader is still up after the libs should have run, force-reveal.

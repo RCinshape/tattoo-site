@@ -80,26 +80,29 @@ The live site is whatever `main` points at, so restoring means force-moving `mai
 
 ## Pages
 
-`index.html`, `portfolio.html` (`/portfolio`) and `legal.html` (`/legal` — privacy, cookies and website terms). The legal page carries its own minimal stylesheet and a copy of the theme + consent scripts; it deliberately does NOT duplicate the site CSS.
+`index.html`, `portfolio.html` (`/portfolio`) and `legal.html` (`/legal` — privacy, cookies and website terms). The legal page carries its own minimal stylesheet and a copy of the theme script; it deliberately does NOT duplicate the site CSS.
 
 ## Intro
 
 The brand loader is kept in `index.html` but disabled by `window.__INTRO = false` in the head. Setting it to `true` re-enables the CSS intro (`html.intro-on #loader`); nothing else needs changing.
 
-## Analytics consent
+## Analytics
 
-Google Analytics is never loaded until the visitor presses Accept in `#cookie-bar`. `window.__consent` (head script, all three pages) owns the `emmy-consent` key and injects gtag only on `granted`. Footer "Cookie settings" (`[data-cookie-settings]`) clears the key and re-opens the bar.
+Google Analytics 4 loads on first paint from an inline head script on all three pages — no consent gate, no cookie bar, no `window.__consent`, no `emmy-consent` key. GA4 is configured for page views only (no ads, remarketing or profiling signals), which is the minimum-friction setup: the site is usable without clicking anything, and the opt-out is documented on `/legal` (browser cookie blocking or a private window). Do not reintroduce a banner. The script keeps two guards: it skips localhost, and it picks `G-M23QSCSBZ9` on `.co.uk` else `G-J8X45ECTLH`.
 
-`#cookie-bar` is `position: fixed` with `display: flex`, which outranks the UA `[hidden] { display: none }` — so each page also carries `#cookie-bar[hidden] { display: none; }` plus `pointer-events: none` off-state. Without them the invisible bar sits over the bottom-centre of the viewport and swallows every footer click. Never drop those two rules.
+## Nav
+
+The nav is bare over the hero and becomes a bar — blurred surface, bottom border, `Emmy Tattoo` wordmark at top left — exactly when the first section seam (`#work`'s top border) reaches it. That swap is a `ScrollTrigger` on `#work-outer` with `start: 'top <--nav-h>'`, not a scroll-offset threshold: `#nav` owns `--nav-h` (94px desktop, 78px at ≤768px) and the trigger re-reads it on every refresh, so the breakpoint needs no second number. `.n-logo` is `opacity: 0` until `#nav.s`; it keeps its box either way, so nothing shifts. `#nav` has no `::before` scrim — over the hero the nav sits on `.hero-bg-photo::after`. `html.libs-failed` and the `<noscript>` block pin the bar on, because with no scroll observer the alternative is a nav that never gets a background.
 
 ## Footer
 
-The footer carries legal links only — Privacy & Cookies, Terms, Cookie settings (subpages prefix a Home link). Social, portfolio and about links live in the nav and the hero pill, not here. `.ft-btn` is declared **before** `.ft-a` in every stylesheet: its `font`/`letter-spacing`/`text-transform: inherit` resets would otherwise beat `.ft-a` on the equal-specificity tie and drop the Cookie settings button out of mono/uppercase.
+The footer carries legal links only — Privacy & Cookies, Terms (subpages prefix a Home link). Social, portfolio and about links live in the nav and the hero pill, not here. There are no buttons in the footer, so no `.ft-btn` rule exists any more.
 
 ## Design Aesthetic
 - Follows the OS colour scheme: neutral `#0a0a0a` dark (default) or warm paper `#f4f1ea` light, with a manual nav toggle; gold is the single accent
 - Gold is ONE token, `#c4a262`, in BOTH palettes — `--gold` / `--gold-rgb: 196,162,98`. There is no `--gold-display` and no per-theme gold; never reintroduce a second value. On the light page that measures 2.1:1, under the WCAG 3:1 non-text floor: a deliberate brand decision, so gold stays decorative in light mode and never carries a run of text under 18.66px. Small mono labels and tiny links use `--fg`/`--fg2` and carry gold as a rule (`.h-eyebrow::before`), ring, border or glyph. Gold text is allowed at display sizes (`em` accents in headings, hero title, `.ft-logo`, `.bk-step-n`); icon/star/arrow glyphs keep gold at any size. Section eyebrows (`.s-label`) are gone — headings lead their sections.
 - Decorative gold ink carries its alpha in a token, not in `opacity`: `--ghost-ink` (`.sp-ghost`) and `--wm-ink` (`.bk-wm`), because GSAP writes inline `opacity` that outranks CSS.
+- Every section divider is `border-top: 1px solid transparent; border-image: var(--seam) 1` — one token, two definitions. Dark keeps `.16` ink flanks into a `.55` gold centre; light needs `.42` ink flanks into solid gold, because `.16` ink on `#f4f1ea` is invisible. Tune the light token only, and never hand-roll a divider gradient in a rule.
 - Minimal UI — let artwork breathe
 - Smooth, deliberate animations — nothing snappy or bouncy
 - Monochrome or desaturated palette with one accent color
