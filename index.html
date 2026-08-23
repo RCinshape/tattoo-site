@@ -134,7 +134,7 @@
         r.dataset.pref = p;
         r.style.colorScheme = theme;
         var m = document.getElementById('meta-theme-color');
-        if (m) m.setAttribute('content', theme === 'light' ? '#f4f1ea' : '#0a0a0a');
+        if (m) m.setAttribute('content', theme === 'light' ? '#f6f0ea' : '#0a0a0a');
         document.dispatchEvent(new Event('themechange'));
       }
       window.__theme = {
@@ -204,6 +204,11 @@
          on .sp-ghost, which outranks any CSS opacity rule. */
       --ghost-ink: rgba(var(--gold-rgb),.07);
       --wm-ink:    rgba(var(--gold-rgb),.06);
+      /* The gift voucher's ink. Same family as --wm-ink, but the watermark sits
+         behind a heading that carries the section on its own, while the voucher is
+         the only thing on its side of the row — on the dark page .06 leaves it as
+         empty space, so it runs at twice the watermark's alpha. */
+      --gc-ink:    rgba(var(--gold-rgb),.12);
       --fg-rgb:    255,255,255;   /* borders + faint washes */
       --panel-rgb: 10,10,10;      /* nav/menu/modal scrims, text shadows */
       --on-gold:   #0a0a0a;       /* ink on a gold fill */
@@ -216,11 +221,11 @@
       --border-h:  rgba(var(--fg-rgb),.15);
       /* Page-tone RGB. Layers that fade content INTO the page (photo scrims,
          vignette, text halos) MUST use this, never --panel-rgb: in light the
-         panel is #fbf9f5 while the page is #f4f1ea, and that mismatch
+         panel is #fcf9f5 while the page is #f6f0ea, and that mismatch
          paints visible white/grey shapes. */
       --bg-rgb: 10,10,10;
       /* Icon-button chrome. Both themes are pinned to the same measured ratios:
-         .34 white on #0a0a0a is 3.02:1 and .48 warm ink on #f4f1ea is 3.13:1 —
+         .34 white on #0a0a0a is 3.02:1 and .48 warm ink on #f6f0ea is 3.13:1 —
          WCAG non-text minimum. Dark sat at .07 = 1.15:1 — an invisible ring. */
       --btn-ring:   rgba(var(--fg-rgb),.34);
       --btn-ring-h: rgba(var(--fg-rgb),.50);
@@ -234,7 +239,7 @@
       --gold-ring-h: rgba(var(--gold-rgb),.65);
       /* Decorative layers, resolved per theme as complete values. Gold ambient
          washes glow on a dark page but stain and band on a light one, and a
-         fixed vignette over #f4f1ea leaves a visible grey ellipse. */
+         fixed vignette over #f6f0ea leaves a visible grey ellipse. */
       --vignette: radial-gradient(ellipse 110% 110% at 50% 50%, transparent 40%, rgba(var(--bg-rgb),.38) 70%, rgba(var(--bg-rgb),.62) 100%);
       --ambient-hero:
         radial-gradient(ellipse at 50% -5%, rgba(var(--gold-rgb),.035), transparent 55%),
@@ -281,26 +286,29 @@
     /* Light theme — resolved from OS preference or the manual override, see head script */
     :root[data-theme="light"] {
       color-scheme: light;
-      --bg:        #f4f1ea;
-      --bg2:       #fbf9f5;
+      /* Paper hue: both greys sit on the warm side of the brand gold (OKLCH h 68
+         and 75 against gold's 82). The previous #f4f1ea/#fbf9f5 were *greener*
+         than the accent, which is what read as an olive cast page-wide. */
+      --bg:        #f6f0ea;
+      --bg2:       #fcf9f5;
       --fg:        #191712;
       --fg2:       #4a453c;
       --dim:       #6a6459;
-      /* One gold, both themes: #c4a262 everywhere. On #f4f1ea it measures 2.1:1,
+      /* One gold, both themes: #c4a262 everywhere. On #f6f0ea it measures 2.1:1,
          below the WCAG 3:1 non-text floor — a deliberate brand choice, so gold
          stays decorative here and never carries small text. */
       --gold:      #c4a262;
       --gold-rgb:  196,162,98;
       --fg-rgb:    25,23,18;
-      --panel-rgb: 251,249,245;
+      --panel-rgb: 252,249,245;
       --on-gold:   #191712;       /* 5.03:1 on gold; white would be 3.56:1 */
       --ok:        #1f7a47;
       --ok-ink:    #1f7a47;
       --ok-rgb:    31,122,71;
       --warn:      #b4322f;
       --warn-rgb:  180,50,47;
-      --bg-rgb: 244,241,234;
-      /* .48 puts the ring at 3.13:1 against #f4f1ea (WCAG non-text minimum) */
+      --bg-rgb: 246,240,234;
+      /* .48 puts the ring at 3.13:1 against #f6f0ea (WCAG non-text minimum) */
       --btn-ring:   rgba(var(--fg-rgb),.48);
       --btn-ring-h: rgba(var(--fg-rgb),.64);
       --btn-fill:   rgba(var(--panel-rgb),1);
@@ -315,7 +323,7 @@
          into warm-grey stains at rgb(237,235,231) against the 244 page. */
       --ambient-hero: radial-gradient(ellipse at 50% 110%, rgba(var(--bg-rgb),.6), transparent 60%);
       --ambient-book: none;
-      /* Seams are alpha-tuned per theme: .16 ink on #f4f1ea is invisible, so the
+      /* Seams are alpha-tuned per theme: .16 ink on #f6f0ea is invisible, so the
          light seam runs near-black at the ends into a solid gold centre. */
       --seam: linear-gradient(90deg,
                 transparent 4%,
@@ -329,13 +337,17 @@
       --gold-soft:  rgba(var(--gold-rgb),.95);
       --ghost-ink:  rgba(var(--gold-rgb),.28);
       --wm-ink:     rgba(var(--gold-rgb),.3);
-      --img-hero:     grayscale(1) sepia(.15) brightness(1.18) contrast(.9);
+      --gc-ink:     rgba(var(--gold-rgb),.3);
+      /* No sepia: it emits R>G>B and the brightness that follows clips red first,
+         so the highlights of a full-viewport photo converge on olive. Warmth here
+         comes from --ambient-hero, which cannot skew channels. */
+      --img-hero:     grayscale(1) brightness(1.14) contrast(.92);
       --img-card:     brightness(1.02) saturate(.8);
       --img-card-h:   brightness(1.06) saturate(.95);
       --img-exp:      brightness(1) saturate(.8);
       --img-exp-open: brightness(1.04) saturate(.9);
       --img-avatar:   grayscale(.5);
-      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23fbf9f5' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
+      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23fcf9f5' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
     }
 
     /* One gutter for every section on a phone. Sections used to hardcode this
@@ -726,7 +738,7 @@
     /* Gallery — uniform 3:4 grid; cards crop rather than follow intrinsic ratios */
     .w-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
       padding: 0 var(--pad);
     }
@@ -761,7 +773,7 @@
     /* Hover label */
     .wc-lbl {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 4;
-      padding: 70px 18px 18px;
+      padding: 52px 14px 14px;
       background: linear-gradient(to top, rgba(0,0,0,.78), transparent);
       transform: translateY(100%); transition: transform .5s var(--out);
     }
@@ -775,14 +787,14 @@
     /* View circle */
     .wc-view {
       position: absolute; top: 50%; left: 50%; z-index: 4;
-      width: 54px; height: 54px; border-radius: 50%;
+      width: 46px; height: 46px; border-radius: 50%;
       border: 1px solid rgba(var(--gold-rgb),.5);
       background: rgba(var(--panel-rgb),.62);
       display: flex; align-items: center; justify-content: center;
       transform: translate(-50%,-50%) scale(0);
       transition: transform .4s var(--sp);
     }
-    .wc-view svg { width: 22px; height: 22px; }
+    .wc-view svg { width: 19px; height: 19px; }
     .wc-view svg { color: var(--gold); }
     .wc:hover .wc-view { transform: translate(-50%,-50%) scale(1); }
 
@@ -826,7 +838,7 @@
     }
     .w-peek {
       width: 100%;
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
       height: clamp(64px, 6vw, 96px); overflow: hidden;
       pointer-events: none;
       -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,.5) 55%, transparent 100%);
@@ -870,8 +882,8 @@
     @media (max-width: 1024px) {
       .w-grid { grid-template-columns: repeat(2, 1fr); }
       .w-peek { grid-template-columns: repeat(2, 1fr); }
-      /* One row means one row: the third card would wrap onto its own line here. */
-      .w-grid .wc:nth-child(3) { display: none; }
+      /* One row means one row: cards 3 and 4 would wrap onto their own line here. */
+      .w-grid .wc:nth-child(n+3) { display: none; }
     }
     @media (max-width: 768px) {
       #work { position: static; height: auto; overflow: visible; padding-top: 72px; }
@@ -1185,6 +1197,13 @@
       .fl-ig-frame { height: calc(198px + 66.7cqw); }
     }
     .fl-ig-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+    /* Instagram serves this widget white in every theme — there is no theme
+       parameter, and inverting it would negate the photographs too. On the dark
+       page the frame is treated as a print instead: gold hairline, deep shadow. */
+    :root:not([data-theme="light"]) .fl-ig-frame {
+      border-color: rgba(var(--gold-rgb),.18);
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+    }
     .fl-badge {
       display: inline-flex; align-items: center; gap: 9px;
       font-family: var(--mono); font-size: .62rem;
@@ -1321,12 +1340,12 @@
       border-top: 1px solid transparent;
       border-image: var(--seam) 1;
       display: flex; flex-direction: row; align-items: center; gap: 72px;
-      /* The card is rotated, so its painted box is wider than its layout box;
-         clipping the overhang is invisible because the edges fade out anyway. */
-      overflow: hidden;
     }
     .gf-body {
       display: flex; flex-direction: column; align-items: flex-start;
+      /* Fixed share for the copy so the ghost panel takes the rest of the row
+         out to the right gutter. */
+      flex: 0 0 clamp(320px, 34%, 520px);
     }
     .gf-h2 {
       font-family: var(--serif);
@@ -1369,29 +1388,24 @@
       transform: translateY(-3px);
     }
     .gf-cta svg { color: var(--gold); flex-shrink: 0; }
-    /* Gift card: tilted, with all four edges dissolving into the page. No stroke
-       around it — a perimeter border cannot survive an edge-fading mask, since it
-       lies exactly where the mask is transparent, and inset far enough to survive
-       it reads as a frame printed across the artwork. The dissolve is the effect. */
+    /* The voucher as a ghost: the artwork is a mask and the paint is --gc-ink, the
+       gold-alpha family that draws the `Book` watermark behind the booking section.
+       A mask rather than an <img> is what lets one asset read correctly in both
+       themes — the pixels carry no colour of their own. */
     .gf-card {
-      position: relative; flex: 0 1 480px; align-self: center;
-      transform: rotate(8deg);
+      flex: 1 1 auto; align-self: center;
+      aspect-ratio: 1091 / 494;
+      background: var(--gc-ink);
+      -webkit-mask-image: url("pictures/web/Emmy-Tattoo-Gift-Card-Voucher-Ink.webp");
+              mask-image: url("pictures/web/Emmy-Tattoo-Gift-Card-Voucher-Ink.webp");
+      -webkit-mask-size: contain; mask-size: contain;
+      -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+      -webkit-mask-position: center; mask-position: center;
     }
-    .gf-card img {
-      width: 100%; height: auto; display: block; border-radius: 12px;
-      -webkit-mask-image: linear-gradient(to right,  transparent 0%, #000 9%, #000 91%, transparent 100%),
-                          linear-gradient(to bottom, transparent 0%, #000 13%, #000 87%, transparent 100%);
-              mask-image: linear-gradient(to right,  transparent 0%, #000 9%, #000 91%, transparent 100%),
-                          linear-gradient(to bottom, transparent 0%, #000 13%, #000 87%, transparent 100%);
-      -webkit-mask-composite: source-in;
-              mask-composite: intersect;
-    }
-    /* The pale artwork glows on the dark page and all but vanishes on #f4f1ea, so
-       the light theme gets a touch of contrast to hold its own. */
-    :root[data-theme="light"] .gf-card img { filter: brightness(.96) contrast(1.08); }
     @media (max-width: 1024px) {
-      #gifts { flex-direction: column; align-items: flex-start; gap: 56px; }
-      .gf-card { flex: none; width: 100%; max-width: 420px; align-self: center; transform: rotate(5deg); }
+      #gifts { flex-direction: column; align-items: stretch; gap: 48px; }
+      .gf-body { flex: none; }
+      .gf-card { width: 100%; }
     }
     @media (max-width: 768px) {
       #gifts { padding: 76px var(--pad) 84px; }
@@ -2279,7 +2293,7 @@
       <article class="wc" tabindex="0" role="button" aria-label="Realism — Thresher shark" data-full="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-1440.webp">
         <img class="wc-img" src="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg" width="2002" height="2669"
              srcset="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-480.webp 480w, pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-960.webp 960w"
-             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
              alt="Black and grey realism tattoo of a Thresher shark swimming downwards on a client's upper arm." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
@@ -2288,7 +2302,7 @@
       <article class="wc" tabindex="0" role="button" aria-label="Realism — Wolf portrait forearm" data-full="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-1440.webp">
         <img class="wc-img" src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" width="2160" height="2881"
              srcset="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-480.webp 480w, pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp 960w"
-             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
              alt="Black and grey forearm half-sleeve tattoo featuring a realistic wolf face, a shattered Roman numeral clock, and a forest silhouette with a howling wolf." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
@@ -2297,10 +2311,19 @@
       <article class="wc" tabindex="0" role="button" aria-label="Fine line — Abstract flower" data-full="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-1440.webp">
         <img class="wc-img" src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" width="2160" height="3007"
              srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w, pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp 960w"
-             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
              alt="Minimalist fine-line tattoo on an upper arm featuring an abstract, continuous flowing line that forms a delicate flower." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Fine Line</div></div>
+      </article>
+
+      <article class="wc" tabindex="0" role="button" aria-label="Fine art — Hermes" data-full="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-1440.webp">
+        <img class="wc-img" src="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg" width="3024" height="4032"
+             srcset="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-480.webp 480w, pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp 960w"
+             sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
+             alt="Fine art tattoo of the god Hermes in a classical style, rendered in black and grey." loading="lazy" decoding="async">
+        <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
+        <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
       </article>
 
   </div>
@@ -2308,15 +2331,19 @@
     <div class="w-peek" aria-hidden="true">
       <img src="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-960.webp"
            srcset="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-480.webp 480w, pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-960.webp 960w"
-           sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
-           alt="" loading="lazy" decoding="async">
-      <img src="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp"
-           srcset="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-480.webp 480w, pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp 960w"
-           sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+           sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
            alt="" loading="lazy" decoding="async">
       <img src="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-960.webp"
            srcset="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-480.webp 480w, pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-960.webp 960w"
-           sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+           sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
+           alt="" loading="lazy" decoding="async">
+      <img src="pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-960.webp"
+           srcset="pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-480.webp 480w, pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-960.webp 960w"
+           sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
+           alt="" loading="lazy" decoding="async">
+      <img src="pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-960.webp"
+           srcset="pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-480.webp 480w, pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-960.webp 960w"
+           sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
            alt="" loading="lazy" decoding="async">
     </div>
     <a class="w-more" href="/portfolio">
@@ -2608,7 +2635,7 @@
     <!-- Heading -->
     <h2 class="bk-h2">
       <span class="tl"><span class="tl-i">Book</span></span>
-      <span class="tl"><em class="tl-i">a session.</em></span>
+      <span class="tl"><span class="tl-i">a <em>session.</em></span></span>
     </h2>
 
     <!-- Animated divider -->
@@ -2662,7 +2689,7 @@
 <!-- ════ GIFTS ════ -->
 <section id="gifts">
   <div class="gf-body">
-    <h2 class="gf-h2">Give someone <em>a tattoo.</em></h2>
+    <h2 class="gf-h2">Give someone a <em>tattoo.</em></h2>
     <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount, no expiry, redeemed when they decide.</p>
     <p class="gf-occ">Birthdays · Christmas · Anniversaries · Just because</p>
     <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
@@ -2671,13 +2698,8 @@
       <span>Enquire via WhatsApp</span>
     </a>
   </div>
-  <div class="gf-card">
-    <img src="pictures/web/Emmy-Tattoo-Gift-Card-Voucher-960.webp"
-         srcset="pictures/web/Emmy-Tattoo-Gift-Card-Voucher-480.webp 480w, pictures/web/Emmy-Tattoo-Gift-Card-Voucher-960.webp 960w"
-         sizes="(max-width: 1024px) 90vw, 34vw"
-         width="1091" height="494" loading="lazy" decoding="async"
-         alt="Emmy Tattoo gift voucher — an art nouveau line drawing beside fields for recipient, amount, expiry and signature.">
-  </div>
+  <div class="gf-card" role="img"
+       aria-label="Emmy Tattoo gift voucher: an art nouveau line drawing beside fields for recipient, amount, expiry and signature."></div>
 </section>
 
 <!-- ════ AFTERCARE ════ -->
@@ -3027,26 +3049,6 @@ function __boot() {
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) closeMenu(); });
   })();
 
-  /* ═══ THEME TOGGLE ═══ */
-  (() => {
-    const btn = document.getElementById('theme-toggle');
-    if (!btn || !window.__theme) return;
-    /* The control is binary on screen - it always names the theme it switches to. */
-    const target = () => document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
-    const sync = () => {
-      const label = 'Switch to ' + target() + ' theme';
-      btn.setAttribute('aria-label', label);
-      btn.setAttribute('title', label);
-    };
-    sync();
-    document.addEventListener('themechange', () => {
-      sync();
-      /* GSAP hover tweens leave resolved inline colours behind — drop them so the new theme applies */
-      gsap.set('.ei-name, .ei-arr', { clearProps: 'color' });
-    });
-    btn.addEventListener('click', () => window.__theme.set(target()));
-  })();
-
   /* ═══ HERO INIT ═══ */
   function initHero() {
     /* Unlock the CSS-driven eyebrow/CTA entrances so they sequence after the loader */
@@ -3379,12 +3381,15 @@ function __boot() {
 
       function show(i) {
         idx = (i + images.length) % images.length;
+        const next = images[idx];
+        /* One shared <img> serves every gallery, so the reveal waits on the new
+           photo's own load event: a timer let the overlay fade in still painting
+           the last picture viewed. */
+        const reveal = () => { img.style.opacity = '1'; };
         img.style.opacity = '0';
-        setTimeout(() => {
-          img.src = images[idx].src;
-          img.alt = images[idx].alt;
-          img.style.opacity = '1';
-        }, 120);
+        img.alt = next.alt || '';
+        if (img.getAttribute('src') === next.src && img.complete) reveal();
+        else { img.onload = reveal; img.onerror = reveal; img.src = next.src; }
         counter.textContent = `${idx + 1} / ${images.length}`;
         btnPrev.style.display = images.length < 2 ? 'none' : '';
         btnNext.style.display = images.length < 2 ? 'none' : '';
@@ -3394,6 +3399,13 @@ function __boot() {
         try { images = JSON.parse(ei.dataset.gallery || '[]'); } catch(e) { images = []; }
         if (!images.length) return;
         label.textContent = ei.querySelector('.ei-name')?.textContent || '';
+        /* Hard reset with the opacity transition suppressed for one frame: the
+           previous photo must not be on screen at all while the overlay fades in. */
+        img.style.transition = 'none';
+        img.style.opacity = '0';
+        img.removeAttribute('src');
+        void img.offsetWidth;
+        img.style.transition = '';
         show(0);
         modal.classList.add('open');
         modal.setAttribute('aria-hidden', 'false');
@@ -3761,6 +3773,32 @@ else __boot();
     });
   }, { rootMargin: '600px 0px' });
   nodes.forEach(function (n) { io.observe(n); });
+})();
+</script>
+
+<!-- ════ THEME TOGGLE ════ -->
+<!-- Top-level, NOT inside __boot: that function returns early when the GSAP/Lenis
+     CDN fails, which left the button rendering normally while clicking it did
+     nothing — the failure mode a phone on a bad connection actually hits. -->
+<script>
+(function () {
+  var btn = document.getElementById('theme-toggle');
+  if (!btn || !window.__theme) return;
+  /* The control is binary on screen - it always names the theme it switches to. */
+  function target() { return document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; }
+  function sync() {
+    var label = 'Switch to ' + target() + ' theme';
+    btn.setAttribute('aria-label', label);
+    btn.setAttribute('title', label);
+  }
+  sync();
+  document.addEventListener('themechange', function () {
+    sync();
+    /* GSAP hover tweens leave resolved inline colours behind — drop them so the
+       new theme applies. Guarded: this script now runs with or without GSAP. */
+    if (window.gsap) gsap.set('.ei-name, .ei-arr', { clearProps: 'color' });
+  });
+  btn.addEventListener('click', function () { window.__theme.set(target()); });
 })();
 </script>
 

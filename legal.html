@@ -50,7 +50,7 @@
         r.dataset.pref = p;
         r.style.colorScheme = theme;
         var m = document.getElementById('meta-theme-color');
-        if (m) m.setAttribute('content', theme === 'light' ? '#f4f1ea' : '#0a0a0a');
+        if (m) m.setAttribute('content', theme === 'light' ? '#f6f0ea' : '#0a0a0a');
         document.dispatchEvent(new Event('themechange'));
       }
       window.__theme = {
@@ -120,15 +120,16 @@
     /* Light theme — one gold, both themes (see index.html) */
     :root[data-theme="light"] {
       color-scheme: light;
-      --bg:        #f4f1ea;
-      --bg2:       #fbf9f5;
+      /* Paper hue: warm side of the brand gold. Matches index.html. */
+      --bg:        #f6f0ea;
+      --bg2:       #fcf9f5;
       --fg:        #191712;
       --fg2:       #4a453c;
       --dim:       #6a6459;
       --gold:      #c4a262;
       --gold-rgb:  196,162,98;
       --fg-rgb:    25,23,18;
-      --panel-rgb: 251,249,245;
+      --panel-rgb: 252,249,245;
       --on-gold:   #191712;
       --btn-ring:   rgba(var(--fg-rgb),.48);
       --btn-ring-h: rgba(var(--fg-rgb),.64);
