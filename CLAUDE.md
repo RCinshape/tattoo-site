@@ -68,6 +68,12 @@ npx live-server --port=3000 --open=index.html
 npx serve .
 ```
 
+## Shipping work
+
+Work that came in as an approved plan ends with a push. Once the plan's steps are done and verified, commit and `git push` to `origin main` without being asked again — the live site is `main`, so unpushed work is work that does not exist. Do not stop at "committed", and do not wait for a second go-ahead.
+
+Never commit `.claude/settings.local.json`, and never move `latest-stable` as part of shipping; that branch only moves on an explicit instruction.
+
 ## Stable snapshot
 
 `latest-stable` is a branch that points at the last known-good commit of `main`.
