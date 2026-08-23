@@ -39,7 +39,10 @@
     "url": "https://emmytattoo.com/",
     "telephone": "+447405979137",
     "email": "emmalenetattoo@gmail.com",
-    "image": "https://emmytattoo.com/pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg",
+    "image": [
+      "https://emmytattoo.com/pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg",
+      "https://emmytattoo.com/pictures/Sainthood-Tattoo-Studio-Shopfront-Hull.jpg"
+    ],
     "priceRange": "££",
     "currenciesAccepted": "GBP",
     "paymentAccepted": "Cash, Bank Transfer",
@@ -69,7 +72,8 @@
       "itemListElement": [
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Fine Line Tattoos", "description": "Delicate, precise fine line tattoo work" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Realism Tattoos", "description": "Photorealistic portrait and realism tattoos" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Fine Art Tattoos", "description": "Illustrative and fine art style tattoos" } }
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Fine Art Tattoos", "description": "Illustrative and fine art style tattoos" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Tattoo Gift Cards", "description": "Gift card for any amount, no expiry, redeemed against any tattoo appointment" } }
       ]
     }
   }
@@ -155,7 +159,7 @@
     #nav { background: rgba(var(--panel-rgb),.92) !important; border-bottom-color: var(--border) !important; }
     #nav .n-logo { opacity: 1 !important; pointer-events: auto !important; }
     :is(.h-eyebrow, .tl-i, .h-sub, .h-scroll, .ei,
-        .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
+        .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
         .exp-h2, .faq-h2, .bk-h2) {
@@ -1156,11 +1160,31 @@
     #flash {
       padding: 80px var(--pad) 90px;
       display: flex;
-      flex-direction: column;
+      flex-direction: row; align-items: flex-start; gap: 64px;
       background: var(--bg);
       border-top: 1px solid transparent;
       border-image: var(--seam) 1;
     }
+    .fl-left { flex: 1 1 460px; max-width: 640px; }
+    /* Instagram's own embed: profile header plus the six most recent posts, always
+       current, no post IDs to maintain. Its surface is hard-coded white by
+       Instagram — that is third-party chrome, so the literal is deliberate, and
+       the frame keeps it inside the site's radius and border. */
+    .fl-ig { container-type: inline-size; flex: 0 0 clamp(340px, 30vw, 460px); }
+    .fl-ig-frame {
+      border-radius: var(--r); overflow: hidden;
+      border: 1px solid var(--border); background: #fff;
+      height: 520px;
+    }
+    /* Height must equal the embed's own content height or the iframe scrolls and
+       eats the wheel: ~198px of chrome + two grid rows at a third of the width
+       each. The query unit has to be read on a child — on the container itself it
+       would be a cyclic dependency and silently falls back to the viewport width,
+       which stretched the panel to 1158px. */
+    @supports (container-type: inline-size) {
+      .fl-ig-frame { height: calc(198px + 66.7cqw); }
+    }
+    .fl-ig-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
     .fl-badge {
       display: inline-flex; align-items: center; gap: 9px;
       font-family: var(--mono); font-size: .62rem;
@@ -1272,6 +1296,11 @@
     .tr-review-btn svg { flex-shrink: 0; }
     .tr-review-btn-fb::before { background: #1877f2; }
     .tr-review-btn-fb:hover { color: #fff; border-color: #1877f2; }
+    @media (max-width: 1024px) {
+      #flash { flex-direction: column; gap: 56px; }
+      .fl-left { max-width: 100%; }
+      .fl-ig { flex: none; width: 100%; max-width: 460px; align-self: center; }
+    }
     @media (max-width: 768px) {
       #flash { padding: 56px var(--pad) 64px; }
       .tr-review-cta { flex-direction: column; align-items: stretch; padding: 32px var(--pad); }
@@ -1291,7 +1320,10 @@
       background: var(--bg);
       border-top: 1px solid transparent;
       border-image: var(--seam) 1;
-      display: flex; flex-direction: column;
+      display: flex; flex-direction: row; align-items: center; gap: 72px;
+      /* The card is rotated, so its painted box is wider than its layout box;
+         clipping the overhang is invisible because the edges fade out anyway. */
+      overflow: hidden;
     }
     .gf-body {
       display: flex; flex-direction: column; align-items: flex-start;
@@ -1337,6 +1369,30 @@
       transform: translateY(-3px);
     }
     .gf-cta svg { color: var(--gold); flex-shrink: 0; }
+    /* Gift card: tilted, with all four edges dissolving into the page. No stroke
+       around it — a perimeter border cannot survive an edge-fading mask, since it
+       lies exactly where the mask is transparent, and inset far enough to survive
+       it reads as a frame printed across the artwork. The dissolve is the effect. */
+    .gf-card {
+      position: relative; flex: 0 1 480px; align-self: center;
+      transform: rotate(8deg);
+    }
+    .gf-card img {
+      width: 100%; height: auto; display: block; border-radius: 12px;
+      -webkit-mask-image: linear-gradient(to right,  transparent 0%, #000 9%, #000 91%, transparent 100%),
+                          linear-gradient(to bottom, transparent 0%, #000 13%, #000 87%, transparent 100%);
+              mask-image: linear-gradient(to right,  transparent 0%, #000 9%, #000 91%, transparent 100%),
+                          linear-gradient(to bottom, transparent 0%, #000 13%, #000 87%, transparent 100%);
+      -webkit-mask-composite: source-in;
+              mask-composite: intersect;
+    }
+    /* The pale artwork glows on the dark page and all but vanishes on #f4f1ea, so
+       the light theme gets a touch of contrast to hold its own. */
+    :root[data-theme="light"] .gf-card img { filter: brightness(.96) contrast(1.08); }
+    @media (max-width: 1024px) {
+      #gifts { flex-direction: column; align-items: flex-start; gap: 56px; }
+      .gf-card { flex: none; width: 100%; max-width: 420px; align-self: center; transform: rotate(5deg); }
+    }
     @media (max-width: 768px) {
       #gifts { padding: 76px var(--pad) 84px; }
       .gf-p { max-width: 100%; }
@@ -1914,9 +1970,25 @@
       letter-spacing: .04em; color: var(--gold);
       margin-bottom: 14px; display: block;
     }
+    /* Shopfront next to the map: the photo is what a visitor actually looks for
+       on the street, the map is how they get there. */
+    .loc-media {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      align-items: start;
+    }
+    .loc-photo {
+      /* height:auto is load-bearing: the width/height attributes are
+         presentational hints, and aspect-ratio is ignored while both axes are
+         specified — the photo rendered at its full 1600px otherwise. */
+      width: 100%; height: auto; aspect-ratio: 5/3; display: block;
+      object-fit: cover; border-radius: var(--r);
+      border: 1px solid var(--border);
+      filter: var(--img-card);
+      opacity: 0; transform: translateY(20px);
+    }
     .loc-map-wrap {
       position: relative;
-      width: 100%; aspect-ratio: 16/6; border-radius: var(--r);
+      width: 100%; aspect-ratio: 5/3; border-radius: var(--r);
       overflow: hidden; border: 1px solid var(--border);
       opacity: 0; transform: translateY(20px);
       transition: box-shadow .6s ease, border-color .6s ease;
@@ -1928,31 +2000,9 @@
     .loc-map-wrap iframe {
       width: 100%; height: 100%; border: 0;
     }
-    /* Click-to-load facade: the Maps embed is only fetched on demand, and the
-       click doubles as the opt-in that stops the iframe trapping Lenis scroll. */
-    .loc-map-overlay {
-      position: absolute; inset: 0; z-index: 2; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--bg2); border: 0; padding: 0;
-      transition: background .3s;
-    }
-    .loc-map-overlay:hover { background: rgba(var(--gold-rgb),.05); }
-    .loc-map-cue {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-family: var(--mono); font-size: .7rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg);
-      padding: 14px 28px; border-radius: 100px;
-      border: 1px solid var(--gold-ring);
-      background: rgba(var(--gold-rgb),.04);
-      transition: border-color .38s, background .38s, transform .38s var(--out);
-    }
-    .loc-map-overlay:hover .loc-map-cue {
-      border-color: var(--gold-ring-h);
-      background: rgba(var(--gold-rgb),.09);
-      transform: translateY(-2px);
-    }
-    .loc-map-cue svg { flex-shrink: 0; color: var(--gold); }
+    /* Deferred embed: the iframe is injected on approach, so the panel is empty
+       until then. Nothing to show meanwhile — the address block above carries the
+       information, and a placeholder would only flash. */
     @media (max-width: 768px) {
       #location { padding: 72px var(--pad) 80px; }
       /* .loc-hd is align-items:flex-start, so the stack shrink-wraps to its
@@ -1961,6 +2011,8 @@
       .loc-btn { width: 100%; justify-content: flex-start; }
       .loc-hd { flex-direction: column; align-items: flex-start; }
       .loc-map-wrap { aspect-ratio: 4/3; }
+      .loc-media { grid-template-columns: 1fr; gap: 12px; }
+      .loc-photo { aspect-ratio: 16/10; }
     }
 
     /* ══════════════════════════════════════════
@@ -2095,7 +2147,7 @@
     ══════════════════════════════════════════ */
     html.libs-failed #loader { display: none !important; }
     html.libs-failed :is(.h-eyebrow, .tl-i, .h-sub, .h-scroll, .ei,
-        .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
+        .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
         .exp-h2, .faq-h2, .bk-h2) {
@@ -2108,7 +2160,7 @@
     ══════════════════════════════════════════ */
     @media (prefers-reduced-motion: reduce) {
       :is(.h-eyebrow, .tl-i, .h-sub, .h-scroll, .ei,
-          .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap,
+          .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap, .loc-photo,
           .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
           .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
           .exp-h2, .faq-h2, .bk-h2) {
@@ -2619,6 +2671,13 @@
       <span>Enquire via WhatsApp</span>
     </a>
   </div>
+  <div class="gf-card">
+    <img src="pictures/web/Emmy-Tattoo-Gift-Card-Voucher-960.webp"
+         srcset="pictures/web/Emmy-Tattoo-Gift-Card-Voucher-480.webp 480w, pictures/web/Emmy-Tattoo-Gift-Card-Voucher-960.webp 960w"
+         sizes="(max-width: 1024px) 90vw, 34vw"
+         width="1091" height="494" loading="lazy" decoding="async"
+         alt="Emmy Tattoo gift voucher — an art nouveau line drawing beside fields for recipient, amount, expiry and signature.">
+  </div>
 </section>
 
 <!-- ════ AFTERCARE ════ -->
@@ -2694,6 +2753,12 @@
       </a>
     </div>
   </div>
+  <div class="fl-ig">
+    <div class="fl-ig-frame"
+         data-embed="https://www.instagram.com/emmy.tattoo/embed"
+         data-embed-title="Latest posts from @emmy.tattoo on Instagram"
+         data-embed-scroll="no"></div>
+  </div>
 </section>
 
 <!-- ════ LOCATION ════ -->
@@ -2730,13 +2795,22 @@
       </a>
     </div>
   </div>
-  <div class="loc-map-wrap" id="loc-map-wrap" data-map="https://maps.google.com/maps?q=80+Princes+Avenue,+Hull+HU5+3QJ&output=embed&z=17">
-    <button type="button" class="loc-map-overlay" id="loc-map-load" aria-label="Load interactive map of Sainthood Tattoo">
-      <span class="loc-map-cue">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.686 7-11a7 7 0 1 0-14 0c0 5.314 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
-        Load map
-      </span>
-    </button>
+  <div class="loc-media">
+    <img class="loc-photo"
+         src="pictures/web/Sainthood-Tattoo-Studio-Shopfront-Hull-960.webp"
+         srcset="pictures/web/Sainthood-Tattoo-Studio-Shopfront-Hull-960.webp 960w, pictures/web/Sainthood-Tattoo-Studio-Shopfront-Hull-1440.webp 1440w"
+         sizes="(max-width: 768px) 100vw, 46vw"
+         width="2646" height="1600" loading="lazy" decoding="async"
+         alt="The Sainthood Tattoo shopfront on Princes Avenue in Hull, a corner unit with a yellow and teal tiled facade and a black metal grille.">
+    <!-- Coordinates, not the address string: the ?q=<address> embed opens with a
+         permanently blank white place card over the top-left of the map. The
+         address is already set in type directly above, and the four Navigate
+         buttons handle routing. -->
+    <div class="loc-map-wrap" id="loc-map-wrap"
+         data-embed="https://maps.google.com/maps?q=53.7558,-0.3587&output=embed&z=17"
+         data-embed-title="Map of Sainthood Tattoo, 80 Princes Avenue, Hull">
+      <noscript><iframe src="https://maps.google.com/maps?q=53.7558,-0.3587&output=embed&z=17" title="Map of Sainthood Tattoo, 80 Princes Avenue, Hull"></iframe></noscript>
+    </div>
   </div>
 </section>
 
@@ -3641,31 +3715,53 @@ function __boot() {
   })();
 
   /* ═══ LOCATION ═══ */
-  gsap.to('.loc-map-wrap', {
+  gsap.to('.loc-map-wrap, .loc-photo', {
     opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
     scrollTrigger: { trigger: '#location', start: 'top 78%', once: true }
   });
 
-  /* Map facade: the embed boots a ~1 MB Maps client, so it is only injected on
-     an explicit click — which doubles as the opt-in that stops it trapping scroll. */
-  (() => {
-    const mapBtn = document.getElementById('loc-map-load');
-    if (!mapBtn) return;
-    mapBtn.addEventListener('click', () => {
-      const wrap = document.getElementById('loc-map-wrap');
-      const f = document.createElement('iframe');
-      f.title = 'Sainthood Tattoo Studio — Hull';
-      f.src = wrap.dataset.map;
-      f.allowFullscreen = true;
-      f.referrerPolicy = 'no-referrer-when-downgrade';
-      wrap.appendChild(f);
-      mapBtn.remove();
-    }, { once: true });
-  })();
+  /* The map embed itself is injected by the deferred-embed loader further down,
+     outside __boot, so it survives a CDN failure. */
 
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', __boot);
 else __boot();
+</script>
+
+<!-- ════ DEFERRED THIRD-PARTY EMBEDS ════ -->
+<!-- Both the Maps client and the Instagram grid are ~1 MB of someone else's
+     JavaScript, so the iframe is injected when the block is one screen away —
+     no click-to-load facade, and no dependency on __boot, which bails out
+     entirely when the CDN libs fail. -->
+<script>
+(function () {
+  var nodes = document.querySelectorAll('[data-embed]');
+  if (!nodes.length) return;
+  function inject(el) {
+    if (el.dataset.embedLoaded) return;
+    el.dataset.embedLoaded = '1';
+    var f = document.createElement('iframe');
+    f.src = el.dataset.embed;
+    f.title = el.dataset.embedTitle || '';
+    f.loading = 'lazy';
+    f.allowFullscreen = true;
+    f.referrerPolicy = 'no-referrer-when-downgrade';
+    if (el.dataset.embedScroll === 'no') f.setAttribute('scrolling', 'no');
+    el.appendChild(f);
+  }
+  if (!('IntersectionObserver' in window)) {
+    for (var i = 0; i < nodes.length; i++) inject(nodes[i]);
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      inject(e.target);
+      io.unobserve(e.target);
+    });
+  }, { rootMargin: '600px 0px' });
+  nodes.forEach(function (n) { io.observe(n); });
+})();
 </script>
 
 <!-- ════ GOOGLE REVIEWS — LIVE FETCH via Cloudflare Worker proxy ════ -->
