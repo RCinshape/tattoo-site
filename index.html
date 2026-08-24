@@ -75,7 +75,65 @@
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Fine Art Tattoos", "description": "Illustrative and fine art style tattoos" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Tattoo Gift Cards", "description": "Gift card for any amount, no expiry, redeemed against any tattoo appointment" } }
       ]
+    },
+    "founder": {
+      "@type": "Person",
+      "@id": "https://emmytattoo.com/#emmy",
+      "name": "Emmy",
+      "jobTitle": "Tattoo Artist",
+      "knowsAbout": ["Fine line tattooing", "Realism tattooing", "Portrait tattooing", "Fine art tattooing"],
+      "worksFor": { "@id": "https://emmytattoo.com/" },
+      "sameAs": ["https://www.instagram.com/emmy.tattoo", "https://www.facebook.com/EmmaleneTattoo"]
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "reviewCount": 20,
+      "bestRating": "5",
+      "worstRating": "1"
     }
+  }
+  </script>
+
+  <!-- FAQPage — the questions and answers below must stay word-for-word identical
+       to the visible #faq copy, or Google drops the rich result. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": "https://emmytattoo.com/#faq",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does a tattoo cost?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The price of tattoos varies as I price by piece, not by hour. Message me via WhatsApp and I'll be able to give you a quote. Deposits are a must and are non-refundable." }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you do walk-ins?",
+        "acceptedAnswer": { "@type": "Answer", "text": "I tend not to do walk-ins as I am usually quite busy. I don't want to waste your time so please book in." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I prepare for my appointment?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Eat a proper meal beforehand and stay well hydrated. Wear clothing that gives easy access to the area being tattooed. Avoid alcohol for at least 24 hours before your session. Do not book if you are pregnant or breastfeeding. If you are on blood thinners or have a skin condition affecting the area, let me know in advance and I'll advise. Worth bringing: earphones, iPads, audiobooks, or anything that helps you pass the time. Feel free to let me know if you want a silent appointment." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it hurt?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes it hurts, however it is a manageable pain and it is different for everyone. I would say it's uncomfortable rather than unbearable, and you adjust to it quickly. To help with this we can take breaks when and as you need, we go at your pace. If you are worried about a longer session, let me know and we can split them up into sessions you feel more comfortable with." }
+      },
+      {
+        "@type": "Question",
+        "name": "What should I know before my first tattoo?",
+        "acceptedAnswer": { "@type": "Answer", "text": "It is normal to be nervous, regardless of if it's your first tattoo or fifth. I will walk you through every step, you can take your time choosing placement, design, colours, anything you need. I like to say getting a tattoo is teamwork, we work together to make the best tattoo for you." }
+      },
+      {
+        "@type": "Question",
+        "name": "What's the minimum age?",
+        "acceptedAnswer": { "@type": "Answer", "text": "18 years old. No exceptions regardless of parental consent. Valid photo ID is required on the day. If you can't prove your age, the session cannot go ahead. Deposit is lost." }
+      }
+    ]
   }
   </script>
 
@@ -158,8 +216,8 @@
     #loader { display: none !important; }
     #nav { background: rgba(var(--panel-rgb),.92) !important; border-bottom-color: var(--border) !important; }
     #nav .n-logo { opacity: 1 !important; pointer-events: auto !important; }
-    :is(.h-eyebrow, .tl-i, .h-sub, .h-scroll, .ei,
-        .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap, .loc-photo,
+    :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
+        .bk-av, .bk-rule, .bk-sub, .bk-form, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
         .exp-h2, .faq-h2, .bk-h2) {
@@ -201,8 +259,7 @@
       --gold-rgb:  196,162,98;
       /* Exactly one gold per palette — no display/text split. Decorative gold
          ink carries its alpha in the token because GSAP writes inline opacity
-         on .sp-ghost, which outranks any CSS opacity rule. */
-      --ghost-ink: rgba(var(--gold-rgb),.07);
+         on .bk-wm, which outranks any CSS opacity rule. */
       --wm-ink:    rgba(var(--gold-rgb),.06);
       /* The gift voucher's ink, in two weights: --gc-ink for the illustration
          beside the copy, --gc-ink-wm for the phone layout where it sits behind
@@ -342,7 +399,6 @@
       --cta-shadow-a: 0 4px 16px rgba(var(--gold-rgb),.20), 0 1px 6px rgba(var(--fg-rgb),.12);
       --gold-faint: rgba(var(--gold-rgb),.8);
       --gold-soft:  rgba(var(--gold-rgb),.95);
-      --ghost-ink:  rgba(var(--gold-rgb),.28);
       --wm-ink:     rgba(var(--gold-rgb),.3);
       --gc-ink:     rgba(var(--fg-rgb),.26);
       --gc-ink-wm:  rgba(var(--fg-rgb),.14);
@@ -630,15 +686,22 @@
     ══════════════════════════════════════════ */
     #hero {
       min-height: 100svh;
-      display: flex; flex-direction: column; justify-content: flex-start;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
       padding: clamp(88px, 12svh, 120px) var(--pad) 56px; position: relative; overflow: hidden;
+      text-align: center;
     }
     .h-vign {
       position: absolute; inset: 0;
       background: var(--ambient-hero);
       pointer-events: none;
     }
-    .h-inner { position: relative; z-index: 2; }
+    /* Centred, not on the left rail: the hero is a staged centre like the reviews
+       spotlight and the booking close. Everything below it still starts at --pad. */
+    .h-inner {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+      width: 100%;
+    }
     @keyframes dp { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.6); opacity: .5; } }
     .h-eyebrow {
       font-family: var(--mono); font-size: clamp(.66rem, 1.4vw, .8rem);
@@ -678,10 +741,10 @@
       color: rgba(var(--fg-rgb),.86);
       line-height: 1.75;
       text-shadow: 0 0 28px rgba(var(--panel-rgb),1), 0 1px 6px rgba(var(--panel-rgb),.85);
-      display: flex; flex-direction: column; gap: 0;
+      display: flex; flex-direction: column; align-items: center; gap: 0;
     }
     .h-loc-studio {
-      display: flex; align-items: center; gap: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
     }
     .h-loc-hours { display: block; }
     .h-dir {
@@ -702,40 +765,57 @@
     .h-dir svg { flex-shrink: 0; }
 
     @keyframes hcta-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-    /* One quiet next-step cue where the CTA row used to be: the hero sets the mood,
-       the work and the reviews persuade, #book does the asking. The 34px gold rule
-       echoes .h-eyebrow::before, so the hero opens and closes on the same rail. */
-    .h-scroll {
-      display: inline-flex; align-items: center; gap: 12px;
+    /* The hero asks. Two buttons, one filled: Book now is the whole point of the
+       page, View portfolio is the browse route for anyone not ready. Both sit over
+       photography, so the outline one uses the same glass as .h-dir rather than a
+       themed surface, and the filled one uses --on-gold, the token that exists for
+       ink on a gold fill. */
+    .h-cta {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 14px;
       margin-top: 40px; opacity: 0;
-      font-family: var(--mono); font-size: .66rem;
-      letter-spacing: .22em; text-transform: uppercase;
-      color: var(--fg2); text-decoration: none;
-      text-shadow: 0 0 20px rgba(var(--panel-rgb),1), 0 1px 5px rgba(var(--panel-rgb),.92);
-      transition: color .35s, gap .35s var(--out);
     }
-    .h-scroll-line {
-      width: 34px; height: 1px; flex: none; background: var(--gold);
-      transform-origin: left; transition: transform .45s var(--out);
+    .h-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 18px 42px; border-radius: 999px;
+      font-family: var(--mono); font-size: .72rem;
+      letter-spacing: .2em; text-transform: uppercase;
+      text-decoration: none; white-space: nowrap;
+      border: 1px solid transparent;
+      transition: background .38s, border-color .38s, color .38s, transform .38s var(--out);
     }
-    .h-scroll:hover { color: var(--fg); gap: 18px; }
-    .h-scroll:hover .h-scroll-line { transform: scaleX(1.35); }
-    html.hero-go .h-scroll { animation: hcta-in .24s var(--out) .05s forwards; }
+    .h-btn-go {
+      background: var(--gold); border-color: var(--gold); color: var(--on-gold);
+    }
+    .h-btn-go:hover { background: var(--gold-soft); transform: translateY(-3px); }
+    .h-btn-alt {
+      background: rgba(var(--fg-rgb),.10);
+      border-color: var(--photo-ring); color: var(--fg);
+      backdrop-filter: blur(16px) saturate(1.4);
+      -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    }
+    .h-btn-alt:hover { border-color: var(--photo-ring-h); transform: translateY(-3px); }
+    html.hero-go .h-cta { animation: hcta-in .24s var(--out) .05s forwards; }
     @media (max-width: 768px) {
       #hero { padding: 80px var(--pad) 48px; min-height: auto; }
       .h-title { font-size: clamp(3.4rem,16vw,6rem); }
       .h-dir span { display: none; }
       .h-dir { padding: 9px 11px; }
+      /* Side by side the two labels are 430px of mono at 342px of gutter, so they
+         wrap anyway — make them full-width thumb targets rather than two ragged pills. */
+      .h-cta { width: 100%; }
+      .h-btn { width: 100%; max-width: 340px; padding: 17px 24px; }
     }
-    @media (prefers-reduced-motion: reduce) { .h-scroll, html.hero-go .h-scroll { animation: none !important; opacity: 1 !important; } }
+    @media (prefers-reduced-motion: reduce) { .h-cta, html.hero-go .h-cta { animation: none !important; opacity: 1 !important; } }
 
     /* ══════════════════════════════════════════
        HERO EYEBROW
     ══════════════════════════════════════════ */
     /* Gold survives at label size as a rule, never as the ink: 11.8px gold is
        3.16:1 in light, which fails AA for text but clears the non-text 3:1. */
+    /* Centred, so the rule is mirrored — a single leading dash reads as a stray
+       mark once the line is no longer on the left rail. */
     .h-eyebrow { display: inline-flex; align-items: center; gap: 12px; }
-    .h-eyebrow::before {
+    .h-eyebrow::before, .h-eyebrow::after {
       content: ''; width: 22px; height: 1px; flex: none; background: var(--gold);
     }
 
@@ -1490,46 +1570,108 @@
       margin-bottom: 60px; text-align: center;
       opacity: 0; transform: translateY(14px);
     }
-    /* ── Enquiry pill — two halves in one box, cursor-tracked tint ── */
-    .bk-btns { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-    .bk-split-lead {
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .28em; text-transform: uppercase; color: var(--fg2);
+    /* ── Enquiry form ──
+       Every DM used to arrive as "hi how much for", which costs a round trip before
+       Emmy can even price it. These are the seven answers she needs to quote, and
+       the email endpoint means the lead exists somewhere she owns rather than only
+       inside Instagram. The WhatsApp button posts the identical structured message
+       for anyone who would rather not use a form. */
+    .bk-form {
+      width: 100%; max-width: 720px; text-align: left;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
     }
-    .bk-split {
-      position: relative; display: flex; align-items: stretch;
-      border: 1px solid var(--gold-ring); border-radius: 100px;
+    .bk-f-wide { grid-column: 1 / -1; }
+    .bk-f-lbl {
+      display: block; margin-bottom: 9px;
+      font-family: var(--mono); font-size: .6rem;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--fg2);
+    }
+    .bk-f-opt { color: var(--dim); }
+    .bk-form input, .bk-form select, .bk-form textarea {
+      width: 100%; display: block;
+      font-family: var(--sans); font-size: .95rem; color: var(--fg);
+      background: rgba(var(--fg-rgb),.03);
+      border: 1px solid var(--border); border-radius: var(--r);
+      padding: 14px 16px;
+      transition: border-color .3s, background .3s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .bk-form textarea { min-height: 132px; resize: vertical; line-height: 1.7; }
+    .bk-form select {
+      /* The caret is inline SVG in the token colour, because a native select arrow
+         renders light-on-light in the dark theme on Windows. */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23c4a262' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 16px center;
+      padding-right: 42px;
+    }
+    .bk-form input:focus-visible, .bk-form select:focus-visible, .bk-form textarea:focus-visible {
+      outline: none; border-color: var(--gold-ring-h);
+      background: rgba(var(--gold-rgb),.05);
+    }
+    .bk-form input::placeholder, .bk-form textarea::placeholder { color: var(--dim); }
+    /* Honeypot: off-screen rather than display:none, which some bots skip. */
+    .bk-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .bk-f-actions {
+      grid-column: 1 / -1;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px;
+      margin-top: 10px;
+    }
+    .bk-f-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 11px;
+      padding: 18px 38px; border-radius: 100px;
+      font-family: var(--mono); font-size: .72rem;
+      letter-spacing: .2em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none;
+      border: 1px solid transparent;
+      transition: background .38s, border-color .38s, color .38s, transform .38s var(--out);
+    }
+    .bk-f-go { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+    .bk-f-go:hover { background: var(--gold-soft); transform: translateY(-3px); }
+    .bk-f-go[disabled] { opacity: .6; cursor: progress; transform: none; }
+    .bk-f-alt {
       background: rgba(var(--gold-rgb),.04);
-      overflow: hidden; opacity: 0;                 /* revealed by the entrance tween */
-      transition: border-color .38s, box-shadow .4s;
-      --bk-mx: 50%;
+      border-color: var(--gold-ring); color: var(--fg);
     }
-    .bk-split:hover { border-color: var(--gold-ring-h); box-shadow: 0 10px 48px rgba(var(--gold-rgb),.12); }
-    /* One glow layer: colour swaps with the hovered half, position follows the
-       pointer through --bk-mx (written by JS — the only such binding in the file). */
-    .bk-split-glow {
-      position: absolute; inset: 0; pointer-events: none; z-index: 0;
-      background: radial-gradient(220px circle at var(--bk-mx) 50%, var(--bk-tint, transparent) 0%, transparent 72%);
-      opacity: 0; transition: opacity .35s, background .35s;
+    .bk-f-alt:hover { border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09); transform: translateY(-3px); }
+    .bk-f-alt svg { flex-shrink: 0; color: var(--gold); }
+    .bk-f-note {
+      grid-column: 1 / -1; text-align: center;
+      font-family: var(--mono); font-size: .6rem;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--dim);
     }
-    .bk-split:hover .bk-split-glow { opacity: 1; }
-    .bk-split[data-side="wa"] { --bk-tint: rgba(37,211,102,.30); }
-    .bk-split[data-side="ig"] { --bk-tint: rgba(225,48,108,.28); }
-    .bk-split-half {
-      position: relative; z-index: 1;
-      display: inline-flex; align-items: center; justify-content: center; gap: 12px;
-      padding: 20px 34px; text-decoration: none; color: var(--fg);
-      font-family: var(--mono); font-size: .74rem;
-      letter-spacing: .2em; text-transform: uppercase; white-space: nowrap;
-      transition: color .3s;
+    /* Result banner — --ok/--err are the status tokens, already per-theme */
+    .bk-f-msg {
+      grid-column: 1 / -1; text-align: center;
+      font-family: var(--sans); font-size: .92rem; line-height: 1.7;
+      padding: 16px 20px; border-radius: var(--r);
+      border: 1px solid var(--border);
     }
-    .bk-split-half svg { flex-shrink: 0; color: var(--gold); transition: color .3s, transform .3s var(--sp); }
-    .bk-split-half:hover svg { transform: scale(1.08); }
-    .bk-half-wa:hover svg { color: #25D366; }
-    .bk-half-ig:hover svg { color: #e1306c; }
-    .bk-split-div { width: 1px; align-self: stretch; background: var(--gold-ring); flex: none; }
-    /* Coarse pointers never get the glow — see the (pointer: coarse) guard in the JS */
-    html.no-hover .bk-split-glow { display: none; }
+    .bk-f-msg[data-state="ok"]  { color: var(--ok-ink); border-color: rgba(var(--ok-rgb),.45); background: rgba(var(--ok-rgb),.07); }
+    .bk-f-msg[data-state="err"] { color: var(--fg); border-color: var(--gold-ring); background: rgba(var(--gold-rgb),.06); }
+
+    /* ── Deposit ──
+       The FAQ has always said deposits are mandatory and non-refundable; until now
+       there was no way to pay one, so every booking needed a manual back-and-forth. */
+    .bk-dep {
+      width: 100%; max-width: 720px; margin-top: 46px;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;
+      padding: 26px 30px; text-align: left;
+      border: 1px solid var(--gold-ring); border-radius: var(--r);
+      background: rgba(var(--gold-rgb),.04);
+    }
+    .bk-dep[hidden] { display: none; }
+    .bk-dep-l { display: flex; flex-direction: column; gap: 7px; }
+    .bk-dep-h {
+      font-family: var(--mono); font-size: .68rem;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--fg);
+    }
+    .bk-dep-p { font-size: .9rem; color: var(--fg2); line-height: 1.7; max-width: 420px; }
+    @media (max-width: 768px) {
+      .bk-form { grid-template-columns: 1fr; }
+      .bk-f-actions { flex-direction: column; align-items: stretch; }
+      .bk-f-btn { width: 100%; }
+      .bk-dep { flex-direction: column; align-items: stretch; padding: 22px 24px; }
+    }
 
     /* ── 3-step process ── */
     .bk-steps {
@@ -1560,8 +1702,7 @@
     @media (max-width: 768px) {
       #book { padding: 88px var(--pad) 80px; }
       .bk-h2 { font-size: clamp(2.6rem, 11vw, 4.2rem); }
-      .bk-split { width: 100%; }
-      .bk-split-half { flex: 1; padding: 18px 12px; font-size: .68rem; letter-spacing: .14em; gap: 8px; }
+      .bk-f-btn { padding: 17px 24px; }
       .bk-steps { gap: 0; }
       .bk-step  { padding: 0 18px; }
       .bk-step-div { width: 28px; }
@@ -1612,56 +1753,61 @@
       .tr-head-r { text-align: left; }
     }
     /* ══════════════════════════════════════════
-       REVIEWS — Spotlight (#tr-stage)
+       REVIEWS — six-card grid (#tr-stage)
     ══════════════════════════════════════════ */
-    #tr-stage { position: relative; }
-    /* avatar */
-    .sp-pic {
+    /* Six at once, not one at a time. A spotlight carousel showed 1/6 of the proof
+       and auto-advanced past it; the whole point of seventeen five-star reviews is
+       the volume, so the volume has to be on screen. */
+    #tr-stage {
+      position: relative;
+      padding: 0 var(--pad);
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .trv-card {
+      display: flex; flex-direction: column; gap: 18px;
+      padding: 30px 32px;
+      border: 1px solid var(--border); border-radius: var(--r);
+      background: rgba(var(--fg-rgb),.012);
+      transition: border-color .4s;
+    }
+    .trv-card:hover { border-color: var(--border-h); }
+    .trv-stars { color: var(--gold); font-size: .8rem; letter-spacing: .14em; }
+    .trv-q {
+      font-family: var(--serif); font-style: italic; font-weight: 300;
+      font-size: 1.05rem; line-height: 1.7; color: var(--fg);
+      margin: 0;
+      display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .trv-more {
+      display: inline-flex; align-items: center; gap: 6px;
+      align-self: flex-start;
+      font-family: var(--mono); font-size: .62rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--fg2); background: none; border: none; padding: 0;
+      cursor: pointer; transition: color .2s;
+    }
+    .trv-more:hover { color: var(--gold); }
+    /* margin-top:auto pins every attribution to the bottom of its card despite
+       uneven quote lengths — the same trick /portfolio's proof strip uses. */
+    .trv-by { display: flex; align-items: center; gap: 13px; margin-top: auto; }
+    .trv-pic {
       width: 46px; height: 46px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
       border: 1px solid var(--border); background: var(--bg2);
       display: inline-flex; align-items: center; justify-content: center;
     }
-    .sp-pic img { width: 100%; height: 100%; object-fit: cover; filter: var(--img-avatar); }
-    .sp-pic-ph { font-family: var(--serif); color: var(--gold); font-size: 1.1rem; }
-
-    /* ── Spotlight ── */
-    .trs-spotlight {
-      position: relative; max-width: 980px; margin: 0 auto; overflow: visible;
-      padding: 16px var(--pad); text-align: center;
-      display: flex; flex-direction: column; align-items: center; gap: 22px;
+    .trv-pic img { width: 100%; height: 100%; object-fit: cover; filter: var(--img-avatar); }
+    .trv-pic-ph { font-family: var(--serif); color: var(--gold); font-size: 1.1rem; }
+    .trv-name {
+      font-family: var(--mono); font-size: .7rem;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--fg);
+      display: flex; flex-direction: column; gap: 4px;
     }
-    .sp-ghost {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      font-family: var(--display); font-size: clamp(8rem, 16vw, 14rem); line-height: 1;
-      color: var(--ghost-ink); opacity: 1; pointer-events: none; user-select: none; z-index: 0;
+    .trv-sub { color: var(--dim); font-size: .6rem; letter-spacing: .16em; }
+    @media (max-width: 1024px) { #tr-stage { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+      #tr-stage { grid-template-columns: 1fr; gap: 14px; }
+      .trv-card { padding: 24px 26px; }
     }
-    .trs-spotlight > *:not(.sp-ghost) { position: relative; z-index: 1; }
-    .sp-rating { display: inline-flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--fg2); }
-    .sp-stars { color: var(--gold); letter-spacing: .15em; }
-    .sp-quote {
-      font-family: var(--serif); font-style: italic; font-weight: 300;
-      font-size: clamp(1.15rem, 1.9vw, 1.6rem); line-height: 1.45; color: var(--fg);
-      width: min(900px, 100%); margin: 0; cursor: pointer;
-      display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .sp-author { display: inline-flex; align-items: center; gap: 14px; }
-    .sp-name { font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg); display: flex; flex-direction: column; gap: 4px; text-align: left; }
-    .sp-sub { color: var(--dim); font-size: .62rem; letter-spacing: .16em; }
-    .sp-nav { display: flex; align-items: center; gap: 20px; }
-    .sp-arrow { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border-h); background: rgba(var(--fg-rgb),.02); color: var(--fg); font-size: 1.2rem; cursor: pointer; transition: border-color .25s, color .25s, background .25s; }
-    .sp-arrow:hover { border-color: var(--gold); color: var(--gold); }
-    .sp-dots { display: flex; gap: 9px; }
-    .sp-dot { width: 7px; height: 7px; border-radius: 50%; border: 0; padding: 0; background: var(--dim); opacity: .5; cursor: pointer; transition: opacity .25s, transform .25s, background .25s; }
-    .sp-dot.on { background: var(--gold); opacity: 1; transform: scale(1.3); }
-    @media (max-width: 768px) { .sp-quote { font-size: 1.15rem; } }
-    .sp-readmore {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-family: var(--mono); font-size: .66rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg); background: none; border: none; padding: 0;
-      cursor: pointer; transition: color .2s;
-    }
-    .sp-readmore:hover { color: var(--gold); }
 
     /* Review expand modal */
     #rv-modal {
@@ -2081,7 +2227,7 @@
     /* — Spring touch feedback — */
     .wc          { transition: border-color .4s, transform .22s cubic-bezier(.175,.885,.32,1.275); }
     .wc:active   { transform: scale(0.95) !important; }
-    .bk-split-half:active, .w-more:active .w-more-ring { transform: scale(0.96) translateY(0) !important; transition-duration: .1s !important; }
+    .bk-f-btn:active, .w-more:active .w-more-ring { transform: scale(0.96) translateY(0) !important; transition-duration: .1s !important; }
     .ei:active   { background: rgba(var(--fg-rgb),.02); }
     .fq-item:active { background: rgba(var(--fg-rgb),.02); }
 
@@ -2141,8 +2287,8 @@
        RESILIENCE — if animation libs/JS fail, reveal content + drop loader
     ══════════════════════════════════════════ */
     html.libs-failed #loader { display: none !important; }
-    html.libs-failed :is(.h-eyebrow, .tl-i, .h-sub, .h-scroll, .ei,
-        .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap, .loc-photo,
+    html.libs-failed :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
+        .bk-av, .bk-rule, .bk-sub, .bk-form, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
         .exp-h2, .faq-h2, .bk-h2) {
@@ -2154,8 +2300,8 @@
        REDUCED MOTION — keep entrance-revealed content visible + static
     ══════════════════════════════════════════ */
     @media (prefers-reduced-motion: reduce) {
-      :is(.h-eyebrow, .tl-i, .h-sub, .h-scroll, .ei,
-          .bk-av, .bk-rule, .bk-sub, .bk-split, .bk-steps, .loc-map-wrap, .loc-photo,
+      :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
+          .bk-av, .bk-rule, .bk-sub, .bk-form, .bk-steps, .loc-map-wrap, .loc-photo,
           .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
           .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
           .exp-h2, .faq-h2, .bk-h2) {
@@ -2259,12 +2405,12 @@
         <span class="h-loc-hours">Appointment only &nbsp;·&nbsp; Tue–Sat</span>
       </div>
     </div>
-    <!-- The hero's one exit goes straight to /portfolio; the cross-document
-         @view-transition makes it the same fade as the work gate below. -->
-    <a class="h-scroll" href="/portfolio">
-      <span class="h-scroll-line" aria-hidden="true"></span>
-      See the work
-    </a>
+    <!-- Book now goes to #book on this page; View portfolio is a cross-document
+         navigation that @view-transition fades exactly like the work gate below. -->
+    <div class="h-cta">
+      <a class="h-btn h-btn-go" href="#book">Book now</a>
+      <a class="h-btn h-btn-alt" href="/portfolio">View portfolio</a>
+    </div>
   </div>
 </section>
 
@@ -2338,6 +2484,47 @@
   </div>
 </section>
 </div><!-- /#work-outer -->
+
+<!-- ════ REVIEWS ════ -->
+<section id="trust">
+
+  <div class="tr-head">
+    <div class="tr-head-l">
+      <h2 class="tr-h2">What clients <em>say</em></h2>
+    </div>
+    <div class="tr-head-r">
+      <div class="tr-score-badge">
+        <span class="tr-score-stars">★★★★★</span>
+        <span class="tr-score-val">5.0</span>
+        <span class="tr-score-sep">·</span>
+        <span class="tr-score-meta">17 Google Reviews</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews render here (Spotlight carousel) -->
+  <div id="tr-stage"></div>
+
+  <!-- View-all + leave-a-review strip — inside trust section -->
+  <div class="tr-review-cta">
+    <p class="tr-review-prompt">Reviews are genuinely appreciated. <em>They help people find their way here.</em></p>
+    <div class="tr-review-btns">
+      <a href="https://g.page/r/CVRweODDPiBwEAI/review" target="_blank" rel="noopener" class="tr-review-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        <span>Leave a Google review</span>
+      </a>
+      <a href="https://www.facebook.com/EmmaleneTattoo/reviews" target="_blank" rel="noopener" class="tr-review-btn tr-review-btn-fb">
+        <svg width="16" height="16" aria-hidden="true"><use href="#i-fb"/></svg>
+        <span>Recommend on Facebook</span>
+      </a>
+      <a href="https://g.page/r/CVRweODDPiBwEAI" target="_blank" rel="noopener" class="tr-review-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>See all Google reviews</span>
+      </a>
+    </div>
+  </div>
+
+</section>
 
 <!-- ════ ABOUT ════ -->
 <section id="about">
@@ -2442,47 +2629,6 @@
 
 
   </ul>
-</section>
-
-<!-- ════ REVIEWS ════ -->
-<section id="trust">
-
-  <div class="tr-head">
-    <div class="tr-head-l">
-      <h2 class="tr-h2">What clients <em>say</em></h2>
-    </div>
-    <div class="tr-head-r">
-      <div class="tr-score-badge">
-        <span class="tr-score-stars">★★★★★</span>
-        <span class="tr-score-val">5.0</span>
-        <span class="tr-score-sep">·</span>
-        <span class="tr-score-meta">17 Google Reviews</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Reviews render here (Spotlight carousel) -->
-  <div id="tr-stage"></div>
-
-  <!-- View-all + leave-a-review strip — inside trust section -->
-  <div class="tr-review-cta">
-    <p class="tr-review-prompt">Reviews are genuinely appreciated. <em>They help people find their way here.</em></p>
-    <div class="tr-review-btns">
-      <a href="https://g.page/r/CVRweODDPiBwEAI/review" target="_blank" rel="noopener" class="tr-review-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        <span>Leave a Google review</span>
-      </a>
-      <a href="https://www.facebook.com/EmmaleneTattoo/reviews" target="_blank" rel="noopener" class="tr-review-btn tr-review-btn-fb">
-        <svg width="16" height="16" aria-hidden="true"><use href="#i-fb"/></svg>
-        <span>Recommend on Facebook</span>
-      </a>
-      <a href="https://g.page/r/CVRweODDPiBwEAI" target="_blank" rel="noopener" class="tr-review-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span>See all Google reviews</span>
-      </a>
-    </div>
-  </div>
-
 </section>
 
 <!-- ════ FAQ ════ -->
@@ -2648,25 +2794,68 @@
       </div>
     </div>
 
-    <!-- CTA — one pill, two halves; the tint follows the cursor across them -->
-    <div class="bk-btns">
-      <p class="bk-split-lead">Enquire via</p>
-      <div class="bk-split" id="bk-split">
-        <span class="bk-split-glow" aria-hidden="true"></span>
-        <a class="bk-split-half bk-half-wa"
-           href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
-           target="_blank" rel="noopener">
-          <svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>
-          <span>WhatsApp</span>
-        </a>
-        <span class="bk-split-div" aria-hidden="true"></span>
-        <a class="bk-split-half bk-half-ig"
-           href="https://instagram.com/emmy.tattoo"
-           target="_blank" rel="noopener">
-          <svg width="20" height="20" aria-hidden="true"><use href="#i-ig"/></svg>
-          <span>Instagram</span>
-        </a>
+    <!-- Enquiry form. Posts to Web3Forms when a key is configured; the WhatsApp
+         button always works and sends the identical structured message. -->
+    <form class="bk-form" id="bk-form" novalidate>
+      <div>
+        <label class="bk-f-lbl" for="bkf-name">Your name</label>
+        <input id="bkf-name" name="name" type="text" autocomplete="name" required data-ask="name" placeholder="Emma">
       </div>
+      <div>
+        <label class="bk-f-lbl" for="bkf-email">Email</label>
+        <input id="bkf-email" name="email" type="email" autocomplete="email" required data-ask="email address" placeholder="you@example.com">
+      </div>
+      <div class="bk-f-wide">
+        <label class="bk-f-lbl" for="bkf-idea">The idea</label>
+        <textarea id="bkf-idea" name="idea" required data-ask="idea" placeholder="What you'd like, and anything behind it. A rough thought is enough."></textarea>
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="bkf-place">Placement</label>
+        <input id="bkf-place" name="placement" type="text" placeholder="Inner forearm">
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="bkf-size">Rough size</label>
+        <input id="bkf-size" name="size" type="text" placeholder="About 12cm">
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="bkf-budget">Budget</label>
+        <select id="bkf-budget" name="budget">
+          <option>Not sure yet</option>
+          <option>Up to £150</option>
+          <option>£150–£300</option>
+          <option>£300–£600</option>
+          <option>£600+</option>
+        </select>
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="bkf-when">When suits <span class="bk-f-opt">— optional</span></label>
+        <input id="bkf-when" name="availability" type="text" placeholder="Weekday mornings">
+      </div>
+      <div class="bk-f-wide">
+        <label class="bk-f-lbl" for="bkf-refs">Reference links <span class="bk-f-opt">— optional</span></label>
+        <input id="bkf-refs" name="references" type="text" placeholder="Instagram or Pinterest links, comma separated">
+      </div>
+
+      <input type="checkbox" name="botcheck" class="bk-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <div class="bk-f-actions">
+        <button class="bk-f-btn bk-f-go" type="submit" id="bkf-send">Send enquiry</button>
+        <button class="bk-f-btn bk-f-alt" type="button" id="bkf-wa">
+          <svg width="18" height="18" aria-hidden="true"><use href="#i-wa"/></svg>
+          <span>Send on WhatsApp</span>
+        </button>
+      </div>
+      <p class="bk-f-note">Consultation is free · Priced by piece, not by hour</p>
+      <p class="bk-f-msg" id="bkf-msg" hidden></p>
+    </form>
+
+    <!-- Deposit — revealed only once a payment link is configured -->
+    <div class="bk-dep" id="bk-dep" hidden>
+      <div class="bk-dep-l">
+        <span class="bk-dep-h">Secure your date</span>
+        <p class="bk-dep-p">Deposits are non-refundable and come off the final price. Pay once we've agreed a date and the slot is yours.</p>
+      </div>
+      <a class="bk-f-btn bk-f-go" id="bk-dep-btn" href="#" target="_blank" rel="noopener">Pay deposit</a>
     </div>
 
   </div>
@@ -2920,11 +3109,15 @@ function __boot() {
     smoothWheel: true,
   });
   /* This Lenis build exposes no public "stopped" flag and every overlay locks the
-     page through lenis.stop(), so shadow the pair once and read the shadow. */
+     page through lenis.stop(), so shadow the pair once and read the shadow. The
+     shadowed pair is published on window because the overlays that need it — the
+     reviews modal for one — live in top-level scripts that run whether or not the
+     CDN delivered Lenis at all. */
   let scrollLocked = false;
   const __lenisStop = lenis.stop.bind(lenis), __lenisStart = lenis.start.bind(lenis);
   lenis.stop  = () => { scrollLocked = true;  __lenisStop(); };
   lenis.start = () => { scrollLocked = false; __lenisStart(); };
+  window.__scrollLock = { stop: lenis.stop, start: lenis.start };
   lenis.stop(); /* locked until loader exits */
   lenis.on('scroll', ScrollTrigger.update);
 
@@ -3500,7 +3693,7 @@ function __boot() {
       opacity: 1, y: 0, duration: .9, ease: 'expo.out', delay: .44,
       scrollTrigger: { trigger: '#book', start: 'top 74%', once: true }
     });
-    gsap.fromTo('#bk-split',
+    gsap.fromTo('.bk-form',
       { opacity: 0, y: 28 },
       { opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: .6,
         scrollTrigger: { trigger: '#book', start: 'top 70%', once: true } }
@@ -3528,30 +3721,43 @@ function __boot() {
         scrollTrigger: { trigger: '#work-outer', start: 'top 82%', once: true } }
     );
 
-    /* ── Enquiry pill: pointer-tracked tint ── */
-    (() => {
-      if (window.matchMedia('(pointer: coarse)').matches) {
-        document.documentElement.classList.add('no-hover');
-        return;
-      }
-      document.querySelectorAll('.bk-split').forEach(split => {
-        split.addEventListener('pointermove', e => {
-          const r = split.getBoundingClientRect();
-          split.style.setProperty('--bk-mx', (e.clientX - r.left) + 'px');
-          const side = e.target.closest('.bk-half-ig') ? 'ig' : e.target.closest('.bk-half-wa') ? 'wa' : null;
-          if (side) split.dataset.side = side;
-        });
-        split.addEventListener('pointerleave', () => split.removeAttribute('data-side'));
-        split.querySelectorAll('.bk-split-half').forEach(h => {
-          h.addEventListener('focus', () => { split.dataset.side = h.classList.contains('bk-half-ig') ? 'ig' : 'wa'; });
-        });
-      });
-    })();
+    /* The coarse-pointer flag still gates hover-only chrome elsewhere. */
+    if (window.matchMedia('(pointer: coarse)').matches) document.documentElement.classList.add('no-hover');
 
   }
 
-  /* ══ REVIEWS — Spotlight carousel ══ */
-  let REVIEWS = [
+
+  /* Head entrance */
+  gsap.fromTo('.tr-head', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
+    scrollTrigger: { trigger: '#trust', start: 'top 88%', once: true } });
+
+
+  /* ═══ LOCATION ═══ */
+  gsap.to('.loc-map-wrap, .loc-photo', {
+    opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
+    scrollTrigger: { trigger: '#location', start: 'top 78%', once: true }
+  });
+
+  /* The map embed itself is injected by the deferred-embed loader further down,
+     outside __boot, so it survives a CDN failure. */
+
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', __boot);
+else __boot();
+</script>
+
+<!-- ════ REVIEWS — six-card grid ════ -->
+<!-- Top-level, NOT inside __boot: with the reviews now sitting directly behind the
+     work, a CDN failure used to leave a blank hole exactly where the social proof
+     belongs, because __boot returns at its lib guard before the grid is built. -->
+<script>
+(() => {
+  /* ══ REVIEWS — six-card grid ══ */
+  /* Google's Places API returns at most five reviews per place, so a live-only grid
+     can never fill the six slots. These seven are transcribed from the same Google
+     listing and top the live five up to six, de-duped by name — never a mix of real
+     and invented, just a longer window onto the same wall. */
+  const SEEDED = [
     { name: 'Jess Dan',        photo: 'google.reviews/Jess Dunn.jpg',     rating: 5, quote: "Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" },
     { name: 'Jaime Dale',      photo: 'google.reviews/James Dale.jpg',    rating: 5, quote: "Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" },
     { name: 'Ruby Taylor',     photo: 'google.reviews/Ruby Taylor.jpg',   rating: 5, quote: "Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist" },
@@ -3560,11 +3766,20 @@ function __boot() {
     { name: 'Sarah Andrew',    photo: 'google.reviews/Sarah Andrew.png',  rating: 5, quote: "Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!" },
     { name: 'Kimberley Rust',  photo: 'google.reviews/Kimberely Rust.jpg', rating: 5, quote: "Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting. Can't wait to get more, so happy with the three I currently have, such beautiful artwork. ❤️" }
   ];
-
-  /* Head entrance */
-  gsap.fromTo('.tr-head', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
-    scrollTrigger: { trigger: '#trust', start: 'top 88%', once: true } });
-
+  let LIVE = [];
+  /* Live first, seeded only to fill the remaining slots. Names are the only key the
+     two sources share, so that is what de-dupes them. */
+  function roster() {
+    const out = LIVE.slice(0, 6);
+    const seen = new Set(out.map(r => String(r.name).trim().toLowerCase()));
+    for (const r of SEEDED) {
+      if (out.length >= 6) break;
+      const k = String(r.name).trim().toLowerCase();
+      if (seen.has(k)) continue;
+      seen.add(k); out.push(r);
+    }
+    return out;
+  }
   (() => {
     const stage = document.getElementById('tr-stage');
     const modal = document.getElementById('rv-modal');
@@ -3573,10 +3788,15 @@ function __boot() {
     const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
     const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const initial = name => (name || '?').trim().charAt(0).toUpperCase();
-    const STATIC = (typeof LOW_END !== 'undefined' && LOW_END);
 
-    /* Live score/count — updated by the Google fetch before re-render */
-    let META = { rating: '5.0', count: 17 };
+    /* Live score/count — the Google fetch updates these and repaints the head badge */
+    const META = { rating: '5.0', count: 17 };
+    function paintMeta() {
+      const v = document.querySelector('.tr-score-val');
+      const m = document.querySelector('.tr-score-meta');
+      if (v) v.textContent = META.rating;
+      if (m) m.textContent = META.count + ' Google Reviews';
+    }
 
     /* Shared modal (reuses #rv-modal) */
     let mq, mauth, mreply, mreplyT;
@@ -3587,7 +3807,7 @@ function __boot() {
       mreplyT = modal.querySelector('.rvm-reply-text');
       const mback = modal.querySelector('.rvm-back');
       const mclose = modal.querySelector('.rvm-close');
-      const closeModal = () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); lenis.start(); };
+      const closeModal = () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); if (window.__scrollLock) window.__scrollLock.start(); };
       if (mback) mback.addEventListener('click', closeModal);
       if (mclose) mclose.addEventListener('click', closeModal);
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
@@ -3600,26 +3820,11 @@ function __boot() {
       mauth.textContent = '— ' + r.name + ' · Google Review';
       if (r.reply) { mreplyT.textContent = r.reply; mreply.classList.add('visible'); mreply.setAttribute('aria-hidden', 'false'); }
       else { mreply.classList.remove('visible'); mreply.setAttribute('aria-hidden', 'true'); }
-      modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); lenis.stop();
+      modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); if (window.__scrollLock) window.__scrollLock.stop();
     }
 
-    /* Pause auto-advance when off-screen. The progress tween is only re-armed on
-       re-entry, so an off-screen carousel costs nothing. */
-    let visible = true;
-    let _onVisible = () => {};
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(([e]) => {
-        visible = e.isIntersecting;
-        if (visible) _onVisible();
-      }, { rootMargin: '80px' }).observe(stage);
-    }
-
-    /* Pause auto-advance while the visitor hovers/reads; each builder registers its pause/resume */
-    let _pause = () => {}, _resume = () => {};
-    stage.addEventListener('mouseenter', () => _pause());
-    stage.addEventListener('mouseleave', () => _resume());
-    stage.addEventListener('focusin',  () => _pause());
-    stage.addEventListener('focusout', () => _resume());
+    /* Cards are static, so there is nothing to pause: no autoplay, no off-screen
+       timer, no swipe. The section's only motion is the entrance stagger below. */
 
     function photoEl(r, cls) {
       return r.photo
@@ -3637,99 +3842,200 @@ function __boot() {
       });
     }
 
-    /* Lightweight swipe (hoisted) */
-    function addSwipe(el, next, prev) {
-      let x0 = null;
-      el.addEventListener('pointerdown', e => { x0 = e.clientX; });
-      el.addEventListener('pointerup', e => {
-        if (x0 === null) return;
-        const dx = e.clientX - x0; x0 = null;
-        if (Math.abs(dx) > 45) (dx < 0 ? next : prev)();
+    /* A card earns a "read full" button only when the 6-line clamp actually hides
+       something. A character-count guess is wrong at these widths — a 230-character
+       quote fits in five lines and got a button that revealed nothing — so measure
+       the box. Deferred until the webfonts land, because the fallback serif wraps
+       to a different line count than Cormorant does. */
+    function pruneReadMore() {
+      stage.querySelectorAll('.trv-q').forEach(q => {
+        const btn = q.parentNode.querySelector('.trv-more');
+        if (q.scrollHeight <= q.clientHeight + 1) { if (btn) btn.remove(); return; }
+        q.style.cursor = 'pointer';
+        q.addEventListener('click', () => openModal(SHOWN[+q.dataset.i]));
+        keyClickable(q, 'Read full review');
       });
     }
+    let SHOWN = [];
 
-    /* ── Spotlight ── */
-    function buildSpotlight() {
-      stage.className = 'trs-spotlight';
-      stage.innerHTML =
-        '<div class="sp-ghost" aria-hidden="true"></div>' +
-        '<div class="sp-rating"><span class="sp-stars">★★★★★</span><span>' + esc(META.rating) + ' on Google</span></div>' +
-        '<blockquote class="sp-quote"></blockquote>' +
-        '<button class="sp-readmore" type="button">Read full review &nbsp;›</button>' +
-        '<div class="sp-author"></div>' +
-        '<div class="sp-nav"><button class="sp-arrow sp-prev" aria-label="Previous review">‹</button><div class="sp-dots"></div><button class="sp-arrow sp-next" aria-label="Next review">›</button></div>';
-      const qEl = stage.querySelector('.sp-quote');
-      const aEl = stage.querySelector('.sp-author');
-      const ghost = stage.querySelector('.sp-ghost');
-      const dotsEl = stage.querySelector('.sp-dots');
-      let i = 0, timer = null;
-      dotsEl.innerHTML = REVIEWS.map((_, k) => '<button class="sp-dot" aria-label="Review ' + (k + 1) + '"></button>').join('');
-      const dots = [...dotsEl.children];
-      function paint(dir) {
-        const r = REVIEWS[i];
-        const tl = gsap.timeline();
-        tl.to([qEl, aEl], STATIC ? { opacity: 0, y: -8 * dir, duration: .26, ease: 'power2.in' }
-                                 : { opacity: 0, y: -8 * dir, filter: 'blur(6px)', duration: .26, ease: 'power2.in' })
-          .add(() => {
-            qEl.textContent = '“' + r.quote + '”';
-            aEl.innerHTML = photoEl(r, 'sp-pic') + '<span class="sp-name">' + esc(r.name) + '<span class="sp-sub">Google review</span></span>';
-            ghost.textContent = initial(r.name);
-          })
-          .fromTo([qEl, aEl], STATIC ? { opacity: 0, y: 12 * dir } : { opacity: 0, y: 12 * dir, filter: 'blur(8px)' },
-                  STATIC ? { opacity: 1, y: 0, duration: .6, ease: 'expo.out', stagger: .06 }
-                         : { opacity: 1, y: 0, filter: 'blur(0px)', duration: .6, ease: 'expo.out', stagger: .06 })
-          .fromTo(ghost, { opacity: 0, scale: .92 }, { opacity: 1, scale: 1, duration: .8, ease: 'expo.out' }, '<');
-        dots.forEach((d, k) => d.classList.toggle('on', k === i));
-      }
-      function go(n, dir) { i = (n + REVIEWS.length) % REVIEWS.length; paint(dir); restart(); }
-      function next() { go(i + 1, 1); }
-      function prev() { go(i - 1, -1); }
-      function restart() {
-        if (STATIC || !visible) { clearTimeout(timer); return; }
-        clearTimeout(timer);
-        timer = setTimeout(() => { if (visible) next(); }, 6000);
-      }
-      stage.querySelector('.sp-next').addEventListener('click', next);
-      stage.querySelector('.sp-prev').addEventListener('click', prev);
-      dots.forEach((d, k) => d.addEventListener('click', () => go(k, k > i ? 1 : -1)));
-      qEl.addEventListener('click', () => openModal(REVIEWS[i]));
-      keyClickable(qEl, 'Read full review');
-      stage.querySelector('.sp-readmore').addEventListener('click', () => openModal(REVIEWS[i]));
-      addSwipe(stage, next, prev);
-      _pause = () => clearTimeout(timer);
-      _resume = restart;
-      _onVisible = restart;
-      paint(1); restart();
+    /* ── Six-card grid ── */
+    function buildGrid() {
+      SHOWN = roster();
+      stage.innerHTML = SHOWN.map((r, k) => {
+        return '<article class="trv-card">' +
+          '<div class="trv-stars" aria-label="' + (r.rating || 5) + ' out of 5">' + stars(r.rating || 5) + '</div>' +
+          '<blockquote class="trv-q" data-i="' + k + '">“' + esc(r.quote) + '”</blockquote>' +
+          '<button class="trv-more" type="button" data-i="' + k + '">Read full review &nbsp;›</button>' +
+          '<div class="trv-by">' + photoEl(r, 'trv-pic') +
+            '<span class="trv-name">' + esc(r.name) + '<span class="trv-sub">Google review</span></span>' +
+          '</div>' +
+        '</article>';
+      }).join('');
+
+      stage.querySelectorAll('.trv-more').forEach(btn => {
+        btn.addEventListener('click', () => openModal(SHOWN[+btn.dataset.i]));
+      });
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestAnimationFrame(pruneReadMore));
+      else requestAnimationFrame(pruneReadMore);
+
+      /* No opacity:0 in CSS and no fallback-list entry: if GSAP never runs the
+         cards are simply already visible, which is the correct degraded state. */
+      if (window.gsap) gsap.fromTo(stage.querySelectorAll('.trv-card'),
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: .7, stagger: .07, ease: 'power3.out',
+          scrollTrigger: { trigger: '#trust', start: 'top 78%', once: true } }
+      );
     }
 
-    buildSpotlight();
+    buildGrid();
 
     /* Live Google fetch hook — replaces data/meta + re-renders */
     window.__refreshReviews = function (arr, meta) {
       if (meta) {
         if (meta.rating) META.rating = meta.rating;
         if (meta.count)  META.count  = meta.count;
+        paintMeta();
       }
       if (Array.isArray(arr) && arr.length) {
-        REVIEWS = arr;
-        buildSpotlight();
-        ScrollTrigger.refresh(); /* stage height may have changed */
+        LIVE = arr;
+        buildGrid();
+        if (window.ScrollTrigger) ScrollTrigger.refresh(); /* stage height may have changed */
       }
     };
   })();
+})();
+</script>
+<!-- ════ ENQUIRY FORM + DEPOSIT ════ -->
+<!-- Top-level, NOT inside __boot: __boot returns at its lib guard when the GSAP/Lenis
+     CDN fails, and the one thing on this page that must never break is the ask. -->
+<script>
+(function () {
+  /* ── Configure these two and nothing else ──────────────────────────────────
+     FORM_KEY   Web3Forms access key (free at web3forms.com — it is a public
+                client-side key by design). Empty = the email route is removed
+                and WhatsApp becomes the primary button; nothing renders dead.
+     DEPOSIT    Stripe Payment Link plus the amount shown on the button. Empty
+                url = the whole deposit block stays hidden.                     */
+  var FORM_KEY = '';
+  var DEPOSIT  = { url: '', amount: '' };
+  /* ─────────────────────────────────────────────────────────────────────────── */
 
-  /* ═══ LOCATION ═══ */
-  gsap.to('.loc-map-wrap, .loc-photo', {
-    opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
-    scrollTrigger: { trigger: '#location', start: 'top 78%', once: true }
+  var WA = '447405979137';
+  var form = document.getElementById('bk-form');
+  if (!form) return;
+
+  var sendBtn = document.getElementById('bkf-send');
+  var waBtn   = document.getElementById('bkf-wa');
+  var msg     = document.getElementById('bkf-msg');
+
+  function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+  function say(state, text) {
+    msg.hidden = false;
+    msg.setAttribute('data-state', state);
+    msg.textContent = text;
+  }
+
+  /* Native validity, but reported ourselves: novalidate is on the form so the
+     WhatsApp button can run the same check without the browser's own bubble
+     firing twice. */
+  function firstInvalid() {
+    var fields = form.querySelectorAll('input[required], textarea[required]');
+    for (var i = 0; i < fields.length; i++) if (!fields[i].checkValidity()) return fields[i];
+    return null;
+  }
+  function guard() {
+    var bad = firstInvalid();
+    if (!bad) return true;
+    bad.focus();
+    say('err', bad.validity.valueMissing
+      ? 'Add your ' + (bad.dataset.ask || 'details') + ' so Emmy can reply.'
+      : 'That email address does not look right.');
+    return false;
+  }
+
+  function payload() {
+    return {
+      name: val('bkf-name'), email: val('bkf-email'), idea: val('bkf-idea'),
+      placement: val('bkf-place'), size: val('bkf-size'),
+      budget: val('bkf-budget'), availability: val('bkf-when'),
+      references: val('bkf-refs')
+    };
+  }
+
+  function waText() {
+    var p = payload();
+    var lines = [
+      'Hi Emmy — tattoo enquiry.', '',
+      'Name: ' + p.name,
+      'Email: ' + p.email,
+      'Idea: ' + p.idea,
+      'Placement: ' + (p.placement || '—'),
+      'Size: ' + (p.size || '—'),
+      'Budget: ' + p.budget,
+      'When suits: ' + (p.availability || '—')
+    ];
+    if (p.references) lines.push('References: ' + p.references);
+    return lines.join('\n');
+  }
+
+  waBtn.addEventListener('click', function () {
+    if (!guard()) return;
+    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(waText()), '_blank', 'noopener');
   });
 
-  /* The map embed itself is injected by the deferred-embed loader further down,
-     outside __boot, so it survives a CDN failure. */
+  if (!FORM_KEY) {
+    /* No endpoint configured: remove the email button rather than leave one that
+       cannot work, and promote WhatsApp to the filled style. */
+    sendBtn.remove();
+    waBtn.classList.remove('bk-f-alt');
+    waBtn.classList.add('bk-f-go');
+  } else {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!guard()) return;
+      if (form.querySelector('.bk-hp').checked) return;   /* honeypot */
+      var p = payload();
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Sending…';
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: FORM_KEY,
+          subject: 'Tattoo enquiry — ' + p.name,
+          from_name: 'emmytattoo.com',
+          replyto: p.email,
+          name: p.name, email: p.email, idea: p.idea,
+          placement: p.placement || '—', size: p.size || '—',
+          budget: p.budget, availability: p.availability || '—',
+          references: p.references || '—'
+        })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d.success) throw new Error(d.message || 'rejected');
+          form.querySelectorAll('input, textarea, select').forEach(function (f) {
+            if (f.type !== 'checkbox') f.value = '';
+          });
+          say('ok', 'Sent. Emmy will reply to ' + p.email + ' — usually within a day or two.');
+          sendBtn.textContent = 'Send enquiry';
+        })
+        .catch(function () {
+          say('err', 'That did not send. Use the WhatsApp button instead — it carries the same details.');
+          sendBtn.textContent = 'Send enquiry';
+        })
+        .then(function () { sendBtn.disabled = false; });
+    });
+  }
 
-}
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', __boot);
-else __boot();
+  if (DEPOSIT.url) {
+    var dep = document.getElementById('bk-dep');
+    var depBtn = document.getElementById('bk-dep-btn');
+    depBtn.href = DEPOSIT.url;
+    if (DEPOSIT.amount) depBtn.textContent = 'Pay ' + DEPOSIT.amount + ' deposit';
+    dep.hidden = false;
+  }
+})();
 </script>
 
 <!-- ════ DEFERRED THIRD-PARTY EMBEDS ════ -->

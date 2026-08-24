@@ -471,6 +471,19 @@
       font-family: var(--mono); font-size: .6rem;
       letter-spacing: .18em; text-transform: uppercase; color: var(--gold);
     }
+    /* Healed proof chip — always visible, unlike the hover-only .pw-tag, and it
+       sits above .pw-over so the hover gradient cannot wash it out. */
+    .pw-healed {
+      position: absolute; top: 10px; left: 10px; z-index: 3;
+      font-family: var(--mono); font-size: .55rem;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--gold);
+      padding: 6px 10px; border-radius: 100px;
+      border: 1px solid var(--gold-ring);
+      background: rgba(var(--panel-rgb),.72);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      pointer-events: none;
+    }
     /* Magnifier */
     .pw-zoom {
       width: 40px; height: 40px; border-radius: 50%;
@@ -825,6 +838,7 @@
   <button class="f-btn" data-filter="fine-line">Fine Line</button>
   <button class="f-btn" data-filter="fine-art">Fine Art</button>
   <button class="f-btn" data-filter="realism">Realism</button>
+  <button class="f-btn" data-filter="healed">Healed</button>
   <span class="f-count" id="f-count" aria-live="polite"></span>
 </div>
 
@@ -995,6 +1009,17 @@
   var moreBtn = document.getElementById('pw-more');
   var moreN   = document.getElementById('pw-more-n');
   if (!items.length || !gate) return;
+
+  /* A filter that matches nothing is a dead end — hide it until an item carries
+     the tag. This is what lets `healed` ship before the healed photos do. */
+  filterBtns.forEach(function (btn) {
+    var f = btn.dataset.filter;
+    if (f === 'all') return;
+    var hits = items.filter(function (i) {
+      return (i.dataset.style || '').split(/\s+/).indexOf(f) !== -1;
+    }).length;
+    if (!hits) btn.hidden = true;
+  });
 
   var curFilter = 'all', shown = BATCH;
   function matches(item) {
