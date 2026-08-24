@@ -134,7 +134,7 @@
         r.dataset.pref = p;
         r.style.colorScheme = theme;
         var m = document.getElementById('meta-theme-color');
-        if (m) m.setAttribute('content', theme === 'light' ? '#f6f0ea' : '#0a0a0a');
+        if (m) m.setAttribute('content', theme === 'light' ? '#f7efeb' : '#0a0a0a');
         document.dispatchEvent(new Event('themechange'));
       }
       window.__theme = {
@@ -204,11 +204,16 @@
          on .sp-ghost, which outranks any CSS opacity rule. */
       --ghost-ink: rgba(var(--gold-rgb),.07);
       --wm-ink:    rgba(var(--gold-rgb),.06);
-      /* The gift voucher's ink. Same family as --wm-ink, but the watermark sits
-         behind a heading that carries the section on its own, while the voucher is
-         the only thing on its side of the row — on the dark page .06 leaves it as
-         empty space, so it runs at twice the watermark's alpha. */
+      /* The gift voucher's ink, in two weights: --gc-ink for the illustration
+         beside the copy, --gc-ink-wm for the phone layout where it sits behind
+         the copy. Dark keeps gold at twice the watermark's alpha — the `Book`
+         watermark hides behind a heading that carries its section, the voucher is
+         alone on its side of the row. Light leaves the gold family entirely:
+         gold's lightness is 72.9 against paper at 95.7, so it tops out at 1.23:1
+         and reads washed out, while text ink at .26 gives 1.84:1 — graphite on
+         cream, which is what the artwork is. */
       --gc-ink:    rgba(var(--gold-rgb),.12);
+      --gc-ink-wm: rgba(var(--gold-rgb),.10);
       --fg-rgb:    255,255,255;   /* borders + faint washes */
       --panel-rgb: 10,10,10;      /* nav/menu/modal scrims, text shadows */
       --on-gold:   #0a0a0a;       /* ink on a gold fill */
@@ -221,11 +226,11 @@
       --border-h:  rgba(var(--fg-rgb),.15);
       /* Page-tone RGB. Layers that fade content INTO the page (photo scrims,
          vignette, text halos) MUST use this, never --panel-rgb: in light the
-         panel is #fcf9f5 while the page is #f6f0ea, and that mismatch
+         panel is #fdf8f6 while the page is #f7efeb, and that mismatch
          paints visible white/grey shapes. */
       --bg-rgb: 10,10,10;
       /* Icon-button chrome. Both themes are pinned to the same measured ratios:
-         .34 white on #0a0a0a is 3.02:1 and .48 warm ink on #f6f0ea is 3.13:1 —
+         .34 white on #0a0a0a is 3.02:1 and .48 warm ink on #f7efeb is 3.13:1 —
          WCAG non-text minimum. Dark sat at .07 = 1.15:1 — an invisible ring. */
       --btn-ring:   rgba(var(--fg-rgb),.34);
       --btn-ring-h: rgba(var(--fg-rgb),.50);
@@ -239,7 +244,7 @@
       --gold-ring-h: rgba(var(--gold-rgb),.65);
       /* Decorative layers, resolved per theme as complete values. Gold ambient
          washes glow on a dark page but stain and band on a light one, and a
-         fixed vignette over #f6f0ea leaves a visible grey ellipse. */
+         fixed vignette over #f7efeb leaves a visible grey ellipse. */
       --vignette: radial-gradient(ellipse 110% 110% at 50% 50%, transparent 40%, rgba(var(--bg-rgb),.38) 70%, rgba(var(--bg-rgb),.62) 100%);
       --ambient-hero:
         radial-gradient(ellipse at 50% -5%, rgba(var(--gold-rgb),.035), transparent 55%),
@@ -286,29 +291,31 @@
     /* Light theme — resolved from OS preference or the manual override, see head script */
     :root[data-theme="light"] {
       color-scheme: light;
-      /* Paper hue: both greys sit on the warm side of the brand gold (OKLCH h 68
-         and 75 against gold's 82). The previous #f4f1ea/#fbf9f5 were *greener*
-         than the accent, which is what read as an olive cast page-wide. */
-      --bg:        #f6f0ea;
-      --bg2:       #fcf9f5;
-      --fg:        #191712;
-      --fg2:       #4a453c;
-      --dim:       #6a6459;
-      /* One gold, both themes: #c4a262 everywhere. On #f6f0ea it measures 2.1:1,
+      /* Paper AND ink share one warm hue family (OKLCH ~50-56 against gold's 82).
+         Rotating only the paper was not enough: --fg/--fg2/--dim sat at 82-89,
+         the yellow-green boundary, and they paint every word on the page, which
+         is what still read as an olive cast. L and C are unchanged, so every
+         contrast ratio moves by less than 0.05. */
+      --bg:        #f7efeb;
+      --bg2:       #fdf8f6;
+      --fg:        #1b1613;
+      --fg2:       #4d443e;
+      --dim:       #6e625b;
+      /* One gold, both themes: #c4a262 everywhere. On #f7efeb it measures 2.1:1,
          below the WCAG 3:1 non-text floor — a deliberate brand choice, so gold
          stays decorative here and never carries small text. */
       --gold:      #c4a262;
       --gold-rgb:  196,162,98;
-      --fg-rgb:    25,23,18;
-      --panel-rgb: 252,249,245;
-      --on-gold:   #191712;       /* 5.03:1 on gold; white would be 3.56:1 */
+      --fg-rgb:    27,22,19;
+      --panel-rgb: 253,248,246;
+      --on-gold:   #1b1613;       /* 5.03:1 on gold; white would be 3.56:1 */
       --ok:        #1f7a47;
       --ok-ink:    #1f7a47;
       --ok-rgb:    31,122,71;
       --warn:      #b4322f;
       --warn-rgb:  180,50,47;
-      --bg-rgb: 246,240,234;
-      /* .48 puts the ring at 3.13:1 against #f6f0ea (WCAG non-text minimum) */
+      --bg-rgb: 247,239,235;
+      /* .48 puts the ring at 3.13:1 against #f7efeb (WCAG non-text minimum) */
       --btn-ring:   rgba(var(--fg-rgb),.48);
       --btn-ring-h: rgba(var(--fg-rgb),.64);
       --btn-fill:   rgba(var(--panel-rgb),1);
@@ -323,7 +330,7 @@
          into warm-grey stains at rgb(237,235,231) against the 244 page. */
       --ambient-hero: radial-gradient(ellipse at 50% 110%, rgba(var(--bg-rgb),.6), transparent 60%);
       --ambient-book: none;
-      /* Seams are alpha-tuned per theme: .16 ink on #f6f0ea is invisible, so the
+      /* Seams are alpha-tuned per theme: .16 ink on #f7efeb is invisible, so the
          light seam runs near-black at the ends into a solid gold centre. */
       --seam: linear-gradient(90deg,
                 transparent 4%,
@@ -337,7 +344,8 @@
       --gold-soft:  rgba(var(--gold-rgb),.95);
       --ghost-ink:  rgba(var(--gold-rgb),.28);
       --wm-ink:     rgba(var(--gold-rgb),.3);
-      --gc-ink:     rgba(var(--gold-rgb),.3);
+      --gc-ink:     rgba(var(--fg-rgb),.26);
+      --gc-ink-wm:  rgba(var(--fg-rgb),.14);
       /* No sepia: it emits R>G>B and the brightness that follows clips red first,
          so the highlights of a full-viewport photo converge on olive. Warmth here
          comes from --ambient-hero, which cannot skew channels. */
@@ -347,7 +355,7 @@
       --img-exp:      brightness(1) saturate(.8);
       --img-exp-open: brightness(1.04) saturate(.9);
       --img-avatar:   grayscale(.5);
-      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23fcf9f5' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
+      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23fdf8f6' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
     }
 
     /* One gutter for every section on a phone. Sections used to hardcode this
@@ -650,6 +658,13 @@
     }
     .tl { display: block; }
     .tl em { font-style: italic; color: var(--gold); }
+    /* A lone lowercase article in Cormorant reads as a speck: its x-height is
+       .39em against the display face's .45em (measured 78px vs 90px at 200px),
+       and the curl on the italic 'a' is what read as an @. The article is set in
+       the display face at 1.12em so it carries the word beside it. font-style and
+       font-weight are stated because Romance Fatal Serif ships one upright face
+       (400 700) and the browser would otherwise synthesise an oblique. */
+    .h-art { font-family: var(--display); font-style: normal; font-weight: 400; font-size: 1.12em; }
     .tl-i { display: block; }
     /* Only hero + booking titles are JS-revealed; exp/faq titles use clip-path wipes */
     .h-title .tl-i, .bk-h2 .tl-i { opacity: 0; }
@@ -951,42 +966,28 @@
       font-weight: 300; letter-spacing: -.02em; line-height: 1;
     }
     .exp-h2 em { font-style: italic; color: var(--gold); }
-    /* ── Expertise — editorial large-type stack ── */
+    /* ── Expertise — same accordion mechanic as the FAQ further down ── */
     .exp-list {
-      list-style: none; display: flex; flex-direction: column; gap: 12px;
-      /* Row content — title, tags, connector, arrow — needs ~750px. At the full
-         1344px content width the remainder was dead space inside the card.
-         Precedent: .trs-spotlight 980px, .fq-answer-inner 800px. */
+      list-style: none;
+      /* Row content needs ~750px. At the full 1344px content width the remainder
+         was dead space. Precedent: .trs-spotlight 980px, .fq-answer-inner 800px. */
       max-width: 1080px;
     }
     .ei {
       position: relative; overflow: hidden;
-      display: flex; align-items: center; gap: 0 32px;
-      flex-wrap: wrap;
-      min-height: 108px; padding: 30px 36px;
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      background: rgba(var(--fg-rgb),.012);
-      opacity: 0; cursor: pointer;
-      transition: border-color .35s, background .35s, transform .18s var(--sp);
+      border-top: 1px solid var(--border);
+      opacity: 0;
     }
-    .ei:hover { border-color: var(--border-h); background: rgba(var(--fg-rgb),.022); }
-
-    /* Gold accent bar — springs in from top on hover, GSAP-owned */
-    .ei-accent {
-      position: absolute; left: 0; top: 0; bottom: 0;
-      width: 2px; background: var(--gold);
-      border-radius: 0 2px 2px 0;
-      transform-origin: top; transform: scaleY(0); opacity: 0;
-      pointer-events: none; z-index: 2;
+    .ei:last-child { border-bottom: 1px solid var(--border); }
+    /* Two-column copy of .fq-trigger, minus the numeral: numbering three styles
+       would read as a ranking of them. */
+    .ei-trigger {
+      display: grid; grid-template-columns: 1fr auto;
+      align-items: center; gap: 0 2.5rem;
+      padding: 30px 0; width: 100%;
+      background: none; border: none; color: inherit; font: inherit;
+      text-align: left; cursor: pointer;
     }
-
-
-    /* Name wrapper — clip reveal target. Fixed basis, not flex:1 — a growing
-       name wrapper was what shoved the tags and arrow to the right border. A
-       fixed width also lines the three rows' tag text up on one x, which a
-       shrink-to-fit column would not. */
-    .ei-nw { flex: 0 0 auto; width: clamp(200px, 24vw, 340px); overflow: visible; position: relative; z-index: 1; }
     .ei-name {
       display: block;
       font-family: var(--serif);
@@ -995,39 +996,31 @@
       color: var(--fg); line-height: 1;
     }
 
-    /* Description tags — fixed basis for the same reason as .ei-nw: the three
-       strings differ by 115px, so an auto width leaves the arrows ragged. */
-    .ei-desc {
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: var(--fg2); text-align: left; white-space: nowrap;
-      /* Flat 300px, no clamp: "Aesthetic · Illustrative · Emotional" measures
-         295px at .68rem/.14em and the column is nowrap, so any fluid lower bound
-         under 295 (22vw does that below 1341px) overflows into the connector.
-         The connector absorbs the width this column no longer gives up. */
-      flex: 0 0 auto; width: 300px; max-width: none;
-      line-height: 2; position: relative; z-index: 1;
+    /* The +/x spin is CSS, like the FAQ's — no GSAP tween, so nothing inline can
+       strand across a theme flip. */
+    .ei-toggle {
+      width: 38px; height: 38px; flex-shrink: 0;
+      border: 1px solid var(--border); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; line-height: 1; color: var(--dim);
+      transition: border-color .35s, color .35s, background .35s,
+                  transform .5s cubic-bezier(.34,1.56,.64,1);
     }
-
-    /* Arrow */
-    .ei-arr {
-      font-size: 1rem; color: var(--dim);
-      margin-left: 0; position: relative; z-index: 1;
-      display: inline-block;
+    .ei:hover .ei-toggle { border-color: rgba(var(--gold-rgb),.45); color: var(--gold); }
+    .ei.open  .ei-toggle {
+      border-color: var(--gold); color: var(--gold);
+      background: rgba(var(--gold-rgb),.08); transform: rotate(45deg);
     }
-    .ei.open .ei-arr { color: var(--gold); }
 
     /* Expand panel */
     .ei-expand {
-      flex: 0 0 100%;
       height: 0; overflow: hidden;
     }
     .ei-expand-inner {
       display: grid;
       grid-template-columns: 240px minmax(0, 1fr);
       gap: 44px; align-items: stretch;
-      padding: 30px 0 32px;
-      border-top: 1px solid var(--border);
+      padding: 4px 0 44px;
     }
     .ei-expand-text {
       font-family: var(--sans);
@@ -1142,28 +1135,20 @@
       #sk-modal-img-wrap { aspect-ratio: 4/5; }
     }
 
-    /* In-flow connector: absorbs the row's slack so the arrow pins to the right
-       edge, matching .fq-trigger's `96px 1fr auto` in the section below. The
-       gold sweep is a CSS transition now, not a GSAP tween, so it cannot strand
-       an inline style across a theme flip. min-width:0 keeps it from forcing a
-       wrap in the flex-wrap row. */
+    /* Gold sweep along the row's own separator, width animated by GSAP — the same
+       shape as .fq-rule in the section below. */
     .ei-rule {
-      flex: 1 1 auto; min-width: 0; height: 1px;
-      background: var(--border);
-      position: relative; overflow: hidden;
+      position: absolute; bottom: -1px; left: 0;
+      height: 1px; width: 0;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      opacity: .5;
     }
-    .ei-rule::after {
-      content: ''; position: absolute; inset: 0;
-      background: var(--gold);
-      transform: scaleX(0); transform-origin: left;
-      transition: transform .45s var(--out);
-    }
-    .ei:hover .ei-rule::after,
-    .ei.open  .ei-rule::after { transform: scaleX(1); }
 
     @media (max-width: 768px) {
       #exp { padding: 64px var(--pad) 80px; }
       .ei-name { font-size: clamp(1.7rem,6vw,2.5rem); }
+      .ei-trigger { padding: 22px 0; gap: 0 1.25rem; }
+      .ei-toggle { width: 30px; height: 30px; font-size: 1rem; }
     }
 
     /* ══════════════════════════════════════════
@@ -1178,32 +1163,47 @@
       border-image: var(--seam) 1;
     }
     .fl-left { flex: 1 1 460px; max-width: 640px; }
-    /* Instagram's own embed: profile header plus the six most recent posts, always
-       current, no post IDs to maintain. Its surface is hard-coded white by
-       Instagram — that is third-party chrome, so the literal is deliberate, and
-       the frame keeps it inside the site's radius and border. */
-    .fl-ig { container-type: inline-size; flex: 0 0 clamp(340px, 30vw, 460px); }
-    .fl-ig-frame {
+    .fl-ig { flex: 0 0 clamp(340px, 30vw, 460px); }
+    /* Instagram's widget is white in every theme — there is no theme parameter
+       (?theme=dark, prefers-color-scheme emulation and the Sec-CH-Prefers-Color-Scheme
+       hint all return the same white page), and inverting it would negate the
+       photographs too. So the widget is cropped to its photo grid: the 147px white
+       header and the 49px "View full profile" band are pushed outside the clip, and
+       the frame around it is ours, in site tokens. Measured against the live embed:
+       three columns of (W-2)/3 with 1px gutters, two rows, so the grid is 2/3 of the
+       width — aspect-ratio, not a container query, gets that height in every browser.
+       If Instagram ever changes its chrome, re-measure and fix the two numbers below
+       (-147px and +197px = 147 header + 49 footer + 1px slack). */
+    .fl-ig-panel {
       border-radius: var(--r); overflow: hidden;
-      border: 1px solid var(--border); background: #fff;
-      height: 520px;
+      border: 1px solid var(--border); background: var(--bg2);
     }
-    /* Height must equal the embed's own content height or the iframe scrolls and
-       eats the wheel: ~198px of chrome + two grid rows at a third of the width
-       each. The query unit has to be read on a child — on the container itself it
-       would be a cyclic dependency and silently falls back to the viewport width,
-       which stretched the panel to 1158px. */
-    @supports (container-type: inline-size) {
-      .fl-ig-frame { height: calc(198px + 66.7cqw); }
+    .fl-ig-frame { position: relative; overflow: hidden; aspect-ratio: 3 / 2; }
+    .fl-ig-frame iframe {
+      position: absolute; left: 0; top: -147px;
+      width: 100%; height: calc(100% + 197px);
+      border: 0; display: block;
     }
-    .fl-ig-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
-    /* Instagram serves this widget white in every theme — there is no theme
-       parameter, and inverting it would negate the photographs too. On the dark
-       page the frame is treated as a print instead: gold hairline, deep shadow. */
-    :root:not([data-theme="light"]) .fl-ig-frame {
-      border-color: rgba(var(--gold-rgb),.18);
-      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+    /* The embed leaves 1px of its own white page between tiles; paint it out so the
+       six photos read as one block. Period is tile + 1px on both axes. */
+    .fl-ig-frame::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(90deg,  transparent calc(100% - 1px), var(--bg2) calc(100% - 1px)),
+        linear-gradient(180deg, transparent calc(100% - 1px), var(--bg2) calc(100% - 1px));
+      background-size: calc((100% - 2px) / 3 + 1px) 100%, 100% calc((100% - 1px) / 2 + 1px);
+      background-repeat: repeat-x, repeat-y;
     }
+    .fl-ig-cap {
+      display: flex; align-items: center; gap: 9px;
+      padding: 14px 16px; text-decoration: none;
+      font-family: var(--mono); font-size: .62rem;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: var(--fg2); border-top: 1px solid var(--border);
+      transition: color .3s, background .3s;
+    }
+    .fl-ig-cap svg { color: var(--gold); flex-shrink: 0; }
+    .fl-ig-cap:hover { color: var(--fg); background: rgba(var(--gold-rgb),.05); }
     .fl-badge {
       display: inline-flex; align-items: center; gap: 9px;
       font-family: var(--mono); font-size: .62rem;
@@ -1388,10 +1388,9 @@
       transform: translateY(-3px);
     }
     .gf-cta svg { color: var(--gold); flex-shrink: 0; }
-    /* The voucher as a ghost: the artwork is a mask and the paint is --gc-ink, the
-       gold-alpha family that draws the `Book` watermark behind the booking section.
-       A mask rather than an <img> is what lets one asset read correctly in both
-       themes — the pixels carry no colour of their own. */
+    /* The voucher as a ghost: the artwork is a mask and the paint is a token, so
+       one asset reads correctly in both themes — gold on the dark page, graphite
+       on the light one, with no per-theme filter and no pixels of its own. */
     .gf-card {
       flex: 1 1 auto; align-self: center;
       aspect-ratio: 1091 / 494;
@@ -1408,8 +1407,18 @@
       .gf-card { width: 100%; }
     }
     @media (max-width: 768px) {
-      #gifts { padding: 76px var(--pad) 84px; }
+      #gifts { padding: 76px var(--pad) 84px; position: relative; overflow: hidden; }
       .gf-p { max-width: 100%; }
+      /* On a phone the voucher was a 155px-tall smudge with dead space around it.
+         It becomes the section's watermark instead: out of flow, bleeding past both
+         gutters, centred behind the copy, at the quieter behind-text weight. */
+      .gf-body { position: relative; z-index: 1; }
+      .gf-card {
+        position: absolute; left: -8%; right: -8%; top: 50%;
+        translate: 0 -50%;
+        width: auto; z-index: 0; pointer-events: none;
+        background: var(--gc-ink-wm);
+      }
     }
 
     /* ══════════════════════════════════════════
@@ -2070,39 +2079,8 @@
     .wc          { transition: border-color .4s, transform .22s cubic-bezier(.175,.885,.32,1.275); }
     .wc:active   { transform: scale(0.95) !important; }
     .bk-split-half:active, .w-more:active .w-more-ring { transform: scale(0.96) translateY(0) !important; transition-duration: .1s !important; }
-    .ei:active   { background: rgba(var(--gold-rgb),.04); transform: scale(.985); }
+    .ei:active   { background: rgba(var(--fg-rgb),.02); }
     .fq-item:active { background: rgba(var(--fg-rgb),.02); }
-
-
-    /* — Expertise blocks on mobile — */
-    @media (max-width: 768px) {
-      .exp-list { gap: 10px; }
-      /* iOS list row: title over subtitle on the left, chevron pinned right.
-         Grid rather than flex so the arrow can span both text rows instead of
-         wrapping under them, which is what it did on the longest row. */
-      .ei {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: center;
-        /* No row-gap: the collapsed .ei-expand still occupies row 3, so a
-           row-gap would push the two text rows 3px above the arrow's centre.
-           The title/subtitle spacing lives on .ei-desc instead. */
-        gap: 0 14px;
-        padding: 20px; min-height: auto;
-      }
-      .ei-nw   { grid-column: 1; grid-row: 1; width: auto; }
-      .ei-desc {
-        grid-column: 1; grid-row: 2;
-        width: auto; max-width: none; text-align: left; white-space: normal;
-        font-size: .58rem; letter-spacing: .1em; line-height: 1.5;
-        margin-top: 6px;
-      }
-      .ei-arr    { grid-column: 2; grid-row: 1 / span 2; justify-self: end; align-self: center; margin-left: 0; }
-      /* flex:0 0 100% does nothing on a grid item */
-      .ei-expand { grid-column: 1 / -1; grid-row: 3; }
-      .ei-rule   { display: none; }
-      .ei-accent { display: none; }
-    }
 
     /* — Ken Burns overflow hide — */
     .hero-bg-photo { overflow: hidden; }
@@ -2380,13 +2358,14 @@
   </div>
   <ul class="exp-list">
 
-    <li class="ei" tabindex="0" role="button" aria-expanded="false" data-gallery='[
+    <li class="ei" data-gallery='[
       {"src":"pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg","alt":"Minimalist fine-line abstract continuous flower tattoo"}
     ]'>
-      <div class="ei-nw"><span class="ei-name">Fine Line</span></div>
-      <span class="ei-desc">Soft · Thin · Delicate</span>
-      <div class="ei-rule"></div>
-      <span class="ei-arr">→</span>
+      <button class="ei-trigger" type="button" aria-expanded="false">
+        <span class="ei-name">Fine Line</span>
+        <span class="ei-toggle" aria-hidden="true">+</span>
+      </button>
+      <div class="ei-rule" aria-hidden="true"></div>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
           <div class="ei-expand-img">
@@ -2403,14 +2382,15 @@
       </div>
     </li>
 
-    <li class="ei" tabindex="0" role="button" aria-expanded="false" data-gallery='[
+    <li class="ei" data-gallery='[
       {"src":"pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg","alt":"Flying barn owl black and grey tattoo"},
       {"src":"pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg","alt":"Classical mythology Hermes fine art tattoo"}
     ]'>
-      <div class="ei-nw"><span class="ei-name">Fine Art</span></div>
-      <span class="ei-desc">Aesthetic · Illustrative · Emotional</span>
-      <div class="ei-rule"></div>
-      <span class="ei-arr">→</span>
+      <button class="ei-trigger" type="button" aria-expanded="false">
+        <span class="ei-name">Fine Art</span>
+        <span class="ei-toggle" aria-hidden="true">+</span>
+      </button>
+      <div class="ei-rule" aria-hidden="true"></div>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
           <div class="ei-expand-img">
@@ -2427,17 +2407,18 @@
       </div>
     </li>
 
-    <li class="ei" tabindex="0" role="button" aria-expanded="false" data-gallery='[
+    <li class="ei" data-gallery='[
       {"src":"pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg","alt":"Wolf portrait clock forest forearm half-sleeve"},
       {"src":"pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg","alt":"Pug Bonnie portrait with roses on thigh"},
       {"src":"pictures/Black-Pug-Portrait-Tattoo-With-Daisies.jpg","alt":"Black pug Marley portrait with daisies"},
       {"src":"pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg","alt":"Thresher shark realism tattoo"},
       {"src":"pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg","alt":"Five cat portraits — Hazel, Ocean, Wolfie, Oreo and Pumpkin"}
     ]'>
-      <div class="ei-nw"><span class="ei-name">Realism</span></div>
-      <span class="ei-desc">Lifelike · detailed · accurate</span>
-      <div class="ei-rule"></div>
-      <span class="ei-arr">→</span>
+      <button class="ei-trigger" type="button" aria-expanded="false">
+        <span class="ei-name">Realism</span>
+        <span class="ei-toggle" aria-hidden="true">+</span>
+      </button>
+      <div class="ei-rule" aria-hidden="true"></div>
       <div class="ei-expand" aria-hidden="true">
         <div class="ei-expand-inner">
           <div class="ei-expand-img">
@@ -2635,7 +2616,7 @@
     <!-- Heading -->
     <h2 class="bk-h2">
       <span class="tl"><span class="tl-i">Book</span></span>
-      <span class="tl"><span class="tl-i">a <em>session.</em></span></span>
+      <span class="tl"><span class="tl-i"><span class="h-art">a</span> <em>session.</em></span></span>
     </h2>
 
     <!-- Animated divider -->
@@ -2689,7 +2670,7 @@
 <!-- ════ GIFTS ════ -->
 <section id="gifts">
   <div class="gf-body">
-    <h2 class="gf-h2">Give someone a <em>tattoo.</em></h2>
+    <h2 class="gf-h2">Give someone <span class="h-art">a</span> <em>tattoo.</em></h2>
     <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount, no expiry, redeemed when they decide.</p>
     <p class="gf-occ">Birthdays · Christmas · Anniversaries · Just because</p>
     <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
@@ -2776,10 +2757,16 @@
     </div>
   </div>
   <div class="fl-ig">
-    <div class="fl-ig-frame"
-         data-embed="https://www.instagram.com/emmy.tattoo/embed"
-         data-embed-title="Latest posts from @emmy.tattoo on Instagram"
-         data-embed-scroll="no"></div>
+    <div class="fl-ig-panel">
+      <div class="fl-ig-frame"
+           data-embed="https://www.instagram.com/emmy.tattoo/embed"
+           data-embed-title="Latest posts from @emmy.tattoo on Instagram"
+           data-embed-scroll="no"></div>
+      <a class="fl-ig-cap" href="https://www.instagram.com/emmy.tattoo/" target="_blank" rel="noopener">
+        <svg width="15" height="15" aria-hidden="true"><use href="#i-ig"/></svg>
+        <span>@emmy.tattoo on Instagram</span>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -3224,20 +3211,19 @@ function __boot() {
         scrollTrigger: { trigger: '.fq-list', start: 'top 82%', once: true } }
     );
 
-    /* ── Accordion (expertise only) ── */
+    /* ── Accordion (expertise) — same mechanic as the FAQ below ── */
     document.querySelectorAll('.ei').forEach(row => {
-      const panel = row.querySelector('.ei-expand');
-      const arr   = row.querySelector('.ei-arr');
-      if (!panel || !arr) return;
+      const trigger = row.querySelector('.ei-trigger');
+      const panel   = row.querySelector('.ei-expand');
+      const inner   = row.querySelector('.ei-expand-inner');
+      const rule    = row.querySelector('.ei-rule');
+      if (!trigger || !panel) return;
       let isOpen = false;
 
-      row.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); }
-      });
-      row.addEventListener('click', () => {
+      trigger.addEventListener('click', () => {
         isOpen = !isOpen;
         row.classList.toggle('open', isOpen);
-        row.setAttribute('aria-expanded', String(isOpen));
+        trigger.setAttribute('aria-expanded', String(isOpen));
         panel.setAttribute('aria-hidden', String(!isOpen));
 
         if (isOpen) {
@@ -3245,22 +3231,29 @@ function __boot() {
           const h = panel.offsetHeight;
           gsap.fromTo(panel,
             { height: 0, overflow: 'hidden' },
-            { height: h, duration: 0.38, ease: 'power3.out',
+            { height: h, duration: 0.55, ease: 'expo.out',
               onComplete() { gsap.set(panel, { height: 'auto' }); } }
           );
-          gsap.fromTo(panel.querySelector('.ei-expand-inner'),
-            { opacity: 0, y: 8 },
-            { opacity: 1, y: 0, duration: 0.22, delay: 0.06, ease: 'power3.out' }
+          gsap.fromTo(inner,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.42, delay: 0.1, ease: 'power3.out' }
           );
-          // back.out(1.6) ≈ the --sp spring token the rest of the site uses
-          gsap.to(arr, { rotation: 90, duration: 0.42, ease: 'back.out(1.6)' });
+          gsap.to(rule, { width: '60%', duration: 0.5, ease: 'expo.out' });
         } else {
-          gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.28, ease: 'power2.inOut' });
-          gsap.to(panel.querySelector('.ei-expand-inner'),
-            { opacity: 0, y: 4, duration: 0.14, ease: 'power2.in' }
-          );
-          gsap.to(arr, { rotation: 0, duration: 0.3, ease: 'power2.inOut' });
+          gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.35, ease: 'expo.in' });
+          gsap.to(inner, { opacity: 0, y: 6, duration: 0.2, ease: 'power2.in' });
+          gsap.to(rule, { width: 0, duration: 0.28, ease: 'expo.in' });
         }
+      });
+
+      /* Hover sweeps the same rule, exactly as the FAQ rows do. */
+      row.addEventListener('mouseenter', () => {
+        if (row.classList.contains('open')) return;
+        gsap.to(rule, { width: '30%', duration: 0.35, ease: 'expo.out' });
+      });
+      row.addEventListener('mouseleave', () => {
+        if (row.classList.contains('open')) return;
+        gsap.to(rule, { width: 0, duration: 0.25, ease: 'expo.in' });
       });
     });
 
@@ -3310,58 +3303,6 @@ function __boot() {
       item.addEventListener('mouseleave', () => {
         if (item.classList.contains('open')) return;
         gsap.to(rule, { width: 0, duration: 0.25, ease: 'expo.in' });
-      });
-    });
-
-    /* ── iOS-spring hover (expertise only) ── */
-    /* mouseenter fires on tap, so on a touch device this timeline strands every
-       tapped row at x:18 and gold with no mouseleave to undo it. Disqualify on a
-       positive coarse-pointer reading rather than requiring hover+fine: that
-       fails open, so any agent that reports neither keeps the desktop path. */
-    const IS_TOUCH = window.matchMedia('(pointer: coarse)').matches;
-    document.querySelectorAll('.ei').forEach(row => {
-      const name  = row.querySelector('.ei-name');
-      const arr   = row.querySelector('.ei-arr');
-
-      /* Inject left accent bar once */
-      const accent = document.createElement('div');
-      accent.className = 'ei-accent';
-      row.insertBefore(accent, row.firstChild);
-
-      if (IS_TOUCH) return;
-
-      let hTl = null;
-
-      row.addEventListener('mouseenter', () => {
-        if (hTl) hTl.kill();
-        hTl = gsap.timeline();
-
-        /* Accent bar: slides in from top */
-        hTl.fromTo(accent,
-          { scaleY: 0, opacity: 0 },
-          { scaleY: 1, opacity: 1, duration: 0.35, ease: 'power3.out', transformOrigin: 'top' },
-          0)
-        /* Name: clean slide right */
-        .to(name,
-          { x: 18, color: 'var(--gold)', duration: 0.4, ease: 'power3.out' },
-          0)
-        /* Arrow: clean slide right. x:8, not 14 — the arrow now sits at the row's
-           right edge inside 36px of padding, so the old travel nearly hit the border. */
-        .to(arr,
-          { x: 8, color: 'var(--gold)', duration: 0.35, ease: 'power3.out' },
-          0.03);
-      });
-
-      row.addEventListener('mouseleave', () => {
-        if (hTl) hTl.kill();
-        hTl = gsap.timeline();
-
-        const openColor = row.classList.contains('open') ? 'var(--gold)' : 'var(--dim)';
-
-        hTl
-          .to(accent, { scaleY: 0, opacity: 0, duration: 0.26, ease: 'expo.in', transformOrigin: 'top' }, 0)
-          .to(name,   { x: 0, color: 'var(--fg)',    duration: 0.32, ease: 'expo.out' }, 0)
-          .to(arr,    { x: 0, color: openColor,       duration: 0.28, ease: 'expo.out' }, 0);
       });
     });
 
@@ -3428,10 +3369,9 @@ function __boot() {
         btn.setAttribute('aria-label', n > 1
           ? `See all ${n} ${name} tattoos`
           : `View this ${name} tattoo larger`);
-        btn.addEventListener('click', e => {
-          e.stopPropagation();
-          open(row);
-        });
+        /* The accordion listens on .ei-trigger, which is not an ancestor of this
+           button, so the click cannot reach it. */
+        btn.addEventListener('click', () => open(row));
       });
 
       btnPrev.addEventListener('click', () => show(idx - 1));
@@ -3792,12 +3732,7 @@ else __boot();
     btn.setAttribute('title', label);
   }
   sync();
-  document.addEventListener('themechange', function () {
-    sync();
-    /* GSAP hover tweens leave resolved inline colours behind — drop them so the
-       new theme applies. Guarded: this script now runs with or without GSAP. */
-    if (window.gsap) gsap.set('.ei-name, .ei-arr', { clearProps: 'color' });
-  });
+  document.addEventListener('themechange', sync);
   btn.addEventListener('click', function () { window.__theme.set(target()); });
 })();
 </script>

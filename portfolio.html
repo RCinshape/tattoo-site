@@ -144,7 +144,7 @@
         r.dataset.pref = p;
         r.style.colorScheme = theme;
         var m = document.getElementById('meta-theme-color');
-        if (m) m.setAttribute('content', theme === 'light' ? '#f6f0ea' : '#0a0a0a');
+        if (m) m.setAttribute('content', theme === 'light' ? '#f7efeb' : '#0a0a0a');
         document.dispatchEvent(new Event('themechange'));
       }
       window.__theme = {
@@ -206,7 +206,7 @@
       --border:    rgba(var(--fg-rgb),.07);
       --border-h:  rgba(var(--fg-rgb),.15);
       /* Icon-button chrome. Both themes are pinned to the same measured ratios:
-         .34 white on #0a0a0a is 3.02:1 and .48 warm ink on #f6f0ea is 3.13:1 —
+         .34 white on #0a0a0a is 3.02:1 and .48 warm ink on #f7efeb is 3.13:1 —
          WCAG non-text minimum. Dark sat at .07 = 1.15:1 — an invisible ring. */
       --btn-ring:   rgba(var(--fg-rgb),.34);
       --btn-ring-h: rgba(var(--fg-rgb),.50);
@@ -232,19 +232,19 @@
       color-scheme: light;
       /* Paper hue: warm side of the brand gold (OKLCH h 68/75 vs gold's 82).
          Matches index.html; greener greys read as an olive cast. */
-      --bg:        #f6f0ea;
-      --bg2:       #fcf9f5;
-      --fg:        #191712;
-      --fg2:       #4a453c;
-      --dim:       #6a6459;
-      /* One gold, both themes: #c4a262 everywhere. On #f6f0ea it measures 2.1:1,
+      --bg:        #f7efeb;
+      --bg2:       #fdf8f6;
+      --fg:        #1b1613;
+      --fg2:       #4d443e;
+      --dim:       #6e625b;
+      /* One gold, both themes: #c4a262 everywhere. On #f7efeb it measures 2.1:1,
          below the WCAG 3:1 non-text floor — a deliberate brand choice, so gold
          stays decorative here and never carries small text. Matches index.html. */
       --gold:      #c4a262;
       --gold-rgb:  196,162,98;
-      --fg-rgb:    25,23,18;
-      --panel-rgb: 252,249,245;
-      --on-gold:   #191712;       /* 5.03:1 on gold; white would be 3.56:1 */
+      --fg-rgb:    27,22,19;
+      --panel-rgb: 253,248,246;
+      --on-gold:   #1b1613;       /* 5.03:1 on gold; white would be 3.56:1 */
       --ok:        #1f7a47;
       --ok-ink:    #1f7a47;
       --ok-rgb:    31,122,71;
@@ -257,7 +257,7 @@
       --gold-ring-h: rgba(var(--gold-rgb),1);
       --img-card:   brightness(1.02) saturate(.8);
       --img-card-h: brightness(1.06) saturate(.95);
-      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23fcf9f5' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
+      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23fdf8f6' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
     }
 
     /* One gutter for every section on a phone — matches index.html. */
@@ -429,13 +429,17 @@
       .f-count { display: none; }
     }
 
-    /* ── Masonry grid ── */
+    /* ── Uniform 4-up grid ── */
+    /* Every card is one 3:4 box so the rows line up. Masonry (columns:3 plus
+       intrinsic image heights) is what made them ragged. */
     #pw-grid {
-      columns: 3; column-gap: 12px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
       padding: 28px var(--pad) 80px;
     }
     .pw-item {
-      break-inside: avoid; margin-bottom: 12px;
+      aspect-ratio: 3/4;
       border-radius: var(--r); overflow: hidden;
       position: relative; cursor: pointer;
       border: 1px solid var(--border);
@@ -444,7 +448,9 @@
     }
     .pw-item:hover { border-color: var(--border-h); }
     .pw-item img {
-      width: 100%; height: auto; display: block; /* height:auto beats the height="" attribute hint — without it images stretch */
+      /* Both axes are set by the 3:4 box, so the width/height attributes are inert
+         and the image crops instead of setting the card's height. */
+      width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
       filter: var(--img-card);
       transition: filter .6s var(--out), transform .7s var(--out);
     }
@@ -479,11 +485,11 @@
 
     .pw-item.pw-hidden { display: none; }
 
-    @media (max-width: 1024px) { #pw-grid { columns: 2; } }
-    /* Single column from 768px, not 600px: between the two the grid kept 48px
-       gutters while #hero and #filter-bar beside it were already at 24px. */
+    @media (max-width: 1024px) { #pw-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* Two-up from 768px, matching the work grid on the home page: ten cards at one
+       full-width 3:4 image per screen is a very long scroll for a browse page. */
     @media (max-width: 768px) {
-      #pw-grid { columns: 1; padding: 20px var(--pad) 56px; column-gap: 0; }
+      #pw-grid { grid-template-columns: repeat(2, 1fr); padding: 20px var(--pad) 56px; gap: 8px; }
     }
 
     /* ── Lightbox ── */
@@ -773,7 +779,7 @@
        tabindex="0" role="button" aria-label="View: Surreal face and snake hand tattoo">
     <img src="pictures/surreal-face-snake-hand-tattoo-emmy-tattoo.jpg" width="1200" height="1541"
          srcset="pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-480.webp 480w, pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-960.webp 960w"
-         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+         sizes="(max-width: 1024px) 50vw, 25vw"
          alt="Black and grey surrealism hand tattoo featuring a woman's face with blank eyes and a snake winding through her mouth, designed by Emmy Tattoo."
          title="Surreal Face and Snake Hand Tattoo by Emmy Tattoo" fetchpriority="high" decoding="async">
     <div class="pw-over" aria-hidden="true">
@@ -788,7 +794,7 @@
        tabindex="0" role="button" aria-label="View: Fine line spotted shark arm tattoo">
     <img src="pictures/fine-line-spotted-shark-arm-tattoo-emmy-tattoo.jpg" width="1200" height="1600"
          srcset="pictures/web/fine-line-spotted-shark-arm-tattoo-emmy-tattoo-480.webp 480w, pictures/web/fine-line-spotted-shark-arm-tattoo-emmy-tattoo-960.webp 960w"
-         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+         sizes="(max-width: 1024px) 50vw, 25vw"
          alt="Fine line blackwork tattoo of a spotted leopard shark using dotwork shading on the back of a woman's upper arm, done by Emmy Tattoo."
          title="Fine Line Spotted Shark Arm Tattoo by Emmy Tattoo" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
@@ -803,7 +809,7 @@
        tabindex="0" role="button" aria-label="View: Fine line abstract flower tattoo">
     <img src="pictures/Fine-Line-Abstract-Continuous-Flower-Tattoo.jpg" width="2160" height="3007"
          srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w, pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp 960w"
-         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+         sizes="(max-width: 1024px) 50vw, 25vw"
          alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Line</span>
@@ -817,7 +823,7 @@
        tabindex="0" role="button" aria-label="View: Wolf portrait forearm tattoo">
     <img src="pictures/Wolf-Portrait-Clock-Forest-Forearm-Tattoo.jpg" width="2160" height="2881"
          srcset="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-480.webp 480w, pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp 960w"
-         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+         sizes="(max-width: 1024px) 50vw, 25vw"
          alt="Wolf portrait with shattered clock and forest forearm half-sleeve by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -831,7 +837,7 @@
        tabindex="0" role="button" aria-label="View: Flying barn owl tattoo">
     <img src="pictures/Flying-Barn-Owl-Black-and-Grey-Tattoo.jpg" width="2160" height="2880"
          srcset="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-480.webp 480w, pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-960.webp 960w"
-         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+         sizes="(max-width: 1024px) 50vw, 25vw"
          alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Art</span>
@@ -845,7 +851,7 @@
        tabindex="0" role="button" aria-label="View: Pug portrait thigh tattoo">
     <img src="pictures/Pug-Dog-Portrait-Floral-Thigh-Tattoo.jpg" width="2160" height="2880"
          srcset="pictures/web/Pug-Dog-Portrait-Floral-Thigh-Tattoo-480.webp 480w, pictures/web/Pug-Dog-Portrait-Floral-Thigh-Tattoo-960.webp 960w"
-         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+         sizes="(max-width: 1024px) 50vw, 25vw"
          alt="Realistic pug Bonnie portrait with roses and floral accents on thigh by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -859,7 +865,7 @@
        tabindex="0" role="button" aria-label="View: Classical mythology fine art tattoo">
     <img src="pictures/Classical-Mythology-Hermes-Fine-Art-Tattoo.jpg" width="3024" height="4032"
          srcset="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-480.webp 480w, pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp 960w"
-         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+         sizes="(max-width: 1024px) 50vw, 25vw"
          alt="Classical mythology fine art forearm tattoo featuring Hermes by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Art</span>
@@ -873,7 +879,7 @@
        tabindex="0" role="button" aria-label="View: Five cat portraits tattoo">
     <img src="pictures/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo.jpg" width="2160" height="2880"
          srcset="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-480.webp 480w, pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-960.webp 960w"
-         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+         sizes="(max-width: 1024px) 50vw, 25vw"
          alt="Five realistic cat portraits — Hazel, Ocean, Wolfie, Oreo and Pumpkin — on upper arm by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -887,7 +893,7 @@
        tabindex="0" role="button" aria-label="View: Black pug Marley tattoo">
     <img src="pictures/Black-Pug-Portrait-Tattoo-With-Daisies.jpg" width="2160" height="2880"
          srcset="pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-480.webp 480w, pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-960.webp 960w"
-         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+         sizes="(max-width: 1024px) 50vw, 25vw"
          alt="Black pug Marley portrait with daisies and roses tattoo by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -901,7 +907,7 @@
        tabindex="0" role="button" aria-label="View: Thresher shark tattoo">
     <img src="pictures/Realistic-Thresher-Shark-Tattoo-Marine-Life.jpg" width="2002" height="2669"
          srcset="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-480.webp 480w, pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-960.webp 960w"
-         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+         sizes="(max-width: 1024px) 50vw, 25vw"
          alt="Realistic thresher shark marine life tattoo on upper arm by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
