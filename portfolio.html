@@ -642,14 +642,17 @@
     footer {
       padding: 36px var(--pad);
       border-top: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
+      /* Three tracks, not space-between: unequal side widths shove the links
+         off true centre. Matches index.html. */
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      align-items: center; gap: 20px;
     }
     .ft-logo {
       font-family: var(--display); font-size: 1.2rem;
       font-weight: 400; color: var(--fg);
     }
     .ft-logo em { font-style: italic; color: var(--gold); }
-    .ft-links { display: flex; gap: 22px; }
+    .ft-links { display: flex; gap: 22px; justify-self: center; }
     .ft-a {
       font-family: var(--mono); font-size: .71rem;
       letter-spacing: .18em; text-transform: uppercase;
@@ -659,10 +662,12 @@
     .ft-copy {
       font-family: var(--mono); font-size: .7rem;
       letter-spacing: .1em; color: var(--fg2);
+      justify-self: end; text-align: right;
     }
     @media (max-width: 768px) {
-      footer { padding: 28px var(--pad); flex-direction: column; gap: 20px; text-align: center; }
+      footer { padding: 28px var(--pad); grid-template-columns: 1fr; justify-items: center; text-align: center; }
       .ft-links { flex-wrap: wrap; justify-content: center; }
+      .ft-copy { justify-self: center; text-align: center; }
     }
 
     /* ── Always-dark islands: chrome drawn over photography ── */
@@ -974,7 +979,7 @@
   <span class="ft-logo">Emmy <em>Tattoo</em></span>
   <nav class="ft-links" aria-label="Footer navigation">
     <a href="/" class="ft-a">Home</a>
-    <a href="/legal" class="ft-a">Privacy &amp; Cookies</a>
+    <a href="/legal#privacy" class="ft-a">Privacy &amp; Cookies</a>
     <a href="/legal#terms" class="ft-a">Terms</a>
   </nav>
   <span class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</span>
@@ -998,6 +1003,42 @@ function __boot() {
   const lenis = new Lenis();
   gsap.ticker.add(t => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
+
+  /* Keyboard paging — matches index.html. Lenis owns the scroll position, so the
+     browser's native PageUp/Home/space handling fights its rAF loop and snaps the
+     page back. Route the keys through Lenis, keep our own pending target so a
+     burst of presses stacks, and swallow them while the lightbox holds the lock. */
+  let scrollLocked = false;
+  const __lenisStop = lenis.stop.bind(lenis), __lenisStart = lenis.start.bind(lenis);
+  lenis.stop  = () => { scrollLocked = true;  __lenisStop(); };
+  lenis.start = () => { scrollLocked = false; __lenisStart(); };
+  const KEY_STEP = 120;
+  let keyTarget = null, keyIdle = 0;
+  window.addEventListener('keydown', e => {
+    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    const page = window.innerHeight * 0.9;
+    const max  = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const from = keyTarget != null ? keyTarget : lenis.scroll;
+    let to;
+    switch (e.key) {
+      case 'PageDown':  to = from + page; break;
+      case 'PageUp':    to = from - page; break;
+      case 'Home':      to = 0; break;
+      case 'End':       to = max; break;
+      case ' ':         to = from + (e.shiftKey ? -page : page); break;
+      case 'ArrowDown': to = from + KEY_STEP; break;
+      case 'ArrowUp':   to = from - KEY_STEP; break;
+      default: return;
+    }
+    e.preventDefault();
+    if (scrollLocked) return;
+    keyTarget = Math.min(max, Math.max(0, to));
+    clearTimeout(keyIdle);
+    keyIdle = setTimeout(() => { keyTarget = null; }, 800);
+    lenis.scrollTo(keyTarget, { duration: .7, easing: p => 1 - Math.pow(1 - p, 3) });
+  }, { passive: false });
 
   // Progress + nav — elements cached; this runs on every scroll frame
   const progEl = document.getElementById('prog');
