@@ -967,12 +967,7 @@
     }
     .exp-h2 em { font-style: italic; color: var(--gold); }
     /* ── Expertise — same accordion mechanic as the FAQ further down ── */
-    .exp-list {
-      list-style: none;
-      /* Row content needs ~750px. At the full 1344px content width the remainder
-         was dead space. Precedent: .trs-spotlight 980px, .fq-answer-inner 800px. */
-      max-width: 1080px;
-    }
+    .exp-list { list-style: none; }
     .ei {
       position: relative; overflow: hidden;
       border-top: 1px solid var(--border);
@@ -1157,11 +1152,10 @@
     #flash {
       padding: 80px var(--pad) 90px;
       display: flex;
-      /* space-between, not flex-start: the copy column is capped at 640px, so the
-         leftover width used to sit to the right of the panel and left it floating
-         276px short of the gutter at 1920. Centre-aligned because the panel is
-         roughly half the copy column's height. */
-      flex-direction: row; align-items: center; justify-content: space-between; gap: 64px;
+      /* flex-start with a 30px gap: the panel reads as part of the copy block, not
+         as a detached card at the far gutter. .fl-left grows to its 640px cap first,
+         so the panel starts at pad + 640 + 30 and the slack falls to the right. */
+      flex-direction: row; align-items: center; justify-content: flex-start; gap: 30px;
       background: var(--bg);
       border-top: 1px solid transparent;
       border-image: var(--seam) 1;

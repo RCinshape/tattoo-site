@@ -485,6 +485,28 @@
 
     .pw-item.pw-hidden { display: none; }
 
+    /* Batch gate — the .pf-proof-all pill re-cut as a button. Inside the grid as a
+       full-row child, so it inherits the gutters and the grid's bottom padding. */
+    #pw-gate { grid-column: 1 / -1; display: flex; justify-content: center; padding-top: 28px; }
+    /* display:flex above outranks the UA's [hidden] rule, so restate it. */
+    #pw-gate[hidden] { display: none; }
+    .pw-more {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--mono); font-size: .72rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--fg); cursor: pointer;
+      padding: 16px 34px; border-radius: 100px;
+      border: 1px solid var(--gold-ring);
+      background: rgba(var(--gold-rgb),.04);
+      transition: border-color .38s, background .38s, transform .38s var(--out);
+    }
+    .pw-more:hover {
+      border-color: var(--gold-ring-h);
+      background: rgba(var(--gold-rgb),.09);
+      transform: translateY(-3px);
+    }
+    .pw-more-n { color: var(--dim); }
+
     @media (max-width: 1024px) { #pw-grid { grid-template-columns: repeat(2, 1fr); } }
     /* Two-up from 768px, matching the work grid on the home page: ten cards at one
        full-width 3:4 image per screen is a very long scroll for a browse page. */
@@ -618,7 +640,7 @@
     }
     .bc-h2 em { font-style: italic; color: var(--gold); }
     .bc-sub {
-      font-size: 1rem; color: var(--fg2); max-width: 440px; line-height: 1.8;
+      font-size: 1rem; color: var(--fg2); max-width: 520px; line-height: 1.8;
     }
     .bc-btns {
       display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
@@ -636,7 +658,38 @@
       border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09);
       transform: translateY(-3px);
     }
-    @media (max-width: 768px) { #book-cta { padding: 60px var(--pad); } .bc-btns { flex-direction: column; align-items: center; } }
+    /* Primary action: the gold sweep from .tr-review-btn on index.html — the site's
+       one established fill treatment, so this stays inside the token set. */
+    .bc-btn-go { position: relative; overflow: hidden; border-color: var(--gold-ring-h); }
+    .bc-btn-go::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--gold);
+      transform: translateX(-101%); transition: transform .5s var(--out);
+    }
+    .bc-btn-go > * { position: relative; z-index: 1; }
+    .bc-btn-go:hover::before { transform: translateX(0); }
+    .bc-btn-go:hover { color: var(--on-gold); border-color: var(--gold); }
+    .bc-close { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .bc-alt {
+      font-family: var(--mono); font-size: .68rem;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: var(--fg2); text-decoration: none;
+      border-bottom: 1px solid transparent; padding-bottom: 3px;
+      transition: color .3s, border-color .3s;
+    }
+    .bc-alt:hover { color: var(--fg); border-color: var(--gold-ring-h); }
+    .bc-note {
+      font-family: var(--mono); font-size: .62rem;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--dim); max-width: 560px; line-height: 1.9;
+    }
+    /* The number plus the arrow is 28 mono characters; at 390px the default
+       40px side padding pushed the arrow onto its own line. */
+    @media (max-width: 768px) {
+      #book-cta { padding: 60px var(--pad); }
+      .bc-btns { flex-direction: column; align-items: center; }
+      .bc-btn { padding: 18px 24px; letter-spacing: .16em; }
+    }
 
     /* ── Footer (matches index.html) ── */
     footer {
@@ -920,7 +973,87 @@
     </div>
   </div>
 
+  <div id="pw-gate" hidden>
+    <button class="pw-more" type="button" id="pw-more" aria-controls="pw-grid">
+      Show more work <span class="pw-more-n" id="pw-more-n"></span>
+    </button>
+  </div>
+
 </main>
+
+<!-- ════ GALLERY: FILTER + BATCH GATE ════ -->
+<!-- Top-level and in-place, NOT inside __boot: __boot returns early when the CDN
+     bundles fail, and this script owns which pieces are visible. Running here,
+     right after the grid, applies the batch before the rows below can paint. -->
+<script>
+(function () {
+  var BATCH = 12;
+  var items      = [].slice.call(document.querySelectorAll('.pw-item'));
+  var filterBtns = [].slice.call(document.querySelectorAll('.f-btn'));
+  var countEl = document.getElementById('f-count');
+  var gate    = document.getElementById('pw-gate');
+  var moreBtn = document.getElementById('pw-more');
+  var moreN   = document.getElementById('pw-more-n');
+  if (!items.length || !gate) return;
+
+  var curFilter = 'all', shown = BATCH;
+  function matches(item) {
+    return curFilter === 'all' || (item.dataset.style || '').split(/\s+/).indexOf(curFilter) !== -1;
+  }
+
+  /* animate: run the entrance tween on newly revealed cards (a filter press or a
+     gate press). false on first render - the grid has its own scroll-triggered
+     entrance in __boot. Returns the first card revealed by this call, or null. */
+  function render(animate) {
+    var gs = window.gsap;
+    var matched = items.filter(matches);
+    var visible = matched.slice(0, shown);
+    var firstNew = null, delay = 0;
+    items.forEach(function (item) {
+      var wasHidden = item.classList.contains('pw-hidden');
+      if (visible.indexOf(item) !== -1) {
+        item.classList.remove('pw-hidden');
+        if (wasHidden && !firstNew) firstNew = item;
+        if (animate && wasHidden && gs) {
+          gs.fromTo(item, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .4, delay: delay * .05, ease: 'power2.out' });
+          delay++;
+        }
+      } else if (!wasHidden) {
+        if (gs) gs.to(item, { opacity: 0, duration: .18, onComplete: function () { item.classList.add('pw-hidden'); } });
+        else item.classList.add('pw-hidden');
+      }
+    });
+    var rest = matched.length - visible.length;
+    gate.hidden = rest < 1;
+    moreN.textContent = '· ' + rest + ' left';
+    countEl.textContent = rest
+      ? visible.length + ' of ' + matched.length + ' shown'
+      : matched.length + ' piece' + (matched.length !== 1 ? 's' : '');
+    if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+    return firstNew;
+  }
+
+  filterBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      filterBtns.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      curFilter = btn.dataset.filter;
+      shown = BATCH;
+      render(true);
+    });
+  });
+
+  moreBtn.addEventListener('click', function () {
+    shown += BATCH;
+    var first = render(true);
+    /* Keyboard users would otherwise lose the caret when the gate empties.
+       preventScroll keeps the browser from fighting Lenis for the position. */
+    if (first && gate.hidden) first.focus({ preventScroll: true });
+  });
+
+  render(false);
+})();
+</script>
 
 <!-- ════ LIGHTBOX ════ -->
 <div id="lb-bg" aria-hidden="true"></div>
@@ -960,17 +1093,17 @@
 
 <!-- ════ BOOK CTA ════ -->
 <section id="book-cta" aria-label="Booking call to action">
-  <h2 class="bc-h2">Like what you <em>see?</em></h2>
-  <p class="bc-sub">Start with a message — a reference, a sketch, or just an idea. The design is built from scratch. Consultation is free.</p>
+  <h2 class="bc-h2">Yours could be <em>next.</em></h2>
+  <p class="bc-sub">Send a reference, a rough sketch, or just the idea in your head. You'll get an honest answer on whether it works and what it costs — the design is drawn from scratch for you, and the consultation is free.</p>
   <div class="bc-btns">
     <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20book%20a%20tattoo%20with%20you%20%E2%80%94%20could%20we%20have%20a%20chat%3F"
-       target="_blank" rel="noopener" class="bc-btn">
-      WhatsApp &nbsp;· +44 7405 979137 &nbsp;→
+       target="_blank" rel="noopener" class="bc-btn bc-btn-go">
+      <span>WhatsApp &nbsp;· +44&nbsp;7405&nbsp;979137&nbsp;→</span>
     </a>
-    <a href="https://www.instagram.com/emmy.tattoo"
-       target="_blank" rel="noopener" class="bc-btn">
-      Instagram &nbsp;· @emmy.tattoo &nbsp;→
-    </a>
+  </div>
+  <div class="bc-close">
+    <a href="https://www.instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="bc-alt">Or send a DM on Instagram &nbsp;→</a>
+    <p class="bc-note">Priced by piece, not by hour · Consultation free · Tue–Sat, appointment only</p>
   </div>
 </section>
 
@@ -1054,7 +1187,7 @@ function __boot() {
   gsap.fromTo('.h-sub',     { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .9, delay: .5,  ease: 'expo.out' });
 
   // Grid entrance — tied to the grid entering view instead of firing for all 10 on load
-  gsap.fromTo('.pw-item',
+  gsap.fromTo('.pw-item:not(.pw-hidden)',
     { opacity: 0, y: 28 },
     { opacity: 1, y: 0, stagger: .06, duration: .65, ease: 'power3.out',
       scrollTrigger: { trigger: '#pw-grid', start: 'top 88%', once: true } }
@@ -1072,36 +1205,11 @@ function __boot() {
     if (document.hidden) gsap.ticker.sleep(); else gsap.ticker.wake();
   });
 
-  // ── Filter ──
-  const items = [...document.querySelectorAll('.pw-item')];
-  const filterBtns = [...document.querySelectorAll('.f-btn')];
-  const countEl = document.getElementById('f-count');
-
-  const updateCount = n => { countEl.textContent = n + ' piece' + (n !== 1 ? 's' : ''); };
-  updateCount(items.length);
-
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const f = btn.dataset.filter;
-      let visible = 0, delay = 0;
-      items.forEach(item => {
-        const styles = (item.dataset.style || '').split(/\s+/);
-        const match = f === 'all' || styles.includes(f);
-        if (match) {
-          item.classList.remove('pw-hidden');
-          gsap.fromTo(item, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .4, delay: delay * .05, ease: 'power2.out' });
-          delay++; visible++;
-        } else {
-          gsap.to(item, { opacity: 0, duration: .18, onComplete: () => item.classList.add('pw-hidden') });
-        }
-      });
-      updateCount(visible);
-    });
-  });
-
   // ── Lightbox ──
+  /* Filtering and batching live in their own top-level script under the grid, so a
+     CDN failure cannot strand the gallery. Both read .pw-hidden off the live DOM,
+     which is all vis() below needs. */
+  const items   = [...document.querySelectorAll('.pw-item')];
   const lbBg    = document.getElementById('lb-bg');
   const lb      = document.getElementById('lb');
   const lbImg   = document.getElementById('lb-img');
