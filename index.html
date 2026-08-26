@@ -709,15 +709,22 @@
       color: var(--fg); margin-bottom: 22px;
       text-shadow: 0 1px 12px rgba(var(--panel-rgb),.9);
       opacity: 0;
+      -webkit-user-select: none; user-select: none;
     }
     /* Entrance gated on .hero-go (added by initHero after the loader) so the
        sequence reads eyebrow → title → sub → CTA instead of finishing under the loader */
     html.hero-go .h-eyebrow { animation: hcta-in .28s var(--out) 0s forwards; }
     @media (prefers-reduced-motion: reduce) { .h-eyebrow, html.hero-go .h-eyebrow { animation: none !important; opacity: 1 !important; } }
+    /* Brand lettering, not copy: initHero splits it into per-character spans, so a
+       selection here yields character soup anyway. Opting out of selection also
+       stops it accepting a text caret, which is what a visitor with Chrome's caret
+       browsing (F7) switched on gets when they click the wordmark. Same treatment
+       as .bk-wm and .fq-num. */
     .h-title {
       font-family: var(--display);
       font-size: clamp(4rem,13.5vw,13rem);
       font-weight: 400; line-height: .87; letter-spacing: -.03em;
+      -webkit-user-select: none; user-select: none;
     }
     .tl { display: block; }
     .tl em { font-style: italic; color: var(--gold); }
@@ -2535,7 +2542,7 @@
          alt="Emmy, fine line and realism tattoo artist at Sainthood Tattoo in Hull." loading="lazy" decoding="async">
   </div>
   <div class="ab-text">
-    <h2 class="ab-h2">Meet <em>Emmy</em></h2>
+    <h2 class="ab-h2">Hi, I'm <em>Emmy</em></h2>
     <div class="ab-bio">
       <p>I'm Emmy, a fine line, fine art and realism tattoo artist, working from Sainthood Tattoo on Princes Avenue, Hull.</p>
     </div>
