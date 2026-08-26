@@ -281,6 +281,12 @@
       --warn-rgb:  224,85,85;
       --border:    rgba(var(--fg-rgb),.07);
       --border-h:  rgba(var(--fg-rgb),.15);
+      /* The one opaque field colour: what rgba(var(--fg-rgb),.03) resolves to
+         over #book's --bg. <select> must not be translucent like its siblings —
+         Chrome paints the native option list from the control's background-color,
+         and a translucent value there lands white-on-white in dark. Recompute
+         both themes if --bg or the .03 wash ever changes. */
+      --field:     #111111;
       /* Page-tone RGB. Layers that fade content INTO the page (photo scrims,
          vignette, text halos) MUST use this, never --panel-rgb: in light the
          panel is #fdf8f6 while the page is #f7efeb, and that mismatch
@@ -371,6 +377,7 @@
       --ok-rgb:    31,122,71;
       --warn:      #b4322f;
       --warn-rgb:  180,50,47;
+      --field:     #f0e8e5;   /* .03 warm ink over #f7efeb — see the dark note */
       --bg-rgb: 247,239,235;
       /* .48 puts the ring at 3.13:1 against #f7efeb (WCAG non-text minimum) */
       --btn-ring:   rgba(var(--fg-rgb),.48);
@@ -1604,17 +1611,32 @@
       -webkit-appearance: none; appearance: none;
     }
     .bk-form textarea { min-height: 132px; resize: vertical; line-height: 1.7; }
+    /* ── Select, and why it alone is opaque ──
+       Chrome and Edge paint the native option list from this control's own used
+       background-color and color. The .03 wash its siblings use is composited
+       against the popup's default white, so in dark the list came out white with
+       near-white --fg text and you could not see what you were picking. --field
+       is that wash already resolved over #book's --bg: identical on the page,
+       legible in the popup. Every option is painted explicitly as well, because
+       Firefox reads option colours rather than the control's. */
     .bk-form select {
+      background-color: var(--field);
       /* The caret is inline SVG in the token colour, because a native select arrow
          renders light-on-light in the dark theme on Windows. */
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23c4a262' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 16px center;
       padding-right: 42px;
     }
-    .bk-form input:focus-visible, .bk-form select:focus-visible, .bk-form textarea:focus-visible {
+    .bk-form select option { background-color: var(--field); color: var(--fg); }
+    .bk-form input:focus-visible, .bk-form textarea:focus-visible {
       outline: none; border-color: var(--gold-ring-h);
-      background: rgba(var(--gold-rgb),.05);
+      background-color: rgba(var(--gold-rgb),.05);
     }
+    /* The select's focus cue is the ring alone. A translucent focus wash would put
+       the option list back to white-on-white while the popup is open, and the
+       `background` shorthand this rule used to share also wiped the caret SVG the
+       moment the field took focus. */
+    .bk-form select:focus-visible { outline: none; border-color: var(--gold-ring-h); }
     .bk-form input::placeholder, .bk-form textarea::placeholder { color: var(--dim); }
     /* Honeypot: off-screen rather than display:none, which some bots skip. */
     .bk-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
@@ -1641,6 +1663,57 @@
     }
     .bk-f-alt:hover { border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09); transform: translateY(-3px); }
     .bk-f-alt svg { flex-shrink: 0; color: var(--gold); }
+    /* ── Reference photos ──
+       The file input is never seen; #bkf-up-btn opens it. It stays in the layout
+       at 1x1 rather than display:none, the conventional pattern so .click()
+       reliably opens the picker. Two classes are needed in the selector: the
+       shared `.bk-form input` rule is one class plus one type and would otherwise
+       restore width: 100%. */
+    .bk-form .bk-f-file {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; border: 0; opacity: 0; pointer-events: none;
+    }
+    /* Both of these are grid items — #bkf-up in .bk-form, each row in
+       .bk-f-up-list — and a grid item's automatic minimum size is min-content.
+       A nowrap filename therefore set the .bk-form track minimum and stretched
+       the whole form past its 720px cap (measured: one 42-character name took the
+       342px phone column to 483px, clipped by #book's overflow: hidden). Pinning
+       min-width to 0 hands the shrinking back to .bk-f-up-name's ellipsis. */
+    .bk-f-up, .bk-f-up-item { min-width: 0; }
+    .bk-f-up-btn { padding: 15px 28px; margin-top: 2px; }
+    /* display: inline-flex on .bk-f-btn outranks the UA's [hidden] rule — the same
+       trap #pw-gate hits on /portfolio — so restate it. */
+    .bk-f-btn[hidden] { display: none; }
+    .bk-f-up-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 9px; }
+    .bk-f-up-item {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--sans); font-size: .85rem; color: var(--fg2);
+    }
+    .bk-f-up-thumb {
+      width: 42px; height: 42px; flex-shrink: 0;
+      border-radius: 8px; object-fit: cover; border: 1px solid var(--border);
+    }
+    .bk-f-up-name {
+      flex: 1 1 auto; min-width: 0;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .bk-f-up-state {
+      font-family: var(--mono); font-size: .58rem;
+      letter-spacing: .16em; text-transform: uppercase; color: var(--dim);
+    }
+    .bk-f-up-item[data-state="ok"]  .bk-f-up-state { color: var(--ok-ink); }
+    .bk-f-up-item[data-state="err"] .bk-f-up-state { color: var(--warn); }
+    .bk-f-up-act, .bk-f-up-x {
+      flex-shrink: 0; background: none; border: 0; cursor: pointer;
+      font-family: var(--mono); letter-spacing: .14em; text-transform: uppercase;
+      color: var(--dim); transition: color .3s;
+    }
+    .bk-f-up-act { font-size: .58rem; }
+    .bk-f-up-x   { font-size: 1.05rem; line-height: 1; padding: 4px 6px; }
+    .bk-f-up-act:hover, .bk-f-up-x:hover { color: var(--gold); }
+    .bk-f-up-act:focus-visible, .bk-f-up-x:focus-visible {
+      outline: 1px solid var(--gold-ring-h); outline-offset: 3px;
+    }
     .bk-f-note {
       grid-column: 1 / -1; text-align: center;
       font-family: var(--mono); font-size: .6rem;
@@ -2328,6 +2401,7 @@
   <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="2.4" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.6" y2="12"/><line x1="5.2" y1="5.2" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5.2" y2="18.8"/></g></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+  <symbol id="i-img" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8.6" cy="9.8" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.4 17.2 8.9 12.4l3.5 3.1 3.3-3.4 4.9 5.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
 </svg>
 
 <div class="vignette"  aria-hidden="true"></div>
@@ -2841,6 +2915,15 @@
       <div class="bk-f-wide">
         <label class="bk-f-lbl" for="bkf-refs">Reference links <span class="bk-f-opt">— optional</span></label>
         <input id="bkf-refs" name="references" type="text" placeholder="Instagram or Pinterest links, comma separated">
+      </div>
+      <div class="bk-f-wide bk-f-up" id="bkf-up" hidden>
+        <label class="bk-f-lbl" for="bkf-files">Reference photos <span class="bk-f-opt">— optional, up to 4</span></label>
+        <input class="bk-f-file" id="bkf-files" type="file" accept="image/*" multiple tabindex="-1">
+        <button class="bk-f-btn bk-f-alt bk-f-up-btn" type="button" id="bkf-up-btn">
+          <svg width="18" height="18" aria-hidden="true"><use href="#i-img"/></svg>
+          <span>Choose photos</span>
+        </button>
+        <ul class="bk-f-up-list" id="bkf-up-list" aria-live="polite"></ul>
       </div>
 
       <input type="checkbox" name="botcheck" class="bk-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -3917,14 +4000,34 @@ else __boot();
      CDN fails, and the one thing on this page that must never break is the ask. -->
 <script>
 (function () {
-  /* ── Configure these two and nothing else ──────────────────────────────────
+  /* ── Configure these three and nothing else ────────────────────────────────
      FORM_KEY   Web3Forms access key (free at web3forms.com — it is a public
                 client-side key by design). Empty = the email route is removed
                 and WhatsApp becomes the primary button; nothing renders dead.
      DEPOSIT    Stripe Payment Link plus the amount shown on the button. Empty
-                url = the whole deposit block stays hidden.                     */
+                url = the whole deposit block stays hidden.
+     UPLOAD     Cloudinary cloud name + UNSIGNED upload preset. Either one empty
+                = the Reference photos field is removed and the form is exactly
+                what it was before. Photos go straight from the visitor's browser
+                to Cloudinary and their URLs are appended to the WhatsApp message
+                and the email body, because a static site cannot attach files.
+                To switch it on: free account at cloudinary.com → Settings →
+                Upload → Add upload preset, with
+                  Signing mode        Unsigned
+                  Asset folder        enquiries
+                  Tags                enquiry
+                  Allowed formats     jpg, png, webp, heic, heif
+                  Max file size       12000000
+                  Incoming transform  c_limit,w_1600,h_1600,q_auto:good
+                  Use filename        off, unique filename on
+                then paste the cloud name from the dashboard and the preset name
+                below. Every other limit lives in the preset, never in this page:
+                an unsigned call may only send `file` and `upload_preset`. The
+                preset name is public by design; if it is ever abused, delete it,
+                create one under a new name and empty the enquiries folder.     */
   var FORM_KEY = '';
   var DEPOSIT  = { url: '', amount: '' };
+  var UPLOAD   = { cloud: '', preset: '' };
   /* ─────────────────────────────────────────────────────────────────────────── */
 
   var WA = '447405979137';
@@ -3935,11 +4038,132 @@ else __boot();
   var waBtn   = document.getElementById('bkf-wa');
   var msg     = document.getElementById('bkf-msg');
 
+  var MAX_SHOTS = 4;
+  var MAX_BYTES = 10 * 1024 * 1024;
+  var shots  = [];   /* { file, name, url (objectURL), link, state: 'up'|'ok'|'err' } */
+  var upWrap = document.getElementById('bkf-up');
+  var fileIn = document.getElementById('bkf-files');
+  var upBtn  = document.getElementById('bkf-up-btn');
+  var upList = document.getElementById('bkf-up-list');
+
   function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
   function say(state, text) {
     msg.hidden = false;
     msg.setAttribute('data-state', state);
     msg.textContent = text;
+  }
+
+  /* A phone camera file is 4-8 MB and Emmy only ever looks at these on a screen,
+     so they are resized in the browser first: 1600px on the long edge at q .82
+     lands ~300-500 KB. That keeps uploads fast on mobile data and keeps a free
+     Cloudinary tier clear of its monthly credits. drawImage honours EXIF
+     orientation in every current browser, so no orientation library is needed.
+     If the file cannot be decoded into an <img> — HEIC on desktop Chrome,
+     mainly — the original bytes go up untouched and Cloudinary decodes it. */
+  function shrink(file) {
+    return new Promise(function (resolve) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var long = Math.max(img.naturalWidth, img.naturalHeight);
+        var s = long > 1600 ? 1600 / long : 1;
+        var c = document.createElement('canvas');
+        c.width  = Math.round(img.naturalWidth  * s);
+        c.height = Math.round(img.naturalHeight * s);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(function (blob) {
+          URL.revokeObjectURL(url);
+          resolve(blob && blob.size < file.size ? blob : file);
+        }, 'image/jpeg', .82);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    });
+  }
+
+  /* Never set Content-Type — the browser must write the multipart boundary. */
+  function put(blob, name) {
+    var fd = new FormData();
+    fd.append('file', blob, name);
+    fd.append('upload_preset', UPLOAD.preset);
+    return fetch('https://api.cloudinary.com/v1_1/' + UPLOAD.cloud + '/image/upload',
+                 { method: 'POST', body: fd })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.secure_url) throw new Error((d.error && d.error.message) || 'rejected');
+        return d.secure_url;
+      });
+  }
+
+  function lift(s) {
+    s.state = 'up'; s.link = ''; paintShots();
+    shrink(s.file)
+      .then(function (blob) { return put(blob, s.name); })
+      .then(function (link) { s.link = link; s.state = 'ok'; })
+      .catch(function () { s.state = 'err'; })
+      .then(paintShots);
+  }
+
+  /* Filenames are visitor-supplied, so every one goes in through textContent. */
+  function shotRow(s) {
+    var li = document.createElement('li');
+    li.className = 'bk-f-up-item';
+    li.setAttribute('data-state', s.state);
+
+    var img = document.createElement('img');
+    img.className = 'bk-f-up-thumb'; img.src = s.url; img.alt = '';
+    li.appendChild(img);
+
+    var nm = document.createElement('span');
+    nm.className = 'bk-f-up-name'; nm.textContent = s.name;
+    li.appendChild(nm);
+
+    var st = document.createElement('span');
+    st.className = 'bk-f-up-state';
+    st.textContent = s.state === 'up' ? 'Uploading' : s.state === 'ok' ? 'Ready' : 'Failed';
+    li.appendChild(st);
+
+    if (s.state === 'err') {
+      var again = document.createElement('button');
+      again.type = 'button'; again.className = 'bk-f-up-act';
+      again.textContent = 'Retry';
+      again.addEventListener('click', function () { lift(s); });
+      li.appendChild(again);
+    }
+
+    var x = document.createElement('button');
+    x.type = 'button'; x.className = 'bk-f-up-x';
+    x.setAttribute('aria-label', 'Remove ' + s.name);
+    x.textContent = '\u00d7';
+    x.addEventListener('click', function () {
+      URL.revokeObjectURL(s.url);
+      shots.splice(shots.indexOf(s), 1);
+      paintShots();
+    });
+    li.appendChild(x);
+    return li;
+  }
+
+  function paintShots() {
+    upList.innerHTML = '';
+    for (var i = 0; i < shots.length; i++) upList.appendChild(shotRow(shots[i]));
+    upBtn.hidden = shots.length >= MAX_SHOTS;
+    upBtn.querySelector('span').textContent = shots.length ? 'Add another photo' : 'Choose photos';
+  }
+
+  function shotsPending() {
+    for (var i = 0; i < shots.length; i++) if (shots[i].state === 'up') return true;
+    return false;
+  }
+  function shotLinks() {
+    var out = [];
+    for (var i = 0; i < shots.length; i++) if (shots[i].link) out.push(shots[i].link);
+    return out;
+  }
+  function clearShots() {
+    for (var i = 0; i < shots.length; i++) URL.revokeObjectURL(shots[i].url);
+    shots.length = 0;
+    paintShots();
   }
 
   /* Native validity, but reported ourselves: novalidate is on the form so the
@@ -3952,12 +4176,15 @@ else __boot();
   }
   function guard() {
     var bad = firstInvalid();
-    if (!bad) return true;
-    bad.focus();
-    say('err', bad.validity.valueMissing
-      ? 'Add your ' + (bad.dataset.ask || 'details') + ' so Emmy can reply.'
-      : 'That email address does not look right.');
-    return false;
+    if (bad) {
+      bad.focus();
+      say('err', bad.validity.valueMissing
+        ? 'Add your ' + (bad.dataset.ask || 'details') + ' so Emmy can reply.'
+        : 'That email address does not look right.');
+      return false;
+    }
+    if (shotsPending()) { say('err', 'Photos are still uploading — one moment.'); return false; }
+    return true;
   }
 
   function payload() {
@@ -3965,7 +4192,8 @@ else __boot();
       name: val('bkf-name'), email: val('bkf-email'), idea: val('bkf-idea'),
       placement: val('bkf-place'), size: val('bkf-size'),
       budget: val('bkf-budget'), availability: val('bkf-when'),
-      references: val('bkf-refs')
+      references: val('bkf-refs'),
+      photos: shotLinks().join('\n')
     };
   }
 
@@ -3982,6 +4210,11 @@ else __boot();
       'When suits: ' + (p.availability || '—')
     ];
     if (p.references) lines.push('References: ' + p.references);
+    var shotUrls = shotLinks();
+    if (shotUrls.length) {
+      lines.push('Photos:');
+      for (var i = 0; i < shotUrls.length; i++) lines.push(shotUrls[i]);
+    }
     return lines.join('\n');
   }
 
@@ -3989,6 +4222,30 @@ else __boot();
     if (!guard()) return;
     window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(waText()), '_blank', 'noopener');
   });
+
+  if (!UPLOAD.cloud || !UPLOAD.preset) {
+    upWrap.remove();          /* not configured: no field at all, nothing dead */
+  } else {
+    upWrap.hidden = false;
+    upBtn.addEventListener('click', function () { fileIn.click(); });
+    fileIn.addEventListener('change', function () {
+      var list = fileIn.files, added = 0, tooMany = false, tooBig = false, notImg = false;
+      for (var i = 0; i < list.length; i++) {
+        var f = list[i];
+        if (shots.length >= MAX_SHOTS)      { tooMany = true; break; }
+        if (f.type.indexOf('image/') !== 0) { notImg = true; continue; }
+        if (f.size > MAX_BYTES)             { tooBig = true; continue; }
+        var s = { file: f, name: f.name, url: URL.createObjectURL(f), link: '', state: 'up' };
+        shots.push(s); added++; lift(s);
+      }
+      fileIn.value = '';      /* so re-picking the same file still fires change */
+      paintShots();
+      if (notImg)       say('err', 'Photos only — that file was not an image.');
+      else if (tooBig)  say('err', 'Each photo has to be under 10 MB.');
+      else if (tooMany) say('err', 'Four photos is the limit.');
+      else if (added)   msg.hidden = true;
+    });
+  }
 
   if (!FORM_KEY) {
     /* No endpoint configured: remove the email button rather than leave one that
@@ -4015,7 +4272,8 @@ else __boot();
           name: p.name, email: p.email, idea: p.idea,
           placement: p.placement || '—', size: p.size || '—',
           budget: p.budget, availability: p.availability || '—',
-          references: p.references || '—'
+          references: p.references || '—',
+          photos: p.photos || '—'
         })
       })
         .then(function (r) { return r.json(); })
@@ -4024,6 +4282,7 @@ else __boot();
           form.querySelectorAll('input, textarea, select').forEach(function (f) {
             if (f.type !== 'checkbox') f.value = '';
           });
+          clearShots();
           say('ok', 'Sent. Emmy will reply to ' + p.email + ' — usually within a day or two.');
           sendBtn.textContent = 'Send enquiry';
         })
