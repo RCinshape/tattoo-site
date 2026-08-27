@@ -1592,9 +1592,8 @@
        for anyone who would rather not use a form. */
     .bk-form {
       width: 100%; max-width: 720px; text-align: left;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+      display: grid; grid-template-columns: 1fr; gap: 18px;
     }
-    .bk-f-wide { grid-column: 1 / -1; }
     .bk-f-lbl {
       display: block; margin-bottom: 9px;
       font-family: var(--mono); font-size: .6rem;
@@ -1640,11 +1639,6 @@
     .bk-form input::placeholder, .bk-form textarea::placeholder { color: var(--dim); }
     /* Honeypot: off-screen rather than display:none, which some bots skip. */
     .bk-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-    .bk-f-actions {
-      grid-column: 1 / -1;
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px;
-      margin-top: 10px;
-    }
     .bk-f-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 11px;
       padding: 18px 38px; border-radius: 100px;
@@ -1700,22 +1694,76 @@
     .bk-f-up-state {
       font-family: var(--mono); font-size: .58rem;
       letter-spacing: .16em; text-transform: uppercase; color: var(--dim);
+      white-space: nowrap; flex-shrink: 0;
     }
-    .bk-f-up-item[data-state="ok"]  .bk-f-up-state { color: var(--ok-ink); }
-    .bk-f-up-item[data-state="err"] .bk-f-up-state { color: var(--warn); }
-    .bk-f-up-act, .bk-f-up-x {
+    .bk-f-up-x {
       flex-shrink: 0; background: none; border: 0; cursor: pointer;
       font-family: var(--mono); letter-spacing: .14em; text-transform: uppercase;
       color: var(--dim); transition: color .3s;
+      font-size: 1.05rem; line-height: 1; padding: 4px 6px;
     }
-    .bk-f-up-act { font-size: .58rem; }
-    .bk-f-up-x   { font-size: 1.05rem; line-height: 1; padding: 4px 6px; }
-    .bk-f-up-act:hover, .bk-f-up-x:hover { color: var(--gold); }
-    .bk-f-up-act:focus-visible, .bk-f-up-x:focus-visible {
-      outline: 1px solid var(--gold-ring-h); outline-offset: 3px;
+    .bk-f-up-x:hover { color: var(--gold); }
+    .bk-f-up-x:focus-visible { outline: 1px solid var(--gold-ring-h); outline-offset: 3px; }
+    /* ── One question per card ──
+       Navigation is CSS-only on purpose. GSAP and Lenis come from a CDN and
+       __boot returns at its lib guard when that fails; a form whose steps
+       depended on GSAP would strand the visitor halfway through the ask. */
+    .bk-card {
+      border: 0; padding: 0; margin: 0; min-width: 0;
+      display: grid; gap: 14px;
+      animation: bk-in .34s var(--out) both;
     }
+    /* display: grid on the same element outranks the UA [hidden] rule — the same
+       trap #pw-gate hits on /portfolio — so restate it. */
+    .bk-card[hidden] { display: none; }
+    @keyframes bk-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .bk-card { animation: none; } }
+    .bk-q {
+      padding: 0; font-family: var(--serif);
+      font-size: clamp(1.35rem, 3.2vw, 1.9rem);
+      line-height: 1.3; color: var(--fg);
+    }
+    .bk-hint { font-family: var(--sans); font-size: .86rem; line-height: 1.7; color: var(--dim); }
+    .bk-prog { height: 3px; border-radius: 2px; background: rgba(var(--fg-rgb),.08); overflow: hidden; }
+    .bk-prog-bar {
+      display: block; height: 100%; width: 0;
+      background: var(--gold); border-radius: 2px;
+      transition: width .34s var(--out);
+    }
+    .bk-prog-n {
+      font-family: var(--mono); font-size: .58rem;
+      letter-spacing: .16em; text-transform: uppercase; color: var(--dim);
+      margin: -10px 0 4px;
+    }
+    .bk-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 6px; }
+    .bk-nav-back {
+      background: none; border: 0; cursor: pointer;
+      font-family: var(--mono); font-size: .62rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--dim); transition: color .3s;
+    }
+    .bk-nav-back:hover { color: var(--gold); }
+    .bk-nav-back:focus-visible { outline: 1px solid var(--gold-ring-h); outline-offset: 3px; }
+    .bk-rev { margin: 0; }
+    .bk-rev dt {
+      font-family: var(--mono); font-size: .56rem;
+      letter-spacing: .16em; text-transform: uppercase; color: var(--dim);
+      margin-bottom: 4px;
+    }
+    .bk-rev dd {
+      font-family: var(--sans); font-size: .92rem; line-height: 1.6;
+      color: var(--fg2); margin: 0 0 12px;
+    }
+    .bk-rev-img {
+      max-width: 100%; height: auto; display: block;
+      border-radius: var(--r); border: 1px solid var(--border);
+    }
+    .bk-rev-img[hidden] { display: none; }
+    .bk-consent { font-family: var(--sans); font-size: .82rem; line-height: 1.7; color: var(--dim); }
+    .bk-consent span { color: var(--fg2); }
+    .bk-done p { font-family: var(--sans); font-size: .95rem; line-height: 1.75; color: var(--fg2); margin: 0; }
     .bk-f-note {
-      grid-column: 1 / -1; text-align: center;
+      text-align: center;
       font-family: var(--mono); font-size: .6rem;
       letter-spacing: .12em; text-transform: uppercase; color: var(--dim);
     }
@@ -1747,8 +1795,6 @@
     }
     .bk-dep-p { font-size: .9rem; color: var(--fg2); line-height: 1.7; max-width: 420px; }
     @media (max-width: 768px) {
-      .bk-form { grid-template-columns: 1fr; }
-      .bk-f-actions { flex-direction: column; align-items: stretch; }
       .bk-f-btn { width: 100%; }
       .bk-dep { flex-direction: column; align-items: stretch; padding: 22px 24px; }
     }
@@ -2875,31 +2921,60 @@
       </div>
     </div>
 
-    <!-- Enquiry form. Posts to Web3Forms when a key is configured; the WhatsApp
-         button always works and sends the identical structured message. -->
+    <!-- Enquiry form. One question per card, one Send. On submit the browser
+         composes the picked photos into a single JPEG and POSTs everything to
+         /api/enquiry (a Cloudflare Pages Function in this repo), which sends it
+         from Emmy's work number to the client's WhatsApp. Emmy's number runs
+         Meta Coexistence, so that message lands in her normal Business app as an
+         outgoing message in a real chat with the client — one thread, both
+         parties, photos attached, no links to open. -->
     <form class="bk-form" id="bk-form" novalidate>
-      <div>
-        <label class="bk-f-lbl" for="bkf-name">Your name</label>
-        <input id="bkf-name" name="name" type="text" autocomplete="name" required data-ask="name" placeholder="Emma">
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="bkf-email">Email</label>
-        <input id="bkf-email" name="email" type="email" autocomplete="email" required data-ask="email address" placeholder="you@example.com">
-      </div>
-      <div class="bk-f-wide">
-        <label class="bk-f-lbl" for="bkf-idea">The idea</label>
-        <textarea id="bkf-idea" name="idea" required data-ask="idea" placeholder="What you'd like, and anything behind it. A rough thought is enough."></textarea>
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="bkf-place">Placement</label>
+      <div class="bk-prog" aria-hidden="true"><span class="bk-prog-bar" id="bkf-bar"></span></div>
+      <p class="bk-prog-n" id="bkf-count" aria-live="polite">1 of 8</p>
+
+      <fieldset class="bk-card" data-step="name">
+        <legend class="bk-q">What should Emmy call you?</legend>
+        <input id="bkf-name" name="name" type="text" autocomplete="name" placeholder="Emma">
+        <div class="bk-nav">
+          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="bk-card" data-step="phone" hidden>
+        <legend class="bk-q">Best WhatsApp number?</legend>
+        <p class="bk-hint">This is where Emmy replies. Outside the UK, start with your country code.</p>
+        <input id="bkf-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="07700 900123">
+        <div class="bk-nav">
+          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
+          <button class="bk-nav-back" type="button">Back</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="bk-card" data-step="idea" hidden>
+        <legend class="bk-q">What are you thinking?</legend>
+        <p class="bk-hint">A rough thought is enough.</p>
+        <textarea id="bkf-idea" name="idea" placeholder="What you'd like, and anything behind it."></textarea>
+        <div class="bk-nav">
+          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
+          <button class="bk-nav-back" type="button">Back</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="bk-card" data-step="body" hidden>
+        <legend class="bk-q">Where on the body, and how big?</legend>
+        <label class="bk-f-lbl" for="bkf-place">Placement <span class="bk-f-opt">— optional</span></label>
         <input id="bkf-place" name="placement" type="text" placeholder="Inner forearm">
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="bkf-size">Rough size</label>
+        <label class="bk-f-lbl" for="bkf-size">Rough size <span class="bk-f-opt">— optional</span></label>
         <input id="bkf-size" name="size" type="text" placeholder="About 12cm">
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="bkf-budget">Budget</label>
+        <div class="bk-nav">
+          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
+          <button class="bk-nav-back" type="button">Back</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="bk-card" data-step="budget" hidden>
+        <legend class="bk-q">Rough budget?</legend>
+        <p class="bk-hint">Nothing is fixed by this. It just tells Emmy what scale to design to.</p>
         <select id="bkf-budget" name="budget">
           <option>Not sure yet</option>
           <option>Up to £150</option>
@@ -2907,34 +2982,63 @@
           <option>£300–£600</option>
           <option>£600+</option>
         </select>
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="bkf-when">When suits <span class="bk-f-opt">— optional</span></label>
-        <input id="bkf-when" name="availability" type="text" placeholder="Weekday mornings">
-      </div>
-      <div class="bk-f-wide">
-        <label class="bk-f-lbl" for="bkf-refs">Reference links <span class="bk-f-opt">— optional</span></label>
-        <input id="bkf-refs" name="references" type="text" placeholder="Instagram or Pinterest links, comma separated">
-      </div>
-      <div class="bk-f-wide bk-f-up" id="bkf-up" hidden>
-        <label class="bk-f-lbl" for="bkf-files">Reference photos <span class="bk-f-opt">— optional, up to 4</span></label>
+        <div class="bk-nav">
+          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
+          <button class="bk-nav-back" type="button">Back</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="bk-card bk-f-up" data-step="photos" id="bkf-up" hidden>
+        <legend class="bk-q">Any references?</legend>
+        <p class="bk-hint">Up to four photos, 10 MB each. They arrive in the chat as one image.</p>
         <input class="bk-f-file" id="bkf-files" type="file" accept="image/*" multiple tabindex="-1">
         <button class="bk-f-btn bk-f-alt bk-f-up-btn" type="button" id="bkf-up-btn">
           <svg width="18" height="18" aria-hidden="true"><use href="#i-img"/></svg>
           <span>Choose photos</span>
         </button>
         <ul class="bk-f-up-list" id="bkf-up-list" aria-live="polite"></ul>
-      </div>
+        <label class="bk-f-lbl" for="bkf-refs">Or paste a link <span class="bk-f-opt">— Instagram, Pinterest</span></label>
+        <input id="bkf-refs" name="refs" type="text" placeholder="instagram.com/p/…">
+        <div class="bk-nav">
+          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
+          <button class="bk-nav-back" type="button">Back</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="bk-card" data-step="when" hidden>
+        <legend class="bk-q">When suits?</legend>
+        <label class="bk-f-lbl" for="bkf-when">Availability <span class="bk-f-opt">— optional</span></label>
+        <input id="bkf-when" name="when" type="text" placeholder="Weekday mornings">
+        <label class="bk-f-lbl" for="bkf-email">Email <span class="bk-f-opt">— optional, a backup if WhatsApp fails</span></label>
+        <input id="bkf-email" name="email" type="email" autocomplete="email" placeholder="you@example.com">
+        <div class="bk-nav">
+          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
+          <button class="bk-nav-back" type="button">Back</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="bk-card" data-step="review" hidden>
+        <legend class="bk-q">Ready to send?</legend>
+        <dl class="bk-rev" id="bkf-rev"></dl>
+        <img class="bk-rev-img" id="bkf-rev-img" alt="" hidden>
+        <div id="bkf-ts"></div>
+        <p class="bk-consent">Send starts a WhatsApp chat with Emmy on <span id="bkf-rev-num"></span>. Your photos and answers arrive in it.</p>
+        <div class="bk-nav">
+          <button class="bk-f-btn bk-f-go" type="submit" id="bkf-send">Send to WhatsApp</button>
+          <button class="bk-nav-back" type="button">Back</button>
+        </div>
+      </fieldset>
+
+      <!-- No data-step: deliberately outside the step machine, so it never counts
+           toward "1 of 8" and Next can never walk into it. -->
+      <fieldset class="bk-card bk-done" id="bkf-done" hidden>
+        <legend class="bk-q">Sent.</legend>
+        <p>Open WhatsApp — Emmy's message with your photos is already there.</p>
+        <p class="bk-hint">Tap &ldquo;Yes, that's right&rdquo; in the chat so Emmy gets pinged.</p>
+      </fieldset>
 
       <input type="checkbox" name="botcheck" class="bk-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
-      <div class="bk-f-actions">
-        <button class="bk-f-btn bk-f-go" type="submit" id="bkf-send">Send enquiry</button>
-        <button class="bk-f-btn bk-f-alt" type="button" id="bkf-wa">
-          <svg width="18" height="18" aria-hidden="true"><use href="#i-wa"/></svg>
-          <span>Send on WhatsApp</span>
-        </button>
-      </div>
       <p class="bk-f-note">Consultation is free · Priced by piece, not by hour</p>
       <p class="bk-f-msg" id="bkf-msg" hidden></p>
     </form>
@@ -4000,51 +4104,53 @@ else __boot();
      CDN fails, and the one thing on this page that must never break is the ask. -->
 <script>
 (function () {
-  /* ── Configure these three and nothing else ────────────────────────────────
-     FORM_KEY   Web3Forms access key (free at web3forms.com — it is a public
-                client-side key by design). Empty = the email route is removed
-                and WhatsApp becomes the primary button; nothing renders dead.
-     DEPOSIT    Stripe Payment Link plus the amount shown on the button. Empty
-                url = the whole deposit block stays hidden.
-     UPLOAD     Cloudinary cloud name + UNSIGNED upload preset. Either one empty
-                = the Reference photos field is removed and the form is exactly
-                what it was before. Photos go straight from the visitor's browser
-                to Cloudinary and their URLs are appended to the WhatsApp message
-                and the email body, because a static site cannot attach files.
-                To switch it on: free account at cloudinary.com → Settings →
-                Upload → Add upload preset, with
-                  Signing mode        Unsigned
-                  Asset folder        enquiries
-                  Tags                enquiry
-                  Allowed formats     jpg, png, webp, heic, heif
-                  Max file size       12000000
-                  Incoming transform  c_limit,w_1600,h_1600,q_auto:good
-                  Use filename        off, unique filename on
-                then paste the cloud name from the dashboard and the preset name
-                below. Every other limit lives in the preset, never in this page:
-                an unsigned call may only send `file` and `upload_preset`. The
-                preset name is public by design; if it is ever abused, delete it,
-                create one under a new name and empty the enquiries folder.     */
-  var FORM_KEY = '';
-  var DEPOSIT  = { url: '', amount: '' };
-  var UPLOAD   = { cloud: '', preset: '' };
+  /* ── Configure these two and nothing else ─────────────────────────────────
+     TURNSTILE_SITEKEY  Cloudflare Turnstile site key. Public by design. Empty =
+                        no widget is rendered and no token is sent, which pairs
+                        with /api/enquiry skipping the check when its secret is
+                        unset — that is what makes local development possible.
+     DEPOSIT            Stripe Payment Link plus the amount shown on the button.
+                        Empty url = the whole deposit block stays hidden.
+
+     Everything else lives server-side in functions/api/enquiry.js, because the
+     WhatsApp token must never reach a browser. That function sends the enquiry
+     from Emmy's work number to the client's WhatsApp; her number runs Meta
+     Coexistence, so the message appears in her normal Business app as an
+     outgoing message in a real chat with that client.                        */
+  var TURNSTILE_SITEKEY = '';
+  var DEPOSIT           = { url: '', amount: '' };
   /* ─────────────────────────────────────────────────────────────────────────── */
 
-  var WA = '447405979137';
   var form = document.getElementById('bk-form');
   if (!form) return;
 
-  var sendBtn = document.getElementById('bkf-send');
-  var waBtn   = document.getElementById('bkf-wa');
-  var msg     = document.getElementById('bkf-msg');
-
   var MAX_SHOTS = 4;
   var MAX_BYTES = 10 * 1024 * 1024;
-  var shots  = [];   /* { file, name, url (objectURL), link, state: 'up'|'ok'|'err' } */
-  var upWrap = document.getElementById('bkf-up');
-  var fileIn = document.getElementById('bkf-files');
-  var upBtn  = document.getElementById('bkf-up-btn');
-  var upList = document.getElementById('bkf-up-list');
+  var CELL = 1000, GAP = 12, ONE = 1600, CAP = 1400000;
+
+  var sendBtn = document.getElementById('bkf-send');
+  var msg     = document.getElementById('bkf-msg');
+  var bar     = document.getElementById('bkf-bar');
+  var count   = document.getElementById('bkf-count');
+  var doneCard = document.getElementById('bkf-done');
+  var fileIn  = document.getElementById('bkf-files');
+  var upBtn   = document.getElementById('bkf-up-btn');
+  var upList  = document.getElementById('bkf-up-list');
+  var revList = document.getElementById('bkf-rev');
+  var revImg  = document.getElementById('bkf-rev-img');
+  var revNum  = document.getElementById('bkf-rev-num');
+  var tsMount = document.getElementById('bkf-ts');
+
+  /* The [data-step] filter is load-bearing: #bkf-done is also a .bk-card, and
+     selecting on the class alone would make the counter read "1 of 9" and let
+     Next walk into the success screen. */
+  var steps = [].slice.call(form.querySelectorAll('.bk-card[data-step]'));
+  var at = 0;
+
+  var shots = [];          /* { file, url } — objectURL is for the thumbnail only */
+  var collageBlob = null;
+  var collageKey = '';
+  var building = false;
 
   function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
   function say(state, text) {
@@ -4053,87 +4159,51 @@ else __boot();
     msg.textContent = text;
   }
 
-  /* A phone camera file is 4-8 MB and Emmy only ever looks at these on a screen,
-     so they are resized in the browser first: 1600px on the long edge at q .82
-     lands ~300-500 KB. That keeps uploads fast on mobile data and keeps a free
-     Cloudinary tier clear of its monthly credits. drawImage honours EXIF
-     orientation in every current browser, so no orientation library is needed.
-     If the file cannot be decoded into an <img> — HEIC on desktop Chrome,
-     mainly — the original bytes go up untouched and Cloudinary decodes it. */
-  function shrink(file) {
-    return new Promise(function (resolve) {
-      var url = URL.createObjectURL(file);
-      var img = new Image();
-      img.onload = function () {
-        var long = Math.max(img.naturalWidth, img.naturalHeight);
-        var s = long > 1600 ? 1600 / long : 1;
-        var c = document.createElement('canvas');
-        c.width  = Math.round(img.naturalWidth  * s);
-        c.height = Math.round(img.naturalHeight * s);
-        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-        c.toBlob(function (blob) {
-          URL.revokeObjectURL(url);
-          resolve(blob && blob.size < file.size ? blob : file);
-        }, 'image/jpeg', .82);
-      };
-      img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
-      img.src = url;
-    });
+  /* Hull-local site, so bare digits are assumed UK. A visitor outside the UK
+     types a leading + or 00 and that wins. The review card shows the resolved
+     number back before sending, which is what catches everything else. The same
+     rule runs again in the Pages Function, which cannot trust this copy. */
+  function e164(raw) {
+    var s = String(raw || '').replace(/[^\d+]/g, '');
+    var plus = s.charAt(0) === '+';
+    var d = s.replace(/\+/g, '');
+    if (!plus) {
+      if (d.slice(0, 2) === '00') d = d.slice(2);
+      else if (d.charAt(0) === '0') d = '44' + d.slice(1);
+      else if (d.slice(0, 2) !== '44') d = '44' + d;
+    }
+    return /^[1-9]\d{7,14}$/.test(d) ? d : '';
   }
 
-  /* Never set Content-Type — the browser must write the multipart boundary. */
-  function put(blob, name) {
-    var fd = new FormData();
-    fd.append('file', blob, name);
-    fd.append('upload_preset', UPLOAD.preset);
-    return fetch('https://api.cloudinary.com/v1_1/' + UPLOAD.cloud + '/image/upload',
-                 { method: 'POST', body: fd })
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        if (!d.secure_url) throw new Error((d.error && d.error.message) || 'rejected');
-        return d.secure_url;
-      });
+  /* ── Photos ─────────────────────────────────────────────────────────────── */
+
+  function shotKey() {
+    return shots.map(function (s) { return s.file.name + ':' + s.file.size; }).join('|');
+  }
+  function kb(n) {
+    return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB';
   }
 
-  function lift(s) {
-    s.state = 'up'; s.link = ''; paintShots();
-    shrink(s.file)
-      .then(function (blob) { return put(blob, s.name); })
-      .then(function (link) { s.link = link; s.state = 'ok'; })
-      .catch(function () { s.state = 'err'; })
-      .then(paintShots);
-  }
-
-  /* Filenames are visitor-supplied, so every one goes in through textContent. */
+  /* Filenames are visitor-supplied, so every one reaches the DOM as textContent. */
   function shotRow(s) {
     var li = document.createElement('li');
     li.className = 'bk-f-up-item';
-    li.setAttribute('data-state', s.state);
 
     var img = document.createElement('img');
     img.className = 'bk-f-up-thumb'; img.src = s.url; img.alt = '';
     li.appendChild(img);
 
     var nm = document.createElement('span');
-    nm.className = 'bk-f-up-name'; nm.textContent = s.name;
+    nm.className = 'bk-f-up-name'; nm.textContent = s.file.name;
     li.appendChild(nm);
 
     var st = document.createElement('span');
-    st.className = 'bk-f-up-state';
-    st.textContent = s.state === 'up' ? 'Uploading' : s.state === 'ok' ? 'Ready' : 'Failed';
+    st.className = 'bk-f-up-state'; st.textContent = kb(s.file.size);
     li.appendChild(st);
-
-    if (s.state === 'err') {
-      var again = document.createElement('button');
-      again.type = 'button'; again.className = 'bk-f-up-act';
-      again.textContent = 'Retry';
-      again.addEventListener('click', function () { lift(s); });
-      li.appendChild(again);
-    }
 
     var x = document.createElement('button');
     x.type = 'button'; x.className = 'bk-f-up-x';
-    x.setAttribute('aria-label', 'Remove ' + s.name);
+    x.setAttribute('aria-label', 'Remove ' + s.file.name);
     x.textContent = '\u00d7';
     x.addEventListener('click', function () {
       URL.revokeObjectURL(s.url);
@@ -4151,148 +4221,279 @@ else __boot();
     upBtn.querySelector('span').textContent = shots.length ? 'Add another photo' : 'Choose photos';
   }
 
-  function shotsPending() {
-    for (var i = 0; i < shots.length; i++) if (shots[i].state === 'up') return true;
-    return false;
-  }
-  function shotLinks() {
-    var out = [];
-    for (var i = 0; i < shots.length; i++) if (shots[i].link) out.push(shots[i].link);
-    return out;
-  }
-  function clearShots() {
-    for (var i = 0; i < shots.length; i++) URL.revokeObjectURL(shots[i].url);
-    shots.length = 0;
-    paintShots();
+  /* Decode through <img> rather than createImageBitmap: browsers apply EXIF
+     orientation to <img> by default, so a phone photo lands the right way up
+     with no orientation library and no options branch. */
+  function decode(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('decode')); };
+      img.src = url;
+    });
   }
 
-  /* Native validity, but reported ourselves: novalidate is on the form so the
-     WhatsApp button can run the same check without the browser's own bubble
-     firing twice. */
-  function firstInvalid() {
-    var fields = form.querySelectorAll('input[required], textarea[required]');
-    for (var i = 0; i < fields.length; i++) if (!fields[i].checkValidity()) return fields[i];
-    return null;
+  function encode(canvas) {
+    var ladder = [0.85, 0.72, 0.6, 0.5];
+    return new Promise(function (resolve) {
+      (function step(k) {
+        canvas.toBlob(function (blob) {
+          if (!blob) return resolve(null);
+          if (blob.size <= CAP || k >= ladder.length - 1) return resolve(blob);
+          step(k + 1);
+        }, 'image/jpeg', ladder[k]);
+      })(0);
+    });
   }
-  function guard() {
-    var bad = firstInvalid();
-    if (bad) {
-      bad.focus();
-      say('err', bad.validity.valueMissing
-        ? 'Add your ' + (bad.dataset.ask || 'details') + ' so Emmy can reply.'
-        : 'That email address does not look right.');
-      return false;
+
+  /* One image, because a WhatsApp template carries exactly one header image and
+     four separate template messages would cost four times as much and arrive as
+     four notifications. Photos are contained, never cropped — a cropped
+     reference photo is a broken reference photo. */
+  function collage() {
+    if (!shots.length) return Promise.resolve(null);
+    var files = shots.map(function (s) { return s.file; });
+    return Promise.all(files.map(decode)).then(function (imgs) {
+      var c = document.createElement('canvas');
+      var g;
+      if (imgs.length === 1) {
+        var im = imgs[0];
+        var long = Math.max(im.naturalWidth, im.naturalHeight);
+        var k = long > ONE ? ONE / long : 1;
+        c.width  = Math.round(im.naturalWidth  * k);
+        c.height = Math.round(im.naturalHeight * k);
+        g = c.getContext('2d');
+        g.drawImage(im, 0, 0, c.width, c.height);
+      } else {
+        var cols = 2, rows = Math.ceil(imgs.length / cols);
+        c.width  = cols * CELL + (cols + 1) * GAP;
+        c.height = rows * CELL + (rows + 1) * GAP;
+        g = c.getContext('2d');
+        g.fillStyle = '#111111';
+        g.fillRect(0, 0, c.width, c.height);
+        for (var i = 0; i < imgs.length; i++) {
+          var x0 = GAP + (i % cols) * (CELL + GAP);
+          var y0 = GAP + Math.floor(i / cols) * (CELL + GAP);
+          var p = imgs[i];
+          var f = Math.min(CELL / p.naturalWidth, CELL / p.naturalHeight);
+          var w = Math.round(p.naturalWidth * f), h = Math.round(p.naturalHeight * f);
+          g.drawImage(p, x0 + (CELL - w) / 2, y0 + (CELL - h) / 2, w, h);
+        }
+      }
+      return encode(c);
+    });
+  }
+
+  function ensureCollage() {
+    var key = shotKey();
+    if (key === collageKey) return Promise.resolve(collageBlob);
+    building = true;
+    return collage().then(function (blob) {
+      collageBlob = blob; collageKey = key; building = false;
+      return blob;
+    }).catch(function () {
+      collageBlob = null; collageKey = key; building = false;
+      return null;
+    });
+  }
+
+  upBtn.addEventListener('click', function () { fileIn.click(); });
+  fileIn.addEventListener('change', function () {
+    var list = fileIn.files, added = 0, tooMany = false, tooBig = false, notImg = false;
+    for (var i = 0; i < list.length; i++) {
+      var f = list[i];
+      if (shots.length >= MAX_SHOTS)      { tooMany = true; break; }
+      if (f.type.indexOf('image/') !== 0) { notImg = true; continue; }
+      if (f.size > MAX_BYTES)             { tooBig = true; continue; }
+      shots.push({ file: f, url: URL.createObjectURL(f) });
+      added++;
     }
-    if (shotsPending()) { say('err', 'Photos are still uploading — one moment.'); return false; }
+    fileIn.value = '';      /* so re-picking the same file still fires change */
+    paintShots();
+    if (notImg)       say('err', 'Photos only — that file was not an image.');
+    else if (tooBig)  say('err', 'Each photo has to be under 10 MB.');
+    else if (tooMany) say('err', 'Four photos is the limit.');
+    else if (added)   msg.hidden = true;
+  });
+
+  /* ── Steps ──────────────────────────────────────────────────────────────── */
+
+  function stepOf(i) { return steps[i].dataset.step; }
+
+  function okStep(i) {
+    var k = stepOf(i);
+    if (k === 'name' && !val('bkf-name')) {
+      say('err', 'Emmy needs a name to call you.'); return false;
+    }
+    if (k === 'phone' && !e164(val('bkf-phone'))) {
+      say('err', "That number doesn't look right. Outside the UK, start with your country code."); return false;
+    }
+    if (k === 'idea' && !val('bkf-idea')) {
+      say('err', 'Tell Emmy the idea, even roughly.'); return false;
+    }
     return true;
   }
 
-  function payload() {
-    return {
-      name: val('bkf-name'), email: val('bkf-email'), idea: val('bkf-idea'),
-      placement: val('bkf-place'), size: val('bkf-size'),
-      budget: val('bkf-budget'), availability: val('bkf-when'),
-      references: val('bkf-refs'),
-      photos: shotLinks().join('\n')
-    };
+  function row(term, value) {
+    if (!value) return;
+    var dt = document.createElement('dt'); dt.textContent = term;
+    var dd = document.createElement('dd'); dd.textContent = value;
+    revList.appendChild(dt); revList.appendChild(dd);
   }
 
-  function waText() {
-    var p = payload();
-    var lines = [
-      'Hi Emmy — tattoo enquiry.', '',
-      'Name: ' + p.name,
-      'Email: ' + p.email,
-      'Idea: ' + p.idea,
-      'Placement: ' + (p.placement || '—'),
-      'Size: ' + (p.size || '—'),
-      'Budget: ' + p.budget,
-      'When suits: ' + (p.availability || '—')
-    ];
-    if (p.references) lines.push('References: ' + p.references);
-    var shotUrls = shotLinks();
-    if (shotUrls.length) {
-      lines.push('Photos:');
-      for (var i = 0; i < shotUrls.length; i++) lines.push(shotUrls[i]);
-    }
-    return lines.join('\n');
+  function paintReview() {
+    var num = e164(val('bkf-phone'));
+    revNum.textContent = '+' + num;
+    revList.innerHTML = '';
+    row('Name', val('bkf-name'));
+    row('WhatsApp', '+' + num);
+    row('Idea', val('bkf-idea'));
+    row('Placement', val('bkf-place'));
+    row('Size', val('bkf-size'));
+    row('Budget', val('bkf-budget'));
+    row('When suits', val('bkf-when'));
+    row('Email', val('bkf-email'));
+    row('Reference link', val('bkf-refs'));
+    row('Photos', shots.length ? shots.length + (shots.length === 1 ? ' photo' : ' photos') : '');
+
+    if (!shots.length) { revImg.hidden = true; revImg.removeAttribute('src'); return; }
+    if (shotKey() === collageKey && collageBlob) return;   /* preview already right */
+    revImg.hidden = true;
+    sendBtn.disabled = true;
+    say('ok', 'Building the image Emmy will see\u2026');
+    ensureCollage().then(function (blob) {
+      sendBtn.disabled = false;
+      msg.hidden = true;
+      if (!blob) { say('err', 'Those photos could not be read. Remove them and send the rest.'); return; }
+      revImg.src = URL.createObjectURL(blob);
+      revImg.hidden = false;
+    });
   }
 
-  waBtn.addEventListener('click', function () {
-    if (!guard()) return;
-    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(waText()), '_blank', 'noopener');
+  function show(i) {
+    at = i;
+    for (var n = 0; n < steps.length; n++) steps[n].hidden = n !== i;
+    doneCard.hidden = true;
+    bar.style.width = ((i + 1) / steps.length * 100) + '%';
+    count.textContent = (i + 1) + ' of ' + steps.length;
+    msg.hidden = true;
+    if (stepOf(i) === 'review') paintReview();
+    var first = steps[i].querySelector('input:not([type="file"]), textarea, select, button');
+    /* preventScroll or the browser fights Lenis and yanks the page. */
+    if (first) try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); }
+  }
+
+  function next() { if (okStep(at) && at < steps.length - 1) show(at + 1); }
+  function back() { if (at > 0) show(at - 1); }
+
+  form.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('.bk-nav-next, .bk-nav-back') : null;
+    if (!t) return;
+    if (t.classList.contains('bk-nav-next')) next(); else back();
   });
 
-  if (!UPLOAD.cloud || !UPLOAD.preset) {
-    upWrap.remove();          /* not configured: no field at all, nothing dead */
-  } else {
-    upWrap.hidden = false;
-    upBtn.addEventListener('click', function () { fileIn.click(); });
-    fileIn.addEventListener('change', function () {
-      var list = fileIn.files, added = 0, tooMany = false, tooBig = false, notImg = false;
-      for (var i = 0; i < list.length; i++) {
-        var f = list[i];
-        if (shots.length >= MAX_SHOTS)      { tooMany = true; break; }
-        if (f.type.indexOf('image/') !== 0) { notImg = true; continue; }
-        if (f.size > MAX_BYTES)             { tooBig = true; continue; }
-        var s = { file: f, name: f.name, url: URL.createObjectURL(f), link: '', state: 'up' };
-        shots.push(s); added++; lift(s);
-      }
-      fileIn.value = '';      /* so re-picking the same file still fires change */
-      paintShots();
-      if (notImg)       say('err', 'Photos only — that file was not an image.');
-      else if (tooBig)  say('err', 'Each photo has to be under 10 MB.');
-      else if (tooMany) say('err', 'Four photos is the limit.');
-      else if (added)   msg.hidden = true;
-    });
-  }
+  form.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    var t = e.target;
+    if (t.isContentEditable) return;
+    var tag = (t.tagName || '').toLowerCase();
+    if (tag === 'button') return;                       /* let the button fire */
+    if (tag === 'textarea' && !(e.ctrlKey || e.metaKey)) return;   /* newline */
+    if (stepOf(at) === 'review') return;                /* submit handles it */
+    e.preventDefault();
+    next();
+  });
 
-  if (!FORM_KEY) {
-    /* No endpoint configured: remove the email button rather than leave one that
-       cannot work, and promote WhatsApp to the filled style. */
-    sendBtn.remove();
-    waBtn.classList.remove('bk-f-alt');
-    waBtn.classList.add('bk-f-go');
-  } else {
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (!guard()) return;
-      if (form.querySelector('.bk-hp').checked) return;   /* honeypot */
-      var p = payload();
-      sendBtn.disabled = true;
-      sendBtn.textContent = 'Sending…';
-      fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          access_key: FORM_KEY,
-          subject: 'Tattoo enquiry — ' + p.name,
-          from_name: 'emmytattoo.com',
-          replyto: p.email,
-          name: p.name, email: p.email, idea: p.idea,
-          placement: p.placement || '—', size: p.size || '—',
-          budget: p.budget, availability: p.availability || '—',
-          references: p.references || '—',
-          photos: p.photos || '—'
-        })
-      })
-        .then(function (r) { return r.json(); })
-        .then(function (d) {
-          if (!d.success) throw new Error(d.message || 'rejected');
-          form.querySelectorAll('input, textarea, select').forEach(function (f) {
-            if (f.type !== 'checkbox') f.value = '';
-          });
-          clearShots();
-          say('ok', 'Sent. Emmy will reply to ' + p.email + ' — usually within a day or two.');
-          sendBtn.textContent = 'Send enquiry';
-        })
-        .catch(function () {
-          say('err', 'That did not send. Use the WhatsApp button instead — it carries the same details.');
-          sendBtn.textContent = 'Send enquiry';
-        })
-        .then(function () { sendBtn.disabled = false; });
-    });
+  /* ── Turnstile ──────────────────────────────────────────────────────────── */
+
+  var tsState = TURNSTILE_SITEKEY ? 'idle' : 'off';
+  var tsId = null;
+
+  function loadTurnstile() {
+    if (tsState !== 'idle') return;
+    tsState = 'loading';
+    var s = document.createElement('script');
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    s.async = true; s.defer = true;
+    s.onload = function () {
+      tsState = 'ready';
+      try {
+        tsId = window.turnstile.render(tsMount, { sitekey: TURNSTILE_SITEKEY, theme: 'auto' });
+      } catch (e) { tsState = 'failed'; }
+      if (stepOf(at) === 'review') { sendBtn.disabled = false; msg.hidden = true; }
+    };
+    s.onerror = function () {
+      tsState = 'failed';
+      if (stepOf(at) === 'review') {
+        sendBtn.disabled = false;
+        say('err', 'The security check could not load. Message Emmy on WhatsApp instead — wa.me/447405979137.');
+      }
+    };
+    document.head.appendChild(s);
   }
+  form.addEventListener('focusin', loadTurnstile, { once: true });
+  form.addEventListener('pointerdown', loadTurnstile, { once: true });
+
+  /* ── Send ───────────────────────────────────────────────────────────────── */
+
+  var FAIL = 'That didn\u2019t send. Message Emmy on WhatsApp and she\u2019ll pick it up — wa.me/447405979137.';
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    for (var i = 0; i < steps.length; i++) {
+      if (!okStep(i)) { show(i); return; }
+    }
+    if (building) { say('err', 'One moment — still building your photo.'); return; }
+    if (tsState === 'loading') { say('err', 'Just a moment — finishing the security check.'); return; }
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sending\u2026';
+
+    ensureCollage().then(function (blob) {
+      var fd = new FormData(form);
+      fd.set('phone', e164(val('bkf-phone')));
+      if (tsState === 'ready' && window.turnstile) {
+        fd.append('cf-turnstile-response', window.turnstile.getResponse(tsId) || '');
+      }
+      if (blob) fd.append('photo', blob, 'enquiry.jpg');
+      return fetch('/api/enquiry', { method: 'POST', body: fd });
+    }).then(function (r) {
+      return r.json().catch(function () { return { ok: false, code: 'whatsapp' }; });
+    }).then(function (d) {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send to WhatsApp';
+      if (d && d.ok) {
+        for (var n = 0; n < steps.length; n++) steps[n].hidden = true;
+        doneCard.hidden = false;
+        bar.style.width = '100%';
+        count.textContent = 'Done';
+        msg.hidden = true;
+        return;
+      }
+      var code = d && d.code;
+      if (code === 'not_whatsapp' || code === 'bad_phone') {
+        var i = 0;
+        for (var k = 0; k < steps.length; k++) if (stepOf(k) === 'phone') i = k;
+        show(i);
+        say('err', "That number isn't on WhatsApp. Check it and send again.");
+      } else if (code === 'turnstile') {
+        if (tsState === 'ready' && window.turnstile) window.turnstile.reset(tsId);
+        say('err', "The security check didn't pass. Try once more.");
+      } else if (code === 'too_big') {
+        say('err', 'Those photos are too large. Remove one and send again.');
+      } else {
+        say('err', FAIL);
+      }
+    }).catch(function () {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send to WhatsApp';
+      say('err', FAIL);
+    });
+  });
+
+  paintShots();
+  show(0);
 
   if (DEPOSIT.url) {
     var dep = document.getElementById('bk-dep');

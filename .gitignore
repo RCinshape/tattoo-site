@@ -2,3 +2,5 @@ node_modules/
 npx
 *.HEIC
 .claude/
+_stub-out/
+.wrangler/
