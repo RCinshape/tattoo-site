@@ -1879,15 +1879,18 @@
       .tr-head-r { text-align: left; }
     }
     /* ══════════════════════════════════════════
-       REVIEWS — six-card grid (#tr-stage)
+       REVIEWS — seven-card grid (#tr-stage)
     ══════════════════════════════════════════ */
     /* Six at once, not one at a time. A spotlight carousel showed 1/6 of the proof
        and auto-advanced past it; the whole point of seventeen five-star reviews is
-       the volume, so the volume has to be on screen. */
+       the volume, so the volume has to be on screen. Phones run two-up and show a
+       seventh card as a centred tip; above 768px the seventh is hidden because six
+       fill the 3-up and 2-up grids exactly. */
     #tr-stage {
       position: relative;
       padding: 0 var(--pad);
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+      --tr-gap: 20px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--tr-gap);
     }
     .trv-card {
       display: flex; flex-direction: column; gap: 18px;
@@ -1913,6 +1916,9 @@
       cursor: pointer; transition: color .2s;
     }
     .trv-more:hover { color: var(--gold); }
+    /* display:inline-flex outranks the UA [hidden] rule — the same trap
+       #pw-gate and .bk-card[hidden] hit. */
+    .trv-more[hidden] { display: none; }
     /* margin-top:auto pins every attribution to the bottom of its card despite
        uneven quote lengths — the same trick /portfolio's proof strip uses. */
     .trv-by { display: flex; align-items: center; gap: 13px; margin-top: auto; }
@@ -1930,10 +1936,35 @@
     }
     .trv-sub { color: var(--dim); font-size: .6rem; letter-spacing: .16em; }
     @media (max-width: 1024px) { #tr-stage { grid-template-columns: repeat(2, 1fr); } }
+    /* Phones get two columns and an odd last card as a centred tip. Six cards
+       one-up is ~2160px of pure scroll, which is where the proof was being
+       abandoned. Two-up costs about 23 characters a line, so the in-card type
+       steps down with it and the 6-line clamp becomes 5 — the modal still
+       carries every full quote, so nothing is lost, only deferred. */
     @media (max-width: 768px) {
-      #tr-stage { grid-template-columns: 1fr; gap: 14px; }
-      .trv-card { padding: 24px 26px; }
+      #tr-stage { grid-template-columns: repeat(2, 1fr); --tr-gap: 10px; }
+      /* Odd count: the last card spans the row but keeps one column's width, so
+         it reads as a deliberate tip and not a stretched special case. Inert on
+         an even count, so the rule is also the guard if the roster ever shrinks. */
+      #tr-stage > .trv-card:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+        width: calc(50% - var(--tr-gap) / 2);
+        justify-self: center;
+      }
+      .trv-card { padding: 16px 15px; gap: 12px; }
+      .trv-stars { font-size: .7rem; }
+      .trv-q { font-size: .88rem; line-height: 1.6; -webkit-line-clamp: 5; }
+      .trv-more { font-size: .54rem; letter-spacing: .1em; }
+      .trv-by { gap: 9px; }
+      .trv-pic { width: 34px; height: 34px; }
+      .trv-name { font-size: .56rem; letter-spacing: .06em; }
+      .trv-sub { font-size: .5rem; letter-spacing: .08em; }
     }
+    /* The seventh review exists for phones only: above 768px the grid is 3-up or
+       2-up and six cards fill it exactly, where a seventh would strand one card
+       on a row of its own. display:none keeps it out of layout, out of tab order,
+       and (its avatar being loading="lazy") off the network. */
+    @media (min-width: 769px) { #tr-stage > .trv-card:nth-child(7) { display: none; } }
 
     /* Review expand modal */
     #rv-modal {
@@ -3940,17 +3971,18 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 else __boot();
 </script>
 
-<!-- ════ REVIEWS — six-card grid ════ -->
+<!-- ════ REVIEWS — seven-card grid ════ -->
 <!-- Top-level, NOT inside __boot: with the reviews now sitting directly behind the
      work, a CDN failure used to leave a blank hole exactly where the social proof
      belongs, because __boot returns at its lib guard before the grid is built. -->
 <script>
 (() => {
-  /* ══ REVIEWS — six-card grid ══ */
+  /* ══ REVIEWS — seven-card grid ══ */
   /* Google's Places API returns at most five reviews per place, so a live-only grid
-     can never fill the six slots. These seven are transcribed from the same Google
-     listing and top the live five up to six, de-duped by name — never a mix of real
-     and invented, just a longer window onto the same wall. */
+     can never fill the slots. These seven are transcribed from the same Google
+     listing and top the live five up to seven, de-duped by name — never a mix of
+     real and invented, just a longer window onto the same wall. Seven is the whole
+     seeded set: the old cap of six left one transcribed review unrendered. */
   const SEEDED = [
     { name: 'Jess Dan',        photo: 'google.reviews/Jess Dunn.jpg',     rating: 5, quote: "Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" },
     { name: 'Jaime Dale',      photo: 'google.reviews/James Dale.jpg',    rating: 5, quote: "Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" },
@@ -3964,10 +3996,10 @@ else __boot();
   /* Live first, seeded only to fill the remaining slots. Names are the only key the
      two sources share, so that is what de-dupes them. */
   function roster() {
-    const out = LIVE.slice(0, 6);
+    const out = LIVE.slice(0, 7);
     const seen = new Set(out.map(r => String(r.name).trim().toLowerCase()));
     for (const r of SEEDED) {
-      if (out.length >= 6) break;
+      if (out.length >= 7) break;
       const k = String(r.name).trim().toLowerCase();
       if (seen.has(k)) continue;
       seen.add(k); out.push(r);
@@ -4026,33 +4058,49 @@ else __boot();
         : '<span class="' + cls + ' ' + cls + '-ph">' + initial(r.name) + '</span>';
     }
 
-    /* Make a JS-clickable element reachable by keyboard too */
-    function keyClickable(el, label) {
-      el.setAttribute('tabindex', '0');
-      el.setAttribute('role', 'button');
-      if (label) el.setAttribute('aria-label', label);
-      el.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
-      });
-    }
-
-    /* A card earns a "read full" button only when the 6-line clamp actually hides
+    /* A card earns a "read full" button only when the clamp actually hides
        something. A character-count guess is wrong at these widths — a 230-character
-       quote fits in five lines and got a button that revealed nothing — so measure
-       the box. Deferred until the webfonts land, because the fallback serif wraps
-       to a different line count than Cormorant does. */
-    function pruneReadMore() {
-      stage.querySelectorAll('.trv-q').forEach(q => {
-        const btn = q.parentNode.querySelector('.trv-more');
-        if (q.scrollHeight <= q.clientHeight + 1) { if (btn) btn.remove(); return; }
-        q.style.cursor = 'pointer';
-        q.addEventListener('click', () => openModal(SHOWN[+q.dataset.i]));
-        keyClickable(q, 'Read full review');
-      });
+       quote fits five lines and got a button that revealed nothing — so measure the
+       box. Deferred until the webfonts land, because the fallback serif wraps to a
+       different line count than Cormorant does.
+       The verdict is per-width, not per-render: two-up phones clamp quotes that are
+       unclamped at three-up, so a rotate has to re-decide. That is why the button is
+       hidden rather than removed, and why the handlers bind once in buildGrid. */
+    function setTap(q, on) {
+      q.dataset.clamped = on ? '1' : '';
+      q.style.cursor = on ? 'pointer' : '';
+      if (on) {
+        q.setAttribute('tabindex', '0');
+        q.setAttribute('role', 'button');
+        q.setAttribute('aria-label', 'Read full review');
+      } else {
+        q.removeAttribute('tabindex');
+        q.removeAttribute('role');
+        q.removeAttribute('aria-label');
+      }
     }
+    function prune() {
+      stage.querySelectorAll('.trv-q').forEach(q => {
+        /* A card hidden by the ≥769px rule measures 0/0 — unmeasurable, not
+           unclamped — so leave its last verdict alone. */
+        if (!q.clientHeight) return;
+        const btn = q.parentNode.querySelector('.trv-more');
+        const clamped = q.scrollHeight > q.clientHeight + 1;
+        if (btn) btn.hidden = !clamped;
+        setTap(q, clamped);
+      });
+      if (window.ScrollTrigger) ScrollTrigger.refresh(); /* card heights changed */
+    }
+    /* This IIFE is top-level, outside __boot, so it cannot reuse the debounced
+       refresh inside __boot — that one calls ScrollTrigger.refresh() unguarded. */
+    let _prTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(_prTimer);
+      _prTimer = setTimeout(prune, 150);
+    });
     let SHOWN = [];
 
-    /* ── Six-card grid ── */
+    /* ── Seven-card grid — the seventh shows on phones only ── */
     function buildGrid() {
       SHOWN = roster();
       stage.innerHTML = SHOWN.map((r, k) => {
@@ -4069,8 +4117,15 @@ else __boot();
       stage.querySelectorAll('.trv-more').forEach(btn => {
         btn.addEventListener('click', () => openModal(SHOWN[+btn.dataset.i]));
       });
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestAnimationFrame(pruneReadMore));
-      else requestAnimationFrame(pruneReadMore);
+      stage.querySelectorAll('.trv-q').forEach(q => {
+        q.addEventListener('click', () => { if (q.dataset.clamped) openModal(SHOWN[+q.dataset.i]); });
+        q.addEventListener('keydown', e => {
+          if (!q.dataset.clamped) return;
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); q.click(); }
+        });
+      });
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestAnimationFrame(prune));
+      else requestAnimationFrame(prune);
 
       /* No opacity:0 in CSS and no fallback-list entry: if GSAP never runs the
          cards are simply already visible, which is the correct degraded state. */
