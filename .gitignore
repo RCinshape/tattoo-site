@@ -4,3 +4,5 @@ npx
 .claude/
 _stub-out/
 .wrangler/
+token.txt
+.dev.vars
