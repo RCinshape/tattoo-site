@@ -132,6 +132,11 @@
         "@type": "Question",
         "name": "What's the minimum age?",
         "acceptedAnswer": { "@type": "Answer", "text": "18 years old. No exceptions regardless of parental consent. Valid photo ID is required on the day. If you can't prove your age, the session cannot go ahead. Deposit is lost." }
+      },
+      {
+        "@type": "Question",
+        "name": "What if I don't like the design?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Say so. Please. This is your tattoo. You're the one who lives with it, sees it every day, and looks at it in twenty years. I'd much rather redraw something five times than put a needle to skin you're not certain about. Nothing is fixed until we start. Placement, size, linework, shading — all of it is still open on the day. If something feels off, even if you can't explain why, tell me. “I'm not sure” is a complete sentence and it's always the right thing to say. Changes before are easy. After is a different conversation entirely. Being polite about a tattoo you don't love helps nobody. I don't take it personally — I'd rather get it right." }
       }
     ]
   }
@@ -205,6 +210,23 @@
       };
       apply(pref());
       mql.addEventListener('change', function () { if (pref() === 'system') apply('system'); });
+    })();
+
+    /* Variant switch. ?form=a|b wins and sticks for the session; otherwise the
+       constant below is what real visitors get. Nothing in the UI exposes this.
+       Resolved before first paint so the losing form never flashes — the
+       enquiry script then removes it from the DOM outright. */
+    (function () {
+      var DEFAULT = 'b';                 /* one-line change to flip the default */
+      var v = null;
+      try { v = new URLSearchParams(location.search).get('form'); } catch (e) {}
+      if (v !== 'a' && v !== 'b') {
+        try { v = sessionStorage.getItem('emmy-form'); } catch (e) { v = null; }
+      } else {
+        try { sessionStorage.setItem('emmy-form', v); } catch (e) {}
+      }
+      if (v !== 'a' && v !== 'b') v = DEFAULT;
+      document.documentElement.dataset.form = v;
     })();
   </script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
@@ -1586,10 +1608,17 @@
     }
     /* ── Enquiry form ──
        Every DM used to arrive as "hi how much for", which costs a round trip before
-       Emmy can even price it. These are the seven answers she needs to quote, and
-       the email endpoint means the lead exists somewhere she owns rather than only
-       inside Instagram. The WhatsApp button posts the identical structured message
-       for anyone who would rather not use a form. */
+       Emmy can even price it. The form collects those answers and hands them to
+       WhatsApp as a prefilled message; the visitor presses send themselves, and
+       Emmy's Business-app greeting then asks for reference photos, which they
+       attach natively in the chat. The page never touches photos. */
+
+    /* Two variants ship in the same document: A is a single page, B is the
+       stepped card flow. The enquiry script removes the losing one from the DOM;
+       this rule only covers the window before that runs, and the case where it
+       never does. Without it both forms would paint. */
+    :root[data-form="a"] [data-variant="b"],
+    :root[data-form="b"] [data-variant="a"] { display: none; }
     .bk-form {
       width: 100%; max-width: 720px; text-align: left;
       display: grid; grid-template-columns: 1fr; gap: 18px;
@@ -1600,6 +1629,23 @@
       letter-spacing: .18em; text-transform: uppercase; color: var(--fg2);
     }
     .bk-f-opt { color: var(--dim); }
+    /* An 18+ tick is a legal gate, not decoration — see FAQ 06.
+       `.bk-form input` below has the same specificity and comes later, so it
+       would win: it sets width 100%, a padded bordered box and
+       `appearance: none`, which turned this into a full-width empty rectangle
+       with no tick and no visible label. Hence `.bk-form .bk-f-chk input`, and
+       an explicit return to the native control. */
+    .bk-f-chk {
+      display: flex; align-items: flex-start; gap: 11px;
+      font-family: var(--sans); font-size: .95rem; color: var(--fg2);
+      cursor: pointer;
+    }
+    .bk-form .bk-f-chk input {
+      width: 18px; height: 18px; flex: 0 0 auto; margin: 2px 0 0;
+      padding: 0; border: 0; border-radius: 0; background: none;
+      -webkit-appearance: checkbox; appearance: checkbox;
+      accent-color: var(--gold);
+    }
     .bk-form input, .bk-form select, .bk-form textarea {
       width: 100%; display: block;
       font-family: var(--sans); font-size: .95rem; color: var(--fg);
@@ -1657,53 +1703,9 @@
     }
     .bk-f-alt:hover { border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09); transform: translateY(-3px); }
     .bk-f-alt svg { flex-shrink: 0; color: var(--gold); }
-    /* ── Reference photos ──
-       The file input is never seen; #bkf-up-btn opens it. It stays in the layout
-       at 1x1 rather than display:none, the conventional pattern so .click()
-       reliably opens the picker. Two classes are needed in the selector: the
-       shared `.bk-form input` rule is one class plus one type and would otherwise
-       restore width: 100%. */
-    .bk-form .bk-f-file {
-      position: absolute; width: 1px; height: 1px;
-      padding: 0; border: 0; opacity: 0; pointer-events: none;
-    }
-    /* Both of these are grid items — #bkf-up in .bk-form, each row in
-       .bk-f-up-list — and a grid item's automatic minimum size is min-content.
-       A nowrap filename therefore set the .bk-form track minimum and stretched
-       the whole form past its 720px cap (measured: one 42-character name took the
-       342px phone column to 483px, clipped by #book's overflow: hidden). Pinning
-       min-width to 0 hands the shrinking back to .bk-f-up-name's ellipsis. */
-    .bk-f-up, .bk-f-up-item { min-width: 0; }
-    .bk-f-up-btn { padding: 15px 28px; margin-top: 2px; }
     /* display: inline-flex on .bk-f-btn outranks the UA's [hidden] rule — the same
        trap #pw-gate hits on /portfolio — so restate it. */
     .bk-f-btn[hidden] { display: none; }
-    .bk-f-up-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 9px; }
-    .bk-f-up-item {
-      display: flex; align-items: center; gap: 12px;
-      font-family: var(--sans); font-size: .85rem; color: var(--fg2);
-    }
-    .bk-f-up-thumb {
-      width: 42px; height: 42px; flex-shrink: 0;
-      border-radius: 8px; object-fit: cover; border: 1px solid var(--border);
-    }
-    .bk-f-up-name {
-      flex: 1 1 auto; min-width: 0;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .bk-f-up-state {
-      font-family: var(--mono); font-size: .58rem;
-      letter-spacing: .16em; text-transform: uppercase; color: var(--dim);
-      white-space: nowrap; flex-shrink: 0;
-    }
-    .bk-f-up-x {
-      flex-shrink: 0; background: none; border: 0; cursor: pointer;
-      font-family: var(--mono); letter-spacing: .14em; text-transform: uppercase;
-      color: var(--dim); transition: color .3s;
-      font-size: 1.05rem; line-height: 1; padding: 4px 6px;
-    }
-    .bk-f-up-x:hover { color: var(--gold); }
-    .bk-f-up-x:focus-visible { outline: 1px solid var(--gold-ring-h); outline-offset: 3px; }
     /* ── One question per card ──
        Navigation is CSS-only on purpose. GSAP and Lenis come from a CDN and
        __boot returns at its lib guard when that fails; a form whose steps
@@ -1754,11 +1756,6 @@
       font-family: var(--sans); font-size: .92rem; line-height: 1.6;
       color: var(--fg2); margin: 0 0 12px;
     }
-    .bk-rev-img {
-      max-width: 100%; height: auto; display: block;
-      border-radius: var(--r); border: 1px solid var(--border);
-    }
-    .bk-rev-img[hidden] { display: none; }
     .bk-consent { font-family: var(--sans); font-size: .82rem; line-height: 1.7; color: var(--dim); }
     .bk-consent span { color: var(--fg2); }
     .bk-done p { font-family: var(--sans); font-size: .95rem; line-height: 1.75; color: var(--fg2); margin: 0; }
@@ -2478,7 +2475,6 @@
   <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="2.4" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.6" y2="12"/><line x1="5.2" y1="5.2" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5.2" y2="18.8"/></g></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
-  <symbol id="i-img" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8.6" cy="9.8" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.4 17.2 8.9 12.4l3.5 3.1 3.3-3.4 4.9 5.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
 </svg>
 
 <div class="vignette"  aria-hidden="true"></div>
@@ -2906,6 +2902,23 @@
       </div>
     </li>
 
+    <li class="fq-item">
+      <button class="fq-trigger" type="button" aria-expanded="false">
+        <span class="fq-num">07</span>
+        <div class="fq-q-wrap">
+          <span class="fq-question">What if I don't like the design?</span>
+          <span class="fq-tags-row">Changes · honesty · your call</span>
+        </div>
+        <span class="fq-toggle">+</span>
+      </button>
+      <div class="fq-rule"></div>
+      <div class="fq-panel">
+        <div class="fq-panel-inner">
+          <p class="fq-answer">Say so. Please.<br><br>This is your tattoo. You're the one who lives with it, sees it every day, and looks at it in twenty years. I'd much rather redraw something five times than put a needle to skin you're not certain about.<br><br>Nothing is fixed until we start. Placement, size, linework, shading — all of it is still open on the day. If something feels off, even if you can't explain why, tell me. &ldquo;I'm not sure&rdquo; is a complete sentence and it's always the right thing to say.<br><br>Changes before are easy. After is a different conversation entirely.<br><br>Being polite about a tattoo you don't love helps nobody. I don't take it personally — I'd rather get it right.</p>
+        </div>
+      </div>
+    </li>
+
   </ul>
 </section>
 
@@ -2952,39 +2965,100 @@
       </div>
     </div>
 
-    <!-- Enquiry form. One question per card, one Send. On submit the browser
-         composes the picked photos into a single JPEG and POSTs everything to
-         /api/enquiry (a Cloudflare Pages Function in this repo), which sends it
-         from Emmy's work number to the client's WhatsApp. Emmy's number runs
-         Meta Coexistence, so that message lands in her normal Business app as an
-         outgoing message in a real chat with the client — one thread, both
-         parties, photos attached, no links to open. -->
-    <form class="bk-form" id="bk-form" novalidate>
-      <div class="bk-prog" aria-hidden="true"><span class="bk-prog-bar" id="bkf-bar"></span></div>
-      <p class="bk-prog-n" id="bkf-count" aria-live="polite">1 of 8</p>
+    <!-- Enquiry form, two variants. A is a single page, B is the stepped card
+         flow; the pre-paint script in <head> picks one and the enquiry script
+         removes the other from the DOM, so only one is ever submitted, read or
+         reachable. Both carry the same `name` attributes and are read by the
+         same builder, so they produce a byte-identical WhatsApp message.
+         Submit prefills wa.me and the visitor presses send themselves — the
+         page never handles photos, because Emmy's Business-app greeting asks
+         for them and they attach natively in the chat. -->
+
+    <!-- ── Variant A — single page ── -->
+    <form class="bk-form" id="bk-form-a" data-variant="a" novalidate>
+      <div>
+        <label class="bk-f-lbl" for="a-name">Your name</label>
+        <input id="a-name" name="name" type="text" autocomplete="name" maxlength="40" placeholder="Emma">
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="a-idea">What are you thinking?</label>
+        <textarea id="a-idea" name="idea" maxlength="300" placeholder="What you'd like, and anything behind it."></textarea>
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="a-placement">Placement <span class="bk-f-opt">— optional</span></label>
+        <input id="a-placement" name="placement" type="text" maxlength="50" placeholder="Inner forearm">
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="a-size">Rough size <span class="bk-f-opt">— optional</span></label>
+        <input id="a-size" name="size" type="text" maxlength="30" placeholder="About 12cm">
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="a-budget">Rough budget <span class="bk-f-opt">— optional</span></label>
+        <select id="a-budget" name="budget">
+          <option>Not sure yet</option>
+          <option>Up to £150</option>
+          <option>£150–£300</option>
+          <option>£300–£600</option>
+          <option>£600+</option>
+        </select>
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="a-when">Availability <span class="bk-f-opt">— optional</span></label>
+        <input id="a-when" name="when" type="text" maxlength="50" placeholder="Weekday mornings">
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="a-notes">Anything I should know? <span class="bk-f-opt">— optional</span></label>
+        <textarea id="a-notes" name="notes" maxlength="150" placeholder="Allergies, blood thinners, skin conditions, pregnancy — anything that affects the day."></textarea>
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="a-email">Email <span class="bk-f-opt">— optional, a backup if WhatsApp fails</span></label>
+        <input id="a-email" name="email" type="email" autocomplete="email" maxlength="70" placeholder="you@example.com">
+      </div>
+      <div>
+        <label class="bk-f-lbl" for="a-refs">Reference link <span class="bk-f-opt">— optional</span></label>
+        <input id="a-refs" name="refs" type="text" maxlength="100" placeholder="instagram.com/p/…">
+      </div>
+
+      <label class="bk-f-chk">
+        <input id="a-age18" name="age18" type="checkbox">
+        <span>I confirm I am 18 or over.</span>
+      </label>
+      <p class="bk-f-note">Photo ID is checked on the day. No exceptions.</p>
+
+      <input type="checkbox" name="botcheck" id="a-botcheck" class="bk-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <div class="bk-nav">
+        <button class="bk-f-btn bk-f-go" type="submit">Send on WhatsApp</button>
+      </div>
+      <p class="bk-f-note">Emmy will ask for reference photos in the chat.</p>
+      <p class="bk-f-msg" id="a-msg" hidden></p>
+
+      <!-- No data-step: deliberately outside the step machine. -->
+      <fieldset class="bk-card bk-done" id="a-done" hidden>
+        <legend class="bk-q">Opening WhatsApp…</legend>
+        <p>Your message is ready — you still need to press send in WhatsApp for it to reach Emmy.</p>
+        <p class="bk-hint">She'll ask for your reference photos right there in the chat.</p>
+        <a class="bk-f-btn bk-f-alt" id="a-open" target="_blank" rel="noopener">Open WhatsApp</a>
+      </fieldset>
+    </form>
+
+    <!-- ── Variant B — one question per card ── -->
+    <form class="bk-form" id="bk-form-b" data-variant="b" novalidate>
+      <div class="bk-prog" aria-hidden="true"><span class="bk-prog-bar" id="b-bar"></span></div>
+      <p class="bk-prog-n" id="b-count" aria-live="polite">1 of 8</p>
 
       <fieldset class="bk-card" data-step="name">
         <legend class="bk-q">What should Emmy call you?</legend>
-        <input id="bkf-name" name="name" type="text" autocomplete="name" placeholder="Emma">
+        <input id="b-name" name="name" type="text" autocomplete="name" maxlength="40" placeholder="Emma">
         <div class="bk-nav">
           <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
-        </div>
-      </fieldset>
-
-      <fieldset class="bk-card" data-step="phone" hidden>
-        <legend class="bk-q">Best WhatsApp number?</legend>
-        <p class="bk-hint">This is where Emmy replies. Outside the UK, start with your country code.</p>
-        <input id="bkf-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="07700 900123">
-        <div class="bk-nav">
-          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
-          <button class="bk-nav-back" type="button">Back</button>
         </div>
       </fieldset>
 
       <fieldset class="bk-card" data-step="idea" hidden>
         <legend class="bk-q">What are you thinking?</legend>
         <p class="bk-hint">A rough thought is enough.</p>
-        <textarea id="bkf-idea" name="idea" placeholder="What you'd like, and anything behind it."></textarea>
+        <textarea id="b-idea" name="idea" maxlength="300" placeholder="What you'd like, and anything behind it."></textarea>
         <div class="bk-nav">
           <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
           <button class="bk-nav-back" type="button">Back</button>
@@ -2993,10 +3067,10 @@
 
       <fieldset class="bk-card" data-step="body" hidden>
         <legend class="bk-q">Where on the body, and how big?</legend>
-        <label class="bk-f-lbl" for="bkf-place">Placement <span class="bk-f-opt">— optional</span></label>
-        <input id="bkf-place" name="placement" type="text" placeholder="Inner forearm">
-        <label class="bk-f-lbl" for="bkf-size">Rough size <span class="bk-f-opt">— optional</span></label>
-        <input id="bkf-size" name="size" type="text" placeholder="About 12cm">
+        <label class="bk-f-lbl" for="b-placement">Placement <span class="bk-f-opt">— optional</span></label>
+        <input id="b-placement" name="placement" type="text" maxlength="50" placeholder="Inner forearm">
+        <label class="bk-f-lbl" for="b-size">Rough size <span class="bk-f-opt">— optional</span></label>
+        <input id="b-size" name="size" type="text" maxlength="30" placeholder="About 12cm">
         <div class="bk-nav">
           <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
           <button class="bk-nav-back" type="button">Back</button>
@@ -3006,7 +3080,7 @@
       <fieldset class="bk-card" data-step="budget" hidden>
         <legend class="bk-q">Rough budget?</legend>
         <p class="bk-hint">Nothing is fixed by this. It just tells Emmy what scale to design to.</p>
-        <select id="bkf-budget" name="budget">
+        <select id="b-budget" name="budget">
           <option>Not sure yet</option>
           <option>Up to £150</option>
           <option>£150–£300</option>
@@ -3019,17 +3093,11 @@
         </div>
       </fieldset>
 
-      <fieldset class="bk-card bk-f-up" data-step="photos" id="bkf-up" hidden>
+      <fieldset class="bk-card" data-step="refs" hidden>
         <legend class="bk-q">Any references?</legend>
-        <p class="bk-hint">Up to four photos, 10 MB each. They arrive in the chat as one image.</p>
-        <input class="bk-f-file" id="bkf-files" type="file" accept="image/*" multiple tabindex="-1">
-        <button class="bk-f-btn bk-f-alt bk-f-up-btn" type="button" id="bkf-up-btn">
-          <svg width="18" height="18" aria-hidden="true"><use href="#i-img"/></svg>
-          <span>Choose photos</span>
-        </button>
-        <ul class="bk-f-up-list" id="bkf-up-list" aria-live="polite"></ul>
-        <label class="bk-f-lbl" for="bkf-refs">Or paste a link <span class="bk-f-opt">— Instagram, Pinterest</span></label>
-        <input id="bkf-refs" name="refs" type="text" placeholder="instagram.com/p/…">
+        <p class="bk-hint">Emmy will ask for photos in the chat once you send. If you have a link handy, drop it here.</p>
+        <label class="bk-f-lbl" for="b-refs">Reference link <span class="bk-f-opt">— optional</span></label>
+        <input id="b-refs" name="refs" type="text" maxlength="100" placeholder="instagram.com/p/…">
         <div class="bk-nav">
           <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
           <button class="bk-nav-back" type="button">Back</button>
@@ -3038,10 +3106,20 @@
 
       <fieldset class="bk-card" data-step="when" hidden>
         <legend class="bk-q">When suits?</legend>
-        <label class="bk-f-lbl" for="bkf-when">Availability <span class="bk-f-opt">— optional</span></label>
-        <input id="bkf-when" name="when" type="text" placeholder="Weekday mornings">
-        <label class="bk-f-lbl" for="bkf-email">Email <span class="bk-f-opt">— optional, a backup if WhatsApp fails</span></label>
-        <input id="bkf-email" name="email" type="email" autocomplete="email" placeholder="you@example.com">
+        <label class="bk-f-lbl" for="b-when">Availability <span class="bk-f-opt">— optional</span></label>
+        <input id="b-when" name="when" type="text" maxlength="50" placeholder="Weekday mornings">
+        <label class="bk-f-lbl" for="b-email">Email <span class="bk-f-opt">— optional, a backup if WhatsApp fails</span></label>
+        <input id="b-email" name="email" type="email" autocomplete="email" maxlength="70" placeholder="you@example.com">
+        <div class="bk-nav">
+          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
+          <button class="bk-nav-back" type="button">Back</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="bk-card" data-step="notes" hidden>
+        <legend class="bk-q">Anything I should know?</legend>
+        <p class="bk-hint">Allergies, blood thinners, skin conditions, pregnancy — anything that affects the day.</p>
+        <textarea id="b-notes" name="notes" maxlength="150" placeholder="Optional, but it saves a round trip."></textarea>
         <div class="bk-nav">
           <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
           <button class="bk-nav-back" type="button">Back</button>
@@ -3050,28 +3128,31 @@
 
       <fieldset class="bk-card" data-step="review" hidden>
         <legend class="bk-q">Ready to send?</legend>
-        <dl class="bk-rev" id="bkf-rev"></dl>
-        <img class="bk-rev-img" id="bkf-rev-img" alt="" hidden>
-        <div id="bkf-ts"></div>
-        <p class="bk-consent">Send starts a WhatsApp chat with Emmy on <span id="bkf-rev-num"></span>. Your photos and answers arrive in it.</p>
+        <dl class="bk-rev" id="b-rev"></dl>
+        <label class="bk-f-chk">
+          <input id="b-age18" name="age18" type="checkbox">
+          <span>I confirm I am 18 or over.</span>
+        </label>
+        <p class="bk-consent">Photo ID is checked on the day. Send opens WhatsApp with this message ready — you press send, and Emmy will ask for photos in the chat.</p>
         <div class="bk-nav">
-          <button class="bk-f-btn bk-f-go" type="submit" id="bkf-send">Send to WhatsApp</button>
+          <button class="bk-f-btn bk-f-go" type="submit">Send on WhatsApp</button>
           <button class="bk-nav-back" type="button">Back</button>
         </div>
       </fieldset>
 
       <!-- No data-step: deliberately outside the step machine, so it never counts
            toward "1 of 8" and Next can never walk into it. -->
-      <fieldset class="bk-card bk-done" id="bkf-done" hidden>
-        <legend class="bk-q">Sent.</legend>
-        <p>Open WhatsApp — Emmy's message with your photos is already there.</p>
-        <p class="bk-hint">Tap &ldquo;Yes, that's right&rdquo; in the chat so Emmy gets pinged.</p>
+      <fieldset class="bk-card bk-done" id="b-done" hidden>
+        <legend class="bk-q">Opening WhatsApp…</legend>
+        <p>Your message is ready — you still need to press send in WhatsApp for it to reach Emmy.</p>
+        <p class="bk-hint">She'll ask for your reference photos right there in the chat.</p>
+        <a class="bk-f-btn bk-f-alt" id="b-open" target="_blank" rel="noopener">Open WhatsApp</a>
       </fieldset>
 
-      <input type="checkbox" name="botcheck" class="bk-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input type="checkbox" name="botcheck" id="b-botcheck" class="bk-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
       <p class="bk-f-note">Consultation is free · Priced by piece, not by hour</p>
-      <p class="bk-f-msg" id="bkf-msg" hidden></p>
+      <p class="bk-f-msg" id="b-msg" hidden></p>
     </form>
 
     <!-- Deposit — revealed only once a payment link is configured -->
@@ -3080,7 +3161,7 @@
         <span class="bk-dep-h">Secure your date</span>
         <p class="bk-dep-p">Deposits are non-refundable and come off the final price. Pay once we've agreed a date and the slot is yours.</p>
       </div>
-      <a class="bk-f-btn bk-f-go" id="bk-dep-btn" href="#" target="_blank" rel="noopener">Pay deposit</a>
+      <a class="bk-f-btn bk-f-go" id="bk-dep-btn" target="_blank" rel="noopener">Pay deposit</a>
     </div>
 
   </div>
@@ -4159,232 +4240,104 @@ else __boot();
      CDN fails, and the one thing on this page that must never break is the ask. -->
 <script>
 (function () {
-  /* ── Configure these two and nothing else ─────────────────────────────────
-     TURNSTILE_SITEKEY  Cloudflare Turnstile site key. Public by design. Empty =
-                        no widget is rendered and no token is sent, which pairs
-                        with /api/enquiry skipping the check when its secret is
-                        unset — that is what makes local development possible.
-     DEPOSIT            Stripe Payment Link plus the amount shown on the button.
-                        Empty url = the whole deposit block stays hidden.
-
-     Everything else lives server-side in functions/api/enquiry.js, because the
-     WhatsApp token must never reach a browser. That function sends the enquiry
-     from Emmy's work number to the client's WhatsApp; her number runs Meta
-     Coexistence, so the message appears in her normal Business app as an
-     outgoing message in a real chat with that client.                        */
-  var TURNSTILE_SITEKEY = '';
-  var DEPOSIT           = { url: '', amount: '' };
+  /* ── Configure this and nothing else ──────────────────────────────────────
+     DEPOSIT  Stripe Payment Link plus the amount shown on the button. Empty
+              url = the whole deposit block stays hidden.                     */
+  var DEPOSIT = { url: '', amount: '' };
   /* ─────────────────────────────────────────────────────────────────────────── */
 
-  var form = document.getElementById('bk-form');
+  var WA_NUMBER = '447405979137';
+  var MSG_MAX   = 1000;
+
+  /* FIELDS is the single source of truth for keys, caps and labels. Both
+     variants carry the same `name` attributes and are read through it, so they
+     compose a byte-identical message.
+     The caps are chosen so a maximally long submission still fits: the values
+     total 810 and the scaffold 146, worst case 956. WhatsApp accepts an
+     8000-character URL but truncates prefilled text in the compose box above
+     roughly 1000, and a silently truncated enquiry is worse than a short one. */
+  var FIELDS = [
+    { key: 'name',      max: 40,  label: null },
+    { key: 'idea',      max: 300, label: 'Idea' },
+    { key: 'placement', max: 50,  label: 'Placement' },
+    { key: 'size',      max: 30,  label: 'Size' },
+    { key: 'budget',    max: 20,  label: 'Budget' },
+    { key: 'when',      max: 50,  label: 'When suits' },
+    { key: 'notes',     max: 150, label: 'Anything to know' },
+    { key: 'email',     max: 70,  label: 'Email' },
+    { key: 'refs',      max: 100, label: 'Reference' }
+  ];
+
+  /* The variant was resolved before first paint by the script in <head>. The
+     loser is REMOVED, not hidden: a hidden field is still submitted, still read
+     by readFields, and still reachable by keyboard and screen reader. */
+  var VARIANT = document.documentElement.dataset.form === 'a' ? 'a' : 'b';
+  var dead = document.querySelector('[data-variant="' + (VARIANT === 'a' ? 'b' : 'a') + '"]');
+  if (dead) dead.remove();
+
+  var form = document.querySelector('[data-variant="' + VARIANT + '"]');
   if (!form) return;
 
-  var MAX_SHOTS = 4;
-  var MAX_BYTES = 10 * 1024 * 1024;
-  var CELL = 1000, GAP = 12, ONE = 1600, CAP = 1400000;
+  function P(id) { return document.getElementById(VARIANT + '-' + id); }
+  var msg      = P('msg');
+  var doneCard = P('done');
+  var openLink = P('open');
+  var bar      = P('bar');     /* variant B only */
+  var count    = P('count');   /* variant B only */
+  var revList  = P('rev');     /* variant B only */
 
-  var sendBtn = document.getElementById('bkf-send');
-  var msg     = document.getElementById('bkf-msg');
-  var bar     = document.getElementById('bkf-bar');
-  var count   = document.getElementById('bkf-count');
-  var doneCard = document.getElementById('bkf-done');
-  var fileIn  = document.getElementById('bkf-files');
-  var upBtn   = document.getElementById('bkf-up-btn');
-  var upList  = document.getElementById('bkf-up-list');
-  var revList = document.getElementById('bkf-rev');
-  var revImg  = document.getElementById('bkf-rev-img');
-  var revNum  = document.getElementById('bkf-rev-num');
-  var tsMount = document.getElementById('bkf-ts');
-
-  /* The [data-step] filter is load-bearing: #bkf-done is also a .bk-card, and
-     selecting on the class alone would make the counter read "1 of 9" and let
-     Next walk into the success screen. */
-  var steps = [].slice.call(form.querySelectorAll('.bk-card[data-step]'));
-  var at = 0;
-
-  var shots = [];          /* { file, url } — objectURL is for the thumbnail only */
-  var collageBlob = null;
-  var collageKey = '';
-  var building = false;
-
-  function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
   function say(state, text) {
     msg.hidden = false;
     msg.setAttribute('data-state', state);
     msg.textContent = text;
   }
 
-  /* Hull-local site, so bare digits are assumed UK. A visitor outside the UK
-     types a leading + or 00 and that wins. The review card shows the resolved
-     number back before sending, which is what catches everything else. The same
-     rule runs again in the Pages Function, which cannot trust this copy. */
-  function e164(raw) {
-    var s = String(raw || '').replace(/[^\d+]/g, '');
-    var plus = s.charAt(0) === '+';
-    var d = s.replace(/\+/g, '');
-    if (!plus) {
-      if (d.slice(0, 2) === '00') d = d.slice(2);
-      else if (d.charAt(0) === '0') d = '44' + d.slice(1);
-      else if (d.slice(0, 2) !== '44') d = '44' + d;
-    }
-    return /^[1-9]\d{7,14}$/.test(d) ? d : '';
-  }
-
-  /* ── Photos ─────────────────────────────────────────────────────────────── */
-
-  function shotKey() {
-    return shots.map(function (s) { return s.file.name + ':' + s.file.size; }).join('|');
-  }
-  function kb(n) {
-    return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB';
-  }
-
-  /* Filenames are visitor-supplied, so every one reaches the DOM as textContent. */
-  function shotRow(s) {
-    var li = document.createElement('li');
-    li.className = 'bk-f-up-item';
-
-    var img = document.createElement('img');
-    img.className = 'bk-f-up-thumb'; img.src = s.url; img.alt = '';
-    li.appendChild(img);
-
-    var nm = document.createElement('span');
-    nm.className = 'bk-f-up-name'; nm.textContent = s.file.name;
-    li.appendChild(nm);
-
-    var st = document.createElement('span');
-    st.className = 'bk-f-up-state'; st.textContent = kb(s.file.size);
-    li.appendChild(st);
-
-    var x = document.createElement('button');
-    x.type = 'button'; x.className = 'bk-f-up-x';
-    x.setAttribute('aria-label', 'Remove ' + s.file.name);
-    x.textContent = '\u00d7';
-    x.addEventListener('click', function () {
-      URL.revokeObjectURL(s.url);
-      shots.splice(shots.indexOf(s), 1);
-      paintShots();
+  /* Whitespace is collapsed so every field stays on one labelled line and the
+     length budget above is exact. maxlength blocks typing and pasting past the
+     cap; the slice also covers autofill and programmatic set. */
+  function readFields(scope) {
+    var out = {};
+    FIELDS.forEach(function (f) {
+      var el = scope.querySelector('[name="' + f.key + '"]');
+      out[f.key] = el ? String(el.value || '').replace(/\s+/g, ' ').trim().slice(0, f.max) : '';
     });
-    li.appendChild(x);
-    return li;
+    return out;
   }
 
-  function paintShots() {
-    upList.innerHTML = '';
-    for (var i = 0; i < shots.length; i++) upList.appendChild(shotRow(shots[i]));
-    upBtn.hidden = shots.length >= MAX_SHOTS;
-    upBtn.querySelector('span').textContent = shots.length ? 'Add another photo' : 'Choose photos';
-  }
-
-  /* Decode through <img> rather than createImageBitmap: browsers apply EXIF
-     orientation to <img> by default, so a phone photo lands the right way up
-     with no orientation library and no options branch. */
-  function decode(file) {
-    return new Promise(function (resolve, reject) {
-      var url = URL.createObjectURL(file);
-      var img = new Image();
-      img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
-      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('decode')); };
-      img.src = url;
+  /* Empty optionals are dropped rather than filled with a placeholder. The old
+     em-dash filler existed only because Meta rejected empty template
+     parameters, and there is no template any more. */
+  function waMessage(v) {
+    var lines = ['Tattoo enquiry — ' + v.name, ''];
+    FIELDS.forEach(function (f) {
+      if (!f.label || !v[f.key]) return;
+      lines.push(f.label + ': ' + v[f.key]);
     });
+    lines.push('', 'Confirmed 18+. Sent from emmytattoo.com');
+    var text = lines.join('\n');
+    /* Defensive only — the caps above already keep this under MSG_MAX. It exists
+       so adding a field without recomputing the budget degrades instead of
+       shipping a message WhatsApp cuts in half. */
+    return text.length > MSG_MAX ? text.slice(0, MSG_MAX - 1) + '…' : text;
   }
 
-  function encode(canvas) {
-    var ladder = [0.85, 0.72, 0.6, 0.5];
-    return new Promise(function (resolve) {
-      (function step(k) {
-        canvas.toBlob(function (blob) {
-          if (!blob) return resolve(null);
-          if (blob.size <= CAP || k >= ladder.length - 1) return resolve(blob);
-          step(k + 1);
-        }, 'image/jpeg', ladder[k]);
-      })(0);
-    });
+  function waUrl(text) {
+    return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(text);
   }
 
-  /* One image, because a WhatsApp template carries exactly one header image and
-     four separate template messages would cost four times as much and arrive as
-     four notifications. Photos are contained, never cropped — a cropped
-     reference photo is a broken reference photo. */
-  function collage() {
-    if (!shots.length) return Promise.resolve(null);
-    var files = shots.map(function (s) { return s.file; });
-    return Promise.all(files.map(decode)).then(function (imgs) {
-      var c = document.createElement('canvas');
-      var g;
-      if (imgs.length === 1) {
-        var im = imgs[0];
-        var long = Math.max(im.naturalWidth, im.naturalHeight);
-        var k = long > ONE ? ONE / long : 1;
-        c.width  = Math.round(im.naturalWidth  * k);
-        c.height = Math.round(im.naturalHeight * k);
-        g = c.getContext('2d');
-        g.drawImage(im, 0, 0, c.width, c.height);
-      } else {
-        var cols = 2, rows = Math.ceil(imgs.length / cols);
-        c.width  = cols * CELL + (cols + 1) * GAP;
-        c.height = rows * CELL + (rows + 1) * GAP;
-        g = c.getContext('2d');
-        g.fillStyle = '#111111';
-        g.fillRect(0, 0, c.width, c.height);
-        for (var i = 0; i < imgs.length; i++) {
-          var x0 = GAP + (i % cols) * (CELL + GAP);
-          var y0 = GAP + Math.floor(i / cols) * (CELL + GAP);
-          var p = imgs[i];
-          var f = Math.min(CELL / p.naturalWidth, CELL / p.naturalHeight);
-          var w = Math.round(p.naturalWidth * f), h = Math.round(p.naturalHeight * f);
-          g.drawImage(p, x0 + (CELL - w) / 2, y0 + (CELL - h) / 2, w, h);
-        }
-      }
-      return encode(c);
-    });
-  }
+  /* ── Step machine — variant B only; variant A has no cards ───────────────── */
 
-  function ensureCollage() {
-    var key = shotKey();
-    if (key === collageKey) return Promise.resolve(collageBlob);
-    building = true;
-    return collage().then(function (blob) {
-      collageBlob = blob; collageKey = key; building = false;
-      return blob;
-    }).catch(function () {
-      collageBlob = null; collageKey = key; building = false;
-      return null;
-    });
-  }
-
-  upBtn.addEventListener('click', function () { fileIn.click(); });
-  fileIn.addEventListener('change', function () {
-    var list = fileIn.files, added = 0, tooMany = false, tooBig = false, notImg = false;
-    for (var i = 0; i < list.length; i++) {
-      var f = list[i];
-      if (shots.length >= MAX_SHOTS)      { tooMany = true; break; }
-      if (f.type.indexOf('image/') !== 0) { notImg = true; continue; }
-      if (f.size > MAX_BYTES)             { tooBig = true; continue; }
-      shots.push({ file: f, url: URL.createObjectURL(f) });
-      added++;
-    }
-    fileIn.value = '';      /* so re-picking the same file still fires change */
-    paintShots();
-    if (notImg)       say('err', 'Photos only — that file was not an image.');
-    else if (tooBig)  say('err', 'Each photo has to be under 10 MB.');
-    else if (tooMany) say('err', 'Four photos is the limit.');
-    else if (added)   msg.hidden = true;
-  });
-
-  /* ── Steps ──────────────────────────────────────────────────────────────── */
+  var steps = [].slice.call(form.querySelectorAll('.bk-card[data-step]'));
+  var at = 0;
 
   function stepOf(i) { return steps[i].dataset.step; }
 
   function okStep(i) {
     var k = stepOf(i);
-    if (k === 'name' && !val('bkf-name')) {
+    if (k === 'name' && !P('name').value.trim()) {
       say('err', 'Emmy needs a name to call you.'); return false;
     }
-    if (k === 'phone' && !e164(val('bkf-phone'))) {
-      say('err', "That number doesn't look right. Outside the UK, start with your country code."); return false;
-    }
-    if (k === 'idea' && !val('bkf-idea')) {
+    if (k === 'idea' && !P('idea').value.trim()) {
       say('err', 'Tell Emmy the idea, even roughly.'); return false;
     }
     return true;
@@ -4398,32 +4351,10 @@ else __boot();
   }
 
   function paintReview() {
-    var num = e164(val('bkf-phone'));
-    revNum.textContent = '+' + num;
+    var v = readFields(form);
     revList.innerHTML = '';
-    row('Name', val('bkf-name'));
-    row('WhatsApp', '+' + num);
-    row('Idea', val('bkf-idea'));
-    row('Placement', val('bkf-place'));
-    row('Size', val('bkf-size'));
-    row('Budget', val('bkf-budget'));
-    row('When suits', val('bkf-when'));
-    row('Email', val('bkf-email'));
-    row('Reference link', val('bkf-refs'));
-    row('Photos', shots.length ? shots.length + (shots.length === 1 ? ' photo' : ' photos') : '');
-
-    if (!shots.length) { revImg.hidden = true; revImg.removeAttribute('src'); return; }
-    if (shotKey() === collageKey && collageBlob) return;   /* preview already right */
-    revImg.hidden = true;
-    sendBtn.disabled = true;
-    say('ok', 'Building the image Emmy will see\u2026');
-    ensureCollage().then(function (blob) {
-      sendBtn.disabled = false;
-      msg.hidden = true;
-      if (!blob) { say('err', 'Those photos could not be read. Remove them and send the rest.'); return; }
-      revImg.src = URL.createObjectURL(blob);
-      revImg.hidden = false;
-    });
+    row('Name', v.name);
+    FIELDS.forEach(function (f) { if (f.label) row(f.label, v[f.key]); });
   }
 
   function show(i) {
@@ -4434,7 +4365,7 @@ else __boot();
     count.textContent = (i + 1) + ' of ' + steps.length;
     msg.hidden = true;
     if (stepOf(i) === 'review') paintReview();
-    var first = steps[i].querySelector('input:not([type="file"]), textarea, select, button');
+    var first = steps[i].querySelector('input, textarea, select, button');
     /* preventScroll or the browser fights Lenis and yanks the page. */
     if (first) try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); }
   }
@@ -4442,113 +4373,87 @@ else __boot();
   function next() { if (okStep(at) && at < steps.length - 1) show(at + 1); }
   function back() { if (at > 0) show(at - 1); }
 
-  form.addEventListener('click', function (e) {
-    var t = e.target.closest ? e.target.closest('.bk-nav-next, .bk-nav-back') : null;
-    if (!t) return;
-    if (t.classList.contains('bk-nav-next')) next(); else back();
-  });
+  if (steps.length) {
+    form.addEventListener('click', function (e) {
+      var t = e.target.closest ? e.target.closest('.bk-nav-next, .bk-nav-back') : null;
+      if (!t) return;
+      if (t.classList.contains('bk-nav-next')) next(); else back();
+    });
 
-  form.addEventListener('keydown', function (e) {
-    if (e.key !== 'Enter') return;
-    var t = e.target;
-    if (t.isContentEditable) return;
-    var tag = (t.tagName || '').toLowerCase();
-    if (tag === 'button') return;                       /* let the button fire */
-    if (tag === 'textarea' && !(e.ctrlKey || e.metaKey)) return;   /* newline */
-    if (stepOf(at) === 'review') return;                /* submit handles it */
-    e.preventDefault();
-    next();
-  });
-
-  /* ── Turnstile ──────────────────────────────────────────────────────────── */
-
-  var tsState = TURNSTILE_SITEKEY ? 'idle' : 'off';
-  var tsId = null;
-
-  function loadTurnstile() {
-    if (tsState !== 'idle') return;
-    tsState = 'loading';
-    var s = document.createElement('script');
-    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-    s.async = true; s.defer = true;
-    s.onload = function () {
-      tsState = 'ready';
-      try {
-        tsId = window.turnstile.render(tsMount, { sitekey: TURNSTILE_SITEKEY, theme: 'auto' });
-      } catch (e) { tsState = 'failed'; }
-      if (stepOf(at) === 'review') { sendBtn.disabled = false; msg.hidden = true; }
-    };
-    s.onerror = function () {
-      tsState = 'failed';
-      if (stepOf(at) === 'review') {
-        sendBtn.disabled = false;
-        say('err', 'The security check could not load. Message Emmy on WhatsApp instead — wa.me/447405979137.');
-      }
-    };
-    document.head.appendChild(s);
+    form.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter') return;
+      var t = e.target;
+      if (t.isContentEditable) return;
+      var tag = (t.tagName || '').toLowerCase();
+      if (tag === 'button') return;                       /* let the button fire */
+      if (tag === 'textarea' && !(e.ctrlKey || e.metaKey)) return;   /* newline */
+      if (stepOf(at) === 'review') return;                /* submit handles it */
+      e.preventDefault();
+      next();
+    });
   }
-  form.addEventListener('focusin', loadTurnstile, { once: true });
-  form.addEventListener('pointerdown', loadTurnstile, { once: true });
 
-  /* ── Send ───────────────────────────────────────────────────────────────── */
+  /* ── Send ─────────────────────────────────────────────────────────────────
+     Nothing here can fail the enquiry: the message is composed locally and
+     handed to WhatsApp. The POST is a fire-and-forget backup so an abandoned
+     submission is not lost, and its outcome is never shown to the visitor. */
 
-  var FAIL = 'That didn\u2019t send. Message Emmy on WhatsApp and she\u2019ll pick it up — wa.me/447405979137.';
+  function fail(el, stepKey, text) {
+    if (steps.length && stepKey) {
+      for (var i = 0; i < steps.length; i++) if (stepOf(i) === stepKey) { show(i); break; }
+    }
+    say('err', text);
+    if (el) try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+    return false;
+  }
+
+  function backup(v) {
+    var hp = form.querySelector('[name="botcheck"]');
+    var payload = {};
+    FIELDS.forEach(function (f) { payload[f.key] = v[f.key]; });
+    payload.variant = VARIANT;
+    payload.botcheck = hp && hp.checked ? 1 : 0;
+    var body = JSON.stringify(payload);
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/enquiry', new Blob([body], { type: 'application/json' }));
+      } else {
+        fetch('/api/enquiry', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: body, keepalive: true
+        });
+      }
+    } catch (e) {}
+  }
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    for (var i = 0; i < steps.length; i++) {
-      if (!okStep(i)) { show(i); return; }
-    }
-    if (building) { say('err', 'One moment — still building your photo.'); return; }
-    if (tsState === 'loading') { say('err', 'Just a moment — finishing the security check.'); return; }
 
-    sendBtn.disabled = true;
-    sendBtn.textContent = 'Sending\u2026';
+    var nameEl = P('name'), ideaEl = P('idea'), ageEl = P('age18');
+    if (!nameEl.value.trim()) return fail(nameEl, 'name', 'Emmy needs a name to call you.');
+    if (!ideaEl.value.trim()) return fail(ideaEl, 'idea', 'Tell Emmy the idea, even roughly.');
+    /* 18+ is a legal gate, not a nicety — see FAQ 06. It blocks both variants. */
+    if (!ageEl.checked) return fail(ageEl, 'review', 'Emmy can only tattoo over-18s — please confirm.');
 
-    ensureCollage().then(function (blob) {
-      var fd = new FormData(form);
-      fd.set('phone', e164(val('bkf-phone')));
-      if (tsState === 'ready' && window.turnstile) {
-        fd.append('cf-turnstile-response', window.turnstile.getResponse(tsId) || '');
-      }
-      if (blob) fd.append('photo', blob, 'enquiry.jpg');
-      return fetch('/api/enquiry', { method: 'POST', body: fd });
-    }).then(function (r) {
-      return r.json().catch(function () { return { ok: false, code: 'whatsapp' }; });
-    }).then(function (d) {
-      sendBtn.disabled = false;
-      sendBtn.textContent = 'Send to WhatsApp';
-      if (d && d.ok) {
-        for (var n = 0; n < steps.length; n++) steps[n].hidden = true;
-        doneCard.hidden = false;
-        bar.style.width = '100%';
-        count.textContent = 'Done';
-        msg.hidden = true;
-        return;
-      }
-      var code = d && d.code;
-      if (code === 'not_whatsapp' || code === 'bad_phone') {
-        var i = 0;
-        for (var k = 0; k < steps.length; k++) if (stepOf(k) === 'phone') i = k;
-        show(i);
-        say('err', "That number isn't on WhatsApp. Check it and send again.");
-      } else if (code === 'turnstile') {
-        if (tsState === 'ready' && window.turnstile) window.turnstile.reset(tsId);
-        say('err', "The security check didn't pass. Try once more.");
-      } else if (code === 'too_big') {
-        say('err', 'Those photos are too large. Remove one and send again.');
-      } else {
-        say('err', FAIL);
-      }
-    }).catch(function () {
-      sendBtn.disabled = false;
-      sendBtn.textContent = 'Send to WhatsApp';
-      say('err', FAIL);
-    });
+    var v = readFields(form);
+    var url = waUrl(waMessage(v));
+
+    /* Backup first, but never awaited: an await here would put the open outside
+       the user gesture and the popup blocker would eat it. */
+    backup(v);
+
+    window.open(url, '_blank', 'noopener');
+
+    /* Shown whether or not the open was blocked; the link is the one-tap path
+       back for anyone whose browser refused it. */
+    openLink.href = url;
+    for (var n = 0; n < steps.length; n++) steps[n].hidden = true;
+    msg.hidden = true;
+    doneCard.hidden = false;
+    try { openLink.focus({ preventScroll: true }); } catch (err) {}
   });
 
-  paintShots();
-  show(0);
+  if (steps.length) show(0);
 
   if (DEPOSIT.url) {
     var dep = document.getElementById('bk-dep');
