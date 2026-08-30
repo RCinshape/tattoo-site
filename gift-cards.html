@@ -118,6 +118,8 @@
          72.9 against paper at 95.7, so it tops out at 1.23:1 and reads washed
          out, while text ink at .26 gives 1.84:1 — graphite on cream, which is
          what the artwork is. */
+      --gc-ink:    rgba(var(--gold-rgb),.12);
+      --gc-ink-wm: rgba(var(--gold-rgb),.10);
       /* tapered gradient seam — matches index.html */
       --seam: linear-gradient(90deg,
                 transparent 4%,
@@ -160,13 +162,19 @@
 
     @media (max-width: 768px) { :root { --pad: 24px; } }
 
+    /* One-section pages: the content is shorter than a desktop viewport, so the
+       footer has to be pushed to the bottom or it floats mid-screen over a band
+       of dead background. `/legal` and `/book` are long enough not to need this. */
     body {
       font-family: var(--sans);
       background: var(--bg);
       color: var(--fg);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
     }
+    main { flex: 1 0 auto; }
 
     /* ── Nav (matches index.html, minus the page-specific chrome) ── */
     #nav {
@@ -217,6 +225,11 @@
     }
     .n-book:hover { background: var(--gold-soft); border-color: var(--gold-soft); transform: translateY(-2px); }
     @media (max-width: 480px) { .n-book { padding: 9px 14px; letter-spacing: .12em; } }
+    /* Same collapse as `/` and `/portfolio`: below 768px the bar is wordmark,
+       Book and toggle. These shells have no hamburger to reopen the links, but
+       their footers carry the same destinations, and without this the row
+       measured 469px inside a 390px viewport. */
+    @media (max-width: 768px) { .n-links { display: none; } }
     #theme-toggle {
       display: inline-flex; align-items: center; justify-content: center;
       width: 38px; height: 38px; border-radius: 50%;
