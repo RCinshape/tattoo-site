@@ -230,6 +230,7 @@
       --btn-fill:   rgba(var(--panel-rgb),.4);
       --gold-ring:   rgba(var(--gold-rgb),.32);
       --gold-ring-h: rgba(var(--gold-rgb),.65);
+      --gold-soft:  rgba(var(--gold-rgb),.55);
       /* photo treatments — flipped per theme so images sit on the page tone */
       --img-card:   brightness(.9) saturate(.75);
       --img-card-h: brightness(1) saturate(.9);
@@ -272,6 +273,7 @@
       --btn-fill:   rgba(var(--panel-rgb),1);
       --gold-ring:   rgba(var(--gold-rgb),.9);
       --gold-ring-h: rgba(var(--gold-rgb),1);
+      --gold-soft:  rgba(var(--gold-rgb),.95);
       --img-card:   brightness(1.02) saturate(.8);
       --img-card-h: brightness(1.06) saturate(.95);
       --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23fdf8f6' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -349,6 +351,19 @@
     /* Nav right-hand actions group — theme toggle + hamburger, last flex child at every width */
     .n-actions { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
     .n-links { margin-left: auto; }
+    /* The one filled control in the bar: everything else here is a 38–42px icon
+       circle, so a pill is what makes the primary action read as primary. */
+    .n-book {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 10px 20px; border-radius: 100px;
+      font-family: var(--mono); font-size: .68rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      background: var(--gold); border: 1px solid var(--gold); color: var(--on-gold);
+      text-decoration: none; white-space: nowrap;
+      transition: background .3s, border-color .3s, transform .3s;
+    }
+    .n-book:hover { background: var(--gold-soft); border-color: var(--gold-soft); transform: translateY(-2px); }
+    @media (max-width: 480px) { .n-book { padding: 9px 14px; letter-spacing: .12em; } }
     #theme-toggle {
       display: inline-flex; align-items: center; justify-content: center;
       width: 38px; height: 38px; border-radius: 50%;
@@ -827,6 +842,7 @@
     </div>
   </div>
   <div class="n-actions">
+    <a class="n-book" href="/book">Book</a>
     <button id="theme-toggle" type="button" title="Switch to light theme" aria-label="Switch to light theme">
       <svg class="ti ti-sun" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="2.4" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.6" y2="12"/><line x1="5.2" y1="5.2" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5.2" y2="18.8"/></g></svg>
       <svg class="ti ti-moon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
@@ -840,6 +856,7 @@
 <!-- ════ MOBILE MENU ════ -->
 <div id="mobile-menu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu">
   <button class="mm-close" id="mm-close" aria-label="Close menu">✕</button>
+  <a class="mm-link" href="/book">Book</a>
   <a class="mm-link" href="/">Home</a>
   <a class="mm-link" href="/#about">About</a>
   <a class="mm-link" href="/#trust">Reviews</a>
