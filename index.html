@@ -749,13 +749,6 @@
     }
     .tl { display: block; }
     .tl em { font-style: italic; color: var(--gold); }
-    /* A lone lowercase article in Cormorant reads as a speck: its x-height is
-       .39em against the display face's .45em (measured 78px vs 90px at 200px),
-       and the curl on the italic 'a' is what read as an @. The article is set in
-       the display face at 1.12em so it carries the word beside it. font-style and
-       font-weight are stated because Romance Fatal Serif ships one upright face
-       (400 700) and the browser would otherwise synthesise an oblique. */
-    .h-art { font-family: var(--display); font-style: normal; font-weight: 400; font-size: 1.12em; }
     .tl-i { display: block; }
     /* Only hero + booking titles are JS-revealed; exp/faq titles use clip-path wipes */
     .h-title .tl-i, .bk-h2 .tl-i { opacity: 0; }
@@ -2546,7 +2539,7 @@
     <!-- Heading -->
     <h2 class="bk-h2">
       <span class="tl"><span class="tl-i">Book</span></span>
-      <span class="tl"><span class="tl-i"><span class="h-art">a</span> <em>session</em>.</span></span>
+      <span class="tl"><span class="tl-i">a <em>session</em>.</span></span>
     </h2>
 
     <!-- Body -->
