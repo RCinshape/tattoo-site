@@ -126,6 +126,20 @@
   <!-- If any animation library fails to load, reveal content (resilience) -->
   <script>window.__libFail = function () { document.documentElement.classList.add('libs-failed'); };</script>
 
+  <!-- Scroll lock. Top-level and dependency-free: overlays must be able to lock
+       the page whether or not the CDN delivered anything. Counted, so a modal
+       opened over another one does not unlock early. -->
+  <script>
+    (function () {
+      var n = 0;
+      window.__scrollLock = {
+        stop:  function () { if (++n === 1) document.documentElement.classList.add('locked'); },
+        start: function () { if (n > 0 && --n === 0) document.documentElement.classList.remove('locked'); },
+        reset: function () { n = 0; document.documentElement.classList.remove('locked'); }
+      };
+    })();
+  </script>
+
   <!-- Theme resolution before first paint: manual override (localStorage) ?? OS preference -->
   <script>
     (function () {
@@ -161,7 +175,6 @@
   </script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha256-eUny2Hql6qBbqmuoQ60u6ueG2eCZVKQaGygqwCPquug=" crossorigin="anonymous" onerror="__libFail()"></script>
 
   <!-- No-JS fallback: reveal JS-animated content -->
   <noscript><style>
@@ -183,7 +196,11 @@
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: auto; overscroll-behavior: none; }
+    html { scroll-behavior: auto; overscroll-behavior: none; scrollbar-gutter: stable; }
+    /* scrollbar-gutter reserves the track permanently, so hiding overflow to lock
+       the page behind an overlay shifts nothing — including #nav, #prog and the
+       lightbox chrome, all position: fixed and otherwise nudged by the scrollbar. */
+    html.locked { overflow: hidden; }
 
     :root {
       color-scheme: dark;
@@ -345,13 +362,17 @@
     #theme-toggle .ti { display: none; }
     :root[data-theme="dark"]  #theme-toggle .ti-sun  { display: block; }
     :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
+    /* visibility, not just opacity: a full-viewport blur resting at opacity 0 is
+       still painted and keeps its compositing layer alive for the whole visit.
+       The 0s-delayed visibility transition lets the fade-out finish first. */
     #mobile-menu {
       position: fixed; inset: 0; z-index: 10000;
       background: rgba(var(--panel-rgb),.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
-      opacity: 0; pointer-events: none; transition: opacity .35s;
+      opacity: 0; pointer-events: none; visibility: hidden;
+      transition: opacity .35s, visibility 0s linear .35s;
     }
-    #mobile-menu.open { opacity: 1; pointer-events: all; }
+    #mobile-menu.open { opacity: 1; pointer-events: all; visibility: visible; transition: opacity .35s, visibility 0s; }
     .mm-link { font-family: var(--serif); font-style: italic; font-size: 2rem; color: var(--fg); text-decoration: none; transition: color .25s; }
     .mm-link:hover { color: var(--gold); }
     .mm-close { position: absolute; top: 22px; right: 22px; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--border-h); background: rgba(var(--panel-rgb),.6); color: var(--fg); font-family: var(--mono); font-size: .8rem; cursor: pointer; }
@@ -530,12 +551,12 @@
     /* ── Lightbox ── */
     #lb-bg {
       position: fixed; inset: 0; z-index: 99990;
-      pointer-events: none; opacity: 0;
+      pointer-events: none; opacity: 0; visibility: hidden;
       background: rgba(var(--panel-rgb),.62);
       backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
-      transition: opacity .3s;
+      transition: opacity .3s, visibility 0s linear .3s;
     }
-    #lb-bg.open { opacity: 1; pointer-events: all; }
+    #lb-bg.open { opacity: 1; pointer-events: all; visibility: visible; transition: opacity .3s, visibility 0s; }
     #lb {
       position: fixed; z-index: 99991;
       overflow: hidden; display: none;
@@ -1072,7 +1093,7 @@
     shown += BATCH;
     var first = render(true);
     /* Keyboard users would otherwise lose the caret when the gate empties.
-       preventScroll keeps the browser from fighting Lenis for the position. */
+       preventScroll stops the browser yanking the page to the new focus. */
     if (first && gate.hidden) first.focus({ preventScroll: true });
   });
 
@@ -1144,9 +1165,9 @@
 </footer>
 
 <script>
-/* Runs after the deferred GSAP/Lenis bundles, on DOMContentLoaded (see tail). */
+/* Runs after the deferred GSAP bundles, on DOMContentLoaded (see tail). */
 function __boot() {
-  if (!window.gsap || !window.Lenis) { document.documentElement.classList.add('libs-failed'); return; }
+  if (!window.gsap) { document.documentElement.classList.add('libs-failed'); return; }
 
   /* ═══ LOW-END DEVICE DETECTION ═══ (mirrors index.html) */
   const LOW_END = navigator.hardwareConcurrency <= 4
@@ -1157,53 +1178,21 @@ function __boot() {
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Lenis
-  const lenis = new Lenis();
-  gsap.ticker.add(t => lenis.raf(t * 1000));
-  gsap.ticker.lagSmoothing(0);
+  /* Scroll is native — no smooth-scroll library, so Chrome keeps its
+     compositor-thread fast path and the browser's own PageUp/Home/space handling
+     works. The lock is html.locked { overflow: hidden }, defined top-level in
+     <head> so the lightbox can lock the page even if the CDN delivered nothing. */
 
-  /* Keyboard paging — matches index.html. Lenis owns the scroll position, so the
-     browser's native PageUp/Home/space handling fights its rAF loop and snaps the
-     page back. Route the keys through Lenis, keep our own pending target so a
-     burst of presses stacks, and swallow them while the lightbox holds the lock. */
-  let scrollLocked = false;
-  const __lenisStop = lenis.stop.bind(lenis), __lenisStart = lenis.start.bind(lenis);
-  lenis.stop  = () => { scrollLocked = true;  __lenisStop(); };
-  lenis.start = () => { scrollLocked = false; __lenisStart(); };
-  const KEY_STEP = 120;
-  let keyTarget = null, keyIdle = 0;
-  window.addEventListener('keydown', e => {
-    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
-    const t = e.target;
-    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
-    const page = window.innerHeight * 0.9;
-    const max  = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-    const from = keyTarget != null ? keyTarget : lenis.scroll;
-    let to;
-    switch (e.key) {
-      case 'PageDown':  to = from + page; break;
-      case 'PageUp':    to = from - page; break;
-      case 'Home':      to = 0; break;
-      case 'End':       to = max; break;
-      case ' ':         to = from + (e.shiftKey ? -page : page); break;
-      case 'ArrowDown': to = from + KEY_STEP; break;
-      case 'ArrowUp':   to = from - KEY_STEP; break;
-      default: return;
-    }
-    e.preventDefault();
-    if (scrollLocked) return;
-    keyTarget = Math.min(max, Math.max(0, to));
-    clearTimeout(keyIdle);
-    keyIdle = setTimeout(() => { keyTarget = null; }, 800);
-    lenis.scrollTo(keyTarget, { duration: .7, easing: p => 1 - Math.pow(1 - p, 3) });
-  }, { passive: false });
-
-  // Progress + nav — elements cached; this runs on every scroll frame
+  /* Progress bar + nav surface, both driven by one ScrollTrigger over the whole
+     document rather than a second scroll listener. */
   const progEl = document.getElementById('prog');
   const navEl  = document.getElementById('nav');
-  lenis.on('scroll', ({ progress, scroll }) => {
-    gsap.set(progEl, { scaleX: progress });
-    navEl.classList.toggle('s', scroll > 40);
+  ScrollTrigger.create({
+    start: 0, end: 'max',
+    onUpdate: self => {
+      gsap.set(progEl, { scaleX: self.progress });
+      navEl.classList.toggle('s', self.scroll() > 40);
+    }
   });
 
   // Hero entrance
@@ -1264,7 +1253,7 @@ function __boot() {
     [lbClose, lbPrev, lbNext].forEach(el => el.style.display = 'flex');
     lbCount.style.display = 'block';
     lbCount.textContent = (idx + 1) + ' / ' + v.length;
-    lenis.stop();
+    window.__scrollLock.stop();
 
     gsap.to(lb, {
       top: window.innerHeight * .04, left: window.innerWidth * .04,
@@ -1280,7 +1269,7 @@ function __boot() {
       gsap.set(lb, { clearProps: 'opacity,scale' });
       [lbClose, lbPrev, lbNext].forEach(el => el.style.display = 'none');
       lbCount.style.display = 'none';
-      lenis.start();
+      window.__scrollLock.start();
     }});
   }
 
@@ -1339,8 +1328,8 @@ function __boot() {
     const menu   = document.getElementById('mobile-menu');
     const close  = document.getElementById('mm-close');
     if (!toggle || !menu) return;
-    const openMenu  = () => { menu.classList.add('open'); menu.setAttribute('aria-hidden','false'); toggle.setAttribute('aria-expanded','true'); lenis.stop(); };
-    const closeMenu = () => { menu.classList.remove('open'); menu.setAttribute('aria-hidden','true'); toggle.setAttribute('aria-expanded','false'); lenis.start(); };
+    const openMenu  = () => { menu.classList.add('open'); menu.setAttribute('aria-hidden','false'); toggle.setAttribute('aria-expanded','true'); window.__scrollLock.stop(); };
+    const closeMenu = () => { menu.classList.remove('open'); menu.setAttribute('aria-hidden','true'); toggle.setAttribute('aria-expanded','false'); window.__scrollLock.start(); };
     toggle.addEventListener('click', openMenu);
     if (close) close.addEventListener('click', closeMenu);
     menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
@@ -1352,7 +1341,7 @@ else __boot();
 </script>
 
 <!-- ════ THEME TOGGLE ════ -->
-<!-- Top-level, NOT inside __boot: that function returns early when the GSAP/Lenis
+<!-- Top-level, NOT inside __boot: that function returns early when the GSAP
      CDN fails, which left the button rendering normally while clicking it did
      nothing — the failure mode a phone on a bad connection actually hits. -->
 <script>

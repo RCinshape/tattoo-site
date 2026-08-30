@@ -176,6 +176,20 @@
   <!-- If any animation library fails to load, reveal content + dismiss the loader (resilience) -->
   <script>window.__libFail = function () { document.documentElement.classList.add('libs-failed'); };</script>
 
+  <!-- Scroll lock. Top-level and dependency-free: overlays must be able to lock
+       the page whether or not the CDN delivered anything. Counted, so a modal
+       opened over another one does not unlock early. -->
+  <script>
+    (function () {
+      var n = 0;
+      window.__scrollLock = {
+        stop:  function () { if (++n === 1) document.documentElement.classList.add('locked'); },
+        start: function () { if (n > 0 && --n === 0) document.documentElement.classList.remove('locked'); },
+        reset: function () { n = 0; document.documentElement.classList.remove('locked'); }
+      };
+    })();
+  </script>
+
   <!-- Brand intro is kept in the repo but disabled. Flip to true to bring it back. -->
   <script>window.__INTRO = false; if (window.__INTRO) document.documentElement.classList.add('intro-on');</script>
 
@@ -214,7 +228,6 @@
   </script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha256-eUny2Hql6qBbqmuoQ60u6ueG2eCZVKQaGygqwCPquug=" crossorigin="anonymous" onerror="__libFail()"></script>
 
   <!-- No-JS fallback: reveal JS-animated content and remove the loader overlay -->
   <noscript><style>
@@ -251,7 +264,11 @@
        RESET + TOKENS
     ══════════════════════════════════════════ */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: auto; overscroll-behavior: none; }
+    html { scroll-behavior: auto; overscroll-behavior: none; scrollbar-gutter: stable; }
+    /* scrollbar-gutter reserves the track permanently, so hiding overflow to lock
+       the page behind an overlay shifts nothing — including #nav and #prog, which
+       are position: fixed and would otherwise jump by the scrollbar width. */
+    html.locked { overflow: hidden; }
 
     :root {
       color-scheme: dark;
@@ -620,14 +637,18 @@
     :root[data-theme="dark"]  #theme-toggle .ti-sun  { display: block; }
     :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
     /* Full-screen mobile menu overlay */
+    /* visibility, not just opacity: a full-viewport blur resting at opacity 0 is
+       still painted and keeps its compositing layer alive for the whole visit.
+       The 0s-delayed visibility transition lets the fade-out finish first. */
     #mobile-menu {
       position: fixed; inset: 0; z-index: 10000;
       background: rgba(var(--panel-rgb),.97);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
-      opacity: 0; pointer-events: none; transition: opacity .35s;
+      opacity: 0; pointer-events: none; visibility: hidden;
+      transition: opacity .35s, visibility 0s linear .35s;
     }
-    #mobile-menu.open { opacity: 1; pointer-events: all; }
+    #mobile-menu.open { opacity: 1; pointer-events: all; visibility: visible; transition: opacity .35s, visibility 0s; }
     .mm-link {
       font-family: var(--serif); font-style: italic; font-size: 2rem;
       color: var(--fg); text-decoration: none; transition: color .25s;
@@ -902,13 +923,17 @@
     .wc:hover .wc-view { transform: translate(-50%,-50%) scale(1); }
 
     /* ── Gallery lightbox ── */
+    /* GSAP drives this one's opacity, so visibility rides a class instead of the
+       opacity value — and pointer-events comes with it rather than being poked
+       from JS. Painted only while the lightbox is up. */
     #gal-modal-bg {
       position: fixed; inset: 0; z-index: 99990;
-      pointer-events: none; opacity: 0;
+      pointer-events: none; opacity: 0; visibility: hidden;
       background: rgba(var(--panel-rgb),0.55);
       backdrop-filter: blur(28px);
       -webkit-backdrop-filter: blur(28px);
     }
+    #gal-modal-bg.on { visibility: visible; pointer-events: all; }
     #gal-modal {
       position: fixed; z-index: 99991;
       overflow: hidden; display: none;
@@ -1150,10 +1175,10 @@
     #sk-modal {
       position: fixed; inset: 0; z-index: 99995;
       display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity .25s;
+      opacity: 0; pointer-events: none; visibility: hidden;
+      transition: opacity .25s, visibility 0s linear .25s;
     }
-    #sk-modal.open { opacity: 1; pointer-events: all; }
+    #sk-modal.open { opacity: 1; pointer-events: all; visibility: visible; transition: opacity .25s, visibility 0s; }
     #sk-modal-bg {
       position: absolute; inset: 0;
       background: rgba(var(--panel-rgb),.88);
@@ -1559,9 +1584,9 @@
       margin-bottom: 60px; text-align: center;
       opacity: 0; transform: translateY(14px);
     }
-    /* The ask itself lives on /book — a page with no GSAP, no Lenis and no
-       loader, so the one thing that must never break depends on nothing
-       off-origin. This section keeps the pitch and hands off. */
+    /* The ask itself lives on /book — a page that loads no GSAP and no loader,
+       so the one thing that must never break depends on nothing off-origin.
+       This section keeps the pitch and hands off. */
     .bk-cta { display: flex; flex-direction: column; align-items: center; gap: 20px; }
     /* Each clause stays whole, so the only break point on a phone is the middot. */
     .bk-cta .bk-f-note span { white-space: nowrap; }
@@ -1746,10 +1771,10 @@
     #rv-modal {
       position: fixed; inset: 0; z-index: 999998;
       display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity .35s;
+      opacity: 0; pointer-events: none; visibility: hidden;
+      transition: opacity .35s, visibility 0s linear .35s;
     }
-    #rv-modal.open { opacity: 1; pointer-events: all; }
+    #rv-modal.open { opacity: 1; pointer-events: all; visibility: visible; transition: opacity .35s, visibility 0s; }
     .rvm-back {
       position: absolute; inset: 0;
       background: rgba(var(--panel-rgb),.86);
@@ -2960,10 +2985,10 @@
 </footer>
 
 <script>
-/* Runs after the deferred GSAP/Lenis bundles, on DOMContentLoaded (see tail). */
+/* Runs after the deferred GSAP bundles, on DOMContentLoaded (see tail). */
 function __boot() {
   'use strict';
-  if (!window.gsap || !window.Lenis) { document.documentElement.classList.add('libs-failed'); return; }
+  if (!window.gsap) { document.documentElement.classList.add('libs-failed'); return; }
 
   /* ═══ AVAILABILITY TOGGLE ═══
      Set to false when not taking bookings — updates pill text + colour */
@@ -2977,6 +3002,9 @@ function __boot() {
   if (LOW_END) {
     document.documentElement.classList.add('lite'); // CSS drops heavy blur effects
   }
+  /* Honour the reduced-motion preference in the two places that scroll the page
+     for the visitor; ordinary scrolling is the browser's business either way. */
+  const SMOOTH = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 
   /* ═══ SCROLL RESET ON REFRESH ═══ */
   if (history.scrollRestoration) history.scrollRestoration = 'manual';
@@ -2985,64 +3013,13 @@ function __boot() {
   /* ═══ GSAP ═══ */
   gsap.registerPlugin(ScrollTrigger);
 
-  /* ═══ LENIS ═══ */
-  /* lerp, not duration: a fixed 1.25s tween restarts from zero on every wheel
-     event, so a fast scroll or a second flick stalled and had to be repeated.
-     lerp accumulates the target instead and keeps easing toward it. Programmatic
-     scrollTo calls still pass their own duration. */
-  const lenis = new Lenis({
-    lerp: 0.1,
-    wheelMultiplier: 1.05,
-    smoothWheel: true,
-  });
-  /* This Lenis build exposes no public "stopped" flag and every overlay locks the
-     page through lenis.stop(), so shadow the pair once and read the shadow. The
-     shadowed pair is published on window because the overlays that need it — the
-     reviews modal for one — live in top-level scripts that run whether or not the
-     CDN delivered Lenis at all. */
-  let scrollLocked = false;
-  const __lenisStop = lenis.stop.bind(lenis), __lenisStart = lenis.start.bind(lenis);
-  lenis.stop  = () => { scrollLocked = true;  __lenisStop(); };
-  lenis.start = () => { scrollLocked = false; __lenisStart(); };
-  window.__scrollLock = { stop: lenis.stop, start: lenis.start };
-  lenis.stop(); /* locked until loader exits */
-  lenis.on('scroll', ScrollTrigger.update);
-
-  /* Keyboard paging. Lenis owns the scroll position, so the browser's native
-     PageUp/Home/space handling fought its rAF loop and snapped the page back —
-     that is the "stopped in your tracks" on a fast key press. Route the keys
-     through Lenis, and keep our own pending target so a burst of presses stacks
-     instead of each one re-measuring the half-finished animation. */
-  const KEY_STEP = 120;
-  let keyTarget = null, keyIdle = 0;
-  window.addEventListener('keydown', e => {
-    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
-    const t = e.target;
-    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
-    const page = window.innerHeight * 0.9;
-    const max  = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-    const from = keyTarget != null ? keyTarget : lenis.scroll;
-    let to;
-    switch (e.key) {
-      case 'PageDown':  to = from + page; break;
-      case 'PageUp':    to = from - page; break;
-      case 'Home':      to = 0; break;
-      case 'End':       to = max; break;
-      case ' ':         to = from + (e.shiftKey ? -page : page); break;
-      case 'ArrowDown': to = from + KEY_STEP; break;
-      case 'ArrowUp':   to = from - KEY_STEP; break;
-      default: return;
-    }
-    /* Swallow the key even while an overlay holds the scroll lock — bailing out
-       early would hand it back to the browser, which scrolls the page behind the
-       modal because Lenis is stopped. */
-    e.preventDefault();
-    if (scrollLocked) return;
-    keyTarget = Math.min(max, Math.max(0, to));
-    clearTimeout(keyIdle);
-    keyIdle = setTimeout(() => { keyTarget = null; }, 800);
-    lenis.scrollTo(keyTarget, { duration: .7, easing: p => 1 - Math.pow(1 - p, 3) });
-  }, { passive: false });
+  /* ═══ SCROLL ═══
+     Native. Nothing drives the scroll position from JS, so Chrome keeps its
+     compositor-thread fast path and ScrollTrigger listens to real scroll events;
+     the browser's own PageUp/Home/space handling comes back with it. The lock is
+     html.locked { overflow: hidden }, defined top-level in <head> so overlays can
+     still lock the page when the CDN delivered nothing. */
+  window.__scrollLock.stop(); /* locked until loader exits */
 
   /* ── Availability pill ── */
   if (!DIARY_OPEN) {
@@ -3053,8 +3030,6 @@ function __boot() {
     if (avDot)  avDot.classList.add('closed');
     if (avPill) avPill.classList.add('closed');
   }
-  gsap.ticker.add(t => lenis.raf(t * 1000));
-  gsap.ticker.lagSmoothing(0);
 
   /* ═══ LOADER ═══ */
   const ldr = document.getElementById('loader');
@@ -3065,13 +3040,13 @@ function __boot() {
 
   function startPage() {
     ldr.style.display = 'none';
-    lenis.start(); /* unlock scroll */
+    window.__scrollLock.start(); /* unlock scroll */
     initHero();
     /* Honour hash deep-links (e.g. /#faq) that the scroll reset wiped out */
     if (location.hash) {
       let target = null;
       try { target = document.querySelector(location.hash); } catch (e) {}
-      if (target) lenis.scrollTo(target, { duration: 1.2 });
+      if (target) target.scrollIntoView({ behavior: SMOOTH, block: 'start' });
     }
   }
 
@@ -3114,8 +3089,9 @@ function __boot() {
   const navEl = document.getElementById('nav');
 
   /* Progress bar only; the nav surface is seam-driven, not offset-driven. */
-  lenis.on('scroll', ({ scroll, limit }) => {
-    gsap.set(progEl, { scaleX: limit ? scroll / limit : 0 });
+  ScrollTrigger.create({
+    start: 0, end: 'max',
+    onUpdate: self => gsap.set(progEl, { scaleX: self.progress })
   });
 
   /* The bar (surface + wordmark) arrives exactly as the first section seam —
@@ -3128,7 +3104,7 @@ function __boot() {
     onLeaveBack: () => navEl.classList.remove('s')
   });
 
-  // Smooth anchor scrolling via Lenis (no teleport)
+  /* Smooth anchor scrolling, browser-timed */
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       const id = a.getAttribute('href');
@@ -3136,7 +3112,7 @@ function __boot() {
       const target = document.querySelector(id);
       if (!target) return;
       e.preventDefault();
-      lenis.scrollTo(target, { duration: 1.6, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+      target.scrollIntoView({ behavior: SMOOTH, block: 'start' });
       /* Directions button → pulse map glow on arrival */
       if (a.classList.contains('h-dir')) {
         const map = document.querySelector('.loc-map-wrap');
@@ -3156,11 +3132,11 @@ function __boot() {
     if (!toggle || !menu) return;
     const openMenu = () => {
       menu.classList.add('open'); menu.setAttribute('aria-hidden', 'false');
-      toggle.setAttribute('aria-expanded', 'true'); lenis.stop();
+      toggle.setAttribute('aria-expanded', 'true'); window.__scrollLock.stop();
     };
     const closeMenu = () => {
       menu.classList.remove('open'); menu.setAttribute('aria-hidden', 'true');
-      toggle.setAttribute('aria-expanded', 'false'); lenis.start();
+      toggle.setAttribute('aria-expanded', 'false'); window.__scrollLock.start();
     };
     toggle.addEventListener('click', openMenu);
     if (close) close.addEventListener('click', closeMenu);
@@ -3223,7 +3199,7 @@ function __boot() {
         galModalImg.src = card.dataset.full || img.src;
         galModal.style.display = 'block';
         galModal.setAttribute('aria-hidden', 'false');
-        galModalBg.style.pointerEvents = 'all';
+        galModalBg.classList.add('on');
         gsap.to(galModalBg, { opacity: 1, duration: 0.22, ease: 'power1.out' });
         gsap.set(galModal, {
           top: rect.top, left: rect.left,
@@ -3237,7 +3213,7 @@ function __boot() {
           borderRadius: 0, duration: 0.52, ease: 'expo.out'
         });
         gsap.to(galClose, { opacity: 1, scale: 1, duration: 0.28, delay: 0.38, ease: 'back.out(2)' });
-        lenis.stop();
+        window.__scrollLock.stop();
       }
 
       function closeLightbox() {
@@ -3253,7 +3229,7 @@ function __boot() {
             onComplete() {
               galModal.style.display = 'none';
               galModal.setAttribute('aria-hidden', 'true');
-              galModalBg.style.pointerEvents = 'none';
+              galModalBg.classList.remove('on');
               originCard = null;
             }
           });
@@ -3263,14 +3239,14 @@ function __boot() {
             onComplete() {
               galModal.style.display = 'none';
               galModal.setAttribute('aria-hidden', 'true');
-              galModalBg.style.pointerEvents = 'none';
+              galModalBg.classList.remove('on');
               originCard = null;
               gsap.set(galModal, { opacity: 1 });
             }
           });
         }
         gsap.to(galClose, { opacity: 0, scale: 0.7, duration: 0.18 });
-        lenis.start();
+        window.__scrollLock.start();
       }
 
       document.querySelectorAll('.wc').forEach(card => {
@@ -3482,13 +3458,13 @@ function __boot() {
         show(0);
         modal.classList.add('open');
         modal.setAttribute('aria-hidden', 'false');
-        lenis.stop();
+        window.__scrollLock.stop();
       }
 
       function close() {
         modal.classList.remove('open');
         modal.setAttribute('aria-hidden', 'true');
-        lenis.start();
+        window.__scrollLock.start();
       }
 
       document.querySelectorAll('.ei-see-more').forEach(btn => {
@@ -3850,7 +3826,7 @@ else __boot();
 </script>
 
 <!-- ════ THEME TOGGLE ════ -->
-<!-- Top-level, NOT inside __boot: that function returns early when the GSAP/Lenis
+<!-- Top-level, NOT inside __boot: that function returns early when the GSAP
      CDN fails, which left the button rendering normally while clicking it did
      nothing — the failure mode a phone on a bad connection actually hits. -->
 <script>
@@ -3931,6 +3907,9 @@ else __boot();
       if (l && getComputedStyle(l).display !== 'none') {
         document.documentElement.classList.add('libs-failed');
         l.style.display = 'none';
+        /* __boot locks the page before the loader exits, so a boot that threw
+           in between would leave the page unscrollable behind a hidden loader. */
+        window.__scrollLock.reset();
       }
     }, 1500);
   })();
