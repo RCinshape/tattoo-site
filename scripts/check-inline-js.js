@@ -6,7 +6,7 @@ const path = require('path');
 const vm = require('vm');
 
 let failed = false;
-for (const file of ['index.html', 'portfolio.html']) {
+for (const file of ['index.html', 'book.html', 'portfolio.html', 'legal.html']) {
   const html = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
   const re = /<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/gi;
   let m, n = 0;

@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" id="meta-theme-color" content="#0a0a0a">
+  <title>Book a session | Emmy Tattoo</title>
+  <meta name="description" content="Start your tattoo enquiry with Emmy at Sainthood Tattoo, Hull. Tell her the idea, the placement and the size — the form hands it to WhatsApp ready to send.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://emmytattoo.com/book">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c4a262'>✦</text></svg>">
+
+  <!-- Analytics: GA4 page views only, loaded straight away. No consent gate —
+       measurement-only GA4 is the least intrusive setup that still counts visits. -->
+  <script>
+    (function () {
+      if (/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) return;
+      var id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
+      var s = document.createElement('script');
+      s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { dataLayer.push(arguments); };
+      gtag('js', new Date());
+      gtag('config', id);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
+
+  <!-- Theme resolution before first paint: system / light / dark (matches index.html) -->
+  <script>
+    (function () {
+      var KEY = 'emmy-theme';
+      var mql = window.matchMedia('(prefers-color-scheme: light)');
+      /* Three states: 'system' (no key stored), 'light', 'dark'. */
+      function pref() {
+        try { var v = localStorage.getItem(KEY); return v === 'light' || v === 'dark' ? v : 'system'; }
+        catch (e) { return 'system'; }
+      }
+      function resolve(p) { return p === 'system' ? (mql.matches ? 'light' : 'dark') : p; }
+      function apply(p) {
+        var theme = resolve(p);
+        var r = document.documentElement;
+        r.dataset.theme = theme;
+        r.dataset.pref = p;
+        r.style.colorScheme = theme;
+        var m = document.getElementById('meta-theme-color');
+        if (m) m.setAttribute('content', theme === 'light' ? '#f7efeb' : '#0a0a0a');
+        document.dispatchEvent(new Event('themechange'));
+      }
+      window.__theme = {
+        pref: pref,
+        resolve: function () { return resolve(pref()); },
+        set: function (p) {
+          try { p === 'system' ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, p); } catch (e) {}
+          apply(p);
+        }
+      };
+      apply(pref());
+      mql.addEventListener('change', function () { if (pref() === 'system') apply('system'); });
+    })();
+  </script>
+
+  <style>
+    /* Cross-document view transition — both documents must opt in. */
+    @view-transition { navigation: auto; }
+
+    /* Self-hosted display face — matches index.html. */
+    @font-face {
+      font-family: 'Romance Fatal Serif';
+      src: url('/fonts/Rom_Ftl_Srif.woff') format('woff');
+      font-weight: 400 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      color-scheme: dark;
+      --bg:        #0a0a0a;
+      --bg2:       #121212;
+      --fg:        #ededed;
+      --fg2:       #adadad;
+      --dim:       #838383;
+      --gold:      #c4a262;
+      --gold-rgb:  196,162,98;
+      --gold-soft: rgba(var(--gold-rgb),.55);
+      --fg-rgb:    255,255,255;
+      --panel-rgb: 10,10,10;
+      --on-gold:   #0a0a0a;
+      --ok-ink:    #5ec98a;
+      --ok-rgb:    61,164,107;
+      --border:    rgba(var(--fg-rgb),.07);
+      --border-h:  rgba(var(--fg-rgb),.15);
+      --btn-ring:   rgba(var(--fg-rgb),.34);
+      --btn-ring-h: rgba(var(--fg-rgb),.50);
+      --btn-fill:   rgba(var(--panel-rgb),.4);
+      --gold-ring:   rgba(var(--gold-rgb),.32);
+      --gold-ring-h: rgba(var(--gold-rgb),.65);
+      /* The one opaque field colour: what rgba(var(--fg-rgb),.03) resolves to
+         over --bg. <select> must not be translucent like its siblings — Chrome
+         paints the native option list from the control's background-color, and
+         a translucent value there lands white-on-white in dark. Recompute both
+         themes if --bg or the .03 wash ever changes. Matches index.html. */
+      --field:     #111111;
+      /* tapered gradient seam — matches index.html */
+      --seam: linear-gradient(90deg,
+                transparent 4%,
+                rgba(var(--fg-rgb),.16) 28%,
+                rgba(var(--gold-rgb),.55) 50%,
+                rgba(var(--fg-rgb),.16) 72%,
+                transparent 96%);
+      --r:       12px;
+      --serif:  'Cormorant Garamond', Georgia, serif;
+      --display:'Romance Fatal Serif', Georgia, serif;
+      --mono:   'Space Mono', monospace;
+      --sans:   'DM Sans', sans-serif;
+      --out:    cubic-bezier(.16,1,.3,1);
+      --pad:    max(48px, calc(50vw - 720px));
+    }
+
+    /* Light theme — one gold, both themes (see index.html) */
+    :root[data-theme="light"] {
+      color-scheme: light;
+      /* Paper hue: warm side of the brand gold. Matches index.html. */
+      --bg:        #f7efeb;
+      --bg2:       #fdf8f6;
+      --fg:        #1b1613;
+      --fg2:       #4d443e;
+      --dim:       #6e625b;
+      --gold:      #c4a262;
+      --gold-rgb:  196,162,98;
+      --gold-soft: rgba(var(--gold-rgb),.95);
+      --fg-rgb:    27,22,19;
+      --panel-rgb: 253,248,246;
+      --on-gold:   #1b1613;
+      --ok-ink:    #1f7a47;
+      --ok-rgb:    31,122,71;
+      --field:     #f0e8e5;   /* .03 warm ink over #f7efeb — see the dark note */
+      --btn-ring:   rgba(var(--fg-rgb),.48);
+      --btn-ring-h: rgba(var(--fg-rgb),.64);
+      --btn-fill:   rgba(var(--panel-rgb),1);
+      --gold-ring:   rgba(var(--gold-rgb),.9);
+      --gold-ring-h: rgba(var(--gold-rgb),1);
+    }
+
+    @media (max-width: 768px) { :root { --pad: 24px; } }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--fg);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── Nav (matches index.html, minus the page-specific chrome) ── */
+    #nav {
+      position: sticky; top: 0; z-index: 1000;
+      padding: 20px var(--pad);
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      background: rgba(var(--panel-rgb),.92);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+    /* Wordmark: always on here — this page has no hero to sit over. */
+    .n-logo {
+      font-family: var(--display); font-size: 1.2rem;
+      font-weight: 400; letter-spacing: .07em;
+      text-decoration: none; color: var(--fg);
+    }
+    .n-logo em { font-style: italic; color: var(--gold); }
+    .n-links { display: flex; align-items: center; gap: 26px; margin-left: auto; }
+    .n-socials { display: flex; align-items: center; gap: 16px; }
+    .n-item {
+      font-family: var(--mono); font-size: .72rem;
+      letter-spacing: .22em; text-transform: uppercase;
+      color: var(--fg2); text-decoration: none; transition: color .3s;
+    }
+    .n-item:hover { color: var(--fg); }
+    .n-social {
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--dim); text-decoration: none;
+      border: 1px solid var(--btn-ring); background: var(--btn-fill);
+      width: 38px; height: 38px; border-radius: 50%;
+      transition: color .25s, border-color .25s; flex-shrink: 0;
+    }
+    .n-social:hover { color: var(--fg); border-color: var(--btn-ring-h); }
+    .n-social span { display: none; }
+    .n-social.n-ig:hover { color: #e1306c; border-color: rgba(225,48,108,.4); }
+    .n-social.n-fb:hover { color: #1877f2; border-color: rgba(24,119,242,.4); }
+    .n-actions { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+    #theme-toggle {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid var(--btn-ring); background: var(--btn-fill);
+      color: var(--dim); cursor: pointer; flex-shrink: 0;
+      transition: color .25s, border-color .25s;
+    }
+    #theme-toggle:hover { color: var(--gold); border-color: var(--btn-ring-h); }
+    #theme-toggle svg { flex-shrink: 0; }
+    /* Two states on screen: the icon shows the theme the button switches TO. */
+    #theme-toggle .ti { display: none; }
+    :root[data-theme="dark"]  #theme-toggle .ti-sun  { display: block; }
+    :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
+
+    /* ── Page shell ── */
+    /* Fixed inline padding, not --pad: --pad grows with the viewport
+       (50vw - 720px), so on a centred max-width column it eats the text at
+       large sizes. Same reasoning as .lg-main on /legal. The nav is sticky,
+       not fixed, so no top clearance is needed for it. */
+    .bk-page {
+      max-width: 768px; margin: 0 auto;
+      padding: 76px 24px 110px;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .bk-eyebrow {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-family: var(--mono); font-size: .74rem;
+      letter-spacing: .28em; text-transform: uppercase;
+      color: var(--fg2); margin-bottom: 18px;
+    }
+    .bk-eyebrow::before { content: ''; width: 22px; height: 1px; flex: none; background: var(--gold); }
+    .bk-page-h1 {
+      font-family: var(--serif); font-weight: 300;
+      font-size: clamp(2.8rem, 8vw, 5rem); line-height: 1.02;
+      letter-spacing: -.025em; margin-bottom: 22px;
+    }
+    .bk-page-h1 em { font-style: italic; color: var(--gold); }
+    /* A lone lowercase article set in the display face. Explicit weight and
+       normal style because the face ships one upright cut (400 700) and the
+       browser would otherwise synthesise an oblique. Matches index.html. */
+    .h-art { font-family: var(--display); font-style: normal; font-weight: 400; font-size: 1.12em; }
+    .bk-page-sub {
+      font-family: var(--sans); font-size: 1.05rem; line-height: 1.85;
+      color: var(--fg2); max-width: 520px; margin-bottom: 52px;
+    }
+    @media (max-width: 768px) {
+      .bk-page { padding: 56px 24px 80px; }
+      .bk-page-sub { margin-bottom: 40px; }
+    }
+
+    /* ── Enquiry form ──
+       Every DM used to arrive as "hi how much for", which costs a round trip before
+       Emmy can even price it. The form collects those answers and hands them to
+       WhatsApp as a prefilled message; the visitor presses send themselves, and
+       Emmy's Business-app greeting then asks for reference photos, which they
+       attach natively in the chat. The page never touches photos. */
+    .bk-form {
+      width: 100%; max-width: 720px; text-align: left;
+      display: grid; grid-template-columns: 1fr; gap: 18px;
+    }
+    .bk-f-lbl {
+      display: block; margin-bottom: 9px;
+      font-family: var(--mono); font-size: .6rem;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--fg2);
+    }
+    .bk-f-opt { color: var(--dim); }
+    /* An 18+ tick is a legal gate, not decoration — see FAQ 06.
+       `.bk-form input` below has the same specificity and comes later, so it
+       would win: it sets width 100%, a padded bordered box and
+       `appearance: none`, which turned this into a full-width empty rectangle
+       with no tick and no visible label. Hence `.bk-form .bk-f-chk input`, and
+       an explicit return to the native control. */
+    .bk-f-chk {
+      display: flex; align-items: flex-start; gap: 11px;
+      font-family: var(--sans); font-size: .95rem; color: var(--fg2);
+      cursor: pointer;
+    }
+    .bk-form .bk-f-chk input {
+      width: 18px; height: 18px; flex: 0 0 auto; margin: 2px 0 0;
+      padding: 0; border: 0; border-radius: 0; background: none;
+      -webkit-appearance: checkbox; appearance: checkbox;
+      accent-color: var(--gold);
+    }
+    .bk-form input, .bk-form select, .bk-form textarea {
+      width: 100%; display: block;
+      font-family: var(--sans); font-size: .95rem; color: var(--fg);
+      background: rgba(var(--fg-rgb),.03);
+      border: 1px solid var(--border); border-radius: var(--r);
+      padding: 14px 16px;
+      transition: border-color .3s, background .3s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .bk-form textarea { min-height: 132px; resize: vertical; line-height: 1.7; }
+    /* ── Select, and why it alone is opaque ──
+       Chrome and Edge paint the native option list from this control's own used
+       background-color and color. The .03 wash its siblings use is composited
+       against the popup's default white, so in dark the list came out white with
+       near-white --fg text and you could not see what you were picking. --field
+       is that wash already resolved over --bg: identical on the page, legible in
+       the popup. Every option is painted explicitly as well, because Firefox
+       reads option colours rather than the control's. */
+    .bk-form select {
+      background-color: var(--field);
+      /* The caret is inline SVG in the token colour, because a native select arrow
+         renders light-on-light in the dark theme on Windows. */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23c4a262' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 16px center;
+      padding-right: 42px;
+    }
+    .bk-form select option { background-color: var(--field); color: var(--fg); }
+    .bk-form input:focus-visible, .bk-form textarea:focus-visible {
+      outline: none; border-color: var(--gold-ring-h);
+      background-color: rgba(var(--gold-rgb),.05);
+    }
+    /* The select's focus cue is the ring alone. A translucent focus wash would put
+       the option list back to white-on-white while the popup is open, and the
+       `background` shorthand this rule used to share also wiped the caret SVG the
+       moment the field took focus. */
+    .bk-form select:focus-visible { outline: none; border-color: var(--gold-ring-h); }
+    .bk-form input::placeholder, .bk-form textarea::placeholder { color: var(--dim); }
+    /* Honeypot: off-screen rather than display:none, which some bots skip. */
+    .bk-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .bk-f-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 11px;
+      padding: 18px 38px; border-radius: 100px;
+      font-family: var(--mono); font-size: .72rem;
+      letter-spacing: .2em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none;
+      border: 1px solid transparent;
+      transition: background .38s, border-color .38s, color .38s, transform .38s var(--out);
+    }
+    .bk-f-go { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+    .bk-f-go:hover { background: var(--gold-soft); transform: translateY(-3px); }
+    .bk-f-go[disabled] { opacity: .6; cursor: progress; transform: none; }
+    .bk-f-alt {
+      background: rgba(var(--gold-rgb),.04);
+      border-color: var(--gold-ring); color: var(--fg);
+    }
+    .bk-f-alt:hover { border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09); transform: translateY(-3px); }
+    .bk-f-alt svg { flex-shrink: 0; color: var(--gold); }
+    /* display: inline-flex on .bk-f-btn outranks the UA's [hidden] rule — the same
+       trap #pw-gate hits on /portfolio — so restate it. */
+    .bk-f-btn[hidden] { display: none; }
+    .bk-card {
+      border: 0; padding: 0; margin: 0; min-width: 0;
+      display: grid; gap: 14px;
+      animation: bk-in .34s var(--out) both;
+    }
+    /* display: grid on the same element outranks the UA [hidden] rule — the same
+       trap #pw-gate hits on /portfolio — so restate it. */
+    .bk-card[hidden] { display: none; }
+    @keyframes bk-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .bk-card { animation: none; } }
+    .bk-q {
+      padding: 0; font-family: var(--serif);
+      font-size: clamp(1.35rem, 3.2vw, 1.9rem);
+      line-height: 1.3; color: var(--fg);
+    }
+    .bk-hint { font-family: var(--sans); font-size: .86rem; line-height: 1.7; color: var(--dim); }
+    /* Centred, because the submit is the only thing in it. */
+    .bk-nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; margin-top: 6px; }
+    .bk-done p { font-family: var(--sans); font-size: .95rem; line-height: 1.75; color: var(--fg2); margin: 0; }
+    .bk-f-note {
+      text-align: center;
+      font-family: var(--mono); font-size: .6rem;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--dim);
+    }
+    /* Result banner — --ok/--err are the status tokens, already per-theme */
+    .bk-f-msg {
+      grid-column: 1 / -1; text-align: center;
+      font-family: var(--sans); font-size: .92rem; line-height: 1.7;
+      padding: 16px 20px; border-radius: var(--r);
+      border: 1px solid var(--border);
+    }
+    .bk-f-msg[data-state="ok"]  { color: var(--ok-ink); border-color: rgba(var(--ok-rgb),.45); background: rgba(var(--ok-rgb),.07); }
+    .bk-f-msg[data-state="err"] { color: var(--fg); border-color: var(--gold-ring); background: rgba(var(--gold-rgb),.06); }
+
+    /* ── Deposit ──
+       The FAQ has always said deposits are mandatory and non-refundable; until now
+       there was no way to pay one, so every booking needed a manual back-and-forth. */
+    .bk-dep {
+      width: 100%; max-width: 720px; margin-top: 46px;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;
+      padding: 26px 30px; text-align: left;
+      border: 1px solid var(--gold-ring); border-radius: var(--r);
+      background: rgba(var(--gold-rgb),.04);
+    }
+    .bk-dep[hidden] { display: none; }
+    .bk-dep-l { display: flex; flex-direction: column; gap: 7px; }
+    .bk-dep-h {
+      font-family: var(--mono); font-size: .68rem;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--fg);
+    }
+    .bk-dep-p { font-size: .9rem; color: var(--fg2); line-height: 1.7; max-width: 420px; }
+    @media (max-width: 768px) {
+      .bk-f-btn { width: 100%; }
+      .bk-dep { flex-direction: column; align-items: stretch; padding: 22px 24px; }
+    }
+
+    /* ── Footer (matches index.html) ── */
+    footer {
+      padding: 36px var(--pad);
+      border-top: 1px solid transparent;
+      border-image: var(--seam) 1;
+      /* Three tracks, not space-between — matches index.html. */
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      align-items: center; gap: 20px;
+    }
+    .ft-logo { font-family: var(--display); font-size: 1.2rem; font-weight: 400; color: var(--fg); }
+    .ft-logo em { font-style: italic; color: var(--gold); }
+    .ft-links { display: flex; gap: 22px; flex-wrap: wrap; justify-self: center; }
+    .ft-a {
+      font-family: var(--mono); font-size: .71rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--fg2); text-decoration: none; transition: color .3s;
+    }
+    .ft-a:hover { color: var(--fg); }
+    .ft-copy { font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; color: var(--fg2); justify-self: end; text-align: right; }
+    @media (max-width: 768px) {
+      footer { padding: 28px var(--pad); grid-template-columns: 1fr; justify-items: center; text-align: center; }
+      .ft-links { justify-content: center; }
+      .ft-copy { justify-self: center; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="nav" aria-label="Site navigation">
+  <a href="/" class="n-logo">Emmy <em>Tattoo</em></a>
+  <div class="n-links">
+    <a href="/#trust" class="n-item">Reviews</a>
+    <a href="/#faq" class="n-item">FAQ</a>
+    <div class="n-socials">
+      <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="n-social n-ig" aria-label="Instagram">
+        <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        <span>Instagram</span>
+      </a>
+      <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="n-social n-fb" aria-label="Facebook">
+        <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <span>Facebook</span>
+      </a>
+    </div>
+  </div>
+  <div class="n-actions">
+    <button id="theme-toggle" type="button" title="Switch to light theme" aria-label="Switch to light theme">
+      <svg class="ti ti-sun" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="2.4" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.6" y2="12"/><line x1="5.2" y1="5.2" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5.2" y2="18.8"/></g></svg>
+      <svg class="ti ti-moon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</nav>
+
+<main class="bk-page">
+  <div class="bk-eyebrow">Booking</div>
+  <h1 class="bk-page-h1">Book <span class="h-art">a</span> <em>session.</em></h1>
+  <p class="bk-page-sub">Start with a message. A reference, a sketch, a feeling, or nothing yet. The design is built from scratch. Consultation is free.</p>
+
+  <form class="bk-form" id="bk-form" novalidate>
+    <div>
+      <label class="bk-f-lbl" for="f-name">Your name</label>
+      <input id="f-name" name="name" type="text" autocomplete="name" maxlength="40" placeholder="Emma">
+    </div>
+    <div>
+      <label class="bk-f-lbl" for="f-email">Email <span class="bk-f-opt">— optional, a backup if WhatsApp fails</span></label>
+      <input id="f-email" name="email" type="email" autocomplete="email" maxlength="70" placeholder="you@example.com">
+    </div>
+    <div>
+      <label class="bk-f-lbl" for="f-idea">What are you thinking?</label>
+      <textarea id="f-idea" name="idea" maxlength="300" placeholder="What you'd like, and anything behind it."></textarea>
+    </div>
+    <div>
+      <label class="bk-f-lbl" for="f-placement">Placement <span class="bk-f-opt">— optional</span></label>
+      <select id="f-placement" name="placement">
+        <option value="">Not sure yet</option>
+        <option>Inner forearm</option>
+        <option>Outer forearm</option>
+        <option>Upper arm</option>
+        <option>Shoulder</option>
+        <option>Full sleeve</option>
+        <option>Wrist</option>
+        <option>Hand</option>
+        <option>Chest</option>
+        <option>Sternum</option>
+        <option>Collarbone</option>
+        <option>Ribs</option>
+        <option>Stomach</option>
+        <option>Upper back</option>
+        <option>Lower back</option>
+        <option>Spine</option>
+        <option>Hip</option>
+        <option>Thigh</option>
+        <option>Knee</option>
+        <option>Calf</option>
+        <option>Ankle</option>
+        <option>Foot</option>
+        <option>Neck</option>
+        <option>Behind the ear</option>
+        <option>Somewhere else</option>
+      </select>
+    </div>
+    <div>
+      <label class="bk-f-lbl" for="f-size">Rough size <span class="bk-f-opt">— optional</span></label>
+      <select id="f-size" name="size">
+        <option value="">Not sure yet</option>
+        <option>Tiny — under 5 cm</option>
+        <option>Small — 5 to 10 cm</option>
+        <option>Medium — 10 to 15 cm</option>
+        <option>Large — 15 to 25 cm</option>
+        <option>Extra large — 25 cm and up</option>
+        <option>Full sleeve or large piece</option>
+      </select>
+    </div>
+    <div>
+      <label class="bk-f-lbl" for="f-budget">Rough budget <span class="bk-f-opt">— optional</span></label>
+      <select id="f-budget" name="budget">
+        <option>Not sure yet</option>
+        <option>£150–£300</option>
+        <option>£300–£600</option>
+        <option>£600+</option>
+      </select>
+    </div>
+    <div>
+      <label class="bk-f-lbl" for="f-when">Availability <span class="bk-f-opt">— optional</span></label>
+      <input id="f-when" name="when" type="text" maxlength="50" placeholder="Weekday mornings">
+    </div>
+    <div>
+      <label class="bk-f-lbl" for="f-notes">Anything I should know? <span class="bk-f-opt">— optional</span></label>
+      <textarea id="f-notes" name="notes" maxlength="150" placeholder="Allergies, blood thinners, skin conditions, pregnancy — anything that affects the day."></textarea>
+    </div>
+    <div>
+      <label class="bk-f-lbl" for="f-refs">Reference link <span class="bk-f-opt">— optional</span></label>
+      <input id="f-refs" name="refs" type="text" maxlength="100" placeholder="instagram.com/p/…">
+    </div>
+
+    <label class="bk-f-chk">
+      <input id="f-age18" name="age18" type="checkbox">
+      <span>I confirm I am 18 or over.</span>
+    </label>
+    <p class="bk-f-note">Photo ID is checked on the day. No exceptions.</p>
+
+    <input type="checkbox" name="botcheck" id="f-botcheck" class="bk-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <div class="bk-nav">
+      <button class="bk-f-btn bk-f-go" type="submit">Send on WhatsApp</button>
+    </div>
+    <p class="bk-f-msg" id="f-msg" hidden></p>
+
+    <fieldset class="bk-card bk-done" id="f-done" hidden>
+      <legend class="bk-q">Opening WhatsApp…</legend>
+      <p>Your message is ready — you still need to press send in WhatsApp for it to reach Emmy.</p>
+      <p class="bk-hint">She'll ask for your reference photos right there in the chat.</p>
+      <a class="bk-f-btn bk-f-alt" id="f-open" target="_blank" rel="noopener">Open WhatsApp</a>
+    </fieldset>
+  </form>
+
+  <!-- Deposit — revealed only once a payment link is configured -->
+  <div class="bk-dep" id="bk-dep" hidden>
+    <div class="bk-dep-l">
+      <span class="bk-dep-h">Secure your date</span>
+      <p class="bk-dep-p">Deposits are non-refundable and come off the final price. Pay once we've agreed a date and the slot is yours.</p>
+    </div>
+    <a class="bk-f-btn bk-f-go" id="bk-dep-btn" target="_blank" rel="noopener">Pay deposit</a>
+  </div>
+</main>
+
+<footer>
+  <span class="ft-logo">Emmy <em>Tattoo</em></span>
+  <nav class="ft-links" aria-label="Footer navigation">
+    <a href="/" class="ft-a">Home</a>
+    <a href="/portfolio" class="ft-a">Portfolio</a>
+    <a href="/legal#privacy" class="ft-a">Privacy &amp; Cookies</a>
+    <a href="/legal#terms" class="ft-a">Terms</a>
+  </nav>
+  <span class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</span>
+</footer>
+
+<script>
+  /* ═══ THEME TOGGLE ═══ (matches index.html) */
+  (function () {
+    var btn = document.getElementById('theme-toggle');
+    if (!btn || !window.__theme) return;
+    /* The control is binary on screen - it always names the theme it switches to. */
+    function target() { return document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; }
+    function sync() {
+      var label = 'Switch to ' + target() + ' theme';
+      btn.setAttribute('aria-label', label);
+      btn.setAttribute('title', label);
+    }
+    sync();
+    document.addEventListener('themechange', sync);
+    btn.addEventListener('click', function () { window.__theme.set(target()); });
+  })();
+</script>
+
+<!-- ════ ENQUIRY FORM + DEPOSIT ════ -->
+<!-- This page loads no GSAP, no Lenis and no loader on purpose: the one thing
+     that must never break is the ask, so it depends on nothing off-origin. -->
+<script>
+(function () {
+  /* ── Configure this and nothing else ──────────────────────────────────────
+     DEPOSIT  Stripe Payment Link plus the amount shown on the button. Empty
+              url = the whole deposit block stays hidden.                     */
+  var DEPOSIT = { url: '', amount: '' };
+  /* ─────────────────────────────────────────────────────────────────────────── */
+
+  var WA_NUMBER = '447405979137';
+  var MSG_MAX   = 1000;
+
+  /* FIELDS is the single source of truth for keys, caps and labels. It drives
+     both the read off the form and the order of the lines in the message.
+     The caps are chosen so a maximally long submission still fits: the values
+     total 810 and the scaffold 146, worst case 956. WhatsApp accepts an
+     8000-character URL but truncates prefilled text in the compose box above
+     roughly 1000, and a silently truncated enquiry is worse than a short one.
+     placement and size are <select>s; their caps only need to clear the
+     longest option ("Extra large — 25 cm and up", 26). */
+  var FIELDS = [
+    { key: 'name',      max: 40,  label: null },
+    { key: 'email',     max: 70,  label: 'Email' },
+    { key: 'idea',      max: 300, label: 'Idea' },
+    { key: 'placement', max: 40,  label: 'Placement' },
+    { key: 'size',      max: 40,  label: 'Size' },
+    { key: 'budget',    max: 20,  label: 'Budget' },
+    { key: 'when',      max: 50,  label: 'When suits' },
+    { key: 'notes',     max: 150, label: 'Anything to know' },
+    { key: 'refs',      max: 100, label: 'Reference' }
+  ];
+
+  var form = document.getElementById('bk-form');
+  if (!form) return;
+
+  var msg      = document.getElementById('f-msg');
+  var doneCard = document.getElementById('f-done');
+  var openLink = document.getElementById('f-open');
+
+  function say(state, text) {
+    msg.hidden = false;
+    msg.setAttribute('data-state', state);
+    msg.textContent = text;
+  }
+
+  /* Whitespace is collapsed so every field stays on one labelled line and the
+     length budget above is exact. maxlength blocks typing and pasting past the
+     cap; the slice also covers autofill and programmatic set. */
+  function readFields(scope) {
+    var out = {};
+    FIELDS.forEach(function (f) {
+      var el = scope.querySelector('[name="' + f.key + '"]');
+      out[f.key] = el ? String(el.value || '').replace(/\s+/g, ' ').trim().slice(0, f.max) : '';
+    });
+    return out;
+  }
+
+  /* Empty optionals are dropped rather than filled with a placeholder — which is
+     why the "Not sure yet" options on placement and size carry value="". */
+  function waMessage(v) {
+    var lines = ['Tattoo enquiry — ' + v.name, ''];
+    FIELDS.forEach(function (f) {
+      if (!f.label || !v[f.key]) return;
+      lines.push(f.label + ': ' + v[f.key]);
+    });
+    lines.push('', 'Confirmed 18+. Sent from emmytattoo.com');
+    var text = lines.join('\n');
+    /* Defensive only — the caps above already keep this under MSG_MAX. It exists
+       so adding a field without recomputing the budget degrades instead of
+       shipping a message WhatsApp cuts in half. */
+    return text.length > MSG_MAX ? text.slice(0, MSG_MAX - 1) + '…' : text;
+  }
+
+  function waUrl(text) {
+    return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(text);
+  }
+
+  /* ── Send ─────────────────────────────────────────────────────────────────
+     Nothing here can fail the enquiry: the message is composed locally and
+     handed to WhatsApp. The POST is a fire-and-forget backup so an abandoned
+     submission is not lost, and its outcome is never shown to the visitor. */
+
+  function fail(el, text) {
+    say('err', text);
+    if (el) try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+    return false;
+  }
+
+  function backup(v) {
+    var hp = form.querySelector('[name="botcheck"]');
+    var payload = {};
+    FIELDS.forEach(function (f) { payload[f.key] = v[f.key]; });
+    payload.botcheck = hp && hp.checked ? 1 : 0;
+    var body = JSON.stringify(payload);
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/enquiry', new Blob([body], { type: 'application/json' }));
+      } else {
+        fetch('/api/enquiry', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: body, keepalive: true
+        });
+      }
+    } catch (e) {}
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var nameEl = document.getElementById('f-name');
+    var ideaEl = document.getElementById('f-idea');
+    var ageEl  = document.getElementById('f-age18');
+    if (!nameEl.value.trim()) return fail(nameEl, 'Emmy needs a name to call you.');
+    if (!ideaEl.value.trim()) return fail(ideaEl, 'Tell Emmy the idea, even roughly.');
+    /* 18+ is a legal gate, not a nicety — see FAQ 06. */
+    if (!ageEl.checked) return fail(ageEl, 'Emmy can only tattoo over-18s — please confirm.');
+
+    var v = readFields(form);
+    var url = waUrl(waMessage(v));
+
+    /* Backup first, but never awaited: an await here would put the open outside
+       the user gesture and the popup blocker would eat it. */
+    backup(v);
+
+    window.open(url, '_blank', 'noopener');
+
+    /* Shown whether or not the open was blocked; the link is the one-tap path
+       back for anyone whose browser refused it. */
+    openLink.href = url;
+    msg.hidden = true;
+    doneCard.hidden = false;
+    try { openLink.focus({ preventScroll: true }); } catch (err) {}
+  });
+
+  if (DEPOSIT.url) {
+    var dep = document.getElementById('bk-dep');
+    var depBtn = document.getElementById('bk-dep-btn');
+    depBtn.href = DEPOSIT.url;
+    if (DEPOSIT.amount) depBtn.textContent = 'Pay ' + DEPOSIT.amount + ' deposit';
+    dep.hidden = false;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
-// Quick tag-balance sanity check for the two pages.
+// Quick tag-balance sanity check for the four pages.
 const fs = require('fs');
-for (const file of ['index.html', 'portfolio.html']) {
+for (const file of ['index.html', 'book.html', 'portfolio.html', 'legal.html']) {
   const h = fs.readFileSync(file, 'utf8');
   console.log('--', file);
   for (const t of ['nav', 'div', 'section', 'main', 'footer', 'style', 'script', 'svg', 'a', 'button', 'ul', 'li']) {

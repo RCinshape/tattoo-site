@@ -60,7 +60,7 @@
       "longitude": -0.3587
     },
     "openingHoursSpecification": [
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday","Wednesday","Thursday","Friday","Saturday"], "opens": "10:00", "closes": "18:00" }
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday","Wednesday","Thursday","Friday","Saturday"], "opens": "09:00", "closes": "17:00" }
     ],
     "sameAs": [
       "https://www.instagram.com/emmy.tattoo",
@@ -211,23 +211,6 @@
       apply(pref());
       mql.addEventListener('change', function () { if (pref() === 'system') apply('system'); });
     })();
-
-    /* Variant switch. ?form=a|b wins and sticks for the session; otherwise the
-       constant below is what real visitors get. Nothing in the UI exposes this.
-       Resolved before first paint so the losing form never flashes — the
-       enquiry script then removes it from the DOM outright. */
-    (function () {
-      var DEFAULT = 'b';                 /* one-line change to flip the default */
-      var v = null;
-      try { v = new URLSearchParams(location.search).get('form'); } catch (e) {}
-      if (v !== 'a' && v !== 'b') {
-        try { v = sessionStorage.getItem('emmy-form'); } catch (e) { v = null; }
-      } else {
-        try { sessionStorage.setItem('emmy-form', v); } catch (e) {}
-      }
-      if (v !== 'a' && v !== 'b') v = DEFAULT;
-      document.documentElement.dataset.form = v;
-    })();
   </script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
@@ -239,7 +222,7 @@
     #nav { background: rgba(var(--panel-rgb),.92) !important; border-bottom-color: var(--border) !important; }
     #nav .n-logo { opacity: 1 !important; pointer-events: auto !important; }
     :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
-        .bk-av, .bk-rule, .bk-sub, .bk-form, .bk-steps, .loc-map-wrap, .loc-photo,
+        .bk-av, .bk-sub, .bk-cta, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
         .exp-h2, .faq-h2, .bk-h2) {
@@ -280,17 +263,14 @@
       --gold:      #c4a262;
       --gold-rgb:  196,162,98;
       /* Exactly one gold per palette — no display/text split. Decorative gold
-         ink carries its alpha in the token because GSAP writes inline opacity
-         on .bk-wm, which outranks any CSS opacity rule. */
-      --wm-ink:    rgba(var(--gold-rgb),.06);
-      /* The gift voucher's ink, in two weights: --gc-ink for the illustration
+         ink carries its alpha in its token, never in `opacity`: GSAP writes
+         inline opacity and it outranks any CSS opacity rule.
+         The gift voucher's ink, in two weights: --gc-ink for the illustration
          beside the copy, --gc-ink-wm for the phone layout where it sits behind
-         the copy. Dark keeps gold at twice the watermark's alpha — the `Book`
-         watermark hides behind a heading that carries its section, the voucher is
-         alone on its side of the row. Light leaves the gold family entirely:
-         gold's lightness is 72.9 against paper at 95.7, so it tops out at 1.23:1
-         and reads washed out, while text ink at .26 gives 1.84:1 — graphite on
-         cream, which is what the artwork is. */
+         the copy. Light leaves the gold family entirely: gold's lightness is
+         72.9 against paper at 95.7, so it tops out at 1.23:1 and reads washed
+         out, while text ink at .26 gives 1.84:1 — graphite on cream, which is
+         what the artwork is. */
       --gc-ink:    rgba(var(--gold-rgb),.12);
       --gc-ink-wm: rgba(var(--gold-rgb),.10);
       --fg-rgb:    255,255,255;   /* borders + faint washes */
@@ -303,12 +283,6 @@
       --warn-rgb:  224,85,85;
       --border:    rgba(var(--fg-rgb),.07);
       --border-h:  rgba(var(--fg-rgb),.15);
-      /* The one opaque field colour: what rgba(var(--fg-rgb),.03) resolves to
-         over #book's --bg. <select> must not be translucent like its siblings —
-         Chrome paints the native option list from the control's background-color,
-         and a translucent value there lands white-on-white in dark. Recompute
-         both themes if --bg or the .03 wash ever changes. */
-      --field:     #111111;
       /* Page-tone RGB. Layers that fade content INTO the page (photo scrims,
          vignette, text halos) MUST use this, never --panel-rgb: in light the
          panel is #fdf8f6 while the page is #f7efeb, and that mismatch
@@ -399,7 +373,6 @@
       --ok-rgb:    31,122,71;
       --warn:      #b4322f;
       --warn-rgb:  180,50,47;
-      --field:     #f0e8e5;   /* .03 warm ink over #f7efeb — see the dark note */
       --bg-rgb: 247,239,235;
       /* .48 puts the ring at 3.13:1 against #f7efeb (WCAG non-text minimum) */
       --btn-ring:   rgba(var(--fg-rgb),.48);
@@ -428,7 +401,6 @@
       --cta-shadow-a: 0 4px 16px rgba(var(--gold-rgb),.20), 0 1px 6px rgba(var(--fg-rgb),.12);
       --gold-faint: rgba(var(--gold-rgb),.8);
       --gold-soft:  rgba(var(--gold-rgb),.95);
-      --wm-ink:     rgba(var(--gold-rgb),.3);
       --gc-ink:     rgba(var(--fg-rgb),.26);
       --gc-ink-wm:  rgba(var(--fg-rgb),.14);
       /* No sepia: it emits R>G>B and the brightness that follows clips red first,
@@ -748,7 +720,7 @@
        selection here yields character soup anyway. Opting out of selection also
        stops it accepting a text caret, which is what a visitor with Chrome's caret
        browsing (F7) switched on gets when they click the wordmark. Same treatment
-       as .bk-wm and .fq-num. */
+       as .fq-num. */
     .h-title {
       font-family: var(--display);
       font-size: clamp(4rem,13.5vw,13rem);
@@ -1549,18 +1521,6 @@
       position: absolute; inset: 0;
       background: var(--ambient-book);
     }
-    /* Large decorative watermark behind content */
-    .bk-wm {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: var(--display);
-      font-size: clamp(16rem, 30vw, 28rem);
-      font-weight: 400; line-height: 1;
-      color: transparent;
-      -webkit-text-stroke: 1px var(--wm-ink);
-      pointer-events: none; user-select: none; z-index: 0;
-      letter-spacing: -.04em; white-space: nowrap;
-    }
     .bk-in {
       position: relative; z-index: 2;
       text-align: center; display: flex; flex-direction: column; align-items: center;
@@ -1590,101 +1550,21 @@
       font-family: var(--serif);
       font-size: clamp(3.2rem, 9vw, 8rem);
       font-weight: 300; letter-spacing: -.025em;
-      line-height: .97; margin-bottom: 0;
+      line-height: .97; margin-bottom: 36px;
     }
     .bk-h2 em { font-style: italic; color: var(--gold); }
-    /* Thin animated rule between heading and body */
-    .bk-rule {
-      width: 56px; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin: 36px auto 36px;
-      opacity: 0; transform: scaleX(0); transform-origin: center;
-    }
     .bk-sub {
       font-size: 1.05rem; color: var(--fg2);
       line-height: 1.88; max-width: 520px;
       margin-bottom: 60px; text-align: center;
       opacity: 0; transform: translateY(14px);
     }
-    /* ── Enquiry form ──
-       Every DM used to arrive as "hi how much for", which costs a round trip before
-       Emmy can even price it. The form collects those answers and hands them to
-       WhatsApp as a prefilled message; the visitor presses send themselves, and
-       Emmy's Business-app greeting then asks for reference photos, which they
-       attach natively in the chat. The page never touches photos. */
-
-    /* Two variants ship in the same document: A is a single page, B is the
-       stepped card flow. The enquiry script removes the losing one from the DOM;
-       this rule only covers the window before that runs, and the case where it
-       never does. Without it both forms would paint. */
-    :root[data-form="a"] [data-variant="b"],
-    :root[data-form="b"] [data-variant="a"] { display: none; }
-    .bk-form {
-      width: 100%; max-width: 720px; text-align: left;
-      display: grid; grid-template-columns: 1fr; gap: 18px;
-    }
-    .bk-f-lbl {
-      display: block; margin-bottom: 9px;
-      font-family: var(--mono); font-size: .6rem;
-      letter-spacing: .18em; text-transform: uppercase; color: var(--fg2);
-    }
-    .bk-f-opt { color: var(--dim); }
-    /* An 18+ tick is a legal gate, not decoration — see FAQ 06.
-       `.bk-form input` below has the same specificity and comes later, so it
-       would win: it sets width 100%, a padded bordered box and
-       `appearance: none`, which turned this into a full-width empty rectangle
-       with no tick and no visible label. Hence `.bk-form .bk-f-chk input`, and
-       an explicit return to the native control. */
-    .bk-f-chk {
-      display: flex; align-items: flex-start; gap: 11px;
-      font-family: var(--sans); font-size: .95rem; color: var(--fg2);
-      cursor: pointer;
-    }
-    .bk-form .bk-f-chk input {
-      width: 18px; height: 18px; flex: 0 0 auto; margin: 2px 0 0;
-      padding: 0; border: 0; border-radius: 0; background: none;
-      -webkit-appearance: checkbox; appearance: checkbox;
-      accent-color: var(--gold);
-    }
-    .bk-form input, .bk-form select, .bk-form textarea {
-      width: 100%; display: block;
-      font-family: var(--sans); font-size: .95rem; color: var(--fg);
-      background: rgba(var(--fg-rgb),.03);
-      border: 1px solid var(--border); border-radius: var(--r);
-      padding: 14px 16px;
-      transition: border-color .3s, background .3s;
-      -webkit-appearance: none; appearance: none;
-    }
-    .bk-form textarea { min-height: 132px; resize: vertical; line-height: 1.7; }
-    /* ── Select, and why it alone is opaque ──
-       Chrome and Edge paint the native option list from this control's own used
-       background-color and color. The .03 wash its siblings use is composited
-       against the popup's default white, so in dark the list came out white with
-       near-white --fg text and you could not see what you were picking. --field
-       is that wash already resolved over #book's --bg: identical on the page,
-       legible in the popup. Every option is painted explicitly as well, because
-       Firefox reads option colours rather than the control's. */
-    .bk-form select {
-      background-color: var(--field);
-      /* The caret is inline SVG in the token colour, because a native select arrow
-         renders light-on-light in the dark theme on Windows. */
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23c4a262' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 16px center;
-      padding-right: 42px;
-    }
-    .bk-form select option { background-color: var(--field); color: var(--fg); }
-    .bk-form input:focus-visible, .bk-form textarea:focus-visible {
-      outline: none; border-color: var(--gold-ring-h);
-      background-color: rgba(var(--gold-rgb),.05);
-    }
-    /* The select's focus cue is the ring alone. A translucent focus wash would put
-       the option list back to white-on-white while the popup is open, and the
-       `background` shorthand this rule used to share also wiped the caret SVG the
-       moment the field took focus. */
-    .bk-form select:focus-visible { outline: none; border-color: var(--gold-ring-h); }
-    .bk-form input::placeholder, .bk-form textarea::placeholder { color: var(--dim); }
-    /* Honeypot: off-screen rather than display:none, which some bots skip. */
-    .bk-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    /* The ask itself lives on /book — a page with no GSAP, no Lenis and no
+       loader, so the one thing that must never break depends on nothing
+       off-origin. This section keeps the pitch and hands off. */
+    .bk-cta { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    /* Each clause stays whole, so the only break point on a phone is the middot. */
+    .bk-cta .bk-f-note span { white-space: nowrap; }
     .bk-f-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 11px;
       padding: 18px 38px; border-radius: 100px;
@@ -1696,104 +1576,10 @@
     }
     .bk-f-go { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
     .bk-f-go:hover { background: var(--gold-soft); transform: translateY(-3px); }
-    .bk-f-go[disabled] { opacity: .6; cursor: progress; transform: none; }
-    .bk-f-alt {
-      background: rgba(var(--gold-rgb),.04);
-      border-color: var(--gold-ring); color: var(--fg);
-    }
-    .bk-f-alt:hover { border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09); transform: translateY(-3px); }
-    .bk-f-alt svg { flex-shrink: 0; color: var(--gold); }
-    /* display: inline-flex on .bk-f-btn outranks the UA's [hidden] rule — the same
-       trap #pw-gate hits on /portfolio — so restate it. */
-    .bk-f-btn[hidden] { display: none; }
-    /* ── One question per card ──
-       Navigation is CSS-only on purpose. GSAP and Lenis come from a CDN and
-       __boot returns at its lib guard when that fails; a form whose steps
-       depended on GSAP would strand the visitor halfway through the ask. */
-    .bk-card {
-      border: 0; padding: 0; margin: 0; min-width: 0;
-      display: grid; gap: 14px;
-      animation: bk-in .34s var(--out) both;
-    }
-    /* display: grid on the same element outranks the UA [hidden] rule — the same
-       trap #pw-gate hits on /portfolio — so restate it. */
-    .bk-card[hidden] { display: none; }
-    @keyframes bk-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
-    @media (prefers-reduced-motion: reduce) { .bk-card { animation: none; } }
-    .bk-q {
-      padding: 0; font-family: var(--serif);
-      font-size: clamp(1.35rem, 3.2vw, 1.9rem);
-      line-height: 1.3; color: var(--fg);
-    }
-    .bk-hint { font-family: var(--sans); font-size: .86rem; line-height: 1.7; color: var(--dim); }
-    .bk-prog { height: 3px; border-radius: 2px; background: rgba(var(--fg-rgb),.08); overflow: hidden; }
-    .bk-prog-bar {
-      display: block; height: 100%; width: 0;
-      background: var(--gold); border-radius: 2px;
-      transition: width .34s var(--out);
-    }
-    .bk-prog-n {
-      font-family: var(--mono); font-size: .58rem;
-      letter-spacing: .16em; text-transform: uppercase; color: var(--dim);
-      margin: -10px 0 4px;
-    }
-    .bk-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 6px; }
-    .bk-nav-back {
-      background: none; border: 0; cursor: pointer;
-      font-family: var(--mono); font-size: .62rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--dim); transition: color .3s;
-    }
-    .bk-nav-back:hover { color: var(--gold); }
-    .bk-nav-back:focus-visible { outline: 1px solid var(--gold-ring-h); outline-offset: 3px; }
-    .bk-rev { margin: 0; }
-    .bk-rev dt {
-      font-family: var(--mono); font-size: .56rem;
-      letter-spacing: .16em; text-transform: uppercase; color: var(--dim);
-      margin-bottom: 4px;
-    }
-    .bk-rev dd {
-      font-family: var(--sans); font-size: .92rem; line-height: 1.6;
-      color: var(--fg2); margin: 0 0 12px;
-    }
-    .bk-consent { font-family: var(--sans); font-size: .82rem; line-height: 1.7; color: var(--dim); }
-    .bk-consent span { color: var(--fg2); }
-    .bk-done p { font-family: var(--sans); font-size: .95rem; line-height: 1.75; color: var(--fg2); margin: 0; }
     .bk-f-note {
       text-align: center;
       font-family: var(--mono); font-size: .6rem;
       letter-spacing: .12em; text-transform: uppercase; color: var(--dim);
-    }
-    /* Result banner — --ok/--err are the status tokens, already per-theme */
-    .bk-f-msg {
-      grid-column: 1 / -1; text-align: center;
-      font-family: var(--sans); font-size: .92rem; line-height: 1.7;
-      padding: 16px 20px; border-radius: var(--r);
-      border: 1px solid var(--border);
-    }
-    .bk-f-msg[data-state="ok"]  { color: var(--ok-ink); border-color: rgba(var(--ok-rgb),.45); background: rgba(var(--ok-rgb),.07); }
-    .bk-f-msg[data-state="err"] { color: var(--fg); border-color: var(--gold-ring); background: rgba(var(--gold-rgb),.06); }
-
-    /* ── Deposit ──
-       The FAQ has always said deposits are mandatory and non-refundable; until now
-       there was no way to pay one, so every booking needed a manual back-and-forth. */
-    .bk-dep {
-      width: 100%; max-width: 720px; margin-top: 46px;
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;
-      padding: 26px 30px; text-align: left;
-      border: 1px solid var(--gold-ring); border-radius: var(--r);
-      background: rgba(var(--gold-rgb),.04);
-    }
-    .bk-dep[hidden] { display: none; }
-    .bk-dep-l { display: flex; flex-direction: column; gap: 7px; }
-    .bk-dep-h {
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .2em; text-transform: uppercase; color: var(--fg);
-    }
-    .bk-dep-p { font-size: .9rem; color: var(--fg2); line-height: 1.7; max-width: 420px; }
-    @media (max-width: 768px) {
-      .bk-f-btn { width: 100%; }
-      .bk-dep { flex-direction: column; align-items: stretch; padding: 22px 24px; }
     }
 
     /* ── 3-step process ── */
@@ -1817,19 +1603,12 @@
       letter-spacing: .28em; text-transform: uppercase;
       color: var(--fg2); white-space: nowrap;
     }
-    .bk-step-div {
-      width: 64px; height: 1px; flex-shrink: 0;
-      background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb),.35), transparent);
-    }
 
     @media (max-width: 768px) {
       #book { padding: 88px var(--pad) 80px; }
       .bk-h2 { font-size: clamp(2.6rem, 11vw, 4.2rem); }
       .bk-f-btn { padding: 17px 24px; }
-      .bk-steps { gap: 0; }
       .bk-step  { padding: 0 18px; }
-      .bk-step-div { width: 28px; }
-      .bk-wm { font-size: clamp(10rem, 28vw, 16rem); }
     }
 
 
@@ -1914,7 +1693,7 @@
     }
     .trv-more:hover { color: var(--gold); }
     /* display:inline-flex outranks the UA [hidden] rule — the same trap
-       #pw-gate and .bk-card[hidden] hit. */
+       #pw-gate on /portfolio hits. */
     .trv-more[hidden] { display: none; }
     /* margin-top:auto pins every attribution to the bottom of its card despite
        uneven quote lengths — the same trick /portfolio's proof strip uses. */
@@ -2442,7 +2221,7 @@
     ══════════════════════════════════════════ */
     html.libs-failed #loader { display: none !important; }
     html.libs-failed :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
-        .bk-av, .bk-rule, .bk-sub, .bk-form, .bk-steps, .loc-map-wrap, .loc-photo,
+        .bk-av, .bk-sub, .bk-cta, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
         .exp-h2, .faq-h2, .bk-h2) {
@@ -2455,7 +2234,7 @@
     ══════════════════════════════════════════ */
     @media (prefers-reduced-motion: reduce) {
       :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
-          .bk-av, .bk-rule, .bk-sub, .bk-form, .bk-steps, .loc-map-wrap, .loc-photo,
+          .bk-av, .bk-sub, .bk-cta, .bk-steps, .loc-map-wrap, .loc-photo,
           .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
           .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
           .exp-h2, .faq-h2, .bk-h2) {
@@ -2556,13 +2335,13 @@
     <div class="h-sub">
       <div class="h-loc">
         <span class="h-loc-studio">At Sainthood Tattoo · Princes Ave, Hull<a href="#location" class="h-dir" aria-label="View map for Sainthood Tattoo"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-5.686-7-11a7 7 0 0 1 14 0c.5 5.314-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span>Directions</span></a></span>
-        <span class="h-loc-hours">Appointment only &nbsp;·&nbsp; Tue–Sat</span>
+        <span class="h-loc-hours">Appointment only &nbsp;·&nbsp; Tue–Sat &nbsp;·&nbsp; 09–17</span>
       </div>
     </div>
-    <!-- Book now goes to #book on this page; View portfolio is a cross-document
-         navigation that @view-transition fades exactly like the work gate below. -->
+    <!-- Both are cross-document navigations that @view-transition fades exactly
+         like the work gate below. -->
     <div class="h-cta">
-      <a class="h-btn h-btn-go" href="#book">Book now</a>
+      <a class="h-btn h-btn-go" href="/book">Book now</a>
       <a class="h-btn h-btn-alt" href="/portfolio">View portfolio</a>
     </div>
   </div>
@@ -2925,7 +2704,6 @@
 <!-- ════ BOOKING ════ -->
 <section id="book">
   <div class="bk-gbg" aria-hidden="true"></div>
-  <div class="bk-wm" aria-hidden="true">Book</div>
 
   <div class="bk-in">
 
@@ -2941,9 +2719,6 @@
       <span class="tl"><span class="tl-i"><span class="h-art">a</span> <em>session.</em></span></span>
     </h2>
 
-    <!-- Animated divider -->
-    <div class="bk-rule"></div>
-
     <!-- Body -->
     <p class="bk-sub">Start with a message. A reference, a sketch, a feeling, or nothing yet. The design is built from scratch. Consultation is free.</p>
 
@@ -2953,215 +2728,21 @@
         <span class="bk-step-n">01</span>
         <span class="bk-step-l">Message</span>
       </div>
-      <div class="bk-step-div" aria-hidden="true"></div>
       <div class="bk-step">
         <span class="bk-step-n">02</span>
         <span class="bk-step-l">Consult</span>
       </div>
-      <div class="bk-step-div" aria-hidden="true"></div>
       <div class="bk-step">
         <span class="bk-step-n">03</span>
         <span class="bk-step-l">Create</span>
       </div>
     </div>
 
-    <!-- Enquiry form, two variants. A is a single page, B is the stepped card
-         flow; the pre-paint script in <head> picks one and the enquiry script
-         removes the other from the DOM, so only one is ever submitted, read or
-         reachable. Both carry the same `name` attributes and are read by the
-         same builder, so they produce a byte-identical WhatsApp message.
-         Submit prefills wa.me and the visitor presses send themselves — the
-         page never handles photos, because Emmy's Business-app greeting asks
-         for them and they attach natively in the chat. -->
-
-    <!-- ── Variant A — single page ── -->
-    <form class="bk-form" id="bk-form-a" data-variant="a" novalidate>
-      <div>
-        <label class="bk-f-lbl" for="a-name">Your name</label>
-        <input id="a-name" name="name" type="text" autocomplete="name" maxlength="40" placeholder="Emma">
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="a-idea">What are you thinking?</label>
-        <textarea id="a-idea" name="idea" maxlength="300" placeholder="What you'd like, and anything behind it."></textarea>
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="a-placement">Placement <span class="bk-f-opt">— optional</span></label>
-        <input id="a-placement" name="placement" type="text" maxlength="50" placeholder="Inner forearm">
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="a-size">Rough size <span class="bk-f-opt">— optional</span></label>
-        <input id="a-size" name="size" type="text" maxlength="30" placeholder="About 12cm">
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="a-budget">Rough budget <span class="bk-f-opt">— optional</span></label>
-        <select id="a-budget" name="budget">
-          <option>Not sure yet</option>
-          <option>Up to £150</option>
-          <option>£150–£300</option>
-          <option>£300–£600</option>
-          <option>£600+</option>
-        </select>
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="a-when">Availability <span class="bk-f-opt">— optional</span></label>
-        <input id="a-when" name="when" type="text" maxlength="50" placeholder="Weekday mornings">
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="a-notes">Anything I should know? <span class="bk-f-opt">— optional</span></label>
-        <textarea id="a-notes" name="notes" maxlength="150" placeholder="Allergies, blood thinners, skin conditions, pregnancy — anything that affects the day."></textarea>
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="a-email">Email <span class="bk-f-opt">— optional, a backup if WhatsApp fails</span></label>
-        <input id="a-email" name="email" type="email" autocomplete="email" maxlength="70" placeholder="you@example.com">
-      </div>
-      <div>
-        <label class="bk-f-lbl" for="a-refs">Reference link <span class="bk-f-opt">— optional</span></label>
-        <input id="a-refs" name="refs" type="text" maxlength="100" placeholder="instagram.com/p/…">
-      </div>
-
-      <label class="bk-f-chk">
-        <input id="a-age18" name="age18" type="checkbox">
-        <span>I confirm I am 18 or over.</span>
-      </label>
-      <p class="bk-f-note">Photo ID is checked on the day. No exceptions.</p>
-
-      <input type="checkbox" name="botcheck" id="a-botcheck" class="bk-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-
-      <div class="bk-nav">
-        <button class="bk-f-btn bk-f-go" type="submit">Send on WhatsApp</button>
-      </div>
-      <p class="bk-f-note">Emmy will ask for reference photos in the chat.</p>
-      <p class="bk-f-msg" id="a-msg" hidden></p>
-
-      <!-- No data-step: deliberately outside the step machine. -->
-      <fieldset class="bk-card bk-done" id="a-done" hidden>
-        <legend class="bk-q">Opening WhatsApp…</legend>
-        <p>Your message is ready — you still need to press send in WhatsApp for it to reach Emmy.</p>
-        <p class="bk-hint">She'll ask for your reference photos right there in the chat.</p>
-        <a class="bk-f-btn bk-f-alt" id="a-open" target="_blank" rel="noopener">Open WhatsApp</a>
-      </fieldset>
-    </form>
-
-    <!-- ── Variant B — one question per card ── -->
-    <form class="bk-form" id="bk-form-b" data-variant="b" novalidate>
-      <div class="bk-prog" aria-hidden="true"><span class="bk-prog-bar" id="b-bar"></span></div>
-      <p class="bk-prog-n" id="b-count" aria-live="polite">1 of 8</p>
-
-      <fieldset class="bk-card" data-step="name">
-        <legend class="bk-q">What should Emmy call you?</legend>
-        <input id="b-name" name="name" type="text" autocomplete="name" maxlength="40" placeholder="Emma">
-        <div class="bk-nav">
-          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
-        </div>
-      </fieldset>
-
-      <fieldset class="bk-card" data-step="idea" hidden>
-        <legend class="bk-q">What are you thinking?</legend>
-        <p class="bk-hint">A rough thought is enough.</p>
-        <textarea id="b-idea" name="idea" maxlength="300" placeholder="What you'd like, and anything behind it."></textarea>
-        <div class="bk-nav">
-          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
-          <button class="bk-nav-back" type="button">Back</button>
-        </div>
-      </fieldset>
-
-      <fieldset class="bk-card" data-step="body" hidden>
-        <legend class="bk-q">Where on the body, and how big?</legend>
-        <label class="bk-f-lbl" for="b-placement">Placement <span class="bk-f-opt">— optional</span></label>
-        <input id="b-placement" name="placement" type="text" maxlength="50" placeholder="Inner forearm">
-        <label class="bk-f-lbl" for="b-size">Rough size <span class="bk-f-opt">— optional</span></label>
-        <input id="b-size" name="size" type="text" maxlength="30" placeholder="About 12cm">
-        <div class="bk-nav">
-          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
-          <button class="bk-nav-back" type="button">Back</button>
-        </div>
-      </fieldset>
-
-      <fieldset class="bk-card" data-step="budget" hidden>
-        <legend class="bk-q">Rough budget?</legend>
-        <p class="bk-hint">Nothing is fixed by this. It just tells Emmy what scale to design to.</p>
-        <select id="b-budget" name="budget">
-          <option>Not sure yet</option>
-          <option>Up to £150</option>
-          <option>£150–£300</option>
-          <option>£300–£600</option>
-          <option>£600+</option>
-        </select>
-        <div class="bk-nav">
-          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
-          <button class="bk-nav-back" type="button">Back</button>
-        </div>
-      </fieldset>
-
-      <fieldset class="bk-card" data-step="refs" hidden>
-        <legend class="bk-q">Any references?</legend>
-        <p class="bk-hint">Emmy will ask for photos in the chat once you send. If you have a link handy, drop it here.</p>
-        <label class="bk-f-lbl" for="b-refs">Reference link <span class="bk-f-opt">— optional</span></label>
-        <input id="b-refs" name="refs" type="text" maxlength="100" placeholder="instagram.com/p/…">
-        <div class="bk-nav">
-          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
-          <button class="bk-nav-back" type="button">Back</button>
-        </div>
-      </fieldset>
-
-      <fieldset class="bk-card" data-step="when" hidden>
-        <legend class="bk-q">When suits?</legend>
-        <label class="bk-f-lbl" for="b-when">Availability <span class="bk-f-opt">— optional</span></label>
-        <input id="b-when" name="when" type="text" maxlength="50" placeholder="Weekday mornings">
-        <label class="bk-f-lbl" for="b-email">Email <span class="bk-f-opt">— optional, a backup if WhatsApp fails</span></label>
-        <input id="b-email" name="email" type="email" autocomplete="email" maxlength="70" placeholder="you@example.com">
-        <div class="bk-nav">
-          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
-          <button class="bk-nav-back" type="button">Back</button>
-        </div>
-      </fieldset>
-
-      <fieldset class="bk-card" data-step="notes" hidden>
-        <legend class="bk-q">Anything I should know?</legend>
-        <p class="bk-hint">Allergies, blood thinners, skin conditions, pregnancy — anything that affects the day.</p>
-        <textarea id="b-notes" name="notes" maxlength="150" placeholder="Optional, but it saves a round trip."></textarea>
-        <div class="bk-nav">
-          <button class="bk-f-btn bk-f-go bk-nav-next" type="button">Next</button>
-          <button class="bk-nav-back" type="button">Back</button>
-        </div>
-      </fieldset>
-
-      <fieldset class="bk-card" data-step="review" hidden>
-        <legend class="bk-q">Ready to send?</legend>
-        <dl class="bk-rev" id="b-rev"></dl>
-        <label class="bk-f-chk">
-          <input id="b-age18" name="age18" type="checkbox">
-          <span>I confirm I am 18 or over.</span>
-        </label>
-        <p class="bk-consent">Photo ID is checked on the day. Send opens WhatsApp with this message ready — you press send, and Emmy will ask for photos in the chat.</p>
-        <div class="bk-nav">
-          <button class="bk-f-btn bk-f-go" type="submit">Send on WhatsApp</button>
-          <button class="bk-nav-back" type="button">Back</button>
-        </div>
-      </fieldset>
-
-      <!-- No data-step: deliberately outside the step machine, so it never counts
-           toward "1 of 8" and Next can never walk into it. -->
-      <fieldset class="bk-card bk-done" id="b-done" hidden>
-        <legend class="bk-q">Opening WhatsApp…</legend>
-        <p>Your message is ready — you still need to press send in WhatsApp for it to reach Emmy.</p>
-        <p class="bk-hint">She'll ask for your reference photos right there in the chat.</p>
-        <a class="bk-f-btn bk-f-alt" id="b-open" target="_blank" rel="noopener">Open WhatsApp</a>
-      </fieldset>
-
-      <input type="checkbox" name="botcheck" id="b-botcheck" class="bk-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-
-      <p class="bk-f-note">Consultation is free · Priced by piece, not by hour</p>
-      <p class="bk-f-msg" id="b-msg" hidden></p>
-    </form>
-
-    <!-- Deposit — revealed only once a payment link is configured -->
-    <div class="bk-dep" id="bk-dep" hidden>
-      <div class="bk-dep-l">
-        <span class="bk-dep-h">Secure your date</span>
-        <p class="bk-dep-p">Deposits are non-refundable and come off the final price. Pay once we've agreed a date and the slot is yours.</p>
-      </div>
-      <a class="bk-f-btn bk-f-go" id="bk-dep-btn" target="_blank" rel="noopener">Pay deposit</a>
+    <!-- The enquiry form lives on /book. Keeping it off the homepage keeps this
+         section a pitch, and keeps the ask on a page that loads no CDN libs. -->
+    <div class="bk-cta">
+      <a class="bk-f-btn bk-f-go" href="/book">Book now</a>
+      <p class="bk-f-note"><span>Consultation is free</span> · <span>Priced by piece, not by hour</span></p>
     </div>
 
   </div>
@@ -3987,10 +3568,6 @@ function __boot() {
       { y: 0, opacity: 1, stagger: .13, duration: 1.3, ease: 'expo.out', delay: .1,
         scrollTrigger: { trigger: '#book', start: 'top 80%', once: true } }
     );
-    gsap.to('.bk-rule', {
-      opacity: 1, scaleX: 1, duration: .9, ease: 'expo.out', delay: .4,
-      scrollTrigger: { trigger: '#book', start: 'top 76%', once: true }
-    });
     gsap.to('.bk-sub', {
       opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: .32,
       scrollTrigger: { trigger: '#book', start: 'top 76%', once: true }
@@ -3999,7 +3576,7 @@ function __boot() {
       opacity: 1, y: 0, duration: .9, ease: 'expo.out', delay: .44,
       scrollTrigger: { trigger: '#book', start: 'top 74%', once: true }
     });
-    gsap.fromTo('.bk-form',
+    gsap.fromTo('.bk-cta',
       { opacity: 0, y: 28 },
       { opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: .6,
         scrollTrigger: { trigger: '#book', start: 'top 70%', once: true } }
@@ -4233,235 +3810,6 @@ else __boot();
       }
     };
   })();
-})();
-</script>
-<!-- ════ ENQUIRY FORM + DEPOSIT ════ -->
-<!-- Top-level, NOT inside __boot: __boot returns at its lib guard when the GSAP/Lenis
-     CDN fails, and the one thing on this page that must never break is the ask. -->
-<script>
-(function () {
-  /* ── Configure this and nothing else ──────────────────────────────────────
-     DEPOSIT  Stripe Payment Link plus the amount shown on the button. Empty
-              url = the whole deposit block stays hidden.                     */
-  var DEPOSIT = { url: '', amount: '' };
-  /* ─────────────────────────────────────────────────────────────────────────── */
-
-  var WA_NUMBER = '447405979137';
-  var MSG_MAX   = 1000;
-
-  /* FIELDS is the single source of truth for keys, caps and labels. Both
-     variants carry the same `name` attributes and are read through it, so they
-     compose a byte-identical message.
-     The caps are chosen so a maximally long submission still fits: the values
-     total 810 and the scaffold 146, worst case 956. WhatsApp accepts an
-     8000-character URL but truncates prefilled text in the compose box above
-     roughly 1000, and a silently truncated enquiry is worse than a short one. */
-  var FIELDS = [
-    { key: 'name',      max: 40,  label: null },
-    { key: 'idea',      max: 300, label: 'Idea' },
-    { key: 'placement', max: 50,  label: 'Placement' },
-    { key: 'size',      max: 30,  label: 'Size' },
-    { key: 'budget',    max: 20,  label: 'Budget' },
-    { key: 'when',      max: 50,  label: 'When suits' },
-    { key: 'notes',     max: 150, label: 'Anything to know' },
-    { key: 'email',     max: 70,  label: 'Email' },
-    { key: 'refs',      max: 100, label: 'Reference' }
-  ];
-
-  /* The variant was resolved before first paint by the script in <head>. The
-     loser is REMOVED, not hidden: a hidden field is still submitted, still read
-     by readFields, and still reachable by keyboard and screen reader. */
-  var VARIANT = document.documentElement.dataset.form === 'a' ? 'a' : 'b';
-  var dead = document.querySelector('[data-variant="' + (VARIANT === 'a' ? 'b' : 'a') + '"]');
-  if (dead) dead.remove();
-
-  var form = document.querySelector('[data-variant="' + VARIANT + '"]');
-  if (!form) return;
-
-  function P(id) { return document.getElementById(VARIANT + '-' + id); }
-  var msg      = P('msg');
-  var doneCard = P('done');
-  var openLink = P('open');
-  var bar      = P('bar');     /* variant B only */
-  var count    = P('count');   /* variant B only */
-  var revList  = P('rev');     /* variant B only */
-
-  function say(state, text) {
-    msg.hidden = false;
-    msg.setAttribute('data-state', state);
-    msg.textContent = text;
-  }
-
-  /* Whitespace is collapsed so every field stays on one labelled line and the
-     length budget above is exact. maxlength blocks typing and pasting past the
-     cap; the slice also covers autofill and programmatic set. */
-  function readFields(scope) {
-    var out = {};
-    FIELDS.forEach(function (f) {
-      var el = scope.querySelector('[name="' + f.key + '"]');
-      out[f.key] = el ? String(el.value || '').replace(/\s+/g, ' ').trim().slice(0, f.max) : '';
-    });
-    return out;
-  }
-
-  /* Empty optionals are dropped rather than filled with a placeholder. The old
-     em-dash filler existed only because Meta rejected empty template
-     parameters, and there is no template any more. */
-  function waMessage(v) {
-    var lines = ['Tattoo enquiry — ' + v.name, ''];
-    FIELDS.forEach(function (f) {
-      if (!f.label || !v[f.key]) return;
-      lines.push(f.label + ': ' + v[f.key]);
-    });
-    lines.push('', 'Confirmed 18+. Sent from emmytattoo.com');
-    var text = lines.join('\n');
-    /* Defensive only — the caps above already keep this under MSG_MAX. It exists
-       so adding a field without recomputing the budget degrades instead of
-       shipping a message WhatsApp cuts in half. */
-    return text.length > MSG_MAX ? text.slice(0, MSG_MAX - 1) + '…' : text;
-  }
-
-  function waUrl(text) {
-    return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(text);
-  }
-
-  /* ── Step machine — variant B only; variant A has no cards ───────────────── */
-
-  var steps = [].slice.call(form.querySelectorAll('.bk-card[data-step]'));
-  var at = 0;
-
-  function stepOf(i) { return steps[i].dataset.step; }
-
-  function okStep(i) {
-    var k = stepOf(i);
-    if (k === 'name' && !P('name').value.trim()) {
-      say('err', 'Emmy needs a name to call you.'); return false;
-    }
-    if (k === 'idea' && !P('idea').value.trim()) {
-      say('err', 'Tell Emmy the idea, even roughly.'); return false;
-    }
-    return true;
-  }
-
-  function row(term, value) {
-    if (!value) return;
-    var dt = document.createElement('dt'); dt.textContent = term;
-    var dd = document.createElement('dd'); dd.textContent = value;
-    revList.appendChild(dt); revList.appendChild(dd);
-  }
-
-  function paintReview() {
-    var v = readFields(form);
-    revList.innerHTML = '';
-    row('Name', v.name);
-    FIELDS.forEach(function (f) { if (f.label) row(f.label, v[f.key]); });
-  }
-
-  function show(i) {
-    at = i;
-    for (var n = 0; n < steps.length; n++) steps[n].hidden = n !== i;
-    doneCard.hidden = true;
-    bar.style.width = ((i + 1) / steps.length * 100) + '%';
-    count.textContent = (i + 1) + ' of ' + steps.length;
-    msg.hidden = true;
-    if (stepOf(i) === 'review') paintReview();
-    var first = steps[i].querySelector('input, textarea, select, button');
-    /* preventScroll or the browser fights Lenis and yanks the page. */
-    if (first) try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); }
-  }
-
-  function next() { if (okStep(at) && at < steps.length - 1) show(at + 1); }
-  function back() { if (at > 0) show(at - 1); }
-
-  if (steps.length) {
-    form.addEventListener('click', function (e) {
-      var t = e.target.closest ? e.target.closest('.bk-nav-next, .bk-nav-back') : null;
-      if (!t) return;
-      if (t.classList.contains('bk-nav-next')) next(); else back();
-    });
-
-    form.addEventListener('keydown', function (e) {
-      if (e.key !== 'Enter') return;
-      var t = e.target;
-      if (t.isContentEditable) return;
-      var tag = (t.tagName || '').toLowerCase();
-      if (tag === 'button') return;                       /* let the button fire */
-      if (tag === 'textarea' && !(e.ctrlKey || e.metaKey)) return;   /* newline */
-      if (stepOf(at) === 'review') return;                /* submit handles it */
-      e.preventDefault();
-      next();
-    });
-  }
-
-  /* ── Send ─────────────────────────────────────────────────────────────────
-     Nothing here can fail the enquiry: the message is composed locally and
-     handed to WhatsApp. The POST is a fire-and-forget backup so an abandoned
-     submission is not lost, and its outcome is never shown to the visitor. */
-
-  function fail(el, stepKey, text) {
-    if (steps.length && stepKey) {
-      for (var i = 0; i < steps.length; i++) if (stepOf(i) === stepKey) { show(i); break; }
-    }
-    say('err', text);
-    if (el) try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
-    return false;
-  }
-
-  function backup(v) {
-    var hp = form.querySelector('[name="botcheck"]');
-    var payload = {};
-    FIELDS.forEach(function (f) { payload[f.key] = v[f.key]; });
-    payload.variant = VARIANT;
-    payload.botcheck = hp && hp.checked ? 1 : 0;
-    var body = JSON.stringify(payload);
-    try {
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon('/api/enquiry', new Blob([body], { type: 'application/json' }));
-      } else {
-        fetch('/api/enquiry', {
-          method: 'POST', headers: { 'content-type': 'application/json' },
-          body: body, keepalive: true
-        });
-      }
-    } catch (e) {}
-  }
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    var nameEl = P('name'), ideaEl = P('idea'), ageEl = P('age18');
-    if (!nameEl.value.trim()) return fail(nameEl, 'name', 'Emmy needs a name to call you.');
-    if (!ideaEl.value.trim()) return fail(ideaEl, 'idea', 'Tell Emmy the idea, even roughly.');
-    /* 18+ is a legal gate, not a nicety — see FAQ 06. It blocks both variants. */
-    if (!ageEl.checked) return fail(ageEl, 'review', 'Emmy can only tattoo over-18s — please confirm.');
-
-    var v = readFields(form);
-    var url = waUrl(waMessage(v));
-
-    /* Backup first, but never awaited: an await here would put the open outside
-       the user gesture and the popup blocker would eat it. */
-    backup(v);
-
-    window.open(url, '_blank', 'noopener');
-
-    /* Shown whether or not the open was blocked; the link is the one-tap path
-       back for anyone whose browser refused it. */
-    openLink.href = url;
-    for (var n = 0; n < steps.length; n++) steps[n].hidden = true;
-    msg.hidden = true;
-    doneCard.hidden = false;
-    try { openLink.focus({ preventScroll: true }); } catch (err) {}
-  });
-
-  if (steps.length) show(0);
-
-  if (DEPOSIT.url) {
-    var dep = document.getElementById('bk-dep');
-    var depBtn = document.getElementById('bk-dep-btn');
-    depBtn.href = DEPOSIT.url;
-    if (DEPOSIT.amount) depBtn.textContent = 'Pay ' + DEPOSIT.amount + ' deposit';
-    dep.hidden = false;
-  }
 })();
 </script>
 
