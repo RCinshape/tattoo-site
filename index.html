@@ -231,7 +231,7 @@
     :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
         .bk-av, .bk-sub, .bk-cta, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
-        .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
+        .fl-left,
         .exp-h2, .faq-h2, .bk-h2) {
       opacity: 1 !important; transform: none !important;
       filter: none !important; clip-path: none !important;
@@ -275,15 +275,7 @@
       --gold-rgb:  196,162,98;
       /* Exactly one gold per palette — no display/text split. Decorative gold
          ink carries its alpha in its token, never in `opacity`: GSAP writes
-         inline opacity and it outranks any CSS opacity rule.
-         The gift voucher's ink, in two weights: --gc-ink for the illustration
-         beside the copy, --gc-ink-wm for the phone layout where it sits behind
-         the copy. Light leaves the gold family entirely: gold's lightness is
-         72.9 against paper at 95.7, so it tops out at 1.23:1 and reads washed
-         out, while text ink at .26 gives 1.84:1 — graphite on cream, which is
-         what the artwork is. */
-      --gc-ink:    rgba(var(--gold-rgb),.12);
-      --gc-ink-wm: rgba(var(--gold-rgb),.10);
+         inline opacity and it outranks any CSS opacity rule. */
       --fg-rgb:    255,255,255;   /* borders + faint washes */
       --panel-rgb: 10,10,10;      /* nav/menu/modal scrims, text shadows */
       --on-gold:   #0a0a0a;       /* ink on a gold fill */
@@ -412,8 +404,6 @@
       --cta-shadow-a: 0 4px 16px rgba(var(--gold-rgb),.20), 0 1px 6px rgba(var(--fg-rgb),.12);
       --gold-faint: rgba(var(--gold-rgb),.8);
       --gold-soft:  rgba(var(--gold-rgb),.95);
-      --gc-ink:     rgba(var(--fg-rgb),.26);
-      --gc-ink-wm:  rgba(var(--fg-rgb),.14);
       /* No sepia: it emits R>G>B and the brightness that follows clips red first,
          so the highlights of a full-viewport photo converge on olive. Warmth here
          comes from --ambient-hero, which cannot skew channels. */
@@ -1452,96 +1442,6 @@
     }
 
     /* ══════════════════════════════════════════
-       GIFTS SECTION
-    ══════════════════════════════════════════ */
-    #gifts {
-      padding: 110px var(--pad) 120px;
-      background: var(--bg);
-      border-top: 1px solid transparent;
-      border-image: var(--seam) 1;
-      display: flex; flex-direction: row; align-items: center; gap: 72px;
-    }
-    .gf-body {
-      display: flex; flex-direction: column; align-items: flex-start;
-      /* Fixed share for the copy so the ghost panel takes the rest of the row
-         out to the right gutter. */
-      flex: 0 0 clamp(320px, 34%, 520px);
-    }
-    .gf-h2 {
-      font-family: var(--serif);
-      font-size: clamp(2.4rem,5vw,4.2rem);
-      font-weight: 300; line-height: 1; letter-spacing: -.02em;
-      margin-bottom: 22px; margin-top: 0;
-    }
-    .gf-h2 em { font-style: italic; color: var(--gold); }
-    .gf-p {
-      font-size: 1rem; color: var(--fg2);
-      line-height: 1.9; max-width: 440px; margin-bottom: 18px;
-    }
-    /* Occasions as one quiet line, replacing the scattered word field */
-    .gf-occ {
-      font-family: var(--mono); font-size: .62rem;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: var(--dim); margin-bottom: 36px;
-    }
-    .gf-cta {
-      display: flex; align-items: center; gap: 14px;
-      font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .2em; text-transform: uppercase;
-      color: var(--fg); text-decoration: none;
-      border: 1px solid var(--gold-ring);
-      background: rgba(var(--gold-rgb),.04);
-      padding: 18px 36px; border-radius: 100px;
-      position: relative; overflow: hidden;
-      transition: border-color .38s, background .38s, transform .38s var(--out);
-    }
-    .gf-cta::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(115deg, transparent 30%, rgba(var(--gold-rgb),.09) 50%, transparent 70%);
-      transform: translateX(-110%); transition: transform .7s var(--out);
-      pointer-events: none;
-    }
-    .gf-cta:hover::before { transform: translateX(110%); }
-    .gf-cta:hover {
-      border-color: var(--gold-ring-h);
-      background: rgba(var(--gold-rgb),.09);
-      transform: translateY(-3px);
-    }
-    .gf-cta svg { color: var(--gold); flex-shrink: 0; }
-    /* The voucher as a ghost: the artwork is a mask and the paint is a token, so
-       one asset reads correctly in both themes — gold on the dark page, graphite
-       on the light one, with no per-theme filter and no pixels of its own. */
-    .gf-card {
-      flex: 1 1 auto; align-self: center;
-      aspect-ratio: 1091 / 494;
-      background: var(--gc-ink);
-      -webkit-mask-image: url("pictures/web/Emmy-Tattoo-Gift-Card-Voucher-Ink.webp");
-              mask-image: url("pictures/web/Emmy-Tattoo-Gift-Card-Voucher-Ink.webp");
-      -webkit-mask-size: contain; mask-size: contain;
-      -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-      -webkit-mask-position: center; mask-position: center;
-    }
-    @media (max-width: 1024px) {
-      #gifts { flex-direction: column; align-items: stretch; gap: 48px; }
-      .gf-body { flex: none; }
-      .gf-card { width: 100%; }
-    }
-    @media (max-width: 768px) {
-      #gifts { padding: 76px var(--pad) 84px; position: relative; overflow: hidden; }
-      .gf-p { max-width: 100%; }
-      /* On a phone the voucher was a 155px-tall smudge with dead space around it.
-         It becomes the section's watermark instead: out of flow, bleeding past both
-         gutters, centred behind the copy, at the quieter behind-text weight. */
-      .gf-body { position: relative; z-index: 1; }
-      .gf-card {
-        position: absolute; left: -8%; right: -8%; top: 50%;
-        translate: 0 -50%;
-        width: auto; z-index: 0; pointer-events: none;
-        background: var(--gc-ink-wm);
-      }
-    }
-
-    /* ══════════════════════════════════════════
        BOOKING
     ══════════════════════════════════════════ */
     #book {
@@ -1948,6 +1848,11 @@
       font-family: var(--sans); font-size: clamp(.9rem,1.4vw,1.05rem);
       line-height: 1.65; color: var(--fg2);
     }
+    /* A sibling of the answer, never inside it: the answer text has a
+       word-for-word twin in the FAQPage schema and must not gain a link. */
+    .fq-answer-link { margin-top: 18px; font-family: var(--mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; }
+    .fq-answer-link a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-ring); transition: border-color .3s; }
+    .fq-answer-link a:hover { border-bottom-color: var(--gold); }
 
     @media (max-width: 768px) {
       #faq { padding: 60px var(--pad) 80px; }
@@ -1957,97 +1862,6 @@
       .fq-toggle { width: 30px; height: 30px; font-size: 1rem; }
       .fq-panel-inner { padding: 0 0 30px calc(52px + 1.25rem); }
       .fq-rule { left: 52px; }
-    }
-
-    /* ══════════════════════════════════════════
-       AFTERCARE
-    ══════════════════════════════════════════ */
-    #aftercare {
-      padding: 80px var(--pad) 100px;
-      background: var(--bg);
-      border-top: 1px solid transparent;
-      border-image: var(--seam) 1;
-    }
-    .ac-hd {
-      max-width: 680px; margin-bottom: 64px;
-    }
-    .ac-h2 {
-      font-family: var(--serif);
-      font-size: clamp(2rem,4.5vw,3.8rem);
-      font-weight: 300; letter-spacing: -.02em; line-height: 1.1;
-      margin-bottom: 20px;
-    }
-    .ac-h2 em { font-style: italic; color: var(--gold); }
-    .ac-sub {
-      font-family: var(--sans); font-size: 1rem;
-      color: var(--fg2); line-height: 1.8; max-width: 520px;
-    }
-    .ac-phases {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0;
-    }
-    .ac-phase {
-      padding: 40px 40px 40px 0;
-      border-left: 1px solid var(--border);
-      padding-left: 40px;
-    }
-    .ac-phase:first-child { border-left: none; padding-left: 0; }
-    .ac-phase-tag {
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg2); margin-bottom: 14px; display: block;
-    }
-    .ac-phase-title {
-      font-family: var(--serif); font-size: 1.45rem;
-      font-weight: 300; font-style: italic;
-      line-height: 1.2; margin-bottom: 20px;
-      color: var(--fg);
-    }
-    .ac-phase-list {
-      list-style: none;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .ac-phase-list li {
-      font-family: var(--sans); font-size: .9rem;
-      color: var(--fg2); line-height: 1.7;
-      padding-left: 18px; position: relative;
-    }
-    .ac-phase-list li::before {
-      content: '—';
-      position: absolute; left: 0;
-      color: var(--gold); opacity: .55;
-      font-size: .85rem;
-    }
-    .ac-note {
-      margin-top: 56px;
-      padding: 28px 32px;
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      display: flex; align-items: flex-start; gap: 20px;
-      max-width: 680px;
-    }
-    .ac-note-icon {
-      color: var(--gold); flex-shrink: 0; opacity: .8;
-      margin-top: 2px;
-    }
-    .ac-note-text {
-      font-family: var(--sans); font-size: .95rem;
-      color: var(--fg2); line-height: 1.8;
-    }
-    .ac-note-text strong { color: var(--fg); font-weight: 400; }
-    .ac-note-text a {
-      color: var(--fg); text-decoration: underline;
-      text-decoration-color: var(--gold); text-underline-offset: 3px;
-    }
-    @media (max-width: 768px) {
-      #aftercare { padding: 60px var(--pad) 80px; }
-      .ac-phases { grid-template-columns: 1fr; }
-      .ac-phase {
-        border-left: none; padding-left: 0;
-        border-top: 1px solid var(--border); padding-top: 36px;
-      }
-      .ac-phase:first-child { border-top: none; padding-top: 0; }
     }
 
     /* ══════════════════════════════════════════
@@ -2167,7 +1981,7 @@
       font-weight: 400; color: var(--fg);
     }
     .ft-logo em { font-style: italic; color: var(--gold); }
-    .ft-links { display: flex; gap: 22px; justify-self: center; }
+    .ft-links { display: flex; gap: 22px; flex-wrap: wrap; justify-self: center; }
     .ft-a {
       font-family: var(--mono); font-size: .71rem;
       letter-spacing: .18em; text-transform: uppercase;
@@ -2257,7 +2071,7 @@
     html.libs-failed :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
         .bk-av, .bk-sub, .bk-cta, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
-        .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
+        .fl-left,
         .exp-h2, .faq-h2, .bk-h2) {
       opacity: 1 !important; transform: none !important;
       filter: none !important; clip-path: none !important;
@@ -2270,7 +2084,7 @@
       :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
           .bk-av, .bk-sub, .bk-cta, .bk-steps, .loc-map-wrap, .loc-photo,
           .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
-          .ac-hd, .ac-phase, .ac-note, .fl-left, .gf-body,
+          .fl-left,
           .exp-h2, .faq-h2, .bk-h2) {
         opacity: 1 !important; transform: none !important;
         filter: none !important; clip-path: none !important;
@@ -2662,6 +2476,7 @@
             <li>— Worth bringing: earphones, iPads, audiobooks, or anything that helps you pass the time.</li>
             <li>— Feel free to let me know if you want a silent appointment.</li>
           </ul>
+          <p class="fq-answer-link"><a href="/aftercare">Read the full aftercare guide</a></p>
         </div>
       </div>
     </li>
@@ -2764,70 +2579,6 @@
       <p class="bk-f-note"><span>Consultation is free</span> · <span>Priced by piece, not by hour</span></p>
     </div>
 
-  </div>
-</section>
-
-<!-- ════ GIFTS ════ -->
-<section id="gifts">
-  <div class="gf-body">
-    <h2 class="gf-h2">Give someone <span class="h-art">a</span> <em>tattoo.</em></h2>
-    <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount, no expiry, redeemed when they decide.</p>
-    <p class="gf-occ">Birthdays · Christmas · Anniversaries · Just because</p>
-    <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
-       target="_blank" rel="noopener" class="gf-cta">
-      <svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>
-      <span>Enquire via WhatsApp</span>
-    </a>
-  </div>
-  <div class="gf-card" role="img"
-       aria-label="Emmy Tattoo gift voucher: an art nouveau line drawing beside fields for recipient, amount, expiry and signature."></div>
-</section>
-
-<!-- ════ AFTERCARE ════ -->
-<section id="aftercare">
-  <div class="ac-hd">
-    <h2 class="ac-h2">Keep it <em>clean.</em><br>Let it heal.</h2>
-    <p class="ac-sub">A new tattoo is an open wound. How you treat it in the first few days determines how it looks for the rest of your life. Get it right and it'll stay sharp for decades.</p>
-  </div>
-  <div class="ac-phases">
-
-    <div class="ac-phase">
-      <span class="ac-phase-tag">First 24 hours</span>
-      <div class="ac-phase-title">Immediate care</div>
-      <ul class="ac-phase-list">
-        <li>Leave the wrap on for as long as specified</li>
-        <li>When removing, wash gently with unscented soap and warm water</li>
-        <li>Pat dry with a clean paper towel. Don't rub.</li>
-        <li>Apply a thin layer of Palmer's Cocoa Butter. Highly recommended.</li>
-      </ul>
-    </div>
-
-    <div class="ac-phase">
-      <span class="ac-phase-tag">24 – 72 hours</span>
-      <div class="ac-phase-title">The healing window</div>
-      <ul class="ac-phase-list">
-        <li>Moisturise 2–3× daily with Palmer's Cocoa Butter</li>
-        <li>Don't scratch, pick, or peel. Let it flake naturally.</li>
-        <li>Keep it out of direct sunlight while healing</li>
-        <li>No baths, pools, or sea water for at least 3 weeks</li>
-      </ul>
-    </div>
-
-    <div class="ac-phase">
-      <span class="ac-phase-tag">Long term</span>
-      <div class="ac-phase-title">Keeping it sharp</div>
-      <ul class="ac-phase-list">
-        <li>SPF 30+ on healed tattoos whenever you're in the sun</li>
-        <li>Keep skin moisturised. Dry skin dulls the contrast.</li>
-        <li>Sunbeds and UV degrade ink faster than anything else</li>
-        <li>First touch-up is free. Get in touch when fully healed.</li>
-      </ul>
-    </div>
-
-  </div>
-  <div class="ac-note" style="margin-left:auto;margin-right:auto;">
-    <svg class="ac-note-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message me directly</strong>. Don't wait, it's always better to ask early. Reach me on <a href="https://wa.me/447405979137">WhatsApp</a>.</p>
   </div>
 </section>
 
@@ -2972,6 +2723,8 @@
   <span class="ft-logo">Emmy <em>Tattoo</em></span>
   <nav class="ft-links" aria-label="Footer navigation">
     <a href="/portfolio" class="ft-a">Portfolio</a>
+    <a href="/aftercare" class="ft-a">Aftercare</a>
+    <a href="/gift-cards" class="ft-a">Gift cards</a>
     <a href="/legal#privacy" class="ft-a">Privacy &amp; Cookies</a>
     <a href="/legal#terms" class="ft-a">Terms</a>
   </nav>
@@ -3497,35 +3250,11 @@ function __boot() {
       });
     })();
 
-    /* ── Aftercare ── */
-    gsap.fromTo('#aftercare .ac-hd',
-      { opacity: 0, y: 28 },
-      { opacity: 1, y: 0, duration: 1, ease: 'expo.out',
-        scrollTrigger: { trigger: '#aftercare', start: 'top 82%', once: true } }
-    );
-    gsap.fromTo('#aftercare .ac-phase',
-      { opacity: 0, y: 32 },
-      { opacity: 1, y: 0, stagger: .12, duration: .85, ease: 'power3.out',
-        scrollTrigger: { trigger: '#aftercare .ac-phases', start: 'top 84%', once: true } }
-    );
-    gsap.fromTo('#aftercare .ac-note',
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: .8, ease: 'power3.out',
-        scrollTrigger: { trigger: '#aftercare .ac-note', start: 'top 90%', once: true } }
-    );
-
     /* ── Flash Days ── */
     gsap.fromTo('#flash .fl-left',
       { opacity: 0, x: -32 },
       { opacity: 1, x: 0, duration: 1.1, ease: 'expo.out',
         scrollTrigger: { trigger: '#flash', start: 'top 82%', once: true } }
-    );
-
-    /* ── Gifts section ── */
-    gsap.fromTo('#gifts .gf-body',
-      { opacity: 0, y: 28 },
-      { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
-        scrollTrigger: { trigger: '#gifts', start: 'top 82%', once: true } }
     );
 
     /* ── Booking — staggered reveal ── */

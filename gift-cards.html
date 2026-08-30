@@ -4,10 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" id="meta-theme-color" content="#0a0a0a">
-  <title>Privacy, Cookies &amp; Terms | Emmy Tattoo</title>
-  <meta name="description" content="How emmytattoo.com uses cookies and handles your data, plus the terms for using this website.">
+  <title>Gift cards | Emmy Tattoo</title>
+  <meta name="description" content="Most gifts are forgotten. A tattoo isn't. Emmy Tattoo gift cards for any amount, no expiry, redeemed when they decide.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://emmytattoo.com/legal">
+  <link rel="canonical" href="https://emmytattoo.com/gift-cards">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Gift cards | Emmy Tattoo">
+  <meta property="og:description" content="Most gifts are forgotten. A tattoo isn't. Emmy Tattoo gift cards for any amount, no expiry, redeemed when they decide.">
+  <meta property="og:image" content="https://emmytattoo.com/pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg">
+  <meta property="og:url" content="https://emmytattoo.com/gift-cards">
+  <meta property="og:type" content="website">
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c4a262'>✦</text></svg>">
 
@@ -102,6 +109,15 @@
       --gold-ring:   rgba(var(--gold-rgb),.32);
       --gold-ring-h: rgba(var(--gold-rgb),.65);
       --gold-soft:  rgba(var(--gold-rgb),.55);
+      /* Exactly one gold per palette — no display/text split. Decorative gold
+         ink carries its alpha in its token, never in `opacity`: GSAP writes
+         inline opacity and it outranks any CSS opacity rule.
+         The gift voucher's ink, in two weights: --gc-ink for the illustration
+         beside the copy, --gc-ink-wm for the phone layout where it sits behind
+         the copy. Light leaves the gold family entirely: gold's lightness is
+         72.9 against paper at 95.7, so it tops out at 1.23:1 and reads washed
+         out, while text ink at .26 gives 1.84:1 — graphite on cream, which is
+         what the artwork is. */
       /* tapered gradient seam — matches index.html */
       --seam: linear-gradient(90deg,
                 transparent 4%,
@@ -138,6 +154,8 @@
       --gold-ring:   rgba(var(--gold-rgb),.9);
       --gold-ring-h: rgba(var(--gold-rgb),1);
       --gold-soft:  rgba(var(--gold-rgb),.95);
+      --gc-ink:     rgba(var(--fg-rgb),.26);
+      --gc-ink-wm:  rgba(var(--fg-rgb),.14);
     }
 
     @media (max-width: 768px) { :root { --pad: 24px; } }
@@ -213,43 +231,96 @@
     :root[data-theme="dark"]  #theme-toggle .ti-sun  { display: block; }
     :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
 
-    /* ── Page body ── */
-    /* A centred column must not use --pad as its gutter: --pad grows with the
-       viewport (50vw - 720px), so at 1920 it ate 480px of a 760px box and left a
-       280px noodle of text. Fixed inline padding, measure from max-width. */
-    .lg-main { padding: 72px 24px 96px; max-width: 808px; margin: 0 auto; }
-    .lg-eyebrow {
-      display: inline-flex; align-items: center; gap: 12px;
-      font-family: var(--mono); font-size: .74rem;
-      letter-spacing: .28em; text-transform: uppercase;
-      color: var(--fg2); margin-bottom: 16px;
+    /* A lone lowercase article in a display heading — see CLAUDE.md. */
+    .h-art { font-family: var(--display); font-style: normal; font-weight: 400; font-size: 1.12em; }
+
+    /* ══════════════════════════════════════════
+       GIFTS SECTION
+    ══════════════════════════════════════════ */
+    #gifts {
+      padding: 110px var(--pad) 120px;
+      background: var(--bg);
+      display: flex; flex-direction: row; align-items: center; gap: 72px;
     }
-    .lg-eyebrow::before { content: ''; width: 22px; height: 1px; flex: none; background: var(--gold); }
-    .lg-h1 {
-      font-family: var(--serif); font-weight: 300;
-      font-size: clamp(2.4rem, 6vw, 4rem); line-height: 1.05;
-      letter-spacing: -.02em; margin-bottom: 14px;
+    .gf-body {
+      display: flex; flex-direction: column; align-items: flex-start;
+      /* Fixed share for the copy so the ghost panel takes the rest of the row
+         out to the right gutter. */
+      flex: 0 0 clamp(320px, 34%, 520px);
     }
-    .lg-h1 em { font-style: italic; color: var(--gold); }
-    .lg-updated { font-family: var(--mono); font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); margin-bottom: 48px; }
-    .lg-sec { padding-top: 44px; border-top: 1px solid transparent; border-image: var(--seam) 1; margin-top: 44px; }
-    .lg-sec:first-of-type { border: 0; margin-top: 0; padding-top: 0; }
-    .lg-h2 {
-      font-family: var(--serif); font-weight: 300; font-style: italic;
-      font-size: clamp(1.7rem, 3.6vw, 2.4rem); line-height: 1.1;
-      margin-bottom: 24px;
+    .gf-h2 {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem,5vw,4.2rem);
+      font-weight: 300; line-height: 1; letter-spacing: -.02em;
+      margin-bottom: 22px; margin-top: 0;
     }
-    .lg-h3 {
+    .gf-h2 em { font-style: italic; color: var(--gold); }
+    .gf-p {
+      font-size: 1rem; color: var(--fg2);
+      line-height: 1.9; max-width: 440px; margin-bottom: 18px;
+    }
+    /* Occasions as one quiet line, replacing the scattered word field */
+    .gf-occ {
+      font-family: var(--mono); font-size: .62rem;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--dim); margin-bottom: 36px;
+    }
+    .gf-cta {
+      display: flex; align-items: center; gap: 14px;
       font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .22em; text-transform: uppercase;
-      color: var(--fg); margin: 32px 0 10px;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: var(--fg); text-decoration: none;
+      border: 1px solid var(--gold-ring);
+      background: rgba(var(--gold-rgb),.04);
+      padding: 18px 36px; border-radius: 100px;
+      position: relative; overflow: hidden;
+      transition: border-color .38s, background .38s, transform .38s var(--out);
     }
-    .lg-main p { font-size: 1rem; line-height: 1.85; color: var(--fg2); margin-bottom: 14px; }
-    .lg-main ul { list-style: none; margin: 0 0 14px; }
-    .lg-main li { font-size: 1rem; line-height: 1.85; color: var(--fg2); padding-left: 18px; position: relative; }
-    .lg-main li::before { content: '—'; position: absolute; left: 0; color: var(--gold); }
-    .lg-main a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
-    .lg-main code { font-family: var(--mono); font-size: .82em; color: var(--fg); }
+    .gf-cta::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(115deg, transparent 30%, rgba(var(--gold-rgb),.09) 50%, transparent 70%);
+      transform: translateX(-110%); transition: transform .7s var(--out);
+      pointer-events: none;
+    }
+    .gf-cta:hover::before { transform: translateX(110%); }
+    .gf-cta:hover {
+      border-color: var(--gold-ring-h);
+      background: rgba(var(--gold-rgb),.09);
+      transform: translateY(-3px);
+    }
+    .gf-cta svg { color: var(--gold); flex-shrink: 0; }
+    /* The voucher as a ghost: the artwork is a mask and the paint is a token, so
+       one asset reads correctly in both themes — gold on the dark page, graphite
+       on the light one, with no per-theme filter and no pixels of its own. */
+    .gf-card {
+      flex: 1 1 auto; align-self: center;
+      aspect-ratio: 1091 / 494;
+      background: var(--gc-ink);
+      -webkit-mask-image: url("pictures/web/Emmy-Tattoo-Gift-Card-Voucher-Ink.webp");
+              mask-image: url("pictures/web/Emmy-Tattoo-Gift-Card-Voucher-Ink.webp");
+      -webkit-mask-size: contain; mask-size: contain;
+      -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+      -webkit-mask-position: center; mask-position: center;
+    }
+    @media (max-width: 1024px) {
+      #gifts { flex-direction: column; align-items: stretch; gap: 48px; }
+      .gf-body { flex: none; }
+      .gf-card { width: 100%; }
+    }
+    @media (max-width: 768px) {
+      #gifts { padding: 76px var(--pad) 84px; position: relative; overflow: hidden; }
+      .gf-p { max-width: 100%; }
+      /* On a phone the voucher was a 155px-tall smudge with dead space around it.
+         It becomes the section's watermark instead: out of flow, bleeding past both
+         gutters, centred behind the copy, at the quieter behind-text weight. */
+      .gf-body { position: relative; z-index: 1; }
+      .gf-card {
+        position: absolute; left: -8%; right: -8%; top: 50%;
+        translate: 0 -50%;
+        width: auto; z-index: 0; pointer-events: none;
+        background: var(--gc-ink-wm);
+      }
+    }
 
     /* ── Footer (matches index.html) ── */
     footer {
@@ -279,6 +350,11 @@
 </head>
 <body>
 
+<!-- Icon sprite: the gift-card CTA references #i-wa. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></symbol>
+</svg>
+
 <nav id="nav" aria-label="Site navigation">
   <a href="/" class="n-logo">Emmy <em>Tattoo</em></a>
   <div class="n-links">
@@ -304,66 +380,21 @@
   </div>
 </nav>
 
-<main class="lg-main">
-  <div class="lg-eyebrow">Legal</div>
-  <h1 class="lg-h1">Privacy, cookies &amp; <em>terms</em></h1>
-  <p class="lg-updated">Last updated: 22 August 2026</p>
-
-  <section class="lg-sec" id="privacy">
-    <h2 class="lg-h2">Privacy &amp; Cookies</h2>
-
-    <h3 class="lg-h3">Who we are</h3>
-    <p>Emmy Tattoo, a tattoo artist working from Sainthood Tattoo, 80 Princes Avenue, Hull HU5 3QJ. You can reach us on <a href="https://wa.me/447405979137" target="_blank" rel="noopener">WhatsApp (+44 7405 979137)</a> or on Instagram at <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener">@emmy.tattoo</a>.</p>
-
-    <h3 class="lg-h3">What this site collects</h3>
-    <p>There is no account and no newsletter on this website. The booking form on <a href="/book">/book</a> does not send your enquiry anywhere on its own: it composes a message and hands it to WhatsApp, and you press send. A copy of what you typed — name, idea, placement, size, budget, availability, notes, any email or reference link you gave — is stored on our hosting provider's servers for 90 days as a backup in case the WhatsApp handover fails, then deleted automatically. Everything after that happens in WhatsApp or Instagram, where those companies' own privacy policies apply to the conversation.</p>
-
-    <h3 class="lg-h3">Cookies and analytics</h3>
-    <p>The site loads Google Analytics 4, which sets cookies to count visits and see which pages are read. It is configured for page-view measurement only — no advertising, no remarketing and no profiling — and we never see anything that identifies you personally.</p>
-    <p>If you would rather not be counted, block cookies for this site in your browser settings, or read the site in a private/incognito window.</p>
-
-    <h3 class="lg-h3">Other things stored in your browser</h3>
-    <ul>
-      <li><code>emmy-theme</code>, in local storage, remembers whether you chose light, dark or system appearance.</li>
-      <li><code>emmy-intro</code>, in session storage, remembers that the opening animation has already played in this tab.</li>
-    </ul>
-    <p>Neither key is sent anywhere; both stay on your device.</p>
-
-    <h3 class="lg-h3">Third-party content</h3>
-    <ul>
-      <li>The studio map is a Google Maps embed that only loads when you press "Load map".</li>
-      <li>Reviews are fetched from our own Cloudflare Worker, which relays public Google reviews; reviewer profile photos are served by Google.</li>
-      <li>Fonts are served by Google Fonts.</li>
-    </ul>
-    <p>These providers see your IP address when their content loads.</p>
-
-    <h3 class="lg-h3">Hosting</h3>
-    <p>The site is served as static files by our hosting provider, which keeps short-lived logs (IP address, user agent) to run and protect the service.</p>
-
-    <h3 class="lg-h3">Your rights</h3>
-    <p>Under UK GDPR you can ask what data we hold, ask for it to be corrected or deleted, and complain to the Information Commissioner's Office at <a href="https://ico.org.uk" target="_blank" rel="noopener">ico.org.uk</a>. Because this website itself stores nothing that identifies you, most requests will concern the WhatsApp or Instagram conversations you have had with us.</p>
-  </section>
-
-  <section class="lg-sec" id="terms">
-    <h2 class="lg-h2">Website Terms</h2>
-
-    <h3 class="lg-h3">Using this site</h3>
-    <p>You may browse and share links freely. Everything else — the photographs of tattoos, the designs shown in them, the text and the layout — belongs to Emmy Tattoo and may not be copied, reproduced or used to advertise anything else without written permission.</p>
-
-    <h3 class="lg-h3">Tattoo photographs</h3>
-    <p>Images are of real, completed work and are shared with the clients' permission. They are examples, not a promise that a given design can be reproduced identically on different skin.</p>
-
-    <h3 class="lg-h3">No medical advice</h3>
-    <p>The aftercare guidance on this site is general information from a tattoo artist, not medical advice. If a tattoo shows signs of infection, or you have a medical condition that affects healing, speak to a pharmacist or your GP.</p>
-
-    <h3 class="lg-h3">Availability and accuracy</h3>
-    <p>Prices, availability and opening hours change; nothing on this site is a binding offer. We try to keep it accurate but do not guarantee the site is always available or error-free.</p>
-
-    <h3 class="lg-h3">Links out</h3>
-    <p>WhatsApp, Instagram, Facebook, Google Maps and Google Reviews are run by other companies under their own terms.</p>
-
-    <h3 class="lg-h3">Law</h3>
-    <p>These terms are governed by the law of England and Wales.</p>
+<main>
+  <!-- ════ GIFTS ════ -->
+  <section id="gifts">
+    <div class="gf-body">
+      <h1 class="gf-h2">Give someone <span class="h-art">a</span> <em>tattoo.</em></h1>
+      <p class="gf-p">Most gifts are forgotten. A tattoo isn't. Gift cards for any amount, no expiry, redeemed when they decide.</p>
+      <p class="gf-occ">Birthdays · Christmas · Anniversaries · Just because</p>
+      <a href="https://wa.me/447405979137?text=Hi%20Emmy%2C%20I%27d%20love%20to%20purchase%20a%20gift%20card%20%E2%80%94%20could%20you%20help%3F"
+         target="_blank" rel="noopener" class="gf-cta">
+        <svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>
+        <span>Enquire via WhatsApp</span>
+      </a>
+    </div>
+    <div class="gf-card" role="img"
+         aria-label="Emmy Tattoo gift voucher: an art nouveau line drawing beside fields for recipient, amount, expiry and signature."></div>
   </section>
 </main>
 
@@ -373,7 +404,8 @@
     <a href="/" class="ft-a">Home</a>
     <a href="/portfolio" class="ft-a">Portfolio</a>
     <a href="/aftercare" class="ft-a">Aftercare</a>
-    <a href="/gift-cards" class="ft-a">Gift cards</a>
+    <a href="/legal#privacy" class="ft-a">Privacy &amp; Cookies</a>
+    <a href="/legal#terms" class="ft-a">Terms</a>
   </nav>
   <span class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</span>
 </footer>

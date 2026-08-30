@@ -4,10 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" id="meta-theme-color" content="#0a0a0a">
-  <title>Privacy, Cookies &amp; Terms | Emmy Tattoo</title>
-  <meta name="description" content="How emmytattoo.com uses cookies and handles your data, plus the terms for using this website.">
+  <title>Tattoo aftercare | Emmy Tattoo</title>
+  <meta name="description" content="A new tattoo is an open wound. How you treat it in the first few days determines how it looks for the rest of your life. Aftercare from Emmy Tattoo, Hull.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://emmytattoo.com/legal">
+  <link rel="canonical" href="https://emmytattoo.com/aftercare">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Tattoo aftercare | Emmy Tattoo">
+  <meta property="og:description" content="A new tattoo is an open wound. How you treat it in the first few days determines how it looks for the rest of your life. Aftercare from Emmy Tattoo, Hull.">
+  <meta property="og:image" content="https://emmytattoo.com/pictures/Emmy-Tattoo-Artist-Working-Black-and-Grey.jpg">
+  <meta property="og:url" content="https://emmytattoo.com/aftercare">
+  <meta property="og:type" content="website">
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c4a262'>✦</text></svg>">
 
@@ -213,43 +220,94 @@
     :root[data-theme="dark"]  #theme-toggle .ti-sun  { display: block; }
     :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
 
-    /* ── Page body ── */
-    /* A centred column must not use --pad as its gutter: --pad grows with the
-       viewport (50vw - 720px), so at 1920 it ate 480px of a 760px box and left a
-       280px noodle of text. Fixed inline padding, measure from max-width. */
-    .lg-main { padding: 72px 24px 96px; max-width: 808px; margin: 0 auto; }
-    .lg-eyebrow {
-      display: inline-flex; align-items: center; gap: 12px;
-      font-family: var(--mono); font-size: .74rem;
-      letter-spacing: .28em; text-transform: uppercase;
-      color: var(--fg2); margin-bottom: 16px;
+    /* ══════════════════════════════════════════
+       AFTERCARE
+    ══════════════════════════════════════════ */
+    #aftercare {
+      padding: 80px var(--pad) 100px;
+      background: var(--bg);
     }
-    .lg-eyebrow::before { content: ''; width: 22px; height: 1px; flex: none; background: var(--gold); }
-    .lg-h1 {
-      font-family: var(--serif); font-weight: 300;
-      font-size: clamp(2.4rem, 6vw, 4rem); line-height: 1.05;
-      letter-spacing: -.02em; margin-bottom: 14px;
+    .ac-hd {
+      max-width: 680px; margin-bottom: 64px;
     }
-    .lg-h1 em { font-style: italic; color: var(--gold); }
-    .lg-updated { font-family: var(--mono); font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); margin-bottom: 48px; }
-    .lg-sec { padding-top: 44px; border-top: 1px solid transparent; border-image: var(--seam) 1; margin-top: 44px; }
-    .lg-sec:first-of-type { border: 0; margin-top: 0; padding-top: 0; }
-    .lg-h2 {
-      font-family: var(--serif); font-weight: 300; font-style: italic;
-      font-size: clamp(1.7rem, 3.6vw, 2.4rem); line-height: 1.1;
-      margin-bottom: 24px;
+    .ac-h2 {
+      font-family: var(--serif);
+      font-size: clamp(2rem,4.5vw,3.8rem);
+      font-weight: 300; letter-spacing: -.02em; line-height: 1.1;
+      margin-bottom: 20px;
     }
-    .lg-h3 {
-      font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .22em; text-transform: uppercase;
-      color: var(--fg); margin: 32px 0 10px;
+    .ac-h2 em { font-style: italic; color: var(--gold); }
+    .ac-sub {
+      font-family: var(--sans); font-size: 1rem;
+      color: var(--fg2); line-height: 1.8; max-width: 520px;
     }
-    .lg-main p { font-size: 1rem; line-height: 1.85; color: var(--fg2); margin-bottom: 14px; }
-    .lg-main ul { list-style: none; margin: 0 0 14px; }
-    .lg-main li { font-size: 1rem; line-height: 1.85; color: var(--fg2); padding-left: 18px; position: relative; }
-    .lg-main li::before { content: '—'; position: absolute; left: 0; color: var(--gold); }
-    .lg-main a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
-    .lg-main code { font-family: var(--mono); font-size: .82em; color: var(--fg); }
+    .ac-phases {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .ac-phase {
+      padding: 40px 40px 40px 0;
+      border-left: 1px solid var(--border);
+      padding-left: 40px;
+    }
+    .ac-phase:first-child { border-left: none; padding-left: 0; }
+    .ac-phase-tag {
+      font-family: var(--mono); font-size: .68rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--fg2); margin-bottom: 14px; display: block;
+    }
+    .ac-phase-title {
+      font-family: var(--serif); font-size: 1.45rem;
+      font-weight: 300; font-style: italic;
+      line-height: 1.2; margin-bottom: 20px;
+      color: var(--fg);
+    }
+    .ac-phase-list {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .ac-phase-list li {
+      font-family: var(--sans); font-size: .9rem;
+      color: var(--fg2); line-height: 1.7;
+      padding-left: 18px; position: relative;
+    }
+    .ac-phase-list li::before {
+      content: '—';
+      position: absolute; left: 0;
+      color: var(--gold); opacity: .55;
+      font-size: .85rem;
+    }
+    .ac-note {
+      margin-top: 56px;
+      padding: 28px 32px;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      display: flex; align-items: flex-start; gap: 20px;
+      max-width: 680px;
+    }
+    .ac-note-icon {
+      color: var(--gold); flex-shrink: 0; opacity: .8;
+      margin-top: 2px;
+    }
+    .ac-note-text {
+      font-family: var(--sans); font-size: .95rem;
+      color: var(--fg2); line-height: 1.8;
+    }
+    .ac-note-text strong { color: var(--fg); font-weight: 400; }
+    .ac-note-text a {
+      color: var(--fg); text-decoration: underline;
+      text-decoration-color: var(--gold); text-underline-offset: 3px;
+    }
+    @media (max-width: 768px) {
+      #aftercare { padding: 60px var(--pad) 80px; }
+      .ac-phases { grid-template-columns: 1fr; }
+      .ac-phase {
+        border-left: none; padding-left: 0;
+        border-top: 1px solid var(--border); padding-top: 36px;
+      }
+      .ac-phase:first-child { border-top: none; padding-top: 0; }
+    }
 
     /* ── Footer (matches index.html) ── */
     footer {
@@ -304,66 +362,53 @@
   </div>
 </nav>
 
-<main class="lg-main">
-  <div class="lg-eyebrow">Legal</div>
-  <h1 class="lg-h1">Privacy, cookies &amp; <em>terms</em></h1>
-  <p class="lg-updated">Last updated: 22 August 2026</p>
+<main>
+  <!-- ════ AFTERCARE ════ -->
+  <section id="aftercare">
+    <div class="ac-hd">
+      <h1 class="ac-h2">Keep it <em>clean.</em><br>Let it heal.</h1>
+      <p class="ac-sub">A new tattoo is an open wound. How you treat it in the first few days determines how it looks for the rest of your life. Get it right and it'll stay sharp for decades.</p>
+    </div>
+    <div class="ac-phases">
 
-  <section class="lg-sec" id="privacy">
-    <h2 class="lg-h2">Privacy &amp; Cookies</h2>
+      <div class="ac-phase">
+        <span class="ac-phase-tag">First 24 hours</span>
+        <div class="ac-phase-title">Immediate care</div>
+        <ul class="ac-phase-list">
+          <li>Leave the wrap on for as long as specified</li>
+          <li>When removing, wash gently with unscented soap and warm water</li>
+          <li>Pat dry with a clean paper towel. Don't rub.</li>
+          <li>Apply a thin layer of Palmer's Cocoa Butter. Highly recommended.</li>
+        </ul>
+      </div>
 
-    <h3 class="lg-h3">Who we are</h3>
-    <p>Emmy Tattoo, a tattoo artist working from Sainthood Tattoo, 80 Princes Avenue, Hull HU5 3QJ. You can reach us on <a href="https://wa.me/447405979137" target="_blank" rel="noopener">WhatsApp (+44 7405 979137)</a> or on Instagram at <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener">@emmy.tattoo</a>.</p>
+      <div class="ac-phase">
+        <span class="ac-phase-tag">24 – 72 hours</span>
+        <div class="ac-phase-title">The healing window</div>
+        <ul class="ac-phase-list">
+          <li>Moisturise 2–3× daily with Palmer's Cocoa Butter</li>
+          <li>Don't scratch, pick, or peel. Let it flake naturally.</li>
+          <li>Keep it out of direct sunlight while healing</li>
+          <li>No baths, pools, or sea water for at least 3 weeks</li>
+        </ul>
+      </div>
 
-    <h3 class="lg-h3">What this site collects</h3>
-    <p>There is no account and no newsletter on this website. The booking form on <a href="/book">/book</a> does not send your enquiry anywhere on its own: it composes a message and hands it to WhatsApp, and you press send. A copy of what you typed — name, idea, placement, size, budget, availability, notes, any email or reference link you gave — is stored on our hosting provider's servers for 90 days as a backup in case the WhatsApp handover fails, then deleted automatically. Everything after that happens in WhatsApp or Instagram, where those companies' own privacy policies apply to the conversation.</p>
+      <div class="ac-phase">
+        <span class="ac-phase-tag">Long term</span>
+        <div class="ac-phase-title">Keeping it sharp</div>
+        <ul class="ac-phase-list">
+          <li>SPF 30+ on healed tattoos whenever you're in the sun</li>
+          <li>Keep skin moisturised. Dry skin dulls the contrast.</li>
+          <li>Sunbeds and UV degrade ink faster than anything else</li>
+          <li>First touch-up is free. Get in touch when fully healed.</li>
+        </ul>
+      </div>
 
-    <h3 class="lg-h3">Cookies and analytics</h3>
-    <p>The site loads Google Analytics 4, which sets cookies to count visits and see which pages are read. It is configured for page-view measurement only — no advertising, no remarketing and no profiling — and we never see anything that identifies you personally.</p>
-    <p>If you would rather not be counted, block cookies for this site in your browser settings, or read the site in a private/incognito window.</p>
-
-    <h3 class="lg-h3">Other things stored in your browser</h3>
-    <ul>
-      <li><code>emmy-theme</code>, in local storage, remembers whether you chose light, dark or system appearance.</li>
-      <li><code>emmy-intro</code>, in session storage, remembers that the opening animation has already played in this tab.</li>
-    </ul>
-    <p>Neither key is sent anywhere; both stay on your device.</p>
-
-    <h3 class="lg-h3">Third-party content</h3>
-    <ul>
-      <li>The studio map is a Google Maps embed that only loads when you press "Load map".</li>
-      <li>Reviews are fetched from our own Cloudflare Worker, which relays public Google reviews; reviewer profile photos are served by Google.</li>
-      <li>Fonts are served by Google Fonts.</li>
-    </ul>
-    <p>These providers see your IP address when their content loads.</p>
-
-    <h3 class="lg-h3">Hosting</h3>
-    <p>The site is served as static files by our hosting provider, which keeps short-lived logs (IP address, user agent) to run and protect the service.</p>
-
-    <h3 class="lg-h3">Your rights</h3>
-    <p>Under UK GDPR you can ask what data we hold, ask for it to be corrected or deleted, and complain to the Information Commissioner's Office at <a href="https://ico.org.uk" target="_blank" rel="noopener">ico.org.uk</a>. Because this website itself stores nothing that identifies you, most requests will concern the WhatsApp or Instagram conversations you have had with us.</p>
-  </section>
-
-  <section class="lg-sec" id="terms">
-    <h2 class="lg-h2">Website Terms</h2>
-
-    <h3 class="lg-h3">Using this site</h3>
-    <p>You may browse and share links freely. Everything else — the photographs of tattoos, the designs shown in them, the text and the layout — belongs to Emmy Tattoo and may not be copied, reproduced or used to advertise anything else without written permission.</p>
-
-    <h3 class="lg-h3">Tattoo photographs</h3>
-    <p>Images are of real, completed work and are shared with the clients' permission. They are examples, not a promise that a given design can be reproduced identically on different skin.</p>
-
-    <h3 class="lg-h3">No medical advice</h3>
-    <p>The aftercare guidance on this site is general information from a tattoo artist, not medical advice. If a tattoo shows signs of infection, or you have a medical condition that affects healing, speak to a pharmacist or your GP.</p>
-
-    <h3 class="lg-h3">Availability and accuracy</h3>
-    <p>Prices, availability and opening hours change; nothing on this site is a binding offer. We try to keep it accurate but do not guarantee the site is always available or error-free.</p>
-
-    <h3 class="lg-h3">Links out</h3>
-    <p>WhatsApp, Instagram, Facebook, Google Maps and Google Reviews are run by other companies under their own terms.</p>
-
-    <h3 class="lg-h3">Law</h3>
-    <p>These terms are governed by the law of England and Wales.</p>
+    </div>
+    <div class="ac-note" style="margin-left:auto;margin-right:auto;">
+      <svg class="ac-note-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message me directly</strong>. Don't wait, it's always better to ask early. Reach me on <a href="https://wa.me/447405979137">WhatsApp</a>.</p>
+    </div>
   </section>
 </main>
 
@@ -372,8 +417,9 @@
   <nav class="ft-links" aria-label="Footer navigation">
     <a href="/" class="ft-a">Home</a>
     <a href="/portfolio" class="ft-a">Portfolio</a>
-    <a href="/aftercare" class="ft-a">Aftercare</a>
     <a href="/gift-cards" class="ft-a">Gift cards</a>
+    <a href="/legal#privacy" class="ft-a">Privacy &amp; Cookies</a>
+    <a href="/legal#terms" class="ft-a">Terms</a>
   </nav>
   <span class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</span>
 </footer>
