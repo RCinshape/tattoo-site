@@ -333,6 +333,58 @@
        moment the field took focus. */
     .bk-form select:focus-visible { outline: none; border-color: var(--gold-ring-h); }
     .bk-form input::placeholder, .bk-form textarea::placeholder { color: var(--dim); }
+    /* ── Availability day picker ──
+       A native <details>, not a JS-rendered listbox: the tick list expands in
+       normal flow and pushes the fields below down, so there is no popup to
+       position, no z-index, no clipping and no outside-click handler. The
+       summary is painted to match .bk-form select exactly — same --field fill,
+       same border, same radius, same 14/16 padding — because it sits directly
+       under three real selects and any difference reads as a broken field. */
+    .bk-days-sum {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      font-family: var(--sans); font-size: .95rem; color: var(--fg);
+      background: var(--field);
+      border: 1px solid var(--border); border-radius: var(--r);
+      padding: 14px 16px; cursor: pointer; list-style: none;
+      transition: border-color .3s, background .3s;
+    }
+    .bk-days-sum::-webkit-details-marker { display: none; }
+    .bk-days-sum:focus-visible { outline: none; border-color: var(--gold-ring-h); }
+    /* Same caret SVG as .bk-form select, as a pseudo-element rather than a
+       background-image, because a background cannot be rotated on open. */
+    .bk-days-sum::after {
+      content: ''; width: 12px; height: 8px; flex: 0 0 auto;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23c4a262' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center;
+      transition: transform .3s;
+    }
+    .bk-days[open] .bk-days-sum { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+    .bk-days[open] .bk-days-sum::after { transform: rotate(180deg); }
+    .bk-days-list {
+      display: grid; gap: 2px; padding: 8px;
+      background: var(--field);
+      border: 1px solid var(--border); border-top: 0;
+      border-radius: 0 0 var(--r) var(--r);
+    }
+    .bk-day {
+      display: flex; align-items: center; gap: 11px;
+      padding: 9px 10px; border-radius: 8px;
+      font-family: var(--sans); font-size: .92rem; color: var(--fg2);
+      cursor: pointer; transition: background .2s, color .2s;
+    }
+    .bk-day:hover { background: rgba(var(--gold-rgb),.06); color: var(--fg); }
+    /* Any day is exclusive, so it is ruled off from the seven it locks out. */
+    .bk-day-any { border-bottom: 1px solid var(--border); border-radius: 8px 8px 0 0; margin-bottom: 4px; }
+    .bk-day.is-off { opacity: .4; cursor: not-allowed; }
+    .bk-day.is-off:hover { background: none; color: var(--fg2); }
+    /* The same trap .bk-f-chk documents above: `.bk-form input` sets width 100%,
+       a padded bordered box and appearance:none, and would turn every tick into
+       a full-width empty rectangle. Two classes outrank it. */
+    .bk-form .bk-day input {
+      width: 17px; height: 17px; flex: 0 0 auto; margin: 0;
+      padding: 0; border: 0; border-radius: 0; background: none;
+      -webkit-appearance: checkbox; appearance: checkbox;
+      accent-color: var(--gold);
+    }
     /* Honeypot: off-screen rather than display:none, which some bots skip. */
     .bk-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
     .bk-f-btn {
@@ -537,8 +589,21 @@
       </select>
     </div>
     <div>
-      <label class="bk-f-lbl" for="f-when">Availability <span class="bk-f-opt">— optional</span></label>
-      <input id="f-when" name="when" type="text" maxlength="50" placeholder="Weekday mornings">
+      <span class="bk-f-lbl" id="f-days-lbl">Availability <span class="bk-f-opt">— optional</span></span>
+      <details class="bk-days" id="f-days">
+        <summary class="bk-days-sum" aria-labelledby="f-days-lbl f-days-txt"><span id="f-days-txt">Not sure yet</span></summary>
+        <div class="bk-days-list" role="group" aria-labelledby="f-days-lbl">
+          <label class="bk-day bk-day-any"><input type="checkbox" id="f-day-any"><span>Any day</span></label>
+          <label class="bk-day"><input type="checkbox" data-day="Mon"><span>Monday</span></label>
+          <label class="bk-day"><input type="checkbox" data-day="Tue"><span>Tuesday</span></label>
+          <label class="bk-day"><input type="checkbox" data-day="Wed"><span>Wednesday</span></label>
+          <label class="bk-day"><input type="checkbox" data-day="Thu"><span>Thursday</span></label>
+          <label class="bk-day"><input type="checkbox" data-day="Fri"><span>Friday</span></label>
+          <label class="bk-day"><input type="checkbox" data-day="Sat"><span>Saturday</span></label>
+          <label class="bk-day"><input type="checkbox" data-day="Sun"><span>Sunday</span></label>
+        </div>
+      </details>
+      <input type="hidden" name="when" id="f-when">
     </div>
     <div>
       <label class="bk-f-lbl" for="f-notes">Anything I should know? <span class="bk-f-opt">— optional</span></label>
@@ -631,8 +696,10 @@
      total 810 and the scaffold 146, worst case 956. WhatsApp accepts an
      8000-character URL but truncates prefilled text in the compose box above
      roughly 1000, and a silently truncated enquiry is worse than a short one.
-     placement and size are <select>s; their caps only need to clear the
-     longest option ("Extra large — 25 cm and up", 26). */
+     placement, size and budget are <select>s and when is a tick list; their
+     caps only need to clear the longest value ("Extra large — 25 cm and up",
+     26, and all seven days joined, 33). No field on this form is free text
+     except name, email, idea, notes and refs, which carry maxlength. */
   var FIELDS = [
     { key: 'name',      max: 40,  label: null },
     { key: 'email',     max: 70,  label: 'Email' },
@@ -651,6 +718,38 @@
   var msg      = document.getElementById('f-msg');
   var doneCard = document.getElementById('f-done');
   var openLink = document.getElementById('f-open');
+
+  /* ── Availability day picker ──────────────────────────────────────────────
+     The visible ticks carry no name, so readFields never sees them; the hidden
+     #f-when is the only [name="when"] in the form and is the single value both
+     the WhatsApp message and the backup POST read. "Any day" is exclusive: while
+     it is ticked the seven weekdays are disabled, not merely cleared, so the
+     contradiction of "any day, but only Tuesday" cannot be expressed at all.
+     Worst case is all seven short names — 33 characters, inside the 50 cap. */
+  var daysTxt = document.getElementById('f-days-txt');
+  var whenEl  = document.getElementById('f-when');
+  var anyEl   = document.getElementById('f-day-any');
+  var dayEls  = [].slice.call(document.querySelectorAll('#f-days [data-day]'));
+
+  function syncDays() {
+    var any = anyEl.checked;
+    dayEls.forEach(function (el) {
+      el.disabled = any;
+      el.parentNode.classList.toggle('is-off', any);
+    });
+    var picked = dayEls.filter(function (el) { return el.checked; })
+                       .map(function (el) { return el.getAttribute('data-day'); });
+    var value = any ? 'Any day' : picked.join(', ');
+    whenEl.value = value;
+    daysTxt.textContent = value || 'Not sure yet';
+  }
+
+  anyEl.addEventListener('change', function () {
+    if (anyEl.checked) dayEls.forEach(function (el) { el.checked = false; });
+    syncDays();
+  });
+  dayEls.forEach(function (el) { el.addEventListener('change', syncDays); });
+  syncDays();
 
   function say(state, text) {
     msg.hidden = false;
