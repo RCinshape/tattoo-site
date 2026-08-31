@@ -1887,6 +1887,7 @@
       color: var(--fg2); transition: color .25s, border-color .25s, background .25s;
     }
     .loc-btn:hover { color: var(--fg); border-color: var(--border-h); }
+    .loc-lbl-short { display: none; }
     /* Neutral at rest; brand colour appears on hover only */
     .loc-btn.loc-btn-waze:hover { background: rgba(0,210,255,.08); border-color: rgba(0,210,255,.5); color: var(--fg); }
     .loc-btn.loc-btn-gmaps:hover {
@@ -1942,10 +1943,12 @@
        information, and a placeholder would only flash. */
     @media (max-width: 768px) {
       #location { padding: 72px var(--pad) 80px; }
-      /* .loc-hd is align-items:flex-start, so the stack shrink-wraps to its
-         widest button (279px in a 342px box) without an explicit width. */
-      .loc-btns { flex-direction: column; width: 100%; }
-      .loc-btn { width: 100%; justify-content: flex-start; }
+      /* Four equal columns, so the row fits whatever the labels are: at 390px
+         that is 79px a cell against about 57px of icon, gap and short label. */
+      .loc-btns { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; }
+      .loc-btn { padding: 14px 4px; gap: 6px; justify-content: center; font-size: .58rem; letter-spacing: .08em; }
+      .loc-lbl-full { display: none; }
+      .loc-lbl-short { display: inline; }
       .loc-hd { flex-direction: column; align-items: flex-start; }
       .loc-map-wrap { aspect-ratio: 4/3; }
       .loc-media { grid-template-columns: 1fr; gap: 12px; }
@@ -2625,22 +2628,22 @@
       <a href="https://www.waze.com/ul?ll=53.7558,-0.3587&navigate=yes&zoom=17"
          target="_blank" rel="noopener" class="loc-btn loc-btn-waze">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M20.54 6.63A10.78 10.78 0 0012 2a10.78 10.78 0 00-8.54 4.63 10.23 10.23 0 00-1.9 7.38 10.55 10.55 0 005.3 7.35l-.24 1.37a.62.62 0 00.61.72h1.06a.62.62 0 00.62-.62v-.5a5.3 5.3 0 002.1.43 5.3 5.3 0 002.1-.43v.5a.62.62 0 00.62.62h1.06a.62.62 0 00.61-.72l-.24-1.37a10.55 10.55 0 005.3-7.35 10.23 10.23 0 00-1.86-7.38zM8.5 13a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm7 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm.5-5.5a.5.5 0 01-.38-.17 5.07 5.07 0 00-7.24 0A.5.5 0 018 6.88a6.07 6.07 0 018.67 0A.5.5 0 0116 7.5z"/></svg>
-        Navigate with Waze
+        <span class="loc-lbl-full">Navigate with Waze</span><span class="loc-lbl-short">Waze</span>
       </a>
       <a href="https://www.google.com/maps/dir/?api=1&destination=80+Princes+Avenue,+Hull+HU5+3QJ&travelmode=driving"
          target="_blank" rel="noopener" class="loc-btn loc-btn-gmaps">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-        Navigate with Google Maps
+        <span class="loc-lbl-full">Navigate with Google Maps</span><span class="loc-lbl-short">Maps</span>
       </a>
       <a href="https://www.google.com/maps/dir/?api=1&destination=80+Princes+Avenue,+Hull+HU5+3QJ&travelmode=transit"
          target="_blank" rel="noopener" class="loc-btn loc-btn-transit">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z"/></svg>
-        Bus / Transit
+        <span class="loc-lbl-full">Bus / Transit</span><span class="loc-lbl-short">Bus</span>
       </a>
       <a href="https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]=53.7558&dropoff[longitude]=-0.3587&dropoff[nickname]=Sainthood+Tattoo+Studio&dropoff[formatted_address]=80+Princes+Avenue,+Hull+HU5+3QJ"
          target="_blank" rel="noopener" class="loc-btn loc-btn-uber">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-        Get an Uber
+        <span class="loc-lbl-full">Get an Uber</span><span class="loc-lbl-short">Uber</span>
       </a>
     </div>
   </div>
