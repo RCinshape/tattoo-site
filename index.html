@@ -835,7 +835,11 @@
     .h-btn-alt:hover { border-color: var(--photo-ring-h); transform: translateY(-3px); }
     html.hero-go .h-cta { animation: hcta-in .24s var(--out) .05s forwards; }
     @media (max-width: 768px) {
-      #hero { padding: 80px var(--pad) 48px; min-height: auto; }
+      /* No min-height override: the hero keeps the base 100svh so the #work seam
+         lands at or below the fold. min-height, never height — on a landscape
+         phone the content is taller than the viewport and the section has to be
+         free to grow past it. */
+      #hero { padding: 80px var(--pad) 48px; }
       .h-title { font-size: clamp(3.4rem,16vw,6rem); }
       .h-dir span { display: none; }
       .h-dir { padding: 9px 11px; }
