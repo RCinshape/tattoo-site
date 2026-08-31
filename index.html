@@ -835,12 +835,17 @@
     .h-btn-alt:hover { border-color: var(--photo-ring-h); transform: translateY(-3px); }
     html.hero-go .h-cta { animation: hcta-in .24s var(--out) .05s forwards; }
     @media (max-width: 768px) {
-      /* No min-height override: the hero keeps the base 100svh so the #work seam
-         lands at or below the fold. min-height, never height — on a landscape
-         phone the content is taller than the viewport and the section has to be
-         free to grow past it, and that growth is also what stops the auto margin
-         below from ever meeting negative free space. */
-      #hero { padding: 80px var(--pad) 64px; }
+      /* 86svh, not the base 100: with the copy bottom-pinned the leftover space
+         all collects above the eyebrow, and moving the block cannot delete that
+         slack — only relocate it. Shortening the section relocates it below the
+         seam, where it reads as a peek of the gallery rather than dead
+         photograph. min-height, never height — on a landscape phone the content
+         is taller than 86svh and the section has to be free to grow past it,
+         which is also what holds free space at zero instead of negative so the
+         auto margin below can never resolve above the padding. The 80px top only
+         shows in that grown case: it is the floor the auto margin collapses onto
+         and must stay >= the 78px --nav-h, or the eyebrow lands under the bar. */
+      #hero { min-height: 86svh; padding: 80px var(--pad) 56px; }
       /* At every portrait phone aspect the photo is height-fitted, so the whole
          frame is already on screen and there is nothing left to stretch downward.
          Its bottom third is the client's pale shoulder and the studio carpet, the
@@ -1038,7 +1043,10 @@
       .w-grid .wc:nth-child(n+3) { display: none; }
     }
     @media (max-width: 768px) {
-      #work { position: static; height: auto; overflow: visible; padding-top: 72px; }
+      /* 48px, down from 72: the hero now ends at 86svh, so this padding sits
+         inside the first screen as part of the peek. At 72 the peek was mostly
+         empty gutter; 48 puts card tops in it and matches the 52px desktop rule. */
+      #work { position: static; height: auto; overflow: visible; padding-top: 48px; }
       .w-grid { grid-template-columns: repeat(2, 1fr); padding: 0 var(--pad); gap: 8px; }
       .w-peek { grid-template-columns: repeat(2, 1fr); gap: 8px; height: 56px; }
       .w-peek-wrap { margin-top: 8px; padding-bottom: 72px; }
@@ -3322,11 +3330,16 @@ function __boot() {
     );
 
     /* — Work cards entrance — smooth, deliberate — */
+    /* 92%, not 82%: the mobile hero ends at 86svh, so at scroll 0 the seam is
+       already on screen and an 82% start would leave the peeked card tops at
+       opacity 0 — a blank strip under the seam. 92% clears 86% so the cards are
+       painted on arrival. Desktop is unaffected: the hero is still 100svh there,
+       so the trigger top starts at 100% and the reveal stays scroll-driven. */
     gsap.fromTo('.wc',
       { y: 40, opacity: 0 },
       { y: 0, opacity: 1,
         stagger: 0.08, duration: 1, ease: 'expo.out',
-        scrollTrigger: { trigger: '#work-outer', start: 'top 82%', once: true } }
+        scrollTrigger: { trigger: '#work-outer', start: 'top 92%', once: true } }
     );
 
     /* The coarse-pointer flag still gates hover-only chrome elsewhere. */
