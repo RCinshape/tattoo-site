@@ -693,6 +693,12 @@
   var WA_NUMBER = '447405979137';
   var MSG_MAX   = 1600;
 
+  /* The form is novalidate, so type="email" enforces nothing — these are the
+     only format checks on the page. Both fields are optional: an empty value
+     skips the check entirely. */
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+  var URL_RE   = /^(https?:\/\/)?[a-z0-9][a-z0-9.-]*\.[a-z]{2,}(\/[^\s]*)?$/i;
+
   /* FIELDS is the single source of truth for keys, caps and labels. It drives
      both the read off the form and the order of the lines in the message.
      The caps are chosen so a maximally long submission still fits: the values
@@ -831,6 +837,19 @@
     if (!ideaEl.value.trim()) return fail(ideaEl, 'Tell Emmy the idea, even roughly.');
     /* 18+ is a legal gate, not a nicety — see FAQ 06. */
     if (!ageEl.checked) return fail(ageEl, 'Emmy can only tattoo over-18s — please confirm.');
+
+    /* Format checks come after the required-field and legal gates so a blocker
+       is never hidden behind a typo. Both fields are optional — blank passes. */
+    var emailEl = document.getElementById('f-email');
+    var refsEl  = document.getElementById('f-refs');
+    var emailV  = emailEl.value.trim();
+    var refsV   = refsEl.value.trim();
+    if (emailV && !EMAIL_RE.test(emailV)) {
+      return fail(emailEl, 'That email doesn\'t look right — check it, or leave it blank.');
+    }
+    if (refsV && !URL_RE.test(refsV)) {
+      return fail(refsEl, 'That reference should be a link — paste the full address, or leave it blank.');
+    }
 
     var v = readFields(form);
     var url = waUrl(waMessage(v));
