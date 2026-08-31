@@ -399,6 +399,12 @@
       .nav-toggle { display: flex; }
     }
     @media (min-width: 769px) { #mobile-menu { display: none; } }
+    /* Seven links no longer fit a landscape phone at 2rem; the menu is centred
+       with no scroll, so shrink rather than clip. */
+    @media (max-height: 560px) {
+      #mobile-menu { gap: 12px; }
+      .mm-link { font-size: 1.4rem; }
+    }
 
     /* ── Hero ── */
     #hero {
@@ -856,6 +862,8 @@
   <a class="mm-link" href="/#about">About</a>
   <a class="mm-link" href="/#trust">Reviews</a>
   <a class="mm-link" href="/#faq">FAQ</a>
+  <a class="mm-link" href="/aftercare">Aftercare</a>
+  <a class="mm-link" href="/gift-cards">Gift cards</a>
 </div>
 
 <!-- ════ HERO ════ -->
