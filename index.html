@@ -228,6 +228,7 @@
     #loader { display: none !important; }
     #nav { background: rgba(var(--panel-rgb),.92) !important; border-bottom-color: var(--border) !important; }
     #nav .n-logo { opacity: 1 !important; pointer-events: auto !important; }
+    #nav .n-book, #nav #theme-toggle { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
     :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
         .bk-av, .bk-sub, .bk-cta, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
@@ -562,6 +563,7 @@
     /* No libs = no scroll observer, so pin the bar on rather than never show it. */
     html.libs-failed #nav { background: rgba(var(--panel-rgb),.92); border-bottom-color: var(--border); }
     html.libs-failed .n-logo { opacity: 1; pointer-events: auto; }
+    html.libs-failed #nav .n-book, html.libs-failed #nav #theme-toggle { opacity: 1; visibility: visible; pointer-events: auto; }
     /* Without the bar surface the links sit straight on the photo, whose
        light-mode filter runs to rgb(240) in places. Same text-shadow plate the
        hero copy uses; dropped as soon as #nav.s brings a real background. */
@@ -615,7 +617,7 @@
       letter-spacing: .18em; text-transform: uppercase;
       background: var(--gold); border: 1px solid var(--gold); color: var(--on-gold);
       text-decoration: none; white-space: nowrap;
-      transition: background .3s, border-color .3s, transform .3s;
+      transition: background .3s, border-color .3s, transform .3s, opacity .35s var(--out), visibility 0s;
     }
     .n-book:hover { background: var(--gold-soft); border-color: var(--gold-soft); transform: translateY(-2px); }
     /* On /book itself the pill is a self-link: keep the affordance, drop the fill. */
@@ -626,7 +628,7 @@
       width: 38px; height: 38px; border-radius: 50%;
       border: 1px solid var(--btn-ring); background: var(--btn-fill);
       color: var(--dim); cursor: pointer; flex-shrink: 0;
-      transition: color .25s, border-color .25s;
+      transition: color .25s, border-color .25s, opacity .35s var(--out), visibility 0s;
     }
     #theme-toggle:hover { color: var(--gold); border-color: var(--btn-ring-h); }
     #theme-toggle svg { flex-shrink: 0; }
@@ -666,6 +668,16 @@
       .n-item { display: none; }
       .n-links { display: none; }
       .nav-toggle { display: flex; }
+      /* Over the hero the bar has no surface, so a gold pill and an icon circle
+         just float on the photograph. They arrive with the bar, exactly like
+         .n-logo. visibility rather than display: both keep their space, so the
+         hamburger never shifts when the bar appears, and the 0s-delayed flip
+         lets the fade finish before they leave the tab order. The hero's own
+         Book now button carries the booking action for the whole first screen. */
+      #nav:not(.s) .n-book, #nav:not(.s) #theme-toggle {
+        opacity: 0; visibility: hidden; pointer-events: none;
+        transition: opacity .35s var(--out), visibility 0s linear .35s;
+      }
     }
     @media (min-width: 769px) { #mobile-menu { display: none; } }
     /* Seven links no longer fit a landscape phone at 2rem; the menu is centred
