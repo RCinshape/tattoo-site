@@ -306,6 +306,9 @@
       -webkit-appearance: none; appearance: none;
     }
     .bk-form textarea { min-height: 132px; resize: vertical; line-height: 1.7; }
+    /* Doubled cap, so the box shows six lines rather than four; #f-idea outranks
+       the shared rule above. Notes keeps 132px — 300 characters already fit. */
+    #f-idea { min-height: 184px; }
     /* ── Select, and why it alone is opaque ──
        Chrome and Edge paint the native option list from this control's own used
        background-color and color. The .03 wash its siblings use is composited
@@ -533,7 +536,7 @@
     </div>
     <div>
       <label class="bk-f-lbl" for="f-idea">What are you thinking?</label>
-      <textarea id="f-idea" name="idea" maxlength="300" placeholder="What you'd like, and anything behind it."></textarea>
+      <textarea id="f-idea" name="idea" maxlength="600" placeholder="What you'd like, and anything behind it."></textarea>
     </div>
     <div>
       <label class="bk-f-lbl" for="f-placement">Placement <span class="bk-f-opt">— optional</span></label>
@@ -607,7 +610,7 @@
     </div>
     <div>
       <label class="bk-f-lbl" for="f-notes">Anything I should know? <span class="bk-f-opt">— optional</span></label>
-      <textarea id="f-notes" name="notes" maxlength="150" placeholder="Allergies, blood thinners, skin conditions, pregnancy — anything that affects the day."></textarea>
+      <textarea id="f-notes" name="notes" maxlength="300" placeholder="Allergies, blood thinners, skin conditions, pregnancy — anything that affects the day."></textarea>
     </div>
     <div>
       <label class="bk-f-lbl" for="f-refs">Reference link <span class="bk-f-opt">— optional</span></label>
@@ -688,14 +691,14 @@
   /* ─────────────────────────────────────────────────────────────────────────── */
 
   var WA_NUMBER = '447405979137';
-  var MSG_MAX   = 1000;
+  var MSG_MAX   = 1600;
 
   /* FIELDS is the single source of truth for keys, caps and labels. It drives
      both the read off the form and the order of the lines in the message.
      The caps are chosen so a maximally long submission still fits: the values
-     total 810 and the scaffold 146, worst case 956. WhatsApp accepts an
-     8000-character URL but truncates prefilled text in the compose box above
-     roughly 1000, and a silently truncated enquiry is worse than a short one.
+     total 1260 and the scaffold 146, worst case 1406, against the 1600-character
+     MSG_MAX ceiling. WhatsApp accepts an 8000-character URL, and a silently
+     truncated enquiry is worse than a short one.
      placement, size and budget are <select>s and when is a tick list; their
      caps only need to clear the longest value ("Extra large — 25 cm and up",
      26, and all seven days joined, 33). No field on this form is free text
@@ -703,12 +706,12 @@
   var FIELDS = [
     { key: 'name',      max: 40,  label: null },
     { key: 'email',     max: 70,  label: 'Email' },
-    { key: 'idea',      max: 300, label: 'Idea' },
+    { key: 'idea',      max: 600, label: 'Idea' },
     { key: 'placement', max: 40,  label: 'Placement' },
     { key: 'size',      max: 40,  label: 'Size' },
     { key: 'budget',    max: 20,  label: 'Budget' },
     { key: 'when',      max: 50,  label: 'When suits' },
-    { key: 'notes',     max: 150, label: 'Anything to know' },
+    { key: 'notes',     max: 300, label: 'Anything to know' },
     { key: 'refs',      max: 100, label: 'Reference' }
   ];
 

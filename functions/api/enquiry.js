@@ -30,8 +30,8 @@ const TTL = 60 * 60 * 24 * 90;   /* 90 days, then it self-prunes */
 /* Same caps the page enforces, re-applied because a public endpoint cannot
    trust the page. Keys not listed here are dropped. */
 const FIELDS = {
-  name: 40, idea: 300, placement: 40, size: 40, budget: 20,
-  when: 50, notes: 150, email: 70, refs: 100
+  name: 40, idea: 600, placement: 40, size: 40, budget: 20,
+  when: 50, notes: 300, email: 70, refs: 100
 };
 
 function json(status, body, origin) {
