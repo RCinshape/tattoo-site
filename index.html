@@ -838,8 +838,18 @@
       /* No min-height override: the hero keeps the base 100svh so the #work seam
          lands at or below the fold. min-height, never height — on a landscape
          phone the content is taller than the viewport and the section has to be
-         free to grow past it. */
-      #hero { padding: 80px var(--pad) 48px; }
+         free to grow past it, and that growth is also what stops the auto margin
+         below from ever meeting negative free space. */
+      #hero { padding: 80px var(--pad) 64px; }
+      /* At every portrait phone aspect the photo is height-fitted, so the whole
+         frame is already on screen and there is nothing left to stretch downward.
+         Its bottom third is the client's pale shoulder and the studio carpet, the
+         dullest part of the shot, and the 1440x1921 source has no resolution left
+         to zoom past it. So move the copy down rather than the picture up: an auto
+         top margin gives every spare pixel to the top of the frame, where the
+         machine and the butterfly tee are, and leaves padding-bottom as the only
+         gap under the buttons. Do not restore justify-content centring here. */
+      .h-inner { margin-top: auto; }
       .h-title { font-size: clamp(3.4rem,16vw,6rem); }
       .h-dir span { display: none; }
       .h-dir { padding: 9px 11px; }
