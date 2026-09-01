@@ -702,14 +702,13 @@
   /* FIELDS is the single source of truth for keys, caps and labels. It drives
      both the read off the form and the order of the lines in the message.
      The caps are chosen so a maximally long submission still fits. Every field
-     at its cap totals 1260 characters of values plus 146 of scaffold — 1406
+     at its cap totals 1260 characters of values plus 139 of scaffold — 1399
      against the 1600-character MSG_MAX ceiling. Using the longest value each
-     control can actually produce, the real ceiling is 1341 (URL 1509).
-     Requiring placement, size and when raises the floor, not the ceiling: the
-     shortest possible message goes from 89 characters to 144. WhatsApp accepts
-     an 8000-character URL — the worst case here is an all-emoji free text,
-     which stays 1341 characters but encodes to 7059. A silently truncated
-     enquiry is worse than a short one.
+     control can actually produce, the real ceiling is 1334 (URL 1496), and the
+     shortest possible message, with all six required fields at their briefest,
+     is 137. WhatsApp accepts an 8000-character URL — the worst case here is
+     free text made entirely of non-BMP emoji, which stays 1334 characters but
+     encodes to 6986. A silently truncated enquiry is worse than a short one.
      placement, size and budget are <select>s and when is a tick list; their
      caps only need to clear the longest value ("Extra large — 25 cm and up",
      26, and all seven days joined, 33). No field on this form is free text
@@ -788,7 +787,7 @@
      when carry value="" too, but that state is rejected in the submit handler
      before waMessage is ever called. */
   function waMessage(v) {
-    var lines = ['Tattoo enquiry — ' + v.name, ''];
+    var lines = ['Enquiry - ' + v.name, ''];
     FIELDS.forEach(function (f) {
       if (!f.label || !v[f.key]) return;
       lines.push(f.label + ': ' + v[f.key]);
