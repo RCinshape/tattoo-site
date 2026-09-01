@@ -313,6 +313,13 @@
         radial-gradient(ellipse at 50% -5%, rgba(var(--gold-rgb),.035), transparent 55%),
         radial-gradient(ellipse at 100% 100%, rgba(var(--gold-rgb),.025), transparent 50%),
         radial-gradient(ellipse at 50% 110%, rgba(var(--bg-rgb),.6), transparent 60%);
+      /* Backing for the hero copy, anchored to .h-inner rather than to a fraction
+         of the hero: the copy is bottom-pinned, so the eyebrow rides anywhere from
+         16% to 42% of the hero depending on the phone, and a position-keyed ramp
+         cannot follow it. Dark needs none — --img-hero crushes the photo to
+         0.00-0.08 luminance behind the copy and the light text already measures
+         7.9:1 at worst, so a scrim here would only flatten the photograph. */
+      --hero-copy-scrim: none;
       --ambient-book:
         radial-gradient(ellipse 80% 55% at 50% 0%,   rgba(var(--gold-rgb),.06)  0%, transparent 72%),
         radial-gradient(ellipse 55% 45% at 50% 100%, rgba(var(--gold-rgb),.03)  0%, transparent 70%),
@@ -392,6 +399,18 @@
       /* Keep only the page-tone bottom fade; drop the gold washes that invert
          into warm-grey stains at rgb(237,235,231) against the 244 page. */
       --ambient-hero: radial-gradient(ellipse at 50% 110%, rgba(var(--bg-rgb),.6), transparent 60%);
+      /* See --hero-copy-scrim in the dark palette. Light is the theme that needs
+         it: brightness(1.14) cannot lift true black, so the dark fabric behind the
+         eyebrow stays at 0.00 luminance while the client's shoulder reaches 0.69 —
+         a 0.69 swing inside one line, under near-black text, measuring 2.50-3.25:1.
+         Radii are exactly 50% so the ellipse reaches transparent AT the box edge
+         and is never clipped into a visible straight edge. */
+      --hero-copy-scrim:
+        radial-gradient(ellipse 50% 50% at 50% 50%,
+          rgba(var(--bg-rgb),.50)   0%,
+          rgba(var(--bg-rgb),.45)  45%,
+          rgba(var(--bg-rgb),.26)  70%,
+          transparent             100%);
       --ambient-book: none;
       /* Seams are alpha-tuned per theme: .16 ink on #f7efeb is invisible, so the
          light seam runs near-black at the ends into a solid gold centre. */
@@ -740,6 +759,23 @@
       position: relative; z-index: 2;
       display: flex; flex-direction: column; align-items: center;
       width: 100%;
+    }
+    /* -30% top over a 100%-tall box puts the ellipse centre at 20% of .h-inner:
+       peak behind the eyebrow and wordmark, tapering through the location lines,
+       zero by 70%. The buttons start at 70.1% at every tested width, so the scrim
+       stops short of them and their gold fill and blurred backdrop are untouched.
+       z-index -1 lands inside .h-inner's own stacking context (it already carries
+       z-index: 2), so the scrim paints above the photo and its ramp but below
+       every line of copy. 100vw, clipped by #hero's overflow: hidden, so there is
+       no left or right edge inside the frame. */
+    .h-inner::before {
+      content: '';
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      top: -30%; width: 100vw; height: 100%;
+      background: var(--hero-copy-scrim);
+      pointer-events: none;
+      z-index: -1;
     }
     @keyframes dp { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.6); opacity: .5; } }
     .h-eyebrow {
