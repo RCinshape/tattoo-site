@@ -539,9 +539,9 @@
       <textarea id="f-idea" name="idea" maxlength="600" placeholder="What you'd like, and anything behind it."></textarea>
     </div>
     <div>
-      <label class="bk-f-lbl" for="f-placement">Placement <span class="bk-f-opt">— optional</span></label>
+      <label class="bk-f-lbl" for="f-placement">Placement</label>
       <select id="f-placement" name="placement">
-        <option value="">Not sure yet</option>
+        <option value="">Choose a placement…</option>
         <option>Inner forearm</option>
         <option>Outer forearm</option>
         <option>Upper arm</option>
@@ -569,9 +569,9 @@
       </select>
     </div>
     <div>
-      <label class="bk-f-lbl" for="f-size">Rough size <span class="bk-f-opt">— optional</span></label>
+      <label class="bk-f-lbl" for="f-size">Rough size</label>
       <select id="f-size" name="size">
-        <option value="">Not sure yet</option>
+        <option value="">Choose a size…</option>
         <option>Tiny — under 5 cm</option>
         <option>Small — 5 to 10 cm</option>
         <option>Medium — 10 to 15 cm</option>
@@ -592,9 +592,9 @@
       </select>
     </div>
     <div>
-      <span class="bk-f-lbl" id="f-days-lbl">Availability <span class="bk-f-opt">— optional</span></span>
+      <span class="bk-f-lbl" id="f-days-lbl">Availability</span>
       <details class="bk-days" id="f-days">
-        <summary class="bk-days-sum" aria-labelledby="f-days-lbl f-days-txt"><span id="f-days-txt">Not sure yet</span></summary>
+        <summary class="bk-days-sum" aria-labelledby="f-days-lbl f-days-txt"><span id="f-days-txt">Choose your days…</span></summary>
         <div class="bk-days-list" role="group" aria-labelledby="f-days-lbl">
           <label class="bk-day bk-day-any"><input type="checkbox" id="f-day-any"><span>Any day</span></label>
           <label class="bk-day"><input type="checkbox" data-day="Mon"><span>Monday</span></label>
@@ -701,10 +701,15 @@
 
   /* FIELDS is the single source of truth for keys, caps and labels. It drives
      both the read off the form and the order of the lines in the message.
-     The caps are chosen so a maximally long submission still fits: the values
-     total 1260 and the scaffold 146, worst case 1406, against the 1600-character
-     MSG_MAX ceiling. WhatsApp accepts an 8000-character URL, and a silently
-     truncated enquiry is worse than a short one.
+     The caps are chosen so a maximally long submission still fits. Every field
+     at its cap totals 1260 characters of values plus 146 of scaffold — 1406
+     against the 1600-character MSG_MAX ceiling. Using the longest value each
+     control can actually produce, the real ceiling is 1341 (URL 1509).
+     Requiring placement, size and when raises the floor, not the ceiling: the
+     shortest possible message goes from 89 characters to 144. WhatsApp accepts
+     an 8000-character URL — the worst case here is an all-emoji free text,
+     which stays 1341 characters but encodes to 7059. A silently truncated
+     enquiry is worse than a short one.
      placement, size and budget are <select>s and when is a tick list; their
      caps only need to clear the longest value ("Extra large — 25 cm and up",
      26, and all seven days joined, 33). No field on this form is free text
@@ -750,7 +755,7 @@
                        .map(function (el) { return el.getAttribute('data-day'); });
     var value = any ? 'Any day' : picked.join(', ');
     whenEl.value = value;
-    daysTxt.textContent = value || 'Not sure yet';
+    daysTxt.textContent = value || 'Choose your days…';
   }
 
   anyEl.addEventListener('change', function () {
@@ -778,8 +783,10 @@
     return out;
   }
 
-  /* Empty optionals are dropped rather than filled with a placeholder — which is
-     why the "Not sure yet" options on placement and size carry value="". */
+  /* Empty optionals are dropped rather than filled with a placeholder. Only
+     email, notes and refs can actually reach here empty — placement, size and
+     when carry value="" too, but that state is rejected in the submit handler
+     before waMessage is ever called. */
   function waMessage(v) {
     var lines = ['Tattoo enquiry — ' + v.name, ''];
     FIELDS.forEach(function (f) {
@@ -830,11 +837,23 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    var nameEl = document.getElementById('f-name');
-    var ideaEl = document.getElementById('f-idea');
-    var ageEl  = document.getElementById('f-age18');
+    var nameEl  = document.getElementById('f-name');
+    var ideaEl  = document.getElementById('f-idea');
+    var placeEl = document.getElementById('f-placement');
+    var sizeEl  = document.getElementById('f-size');
+    var daysEl  = document.getElementById('f-days');
+    var daysSum = form.querySelector('.bk-days-sum');
+    var ageEl   = document.getElementById('f-age18');
     if (!nameEl.value.trim()) return fail(nameEl, 'Emmy needs a name to call you.');
     if (!ideaEl.value.trim()) return fail(ideaEl, 'Tell Emmy the idea, even roughly.');
+    if (!placeEl.value) return fail(placeEl, 'Emmy needs to know where it goes — pick a placement.');
+    if (!sizeEl.value) return fail(sizeEl, 'Pick a rough size, even a guess.');
+    if (!whenEl.value) {
+      /* The hidden #f-when cannot take focus and the ticks sit inside a closed
+         <details>, so open the disclosure and focus its summary instead. */
+      daysEl.open = true;
+      return fail(daysSum, 'Pick the days that suit — Any day works too.');
+    }
     /* 18+ is a legal gate, not a nicety — see FAQ 06. */
     if (!ageEl.checked) return fail(ageEl, 'Emmy can only tattoo over-18s — please confirm.');
 
