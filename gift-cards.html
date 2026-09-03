@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" id="meta-theme-color" content="#0a0a0a">
+  <meta name="theme-color" content="#0a0a0a">
   <title>Gift cards | Emmy Tattoo</title>
   <meta name="description" content="Most gifts are forgotten. A tattoo isn't. Emmy Tattoo gift cards for any amount, no expiry, redeemed when they decide.">
   <meta name="robots" content="index, follow">
@@ -38,40 +38,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
-
-  <!-- Theme resolution before first paint: system / light / dark (matches index.html) -->
-  <script>
-    (function () {
-      var KEY = 'emmy-theme';
-      var mql = window.matchMedia('(prefers-color-scheme: light)');
-      /* Three states: 'system' (no key stored), 'light', 'dark'. */
-      function pref() {
-        try { var v = localStorage.getItem(KEY); return v === 'light' || v === 'dark' ? v : 'system'; }
-        catch (e) { return 'system'; }
-      }
-      function resolve(p) { return p === 'system' ? (mql.matches ? 'light' : 'dark') : p; }
-      function apply(p) {
-        var theme = resolve(p);
-        var r = document.documentElement;
-        r.dataset.theme = theme;
-        r.dataset.pref = p;
-        r.style.colorScheme = theme;
-        var m = document.getElementById('meta-theme-color');
-        if (m) m.setAttribute('content', theme === 'light' ? '#f7efeb' : '#0a0a0a');
-        document.dispatchEvent(new Event('themechange'));
-      }
-      window.__theme = {
-        pref: pref,
-        resolve: function () { return resolve(pref()); },
-        set: function (p) {
-          try { p === 'system' ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, p); } catch (e) {}
-          apply(p);
-        }
-      };
-      apply(pref());
-      mql.addEventListener('change', function () { if (pref() === 'system') apply('system'); });
-    })();
-  </script>
 
   <style>
     /* Cross-document view transition — both documents must opt in. */
@@ -109,15 +75,12 @@
       --gold-ring:   rgba(var(--gold-rgb),.32);
       --gold-ring-h: rgba(var(--gold-rgb),.65);
       --gold-soft:  rgba(var(--gold-rgb),.55);
-      /* Exactly one gold per palette — no display/text split. Decorative gold
-         ink carries its alpha in its token, never in `opacity`: GSAP writes
-         inline opacity and it outranks any CSS opacity rule.
+      /* Exactly one gold — no display/text split. Decorative gold ink carries
+         its alpha in its token, never in `opacity`: GSAP writes inline opacity
+         and it outranks any CSS opacity rule.
          The gift voucher's ink, in two weights: --gc-ink for the illustration
          beside the copy, --gc-ink-wm for the phone layout where it sits behind
-         the copy. Light leaves the gold family entirely: gold's lightness is
-         72.9 against paper at 95.7, so it tops out at 1.23:1 and reads washed
-         out, while text ink at .26 gives 1.84:1 — graphite on cream, which is
-         what the artwork is. */
+         the copy. */
       --gc-ink:    rgba(var(--gold-rgb),.12);
       --gc-ink-wm: rgba(var(--gold-rgb),.10);
       /* tapered gradient seam — matches index.html */
@@ -134,30 +97,6 @@
       --sans:   'DM Sans', sans-serif;
       --out:    cubic-bezier(.16,1,.3,1);
       --pad:    max(48px, calc(50vw - 720px));
-    }
-
-    /* Light theme — one gold, both themes (see index.html) */
-    :root[data-theme="light"] {
-      color-scheme: light;
-      /* Paper hue: warm side of the brand gold. Matches index.html. */
-      --bg:        #f7efeb;
-      --bg2:       #fdf8f6;
-      --fg:        #1b1613;
-      --fg2:       #4d443e;
-      --dim:       #6e625b;
-      --gold:      #c4a262;
-      --gold-rgb:  196,162,98;
-      --fg-rgb:    27,22,19;
-      --panel-rgb: 253,248,246;
-      --on-gold:   #1b1613;
-      --btn-ring:   rgba(var(--fg-rgb),.48);
-      --btn-ring-h: rgba(var(--fg-rgb),.64);
-      --btn-fill:   rgba(var(--panel-rgb),1);
-      --gold-ring:   rgba(var(--gold-rgb),.9);
-      --gold-ring-h: rgba(var(--gold-rgb),1);
-      --gold-soft:  rgba(var(--gold-rgb),.95);
-      --gc-ink:     rgba(var(--fg-rgb),.26);
-      --gc-ink-wm:  rgba(var(--fg-rgb),.14);
     }
 
     @media (max-width: 768px) { :root { --pad: 24px; } }
@@ -230,19 +169,6 @@
        their footers carry the same destinations, and without this the row
        measured 469px inside a 390px viewport. */
     @media (max-width: 768px) { .n-links { display: none; } }
-    #theme-toggle {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 38px; height: 38px; border-radius: 50%;
-      border: 1px solid var(--btn-ring); background: var(--btn-fill);
-      color: var(--dim); cursor: pointer; flex-shrink: 0;
-      transition: color .25s, border-color .25s;
-    }
-    #theme-toggle:hover { color: var(--gold); border-color: var(--btn-ring-h); }
-    #theme-toggle svg { flex-shrink: 0; }
-    /* Two states on screen: the icon shows the theme the button switches TO. */
-    #theme-toggle .ti { display: none; }
-    :root[data-theme="dark"]  #theme-toggle .ti-sun  { display: block; }
-    :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
 
     /* ══════════════════════════════════════════
        GIFTS SECTION
@@ -297,10 +223,8 @@
       background: rgba(var(--gold-rgb),.09);
       transform: translateY(-3px);
     }
-    .gf-cta svg { color: var(--gold); flex-shrink: 0; }
-    /* The voucher as a ghost: the artwork is a mask and the paint is a token, so
-       one asset reads correctly in both themes — gold on the dark page, graphite
-       on the light one, with no per-theme filter and no pixels of its own. */
+    /* The voucher as a ghost: the artwork is a mask and the paint is a token,
+       so one asset needs no filter and no pixels of its own. */
     .gf-card {
       flex: 1 1 auto; align-self: center;
       aspect-ratio: 1091 / 494;
@@ -382,10 +306,6 @@
   </div>
   <div class="n-actions">
     <a class="n-book" href="/book">Book</a>
-    <button id="theme-toggle" type="button" title="Switch to light theme" aria-label="Switch to light theme">
-      <svg class="ti ti-sun" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="2.4" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.6" y2="12"/><line x1="5.2" y1="5.2" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5.2" y2="18.8"/></g></svg>
-      <svg class="ti ti-moon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-    </button>
   </div>
 </nav>
 
@@ -418,23 +338,5 @@
   </nav>
   <span class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</span>
 </footer>
-
-<script>
-  /* ═══ THEME TOGGLE ═══ (matches index.html) */
-  (function () {
-    var btn = document.getElementById('theme-toggle');
-    if (!btn || !window.__theme) return;
-    /* The control is binary on screen - it always names the theme it switches to. */
-    function target() { return document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; }
-    function sync() {
-      var label = 'Switch to ' + target() + ' theme';
-      btn.setAttribute('aria-label', label);
-      btn.setAttribute('title', label);
-    }
-    sync();
-    document.addEventListener('themechange', sync);
-    btn.addEventListener('click', function () { window.__theme.set(target()); });
-  })();
-</script>
 </body>
 </html>

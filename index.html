@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" id="meta-theme-color" content="#0a0a0a">
+  <meta name="theme-color" content="#0a0a0a">
 
   <title>Emmy Tattoo Hull | Fine Line, Realism & Portrait Tattoos — Sainthood Tattoo</title>
   <meta name="description" content="Emmy is a tattoo artist based at Sainthood Tattoo, Princes Avenue, Hull. Specialising in fine line, realism and portrait tattoos. By appointment — enquire via WhatsApp or Instagram.">
@@ -187,39 +187,6 @@
   <!-- Brand intro is kept in the repo but disabled. Flip to true to bring it back. -->
   <script>window.__INTRO = false; if (window.__INTRO) document.documentElement.classList.add('intro-on');</script>
 
-  <!-- Theme resolution before first paint: manual override (localStorage) ?? OS preference -->
-  <script>
-    (function () {
-      var KEY = 'emmy-theme';
-      var mql = window.matchMedia('(prefers-color-scheme: light)');
-      /* Three states: 'system' (no key stored), 'light', 'dark'. */
-      function pref() {
-        try { var v = localStorage.getItem(KEY); return v === 'light' || v === 'dark' ? v : 'system'; }
-        catch (e) { return 'system'; }
-      }
-      function resolve(p) { return p === 'system' ? (mql.matches ? 'light' : 'dark') : p; }
-      function apply(p) {
-        var theme = resolve(p);
-        var r = document.documentElement;
-        r.dataset.theme = theme;
-        r.dataset.pref = p;
-        r.style.colorScheme = theme;
-        var m = document.getElementById('meta-theme-color');
-        if (m) m.setAttribute('content', theme === 'light' ? '#f7efeb' : '#0a0a0a');
-        document.dispatchEvent(new Event('themechange'));
-      }
-      window.__theme = {
-        pref: pref,
-        resolve: function () { return resolve(pref()); },
-        set: function (p) {
-          try { p === 'system' ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, p); } catch (e) {}
-          apply(p);
-        }
-      };
-      apply(pref());
-      mql.addEventListener('change', function () { if (pref() === 'system') apply('system'); });
-    })();
-  </script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
 
@@ -228,7 +195,7 @@
     #loader { display: none !important; }
     #nav { background: rgba(var(--panel-rgb),.92) !important; border-bottom-color: var(--border) !important; }
     #nav .n-logo { opacity: 1 !important; pointer-events: auto !important; }
-    #nav .n-book, #nav #theme-toggle { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+    #nav .n-book { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
     :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
         .bk-av, .bk-sub, .bk-cta, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
@@ -288,38 +255,30 @@
       --border:    rgba(var(--fg-rgb),.07);
       --border-h:  rgba(var(--fg-rgb),.15);
       /* Page-tone RGB. Layers that fade content INTO the page (photo scrims,
-         vignette, text halos) MUST use this, never --panel-rgb: in light the
-         panel is #fdf8f6 while the page is #f7efeb, and that mismatch
-         paints visible white/grey shapes. */
+         vignette, text halos) MUST use this, never --panel-rgb: --panel-rgb is
+         the panel surface, not the page, and the mismatch paints visible grey
+         shapes. */
       --bg-rgb: 10,10,10;
-      /* Icon-button chrome. Both themes are pinned to the same measured ratios:
-         .34 white on #0a0a0a is 3.02:1 and .48 warm ink on #f7efeb is 3.13:1 —
-         WCAG non-text minimum. Dark sat at .07 = 1.15:1 — an invisible ring. */
+      /* Icon-button chrome, pinned to a measured ratio: .34 white on #0a0a0a is
+         3.02:1, the WCAG non-text minimum. It sat at .07 = 1.15:1 — an
+         invisible ring. */
       --btn-ring:   rgba(var(--fg-rgb),.34);
       --btn-ring-h: rgba(var(--fg-rgb),.50);
       --btn-fill:   rgba(var(--panel-rgb),.4);
       /* Hero chrome sits on the hero photograph, not the page, so it needs its
-         own pair: the light hero treatment lifts the backdrop to ~rgb(133),
-         where dark ink needs ~1.8x the alpha white needs on the dark render. */
+         own pair: the hover ring carries more alpha than --btn-ring-h because
+         the photo behind it is brighter and busier than a flat page surface. */
       --photo-ring:   rgba(var(--fg-rgb),.34);
       --photo-ring-h: rgba(var(--fg-rgb),.55);
       --gold-ring:   rgba(var(--gold-rgb),.32);
       --gold-ring-h: rgba(var(--gold-rgb),.65);
-      /* Decorative layers, resolved per theme as complete values. Gold ambient
-         washes glow on a dark page but stain and band on a light one, and a
-         fixed vignette over #f7efeb leaves a visible grey ellipse. */
+      /* Decorative layers, resolved as complete values rather than alphas, so
+         one token swap changes a whole treatment. */
       --vignette: radial-gradient(ellipse 110% 110% at 50% 50%, transparent 40%, rgba(var(--bg-rgb),.38) 70%, rgba(var(--bg-rgb),.62) 100%);
       --ambient-hero:
         radial-gradient(ellipse at 50% -5%, rgba(var(--gold-rgb),.035), transparent 55%),
         radial-gradient(ellipse at 100% 100%, rgba(var(--gold-rgb),.025), transparent 50%),
         radial-gradient(ellipse at 50% 110%, rgba(var(--bg-rgb),.6), transparent 60%);
-      /* Backing for the hero copy, anchored to .h-inner rather than to a fraction
-         of the hero: the copy is bottom-pinned, so the eyebrow rides anywhere from
-         16% to 42% of the hero depending on the phone, and a position-keyed ramp
-         cannot follow it. Dark needs none — --img-hero crushes the photo to
-         0.00-0.08 luminance behind the copy and the light text already measures
-         7.9:1 at worst, so a scrim here would only flatten the photograph. */
-      --hero-copy-scrim: none;
       --ambient-book:
         radial-gradient(ellipse 80% 55% at 50% 0%,   rgba(var(--gold-rgb),.06)  0%, transparent 72%),
         radial-gradient(ellipse 55% 45% at 50% 100%, rgba(var(--gold-rgb),.03)  0%, transparent 70%),
@@ -327,8 +286,7 @@
         radial-gradient(ellipse 38% 70% at 100% 50%,  rgba(var(--gold-rgb),.025) 0%, transparent 62%);
       --cta-shadow:   0 8px 40px rgba(var(--gold-rgb),.4), 0 2px 12px rgba(0,0,0,.55);
       --cta-shadow-a: 0 4px 20px rgba(var(--gold-rgb),.25), 0 1px 6px rgba(0,0,0,.4);
-      /* Decorative gold numerals. Light mode needs a heavier alpha: its gold is
-         darker than the page, so the same value reads as washed-out grey. */
+      /* Decorative gold numerals. */
       --gold-faint: rgba(var(--gold-rgb),.25);
       --gold-soft:  rgba(var(--gold-rgb),.55);
       /* tapered gradient seam — gold line, bright center, fades out at both ends */
@@ -338,7 +296,7 @@
                 rgba(var(--gold-rgb),.55) 50%,
                 rgba(var(--fg-rgb),.16) 72%,
                 transparent 96%);
-      /* photo treatments — flipped per theme so images sit on the page tone */
+      /* photo treatments — tuned so images sit on the page tone */
       --img-hero:     grayscale(1) brightness(.42) contrast(1.08);
       --img-card:     brightness(.9) saturate(.75);
       --img-card-h:   brightness(1) saturate(.9);
@@ -356,84 +314,6 @@
       --sp:    cubic-bezier(.34,1.56,.64,1);
       /* auto-center: 48px min, grows to keep content ≤ 1440px wide */
       --pad:   max(48px, calc(50vw - 720px));
-    }
-
-    /* Light theme — resolved from OS preference or the manual override, see head script */
-    :root[data-theme="light"] {
-      color-scheme: light;
-      /* Paper AND ink share one warm hue family (OKLCH ~50-56 against gold's 82).
-         Rotating only the paper was not enough: --fg/--fg2/--dim sat at 82-89,
-         the yellow-green boundary, and they paint every word on the page, which
-         is what still read as an olive cast. L and C are unchanged, so every
-         contrast ratio moves by less than 0.05. */
-      --bg:        #f7efeb;
-      --bg2:       #fdf8f6;
-      --fg:        #1b1613;
-      --fg2:       #4d443e;
-      --dim:       #6e625b;
-      /* One gold, both themes: #c4a262 everywhere. On #f7efeb it measures 2.1:1,
-         below the WCAG 3:1 non-text floor — a deliberate brand choice, so gold
-         stays decorative here and never carries small text. */
-      --gold:      #c4a262;
-      --gold-rgb:  196,162,98;
-      --fg-rgb:    27,22,19;
-      --panel-rgb: 253,248,246;
-      --on-gold:   #1b1613;       /* 5.03:1 on gold; white would be 3.56:1 */
-      --ok:        #1f7a47;
-      --ok-ink:    #1f7a47;
-      --ok-rgb:    31,122,71;
-      --warn:      #b4322f;
-      --warn-rgb:  180,50,47;
-      --bg-rgb: 247,239,235;
-      /* .48 puts the ring at 3.13:1 against #f7efeb (WCAG non-text minimum) */
-      --btn-ring:   rgba(var(--fg-rgb),.48);
-      --btn-ring-h: rgba(var(--fg-rgb),.64);
-      --btn-fill:   rgba(var(--panel-rgb),1);
-      --photo-ring:   rgba(var(--fg-rgb),.62);
-      --photo-ring-h: rgba(var(--fg-rgb),.82);
-      --gold-ring:   rgba(var(--gold-rgb),.9);
-      --gold-ring-h: rgba(var(--gold-rgb),1);
-      /* No vignette on a light page: the effect needs ~7 code values across half
-         the screen, which bands on 8-bit SDR panels and reads as a grey ellipse. */
-      --vignette: none;
-      /* Keep only the page-tone bottom fade; drop the gold washes that invert
-         into warm-grey stains at rgb(237,235,231) against the 244 page. */
-      --ambient-hero: radial-gradient(ellipse at 50% 110%, rgba(var(--bg-rgb),.6), transparent 60%);
-      /* See --hero-copy-scrim in the dark palette. Light is the theme that needs
-         it: brightness(1.14) cannot lift true black, so the dark fabric behind the
-         eyebrow stays at 0.00 luminance while the client's shoulder reaches 0.69 —
-         a 0.69 swing inside one line, under near-black text, measuring 2.50-3.25:1.
-         Radii are exactly 50% so the ellipse reaches transparent AT the box edge
-         and is never clipped into a visible straight edge. */
-      --hero-copy-scrim:
-        radial-gradient(ellipse 50% 50% at 50% 50%,
-          rgba(var(--bg-rgb),.50)   0%,
-          rgba(var(--bg-rgb),.45)  45%,
-          rgba(var(--bg-rgb),.26)  70%,
-          transparent             100%);
-      --ambient-book: none;
-      /* Seams are alpha-tuned per theme: .16 ink on #f7efeb is invisible, so the
-         light seam runs near-black at the ends into a solid gold centre. */
-      --seam: linear-gradient(90deg,
-                transparent 4%,
-                rgba(var(--fg-rgb),.42) 28%,
-                rgba(var(--gold-rgb),1) 50%,
-                rgba(var(--fg-rgb),.42) 72%,
-                transparent 96%);
-      --cta-shadow:   0 8px 28px rgba(var(--gold-rgb),.30), 0 2px 10px rgba(var(--fg-rgb),.18);
-      --cta-shadow-a: 0 4px 16px rgba(var(--gold-rgb),.20), 0 1px 6px rgba(var(--fg-rgb),.12);
-      --gold-faint: rgba(var(--gold-rgb),.8);
-      --gold-soft:  rgba(var(--gold-rgb),.95);
-      /* No sepia: it emits R>G>B and the brightness that follows clips red first,
-         so the highlights of a full-viewport photo converge on olive. Warmth here
-         comes from --ambient-hero, which cannot skew channels. */
-      --img-hero:     grayscale(1) brightness(1.14) contrast(.92);
-      --img-card:     brightness(1.02) saturate(.8);
-      --img-card-h:   brightness(1.06) saturate(.95);
-      --img-exp:      brightness(1) saturate(.8);
-      --img-exp-open: brightness(1.04) saturate(.9);
-      --img-avatar:   grayscale(.5);
-      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23fdf8f6' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
     }
 
     /* One gutter for every section on a phone. Sections used to hardcode this
@@ -582,10 +462,12 @@
     /* No libs = no scroll observer, so pin the bar on rather than never show it. */
     html.libs-failed #nav { background: rgba(var(--panel-rgb),.92); border-bottom-color: var(--border); }
     html.libs-failed .n-logo { opacity: 1; pointer-events: auto; }
-    html.libs-failed #nav .n-book, html.libs-failed #nav #theme-toggle { opacity: 1; visibility: visible; pointer-events: auto; }
-    /* Without the bar surface the links sit straight on the photo, whose
-       light-mode filter runs to rgb(240) in places. Same text-shadow plate the
-       hero copy uses; dropped as soon as #nav.s brings a real background. */
+    html.libs-failed #nav .n-book { opacity: 1; visibility: visible; pointer-events: auto; }
+    /* Without the bar surface the links sit straight on the photo, which peaks
+       at 0.59 luminance behind the nav even under --img-hero (measured at 390
+       wide, hero un-scrolled) — --fg on that is about 1.4:1. Same text-shadow
+       plate the hero copy uses; dropped as soon as #nav.s brings a real
+       background. */
     #nav:not(.s) .n-item {
       color: var(--fg);
       text-shadow: 0 0 20px rgba(var(--panel-rgb),1), 0 1px 5px rgba(var(--panel-rgb),.92);
@@ -642,20 +524,6 @@
     /* On /book itself the pill is a self-link: keep the affordance, drop the fill. */
     .n-book[aria-current="page"] { background: transparent; color: var(--gold); }
     @media (max-width: 480px) { .n-book { padding: 9px 14px; letter-spacing: .12em; } }
-    #theme-toggle {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 38px; height: 38px; border-radius: 50%;
-      border: 1px solid var(--btn-ring); background: var(--btn-fill);
-      color: var(--dim); cursor: pointer; flex-shrink: 0;
-      transition: color .25s, border-color .25s, opacity .35s var(--out), visibility 0s;
-    }
-    #theme-toggle:hover { color: var(--gold); border-color: var(--btn-ring-h); }
-    #theme-toggle svg { flex-shrink: 0; }
-    /* Two states on screen: the icon shows the theme the button switches TO.
-       'system' is the unclicked default and borrows the icon of whatever the OS resolved. */
-    #theme-toggle .ti { display: none; }
-    :root[data-theme="dark"]  #theme-toggle .ti-sun  { display: block; }
-    :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
     /* Full-screen mobile menu overlay */
     /* visibility, not just opacity: a full-viewport blur resting at opacity 0 is
        still painted and keeps its compositing layer alive for the whole visit.
@@ -693,7 +561,7 @@
          hamburger never shifts when the bar appears, and the 0s-delayed flip
          lets the fade finish before they leave the tab order. The hero's own
          Book now button carries the booking action for the whole first screen. */
-      #nav:not(.s) .n-book, #nav:not(.s) #theme-toggle {
+      #nav:not(.s) .n-book {
         opacity: 0; visibility: hidden; pointer-events: none;
         transition: opacity .35s var(--out), visibility 0s linear .35s;
       }
@@ -760,23 +628,6 @@
       display: flex; flex-direction: column; align-items: center;
       width: 100%;
     }
-    /* -30% top over a 100%-tall box puts the ellipse centre at 20% of .h-inner:
-       peak behind the eyebrow and wordmark, tapering through the location lines,
-       zero by 70%. The buttons start at 70.1% at every tested width, so the scrim
-       stops short of them and their gold fill and blurred backdrop are untouched.
-       z-index -1 lands inside .h-inner's own stacking context (it already carries
-       z-index: 2), so the scrim paints above the photo and its ramp but below
-       every line of copy. 100vw, clipped by #hero's overflow: hidden, so there is
-       no left or right edge inside the frame. */
-    .h-inner::before {
-      content: '';
-      position: absolute;
-      left: 50%; transform: translateX(-50%);
-      top: -30%; width: 100vw; height: 100%;
-      background: var(--hero-copy-scrim);
-      pointer-events: none;
-      z-index: -1;
-    }
     @keyframes dp { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.6); opacity: .5; } }
     .h-eyebrow {
       font-family: var(--mono); font-size: clamp(.79rem, 1.4vw, .8rem);
@@ -830,7 +681,7 @@
       border: 1px solid var(--photo-ring);
       backdrop-filter: blur(16px) saturate(1.4);
       -webkit-backdrop-filter: blur(16px) saturate(1.4);
-      font-family: var(--sans); font-size: .7rem; font-weight: 300;
+      font-family: var(--sans); font-size: .7rem;
       letter-spacing: .06em; text-transform: uppercase;
       color: var(--fg);
       text-decoration: none; white-space: nowrap;
@@ -2085,20 +1936,6 @@
     .hero-bg-photo img { transform-origin: center center; }
 
     /* ══════════════════════════════════════════
-       ALWAYS-DARK ISLANDS — brand splash + chrome drawn over photography.
-       Tokens are redeclared here so every descendant resolves dark values
-       in both themes without per-property exceptions.
-    ══════════════════════════════════════════ */
-    #loader,
-    .wc-lbl,
-    .wc-view {
-      --fg: #ededed; --fg2: #adadad; --dim: #838383;
-      --fg-rgb: 255,255,255; --panel-rgb: 10,10,10;
-      --gold: #c4a262; --gold-rgb: 196,162,98;
-    }
-    #loader { background: #0a0a0a; }
-
-    /* ══════════════════════════════════════════
        LITE MODE — weak hardware / reduced-motion
        Drops always-on / on-open backdrop-filter blur (expensive GPU paint)
        and swaps in a slightly more opaque solid background so it still reads.
@@ -2168,8 +2005,6 @@
   <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></symbol>
   <symbol id="i-ig" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></symbol>
   <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></symbol>
-  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="2.4" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.6" y2="12"/><line x1="5.2" y1="5.2" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5.2" y2="18.8"/></g></symbol>
-  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
 </svg>
 
 <div class="vignette"  aria-hidden="true"></div>
@@ -2207,10 +2042,6 @@
   </div>
   <div class="n-actions">
     <a class="n-book" href="/book">Book</a>
-    <button id="theme-toggle" type="button" title="Switch to light theme" aria-label="Switch to light theme">
-      <svg class="ti ti-sun" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg>
-      <svg class="ti ti-moon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-moon"/></svg>
-    </button>
     <button id="nav-toggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
       <span></span><span></span><span></span>
     </button>
@@ -3620,27 +3451,6 @@ else __boot();
     });
   }, { rootMargin: '600px 0px' });
   nodes.forEach(function (n) { io.observe(n); });
-})();
-</script>
-
-<!-- ════ THEME TOGGLE ════ -->
-<!-- Top-level, NOT inside __boot: that function returns early when the GSAP
-     CDN fails, which left the button rendering normally while clicking it did
-     nothing — the failure mode a phone on a bad connection actually hits. -->
-<script>
-(function () {
-  var btn = document.getElementById('theme-toggle');
-  if (!btn || !window.__theme) return;
-  /* The control is binary on screen - it always names the theme it switches to. */
-  function target() { return document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; }
-  function sync() {
-    var label = 'Switch to ' + target() + ' theme';
-    btn.setAttribute('aria-label', label);
-    btn.setAttribute('title', label);
-  }
-  sync();
-  document.addEventListener('themechange', sync);
-  btn.addEventListener('click', function () { window.__theme.set(target()); });
 })();
 </script>
 

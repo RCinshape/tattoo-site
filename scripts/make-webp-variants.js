@@ -9,7 +9,7 @@ const fs    = require('fs');
 const PICS   = path.join(__dirname, '..', 'pictures');
 const OUT    = path.join(PICS, 'web');
 const WIDTHS = [480, 960, 1440];
-// The hero photo is rendered through `filter: grayscale(1)` in both themes, so a
+// The hero photo is rendered through `filter: grayscale(1)`, so a
 // grayscale-encoded source is pixel-identical on screen and materially smaller.
 const GRAYSCALE = new Set(['Emmy-Tattoo-Artist-Working-Black-and-Grey']);
 

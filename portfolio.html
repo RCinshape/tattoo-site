@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" id="meta-theme-color" content="#0a0a0a">
+  <meta name="theme-color" content="#0a0a0a">
   <title>My Work | Emmy Tattoo Hull</title>
   <meta name="description" content="Tattoo portfolio — fine line, fine art and realism work by Emmy at Sainthood Tattoo, Princes Avenue, Hull.">
   <link rel="canonical" href="https://emmytattoo.com/portfolio">
@@ -140,39 +140,6 @@
     })();
   </script>
 
-  <!-- Theme resolution before first paint: manual override (localStorage) ?? OS preference -->
-  <script>
-    (function () {
-      var KEY = 'emmy-theme';
-      var mql = window.matchMedia('(prefers-color-scheme: light)');
-      /* Three states: 'system' (no key stored), 'light', 'dark'. */
-      function pref() {
-        try { var v = localStorage.getItem(KEY); return v === 'light' || v === 'dark' ? v : 'system'; }
-        catch (e) { return 'system'; }
-      }
-      function resolve(p) { return p === 'system' ? (mql.matches ? 'light' : 'dark') : p; }
-      function apply(p) {
-        var theme = resolve(p);
-        var r = document.documentElement;
-        r.dataset.theme = theme;
-        r.dataset.pref = p;
-        r.style.colorScheme = theme;
-        var m = document.getElementById('meta-theme-color');
-        if (m) m.setAttribute('content', theme === 'light' ? '#f7efeb' : '#0a0a0a');
-        document.dispatchEvent(new Event('themechange'));
-      }
-      window.__theme = {
-        pref: pref,
-        resolve: function () { return resolve(pref()); },
-        set: function (p) {
-          try { p === 'system' ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, p); } catch (e) {}
-          apply(p);
-        }
-      };
-      apply(pref());
-      mql.addEventListener('change', function () { if (pref() === 'system') apply('system'); });
-    })();
-  </script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
 
@@ -222,16 +189,16 @@
       --warn-rgb:  224,85,85;
       --border:    rgba(var(--fg-rgb),.07);
       --border-h:  rgba(var(--fg-rgb),.15);
-      /* Icon-button chrome. Both themes are pinned to the same measured ratios:
-         .34 white on #0a0a0a is 3.02:1 and .48 warm ink on #f7efeb is 3.13:1 —
-         WCAG non-text minimum. Dark sat at .07 = 1.15:1 — an invisible ring. */
+      /* Icon-button chrome, pinned to a measured ratio: .34 white on #0a0a0a is
+         3.02:1, the WCAG non-text minimum. It sat at .07 = 1.15:1 — an
+         invisible ring. */
       --btn-ring:   rgba(var(--fg-rgb),.34);
       --btn-ring-h: rgba(var(--fg-rgb),.50);
       --btn-fill:   rgba(var(--panel-rgb),.4);
       --gold-ring:   rgba(var(--gold-rgb),.32);
       --gold-ring-h: rgba(var(--gold-rgb),.65);
       --gold-soft:  rgba(var(--gold-rgb),.55);
-      /* photo treatments — flipped per theme so images sit on the page tone */
+      /* photo treatments — tuned so images sit on the page tone */
       --img-card:   brightness(.9) saturate(.75);
       --img-card-h: brightness(1) saturate(.9);
       --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23080705' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -243,40 +210,6 @@
       --out:    cubic-bezier(.16,1,.3,1);
       --sp:     cubic-bezier(.34,1.56,.64,1);
       --pad:    max(48px, calc(50vw - 720px));
-    }
-
-    /* Light theme — resolved from OS preference or the manual override, see head script */
-    :root[data-theme="light"] {
-      color-scheme: light;
-      /* Paper hue: warm side of the brand gold (OKLCH h 68/75 vs gold's 82).
-         Matches index.html; greener greys read as an olive cast. */
-      --bg:        #f7efeb;
-      --bg2:       #fdf8f6;
-      --fg:        #1b1613;
-      --fg2:       #4d443e;
-      --dim:       #6e625b;
-      /* One gold, both themes: #c4a262 everywhere. On #f7efeb it measures 2.1:1,
-         below the WCAG 3:1 non-text floor — a deliberate brand choice, so gold
-         stays decorative here and never carries small text. Matches index.html. */
-      --gold:      #c4a262;
-      --gold-rgb:  196,162,98;
-      --fg-rgb:    27,22,19;
-      --panel-rgb: 253,248,246;
-      --on-gold:   #1b1613;       /* 5.03:1 on gold; white would be 3.56:1 */
-      --ok:        #1f7a47;
-      --ok-ink:    #1f7a47;
-      --ok-rgb:    31,122,71;
-      --warn:      #b4322f;
-      --warn-rgb:  180,50,47;
-      --btn-ring:   rgba(var(--fg-rgb),.48);
-      --btn-ring-h: rgba(var(--fg-rgb),.64);
-      --btn-fill:   rgba(var(--panel-rgb),1);
-      --gold-ring:   rgba(var(--gold-rgb),.9);
-      --gold-ring-h: rgba(var(--gold-rgb),1);
-      --gold-soft:  rgba(var(--gold-rgb),.95);
-      --img-card:   brightness(1.02) saturate(.8);
-      --img-card-h: brightness(1.06) saturate(.95);
-      --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23fdf8f6' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
     }
 
     /* One gutter for every section on a phone — matches index.html. */
@@ -364,19 +297,6 @@
     }
     .n-book:hover { background: var(--gold-soft); border-color: var(--gold-soft); transform: translateY(-2px); }
     @media (max-width: 480px) { .n-book { padding: 9px 14px; letter-spacing: .12em; } }
-    #theme-toggle {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 38px; height: 38px; border-radius: 50%;
-      border: 1px solid var(--btn-ring); background: var(--btn-fill);
-      color: var(--dim); cursor: pointer; flex-shrink: 0;
-      transition: color .25s, border-color .25s;
-    }
-    #theme-toggle:hover { color: var(--gold); border-color: var(--btn-ring-h); }
-    #theme-toggle svg { flex-shrink: 0; }
-    /* Two states on screen: the icon shows the theme the button switches TO. */
-    #theme-toggle .ti { display: none; }
-    :root[data-theme="dark"]  #theme-toggle .ti-sun  { display: block; }
-    :root[data-theme="light"] #theme-toggle .ti-moon { display: block; }
     /* visibility, not just opacity: a full-viewport blur resting at opacity 0 is
        still painted and keeps its compositing layer alive for the whole visit.
        The 0s-delayed visibility transition lets the fade-out finish first. */
@@ -773,13 +693,6 @@
       .ft-copy { justify-self: center; text-align: center; }
     }
 
-    /* ── Always-dark islands: chrome drawn over photography ── */
-    .pw-over, .pw-zoom {
-      --fg: #ededed; --fg2: #adadad; --dim: #838383;
-      --fg-rgb: 255,255,255; --panel-rgb: 10,10,10;
-      --gold: #c4a262; --gold-rgb: 196,162,98;
-    }
-
     /* ══════════════════════════════════════════
        LITE MODE — weak hardware / reduced-motion (mirrors index.html)
        Drops always-on / on-open backdrop-filter blur (expensive GPU paint)
@@ -844,10 +757,6 @@
   </div>
   <div class="n-actions">
     <a class="n-book" href="/book">Book</a>
-    <button id="theme-toggle" type="button" title="Switch to light theme" aria-label="Switch to light theme">
-      <svg class="ti ti-sun" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="2.4" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.6" y2="12"/><line x1="5.2" y1="5.2" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5.2" y2="18.8"/></g></svg>
-      <svg class="ti ti-moon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.9 6.9 0 0 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-    </button>
     <button id="nav-toggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
       <span></span><span></span><span></span>
     </button>
@@ -1359,27 +1268,6 @@ function __boot() {
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', __boot);
 else __boot();
-</script>
-
-<!-- ════ THEME TOGGLE ════ -->
-<!-- Top-level, NOT inside __boot: that function returns early when the GSAP
-     CDN fails, which left the button rendering normally while clicking it did
-     nothing — the failure mode a phone on a bad connection actually hits. -->
-<script>
-(function () {
-  var btn = document.getElementById('theme-toggle');
-  if (!btn || !window.__theme) return;
-  /* The control is binary on screen - it always names the theme it switches to. */
-  function target() { return document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; }
-  function sync() {
-    var label = 'Switch to ' + target() + ' theme';
-    btn.setAttribute('aria-label', label);
-    btn.setAttribute('title', label);
-  }
-  sync();
-  document.addEventListener('themechange', sync);
-  btn.addEventListener('click', function () { window.__theme.set(target()); });
-})();
 </script>
 
 <!-- Resilience watchdog: if the hero is still hidden after the libs should have run, force-reveal.
