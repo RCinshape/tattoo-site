@@ -1454,12 +1454,17 @@
       letter-spacing: .28em; text-transform: uppercase;
       color: var(--fg2); white-space: nowrap;
     }
+    .bk-step-div {
+      width: 64px; height: 1px; flex-shrink: 0;
+      background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb),.35), transparent);
+    }
 
     @media (max-width: 768px) {
       #book { padding: 88px var(--pad) 80px; }
       .bk-h2 { font-size: clamp(2.6rem, 11vw, 4.2rem); }
       .bk-f-btn { padding: 17px 24px; }
       .bk-step  { padding: 0 18px; }
+      .bk-step-div { width: 28px; }
     }
 
 
@@ -2086,7 +2091,7 @@
     <div class="h-sub">
       <div class="h-loc">
         <span class="h-loc-studio">At Sainthood Tattoo · Princes Ave, Hull<a href="#location" class="h-dir" aria-label="View map for Sainthood Tattoo"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-5.686-7-11a7 7 0 0 1 14 0c.5 5.314-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span>Directions</span></a></span>
-        <span class="h-loc-hours">Appointment only &nbsp;·&nbsp; Tue–Sat &nbsp;·&nbsp; 09–17</span>
+        <span class="h-loc-hours">Appointment only &nbsp;·&nbsp; Tue–Sat</span>
       </div>
     </div>
     <!-- Both are cross-document navigations that @view-transition fades exactly
@@ -2463,10 +2468,12 @@
         <span class="bk-step-n">01</span>
         <span class="bk-step-l">Message</span>
       </div>
+      <div class="bk-step-div" aria-hidden="true"></div>
       <div class="bk-step">
         <span class="bk-step-n">02</span>
         <span class="bk-step-l">Consult</span>
       </div>
+      <div class="bk-step-div" aria-hidden="true"></div>
       <div class="bk-step">
         <span class="bk-step-n">03</span>
         <span class="bk-step-l">Create</span>
