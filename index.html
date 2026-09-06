@@ -970,9 +970,7 @@
       width: 100%; height: 100%; object-fit: cover; display: block;
     }
     .ab-h2 {
-      font-family: var(--serif);
       font-size: clamp(2.2rem, 4.5vw, 3.8rem);
-      font-weight: 300; line-height: 1; letter-spacing: -.02em;
       margin-bottom: 24px;
     }
     .ab-bio p {
@@ -995,9 +993,7 @@
     }
     .exp-hd { margin-bottom: 48px; }
     .exp-h2 {
-      font-family: var(--serif);
       font-size: clamp(1.9rem,4.5vw,3.8rem);
-      font-weight: 300; letter-spacing: -.02em; line-height: 1;
     }
     /* ── Expertise — same accordion mechanic as the FAQ further down ── */
     .exp-list { list-style: none; }
@@ -1278,9 +1274,7 @@
       animation: dp 2.2s ease-in-out infinite;
     }
     .fl-h2 {
-      font-family: var(--serif);
       font-size: clamp(2.8rem, 6.5vw, 5.5rem);
-      font-weight: 300; line-height: 1; letter-spacing: -.02em;
       margin-bottom: 22px;
     }
     .fl-p {
@@ -1522,6 +1516,24 @@
       margin-top: 12px;
     }
     .tr-h2 em { color: var(--gold); font-style: italic; }
+    /* The four other section titles take the treatment What clients say
+       established, in one rule so they cannot drift from each other. .tr-h2
+       itself is deliberately not in this selector list: it is the reference and
+       stays as it is. Each section's own rule keeps only its font-size and
+       margins — the sizes are per-section by design and are not part of "the
+       same font". The accent <em> is the same --gold token as the hero
+       wordmark. */
+    .ab-h2, .exp-h2, .faq-h2, .fl-h2 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1;
+      letter-spacing: normal;
+    }
+    .ab-h2 em, .exp-h2 em, .faq-h2 em, .fl-h2 em {
+      color: var(--gold);
+      font-style: italic;
+    }
     .tr-head-r { flex-shrink: 0; }
     .tr-score-badge {
       display: inline-flex; align-items: center; gap: 11px;
@@ -1706,9 +1718,7 @@
     }
     .faq-hd { margin-bottom: 72px; }
     .faq-h2 {
-      font-family: var(--serif);
       font-size: clamp(2.6rem,5.5vw,5rem);
-      font-weight: 300; letter-spacing: -.03em; line-height: 1;
     }
     .fq-list { list-style: none; }
 
@@ -2262,7 +2272,7 @@
          alt="Emmy, fine line and realism tattoo artist at Sainthood Tattoo in Hull." loading="lazy" decoding="async">
   </div>
   <div class="ab-text">
-    <h2 class="ab-h2">Hi, I'm Emmy</h2>
+    <h2 class="ab-h2">Hi, I'm <em>Emmy</em></h2>
     <div class="ab-bio">
       <p>A fine line, fine art and realism tattoo artist, working from Sainthood Tattoo on Princes Avenue, Hull.</p>
     </div>
@@ -2273,7 +2283,7 @@
 <section id="exp">
   <div class="exp-hd">
 
-    <h2 class="exp-h2"><span class="tl"><span class="tl-i">Areas of Expertise</span></span></h2>
+    <h2 class="exp-h2"><span class="tl"><span class="tl-i">Areas of <em>Expertise</em></span></span></h2>
   </div>
   <ul class="exp-list">
 
@@ -2361,7 +2371,7 @@
 <!-- ════ FAQ ════ -->
 <section id="faq">
   <div class="faq-hd">
-    <h2 class="faq-h2"><span class="tl"><span class="tl-i">Frequently Asked Questions</span></span></h2>
+    <h2 class="faq-h2"><span class="tl"><span class="tl-i"><em>Frequently Asked</em> Questions</span></span></h2>
   </div>
   <ul class="fq-list">
 
@@ -2532,7 +2542,7 @@
 <section id="flash">
   <div class="fl-left">
     <div class="fl-badge"><span class="fl-dot"></span> @emmy.tattoo</div>
-    <h2 class="fl-h2">Follow the work</h2>
+    <h2 class="fl-h2"><em>Follow</em> the work</h2>
     <p class="fl-p">Instagram is where new work goes first: finished pieces, available slots, flash designs. Updated when something happens, not on a schedule.</p>
     <ul class="fl-reasons">
       <li class="fl-reason">New pieces posted as they're completed</li>
