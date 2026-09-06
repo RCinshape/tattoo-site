@@ -312,6 +312,9 @@
       --out:   cubic-bezier(.16,1,.3,1);
       --io:    cubic-bezier(.87,0,.13,1);
       --sp:    cubic-bezier(.34,1.56,.64,1);
+      --ios:      cubic-bezier(.32,.72,0,1);   /* iOS sheet/nav curve */
+      --ios-t:     560ms;                      /* opening gesture */
+      --ios-t-out: 400ms;                      /* closing gesture */
       /* auto-center: 48px min, grows to keep content ≤ 1440px wide */
       --pad:   max(48px, calc(50vw - 720px));
     }
@@ -1002,8 +1005,34 @@
       position: relative; overflow: hidden;
       border-top: 1px solid var(--border);
       opacity: 0;
+      isolation: isolate;
     }
     .ei:last-child { border-bottom: 1px solid var(--border); }
+    /* Opening a row lights it with a wash that dissolves before the gutters, so
+       the highlight reads as leaking off both sides rather than ending on a hard
+       edge. Shared with .fq-item in the FAQ block below — one rule, because the
+       two accordions must light identically. --fg-rgb is the token for faint
+       washes; --panel-rgb would paint a visible grey shape over the page. */
+    .ei::before,
+    .fq-item::before {
+      content: ''; position: absolute; inset: 0; z-index: -1;
+      opacity: 0; pointer-events: none;
+      background: linear-gradient(90deg,
+        rgba(var(--fg-rgb),0)    0%,
+        rgba(var(--fg-rgb),.045) 20%,
+        rgba(var(--fg-rgb),.045) 80%,
+        rgba(var(--fg-rgb),0)   100%);
+      transition: opacity var(--ios-t-out) var(--ios);
+    }
+    .ei.open::before,
+    .fq-item.open::before {
+      opacity: 1;
+      transition-duration: var(--ios-t);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ei::before, .fq-item::before,
+      .ei.open::before, .fq-item.open::before { transition: none; }
+    }
     /* Two-column copy of .fq-trigger, minus the numeral: numbering three styles
        would read as a ranking of them. */
     .ei-trigger {
@@ -1162,6 +1191,10 @@
 
     /* Gold sweep along the row's own separator, width animated by GSAP — the same
        shape as .fq-rule in the section below. */
+    /* TODO: dead. bottom:-1px puts this entirely outside the row's overflow:hidden
+       clip box, so it never paints — verified by pixel sample, flat #0a0a0a across
+       the row's bottom edge. The width tweens on open and hover animate nothing.
+       Either move it to bottom:0 and let it show, or delete it and its tweens. */
     .ei-rule {
       position: absolute; bottom: -1px; left: 0;
       height: 1px; width: 0;
@@ -1684,6 +1717,7 @@
       border-top: 1px solid var(--border);
       position: relative; overflow: hidden;
       cursor: pointer;
+      isolation: isolate;
     }
     .fq-item:last-child { border-bottom: 1px solid var(--border); }
 
@@ -1745,6 +1779,10 @@
     }
 
     /* Gold sweep rule at bottom of trigger */
+    /* TODO: dead. bottom:-1px puts this entirely outside the row's overflow:hidden
+       clip box, so it never paints — verified by pixel sample, flat #0a0a0a across
+       the row's bottom edge. The width tweens on open and hover animate nothing.
+       Either move it to bottom:0 and let it show, or delete it and its tweens. */
     .fq-rule {
       position: absolute; bottom: -1px; left: 96px;
       height: 1px; width: 0;
@@ -2661,6 +2699,36 @@ function __boot() {
      for the visitor; ordinary scrolling is the browser's business either way. */
   const SMOOTH = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 
+  /* One curve and one duration for the whole open gesture — scroll, panel, copy
+     fade and row wash — so a row reads as a single movement rather than four.
+     The evaluator is the same cubic as --ios and doubles as a GSAP ease
+     function, and both durations are read back out of CSS, so nothing here can
+     drift from the stylesheet. */
+  const rootCS    = getComputedStyle(document.documentElement);
+  const IOS_S     = (parseFloat(rootCS.getPropertyValue('--ios-t'))     || 560) / 1000;
+  const IOS_OUT_S = (parseFloat(rootCS.getPropertyValue('--ios-t-out')) || 400) / 1000;
+  const IOS_EASE = (() => {
+    const x1 = .32, y1 = .72, x2 = 0, y2 = 1;
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const fx  = (t) => ((ax * t + bx) * t + cx) * t;
+    const dfx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (p) => {
+      if (p <= 0) return 0;
+      if (p >= 1) return 1;
+      let t = p;
+      for (let i = 0; i < 6; i++) {
+        const err = fx(t) - p;
+        if (Math.abs(err) < 1e-5) break;
+        const d = dfx(t);
+        if (Math.abs(d) < 1e-6) break;
+        t -= err / d;
+      }
+      t = t < 0 ? 0 : t > 1 ? 1 : t;
+      return ((ay * t + by) * t + cy) * t;
+    };
+  })();
+
   /* ═══ SCROLL RESET ON REFRESH ═══ */
   if (history.scrollRestoration) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
@@ -2974,18 +3042,52 @@ function __boot() {
         scrollTrigger: { trigger: '.fq-list', start: 'top 82%', once: true } }
     );
 
-    /* ── Mobile: opening a row pulls it to the top of the screen ──
-       The tapped row is on screen by definition, so the travel is at most one
-       viewport and the browser's own smooth scroll lands fast; nothing here
-       drives the scroll position frame by frame. --nav-h is read off #nav so the
-       78px mobile bar and the 94px desktop one stay one source of truth. */
-    const MOBILE_LAYOUT = window.matchMedia('(max-width: 768px)');
-    function revealOnOpen(el) {
-      if (!MOBILE_LAYOUT.matches) return;
+    /* ── Opening a row pulls it to the top of the screen, when it needs to ──
+       Runs on every viewport, but only when the row cannot show its opened
+       panel where it stands, rather than yanking the page under someone who
+       only clicked to read. Measured expanded row heights: 489-525px on
+       desktop against 806px of room below the 94px bar, and 213-729px on a
+       390x844 phone against 766px below the 78px bar. So the size test alone
+       nearly always passes and it is the row's current position that decides:
+       tap a row low on the screen and it travels, tap one already sitting
+       under the bar and the page stays put.
+
+       The travel is tweened rather than handed to the browser's smooth scroll
+       because the browser picks its own timing, which cannot match the panel
+       opening underneath it; both run on --ios. --nav-h is read off #nav so the
+       78px mobile bar and the 94px desktop one stay one source of truth.
+       A wheel or touch during the tween hands the page straight back. */
+    let scrollRun = 0;
+    function revealOnOpen(el, expandedH) {
       const navH = parseFloat(getComputedStyle(navEl).getPropertyValue('--nav-h')) || 0;
-      window.scrollTo({
-        top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - navH),
-        behavior: SMOOTH
+      const top  = el.getBoundingClientRect().top;
+
+      /* Fits below the bar as it is → nothing to do. */
+      if (top >= navH && top + expandedH <= window.innerHeight) return;
+
+      const from = window.scrollY;
+      const max  = document.documentElement.scrollHeight - window.innerHeight;
+      const to   = Math.max(0, Math.min(top + from - navH, max));
+      if (Math.abs(to - from) < 1) return;
+      if (SMOOTH === 'auto') { window.scrollTo(0, to); return; }
+
+      const run = ++scrollRun;
+      let alive = true;
+      const stop = () => { alive = false; };
+      const opts = { passive: true };
+      addEventListener('wheel', stop, opts);
+      addEventListener('touchstart', stop, opts);
+      const done = () => {
+        removeEventListener('wheel', stop, opts);
+        removeEventListener('touchstart', stop, opts);
+      };
+
+      const t0 = performance.now();
+      requestAnimationFrame(function step(now) {
+        if (!alive || run !== scrollRun) return done();
+        const p = Math.min(1, (now - t0) / (IOS_S * 1000));
+        window.scrollTo(0, from + (to - from) * IOS_EASE(p));
+        if (p < 1) requestAnimationFrame(step); else done();
       });
     }
 
@@ -3007,20 +3109,21 @@ function __boot() {
         if (isOpen) {
           gsap.set(panel, { height: 'auto', overflow: 'visible' });
           const h = panel.offsetHeight;
-          gsap.fromTo(panel,
-            { height: 0, overflow: 'hidden' },
-            { height: h, duration: 0.55, ease: 'expo.out',
+          gsap.set(panel, { height: 0, overflow: 'hidden' });
+          const collapsedH = row.offsetHeight;
+          gsap.to(panel,
+            { height: h, duration: IOS_S, ease: IOS_EASE,
               onComplete() { gsap.set(panel, { height: 'auto' }); } }
           );
           gsap.fromTo(inner,
             { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, duration: 0.42, delay: 0.1, ease: 'power3.out' }
+            { opacity: 1, y: 0, duration: IOS_S * .6, delay: IOS_S * .16, ease: IOS_EASE }
           );
           gsap.to(rule, { width: '60%', duration: 0.5, ease: 'expo.out' });
-          revealOnOpen(row);
+          revealOnOpen(row, collapsedH + h);
         } else {
-          gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.35, ease: 'expo.in' });
-          gsap.to(inner, { opacity: 0, y: 6, duration: 0.2, ease: 'power2.in' });
+          gsap.to(panel, { height: 0, overflow: 'hidden', duration: IOS_OUT_S, ease: IOS_EASE });
+          gsap.to(inner, { opacity: 0, y: 6, duration: IOS_OUT_S * .5, ease: IOS_EASE });
           gsap.to(rule, { width: 0, duration: 0.28, ease: 'expo.in' });
         }
       });
@@ -3053,20 +3156,21 @@ function __boot() {
         if (isOpen) {
           gsap.set(panel, { height: 'auto', overflow: 'visible' });
           const h = panel.offsetHeight;
-          gsap.fromTo(panel,
-            { height: 0, overflow: 'hidden' },
-            { height: h, duration: 0.55, ease: 'expo.out',
+          gsap.set(panel, { height: 0, overflow: 'hidden' });
+          const collapsedH = item.offsetHeight;
+          gsap.to(panel,
+            { height: h, duration: IOS_S, ease: IOS_EASE,
               onComplete() { gsap.set(panel, { height: 'auto' }); } }
           );
           gsap.fromTo(inner,
             { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, duration: 0.42, delay: 0.1, ease: 'power3.out' }
+            { opacity: 1, y: 0, duration: IOS_S * .6, delay: IOS_S * .16, ease: IOS_EASE }
           );
           gsap.to(rule, { width: '60%', duration: 0.5, ease: 'expo.out' });
-          revealOnOpen(item);
+          revealOnOpen(item, collapsedH + h);
         } else {
-          gsap.to(panel, { height: 0, overflow: 'hidden', duration: 0.35, ease: 'expo.in' });
-          gsap.to(inner, { opacity: 0, y: 6, duration: 0.2, ease: 'power2.in' });
+          gsap.to(panel, { height: 0, overflow: 'hidden', duration: IOS_OUT_S, ease: IOS_EASE });
+          gsap.to(inner, { opacity: 0, y: 6, duration: IOS_OUT_S * .5, ease: IOS_EASE });
           gsap.to(rule, { width: 0, duration: 0.28, ease: 'expo.in' });
         }
       });
