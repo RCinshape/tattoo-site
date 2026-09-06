@@ -1267,6 +1267,12 @@
       letter-spacing: .2em; text-transform: uppercase;
       color: var(--fg2); margin-bottom: 22px;
     }
+    /* Space Mono draws @ as a small glyph sitting entirely above the baseline
+       (ascent 6, descent 0 at this size, against cap height 7), which reads as a
+       raised blob rather than an at-sign. DM Sans's @ is ascent 7 / descent 2 —
+       cap-matched and crossing the baseline. Only this one character changes
+       font; .fl-handle is a grouping wrapper so .fl-at is not a flex item. */
+    .fl-at { font-family: var(--sans); }
     .fl-dot {
       width: 7px; height: 7px; border-radius: 50%;
       background: var(--gold); flex-shrink: 0;
@@ -2541,7 +2547,7 @@
 <!-- ════ SOCIAL / FOLLOW ════ -->
 <section id="flash">
   <div class="fl-left">
-    <div class="fl-badge"><span class="fl-dot"></span> @emmy.tattoo</div>
+    <div class="fl-badge"><span class="fl-dot"></span> <span class="fl-handle"><span class="fl-at">@</span>emmy.tattoo</span></div>
     <h2 class="fl-h2"><em>Follow</em> the work</h2>
     <p class="fl-p">Instagram is where new work goes first: finished pieces, available slots, flash designs. Updated when something happens, not on a schedule.</p>
     <ul class="fl-reasons">
