@@ -143,23 +143,39 @@
   <!-- Display face is self-hosted: one origin fewer and font-display:swap instead of cdnfonts' 3s block -->
   <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="/fonts/dm-sans-latin.woff2" crossorigin>
+  <!-- 320px on phones is a tier cap, not a layout width: at DPR3 it selects the
+       960 variant (79.9KB) rather than 1440 (137.7KB), which is 1.2x more pixels
+       than a 390px screen can show. Must stay identical to the <img> sizes below,
+       or the phone downloads both files. -->
   <link rel="preload" as="image" fetchpriority="high"
         imagesrcset="pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-480.webp 480w, pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-960.webp 960w, pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-1440.webp 1440w"
-        imagesizes="100vw">
+        imagesizes="(max-width: 480px) 320px, 100vw">
 
-  <!-- Analytics: GA4 page views only, loaded straight away. No consent gate —
-       measurement-only GA4 is the least intrusive setup that still counts visits. -->
+  <!-- Analytics: GA4 page views only. No consent gate — measurement-only GA4 is
+       the least intrusive setup that still counts visits.
+       Held back until first interaction or 3s idle: gtag.js is 169.7KB, larger
+       than the hero photo, and fetched at ~100ms it competes with the LCP image
+       for a 2Mbps pipe. A visitor who leaves inside 3s without touching
+       anything is not counted; that is the accepted trade. -->
   <script>
     (function () {
       if (/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) return;
       var id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
-      var s = document.createElement('script');
-      s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
-      document.head.appendChild(s);
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function () { dataLayer.push(arguments); };
-      gtag('js', new Date());
-      gtag('config', id);
+      var fired = false;
+      function load() {
+        if (fired) return;
+        fired = true;
+        var s = document.createElement('script');
+        s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', id);
+      }
+      var evs = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+      evs.forEach(function (e) { addEventListener(e, load, { once: true, passive: true }); });
+      setTimeout(load, 3000);
     })();
   </script>
 
@@ -2276,7 +2292,7 @@
   <div class="hero-bg-photo" aria-hidden="true">
     <img src="pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-960.webp"
          srcset="pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-480.webp 480w, pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-960.webp 960w, pictures/web/Emmy-Tattoo-Artist-Working-Black-and-Grey-1440.webp 1440w"
-         sizes="100vw" width="1440" height="1921" fetchpriority="high"
+         sizes="(max-width: 480px) 320px, 100vw" width="1440" height="1921" fetchpriority="high"
          alt="A black and white close-up photo of a tattoo artist from Emmy Tattoo working on a client's arm using a rotary tattoo machine." loading="eager" decoding="async">
   </div>
   <div class="h-vign" aria-hidden="true"></div>
@@ -2418,7 +2434,7 @@
   <div class="ab-portrait">
     <img src="pictures/web/Emmy-Selfie-Colorful-960.webp" width="1696" height="2496"
          srcset="pictures/web/Emmy-Selfie-Colorful-480.webp 480w, pictures/web/Emmy-Selfie-Colorful-960.webp 960w"
-         sizes="(max-width: 768px) 50vw, 20vw"
+         sizes="(max-width: 480px) 160px, (max-width: 768px) 50vw, 20vw"
          alt="Emmy, fine line and realism tattoo artist at Sainthood Tattoo in Hull." loading="lazy" decoding="async">
   </div>
   <div class="ab-text">
@@ -2764,8 +2780,8 @@
   <div class="loc-media">
     <img class="loc-photo"
          src="pictures/web/Sainthood-Tattoo-Studio-Shopfront-Hull-960.webp"
-         srcset="pictures/web/Sainthood-Tattoo-Studio-Shopfront-Hull-960.webp 960w, pictures/web/Sainthood-Tattoo-Studio-Shopfront-Hull-1440.webp 1440w"
-         sizes="(max-width: 768px) 100vw, 46vw"
+         srcset="pictures/web/Sainthood-Tattoo-Studio-Shopfront-Hull-480.webp 480w, pictures/web/Sainthood-Tattoo-Studio-Shopfront-Hull-960.webp 960w, pictures/web/Sainthood-Tattoo-Studio-Shopfront-Hull-1440.webp 1440w"
+         sizes="(max-width: 480px) 320px, (max-width: 768px) 100vw, 46vw"
          width="2646" height="1600" loading="lazy" decoding="async"
          alt="The Sainthood Tattoo shopfront on Princes Avenue in Hull, a corner unit with a yellow and teal tiled facade and a black metal grille.">
     <!-- Coordinates, not the address string: the ?q=<address> embed opens with a
@@ -3170,13 +3186,16 @@ function __boot() {
 
       let originCard = null;
       const CARD_R = 12;
+      /* Same phone tier cap as the #sk-modal viewer. This scope is a separate
+         IIFE, so it needs its own copy — data-full is always the 1440 tier. */
+      const viewSrc = (u) => window.innerWidth <= 480 ? u.replace('-1440.webp', '-960.webp') : u;
 
       function openLightbox(card) {
         const img = card.querySelector('.wc-img');
         if (!img) return;
         originCard = card;
         const rect = card.getBoundingClientRect();
-        galModalImg.src = card.dataset.full || img.src;
+        galModalImg.src = viewSrc(card.dataset.full || img.src);
         galModal.style.display = 'block';
         galModal.setAttribute('aria-hidden', 'false');
         galModalBg.classList.add('on');
@@ -3438,6 +3457,11 @@ function __boot() {
 
       let images = [], idx = 0;
 
+      /* The viewer is a 1440 tier: 149-224KB. On a 390px screen the 960 tier is
+         still 2.4x the device pixels, so phones get that instead. Read per call,
+         not cached, so a rotation or a resize picks the right file. */
+      const viewSrc = (u) => window.innerWidth <= 480 ? u.replace('-1440.webp', '-960.webp') : u;
+
       function show(i) {
         idx = (i + images.length) % images.length;
         const next = images[idx];
@@ -3447,8 +3471,9 @@ function __boot() {
         const reveal = () => { img.style.opacity = '1'; };
         img.style.opacity = '0';
         img.alt = next.alt || '';
-        if (img.getAttribute('src') === next.src && img.complete) reveal();
-        else { img.onload = reveal; img.onerror = reveal; img.src = next.src; }
+        const want = viewSrc(next.src);
+        if (img.getAttribute('src') === want && img.complete) reveal();
+        else { img.onload = reveal; img.onerror = reveal; img.src = want; }
         counter.textContent = `${idx + 1} / ${images.length}`;
         btnPrev.style.display = images.length < 2 ? 'none' : '';
         btnNext.style.display = images.length < 2 ? 'none' : '';
@@ -3609,13 +3634,13 @@ else __boot();
      real and invented, just a longer window onto the same wall. Seven is the whole
      seeded set: the old cap of six left one transcribed review unrendered. */
   const SEEDED = [
-    { name: 'Jess Dan',        photo: 'google.reviews/Jess Dunn.jpg',     rating: 5, quote: "Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" },
-    { name: 'Jaime Dale',      photo: 'google.reviews/James Dale.jpg',    rating: 5, quote: "Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" },
-    { name: 'Ruby Taylor',     photo: 'google.reviews/Ruby Taylor.jpg',   rating: 5, quote: "Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist" },
-    { name: 'Leanne Smith',    photo: 'google.reviews/Leanne Smith.jpg',  rating: 5, quote: "Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻" },
-    { name: 'Matthew Wallace', photo: 'google.reviews/Matthew wallace.png', rating: 5, quote: "I'm Matthew on a different account but Emmy did me an absolutely unbelievable full back tattoo, she did it all in one sitting and the experience was unbelievable. So kind and patient and I will be sure to go back to her next time I want a tattoo" },
-    { name: 'Sarah Andrew',    photo: 'google.reviews/Sarah Andrew.png',  rating: 5, quote: "Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!" },
-    { name: 'Kimberley Rust',  photo: 'google.reviews/Kimberely Rust.jpg', rating: 5, quote: "Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting. Can't wait to get more, so happy with the three I currently have, such beautiful artwork. ❤️" }
+    { name: 'Jess Dan',        photo: 'google.reviews/web/Jess Dunn-96.webp',     rating: 5, quote: "Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" },
+    { name: 'Jaime Dale',      photo: 'google.reviews/web/James Dale-96.webp',    rating: 5, quote: "Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" },
+    { name: 'Ruby Taylor',     photo: 'google.reviews/web/Ruby Taylor-96.webp',   rating: 5, quote: "Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist" },
+    { name: 'Leanne Smith',    photo: 'google.reviews/web/Leanne Smith-96.webp',  rating: 5, quote: "Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻" },
+    { name: 'Matthew Wallace', photo: 'google.reviews/web/Matthew wallace-96.webp', rating: 5, quote: "I'm Matthew on a different account but Emmy did me an absolutely unbelievable full back tattoo, she did it all in one sitting and the experience was unbelievable. So kind and patient and I will be sure to go back to her next time I want a tattoo" },
+    { name: 'Sarah Andrew',    photo: 'google.reviews/web/Sarah Andrew-96.webp',  rating: 5, quote: "Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!" },
+    { name: 'Kimberley Rust',  photo: 'google.reviews/web/Kimberely Rust-96.webp', rating: 5, quote: "Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting. Can't wait to get more, so happy with the three I currently have, such beautiful artwork. ❤️" }
   ];
   let LIVE = [];
   /* Live first, seeded only to fill the remaining slots. Names are the only key the
@@ -3677,9 +3702,19 @@ else __boot();
     /* Cards are static, so there is nothing to pause: no autoplay, no off-screen
        timer, no swipe. The section's only motion is the entrance stagger below. */
 
+    /* Google returns the full-resolution avatar — measured 30-35KB of PNG for a
+       32px circle. The =s<n> suffix is Google's own resize API and -rw asks for
+       WebP; s96 is 32 CSS px at DPR 3. Measured 2.3-3.0KB each. Non-Google
+       (seeded, same-origin) URLs pass through untouched. Splitting on '=' is
+       safe: the path segment (/a-/ALV-Uj…) contains none, so everything after
+       the first one is Google's option string. */
+    function avatarSrc(u) {
+      return /\/\/lh3\.googleusercontent\.com\//.test(u) ? u.split('=')[0] + '=s96-c-rw' : u;
+    }
+
     function photoEl(r, cls) {
       return r.photo
-        ? '<span class="' + cls + '"><img src="' + esc(r.photo).replace(/"/g, '&quot;') + '" alt="' + esc(r.name) + '" loading="lazy" decoding="async"></span>'
+        ? '<span class="' + cls + '"><img src="' + esc(avatarSrc(r.photo)).replace(/"/g, '&quot;') + '" alt="' + esc(r.name) + '" loading="lazy" decoding="async"></span>'
         : '<span class="' + cls + ' ' + cls + '-ph">' + initial(r.name) + '</span>';
     }
 

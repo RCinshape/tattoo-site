@@ -99,27 +99,41 @@
   </script>
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c4a262'>✦</text></svg>">
-  <!-- Analytics: GA4 page views only, loaded straight away. No consent gate —
-       measurement-only GA4 is the least intrusive setup that still counts visits. -->
+  <!-- Analytics: GA4 page views only. No consent gate — measurement-only GA4 is
+       the least intrusive setup that still counts visits.
+       Held back until first interaction or 3s idle: gtag.js is 169.7KB, larger
+       than the hero photo, and fetched at ~100ms it competes with the LCP image
+       for a 2Mbps pipe. A visitor who leaves inside 3s without touching
+       anything is not counted; that is the accepted trade. -->
   <script>
     (function () {
       if (/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) return;
       var id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
-      var s = document.createElement('script');
-      s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
-      document.head.appendChild(s);
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function () { dataLayer.push(arguments); };
-      gtag('js', new Date());
-      gtag('config', id);
+      var fired = false;
+      function load() {
+        if (fired) return;
+        fired = true;
+        var s = document.createElement('script');
+        s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', id);
+      }
+      var evs = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+      evs.forEach(function (e) { addEventListener(e, load, { once: true, passive: true }); });
+      setTimeout(load, 3000);
     })();
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Display face is self-hosted: one origin fewer and font-display:swap instead of cdnfonts' 3s block -->
   <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
+  <!-- Body faces are self-hosted too, matching index.html: the Google Fonts
+       stylesheet was a full RTT on a third origin before it even revealed the
+       four woff2 files (145.7KB, landing 408-410ms). Only the body face is
+       preloaded — a second font preload would compete with the hero image. -->
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/dm-sans-latin.woff2" crossorigin>
 
   <!-- If any animation library fails to load, reveal content (resilience) -->
   <script>window.__libFail = function () { document.documentElement.classList.add('libs-failed'); };</script>
@@ -158,6 +172,95 @@
       font-weight: 400 700;
       font-style: normal;
       font-display: swap;
+    }
+
+    /* Body typography, self-hosted for the same reason as the display face
+       above: from Google it is a two-hop chain (googleapis stylesheet, then a
+       gstatic woff2), which measured 6 painted frames of fallback Arial before
+       DM Sans arrived. Same-origin and declared here, the browser starts them
+       while parsing the head. Declarations are Google's own, verbatim, with
+       only src repointed; 300 and 400 share one variable file per family.
+       The unicode-range values must stay: a face without one claims every
+       codepoint, which would stop latin-ext from ever being used. */
+    @font-face {
+      font-family: 'DM Sans';
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+      src: url('/fonts/dm-sans-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'DM Sans';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('/fonts/dm-sans-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'DM Sans';
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+      src: url('/fonts/dm-sans-latin-ext.woff2') format('woff2');
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+    @font-face {
+      font-family: 'DM Sans';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('/fonts/dm-sans-latin-ext.woff2') format('woff2');
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+    @font-face {
+      font-family: 'DM Sans';
+      font-style: italic;
+      font-weight: 300;
+      font-display: swap;
+      src: url('/fonts/dm-sans-italic-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Cormorant Garamond';
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+      src: url('/fonts/cormorant-garamond-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Cormorant Garamond';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('/fonts/cormorant-garamond-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Cormorant Garamond';
+      font-style: italic;
+      font-weight: 300;
+      font-display: swap;
+      src: url('/fonts/cormorant-garamond-italic-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Cormorant Garamond';
+      font-style: italic;
+      font-weight: 400;
+      font-display: swap;
+      src: url('/fonts/cormorant-garamond-italic-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Space Mono';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('/fonts/space-mono-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -805,13 +908,19 @@
 <!-- ════ GRID ════ -->
 <main id="pw-grid" aria-label="Portfolio">
 
+  <!-- 160px on phones is a tier cap, not a layout width. The real slot is 165 CSS
+       px, not the 195 that 50vw claims, so at DPR3 this selects the 480 variant
+       instead of 960: 658KB -> 207KB across the ten. loading="lazy" defers none of
+       them on mobile — the document is shorter than Chrome's lazy threshold, so all
+       ten are requested inside 573ms whatever this says. Every .pw-item img below
+       carries the same value. -->
   <div class="pw-item" data-style="fine-art realism"
        data-src="pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-1440.webp"
        data-alt="Black and grey surrealism hand tattoo featuring a woman's face with blank eyes and a snake winding through her mouth, designed by Emmy Tattoo."
        tabindex="0" role="button" aria-label="View: Surreal face and snake hand tattoo">
     <img src="pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-960.webp" width="1200" height="1541"
          srcset="pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-480.webp 480w, pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-960.webp 960w"
-         sizes="(max-width: 1024px) 50vw, 25vw"
+         sizes="(max-width: 480px) 160px, (max-width: 1024px) 50vw, 25vw"
          alt="Black and grey surrealism hand tattoo featuring a woman's face with blank eyes and a snake winding through her mouth, designed by Emmy Tattoo."
          title="Surreal Face and Snake Hand Tattoo by Emmy Tattoo" fetchpriority="high" decoding="async">
     <div class="pw-over" aria-hidden="true">
@@ -826,7 +935,7 @@
        tabindex="0" role="button" aria-label="View: Fine line spotted shark arm tattoo">
     <img src="pictures/web/fine-line-spotted-shark-arm-tattoo-emmy-tattoo-960.webp" width="1200" height="1600"
          srcset="pictures/web/fine-line-spotted-shark-arm-tattoo-emmy-tattoo-480.webp 480w, pictures/web/fine-line-spotted-shark-arm-tattoo-emmy-tattoo-960.webp 960w"
-         sizes="(max-width: 1024px) 50vw, 25vw"
+         sizes="(max-width: 480px) 160px, (max-width: 1024px) 50vw, 25vw"
          alt="Fine line blackwork tattoo of a spotted leopard shark using dotwork shading on the back of a woman's upper arm, done by Emmy Tattoo."
          title="Fine Line Spotted Shark Arm Tattoo by Emmy Tattoo" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
@@ -841,7 +950,7 @@
        tabindex="0" role="button" aria-label="View: Fine line abstract flower tattoo">
     <img src="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp" width="2160" height="3007"
          srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w, pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp 960w"
-         sizes="(max-width: 1024px) 50vw, 25vw"
+         sizes="(max-width: 480px) 160px, (max-width: 1024px) 50vw, 25vw"
          alt="Minimalist fine-line abstract continuous flower tattoo on upper arm by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Line</span>
@@ -855,7 +964,7 @@
        tabindex="0" role="button" aria-label="View: Wolf portrait forearm tattoo">
     <img src="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp" width="2160" height="2881"
          srcset="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-480.webp 480w, pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp 960w"
-         sizes="(max-width: 1024px) 50vw, 25vw"
+         sizes="(max-width: 480px) 160px, (max-width: 1024px) 50vw, 25vw"
          alt="Wolf portrait with shattered clock and forest forearm half-sleeve by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -869,7 +978,7 @@
        tabindex="0" role="button" aria-label="View: Flying barn owl tattoo">
     <img src="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-960.webp" width="2160" height="2880"
          srcset="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-480.webp 480w, pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-960.webp 960w"
-         sizes="(max-width: 1024px) 50vw, 25vw"
+         sizes="(max-width: 480px) 160px, (max-width: 1024px) 50vw, 25vw"
          alt="Flying barn owl black and grey tattoo on upper arm by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Art</span>
@@ -883,7 +992,7 @@
        tabindex="0" role="button" aria-label="View: Pug portrait thigh tattoo">
     <img src="pictures/web/Pug-Dog-Portrait-Floral-Thigh-Tattoo-960.webp" width="2160" height="2880"
          srcset="pictures/web/Pug-Dog-Portrait-Floral-Thigh-Tattoo-480.webp 480w, pictures/web/Pug-Dog-Portrait-Floral-Thigh-Tattoo-960.webp 960w"
-         sizes="(max-width: 1024px) 50vw, 25vw"
+         sizes="(max-width: 480px) 160px, (max-width: 1024px) 50vw, 25vw"
          alt="Realistic pug Bonnie portrait with roses and floral accents on thigh by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -897,7 +1006,7 @@
        tabindex="0" role="button" aria-label="View: Classical mythology fine art tattoo">
     <img src="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp" width="3024" height="4032"
          srcset="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-480.webp 480w, pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp 960w"
-         sizes="(max-width: 1024px) 50vw, 25vw"
+         sizes="(max-width: 480px) 160px, (max-width: 1024px) 50vw, 25vw"
          alt="Classical mythology fine art forearm tattoo featuring Hermes by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Fine Art</span>
@@ -911,7 +1020,7 @@
        tabindex="0" role="button" aria-label="View: Five cat portraits tattoo">
     <img src="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-960.webp" width="2160" height="2880"
          srcset="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-480.webp 480w, pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-960.webp 960w"
-         sizes="(max-width: 1024px) 50vw, 25vw"
+         sizes="(max-width: 480px) 160px, (max-width: 1024px) 50vw, 25vw"
          alt="Five realistic cat portraits — Hazel, Ocean, Wolfie, Oreo and Pumpkin — on upper arm by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -925,7 +1034,7 @@
        tabindex="0" role="button" aria-label="View: Black pug Marley tattoo">
     <img src="pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-960.webp" width="2160" height="2880"
          srcset="pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-480.webp 480w, pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-960.webp 960w"
-         sizes="(max-width: 1024px) 50vw, 25vw"
+         sizes="(max-width: 480px) 160px, (max-width: 1024px) 50vw, 25vw"
          alt="Black pug Marley portrait with daisies and roses tattoo by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -939,7 +1048,7 @@
        tabindex="0" role="button" aria-label="View: Thresher shark tattoo">
     <img src="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-960.webp" width="2002" height="2669"
          srcset="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-480.webp 480w, pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-960.webp 960w"
-         sizes="(max-width: 1024px) 50vw, 25vw"
+         sizes="(max-width: 480px) 160px, (max-width: 1024px) 50vw, 25vw"
          alt="Realistic thresher shark marine life tattoo on upper arm by Emmy, Hull" loading="lazy" decoding="async">
     <div class="pw-over" aria-hidden="true">
       <span class="pw-tag">Realism</span>
@@ -1171,6 +1280,10 @@ function __boot() {
 
   let curIdx = 0;
   const vis = () => items.filter(i => !i.classList.contains('pw-hidden'));
+  /* The viewer is a 1440 tier: 149-224KB. On a 390px screen the 960 tier is
+     still 2.4x the device pixels, so phones get that instead. data-src stays at
+     1440 — desktop uses it, and the -960 swap is derived from it. */
+  const viewSrc = (u) => window.innerWidth <= 480 ? u.replace('-1440.webp', '-960.webp') : u;
 
   function openLb(idx) {
     const v = vis();
@@ -1183,7 +1296,7 @@ function __boot() {
     /* reset any fade state left over from navigate() */
     lbImg.onload = null;
     gsap.set(lbImg, { clearProps: 'opacity' });
-    lbImg.src = item.dataset.src;
+    lbImg.src = viewSrc(item.dataset.src);
     lbImg.alt = item.dataset.alt;
     lb.style.display = 'block';
     lbBg.classList.add('open');
@@ -1214,7 +1327,7 @@ function __boot() {
     const v = vis();
     curIdx = (curIdx + dir + v.length) % v.length;
     gsap.to(lbImg, { opacity: 0, duration: .15, onComplete: () => {
-      lbImg.src = v[curIdx].dataset.src;
+      lbImg.src = viewSrc(v[curIdx].dataset.src);
       lbImg.alt = v[curIdx].dataset.alt;
       lbImg.onload = () => gsap.to(lbImg, { opacity: 1, duration: .22 });
     }});
