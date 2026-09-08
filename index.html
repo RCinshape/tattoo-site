@@ -138,8 +138,6 @@
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c4a262'>✦</text></svg>">
 
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="dns-prefetch" href="https://emmy-reviews.emmalenetattoo.workers.dev">
   <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
   <!-- Display face is self-hosted: one origin fewer and font-display:swap instead of cdnfonts' 3s block -->
@@ -205,6 +203,11 @@
       window.__restoreY      = y > 0 ? y : 0;
       window.__restoreTarget = 0;
       window.__restoreBusy   = false;
+      /* The hero entrances start at first paint now, so the decision to suppress
+         them on a restore has to be made before that paint — initHero adds this
+         class ~2.4s too late, by which time a 560ms entrance has been and gone
+         while the page was travelling away from the hero. */
+      if (window.__restoreY > 0) document.documentElement.classList.add('no-hero-intro');
       function save() {
         /* Never record a frame of the restore travel: reloading mid-travel
            would otherwise strand the reader half way. */
@@ -222,8 +225,8 @@
     })();
   </script>
 
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script defer src="/js/gsap.min.js" onerror="__libFail()"></script>
+  <script defer src="/js/ScrollTrigger.min.js" onerror="__libFail()"></script>
 
   <!-- No-JS fallback: reveal JS-animated content and remove the loader overlay -->
   <noscript><style>
@@ -761,13 +764,16 @@
       letter-spacing: .26em; text-transform: uppercase;
       color: var(--fg); margin-bottom: 22px;
       text-shadow: 0 1px 12px rgba(var(--panel-rgb),.9);
-      opacity: 0;
       -webkit-user-select: none; user-select: none;
     }
-    /* Entrance gated on .hero-go (added by initHero after the loader) so the
-       sequence reads eyebrow → title → sub → CTA instead of finishing under the loader */
-    html.hero-go .h-eyebrow { animation: hcta-in .28s var(--out) 0s forwards; }
-    @media (prefers-reduced-motion: reduce) { .h-eyebrow, html.hero-go .h-eyebrow { animation: none !important; opacity: 1 !important; } }
+    /* Entrances run from first paint. They used to be gated behind a class only
+       the GSAP boot could add, so the eyebrow, hours line and booking CTA sat at
+       opacity 0 until GSAP arrived from a CDN: measured 2643ms, 2708ms and 2660ms
+       on a 390px phone over 2Mbps. Nothing a reader needs may wait on a script.
+       `both` fill, not `forwards`: the keyframe's from-state is now the only
+       thing hiding these, so it has to apply during the delay too. */
+    .h-eyebrow { animation: hcta-in .28s var(--out) 0s both; }
+    @media (prefers-reduced-motion: reduce) { .h-eyebrow { animation: none !important; opacity: 1 !important; } }
     /* Brand lettering, not copy: initHero splits it into per-character spans, so a
        selection here yields character soup anyway. Opting out of selection also
        stops it accepting a text caret, which is what a visitor with Chrome's caret
@@ -782,12 +788,18 @@
     .tl { display: block; }
     .tl em { font-style: italic; color: var(--gold); }
     .tl-i { display: block; }
-    /* Only hero + booking titles are JS-revealed; exp/faq titles use clip-path wipes */
-    .h-title .tl-i, .bk-h2 .tl-i { opacity: 0; }
+    /* .bk-h2 is a scroll reveal and stays hidden until its trigger. The hero H1
+       is not: its two .tl-i spans are in the markup, so this rule was hiding the
+       headline itself until initHero ran. It gets no CSS entrance of its own —
+       the char-split stagger is its entrance, and a second animation on the
+       parent would fight it. */
+    .bk-h2 .tl-i { opacity: 0; }
     .htc { display: inline-block; }
     .h-sub {
-      margin-top: 44px; opacity: 0;
+      margin-top: 44px;
     }
+    .h-sub { animation: hcta-in .3s var(--out) .1s both; }
+    @media (prefers-reduced-motion: reduce) { .h-sub { animation: none !important; opacity: 1 !important; } }
     .h-loc {
       font-family: var(--serif); font-style: italic; font-weight: 400;
       font-size: clamp(1.03rem, 1.7vw, 1.1rem);
@@ -825,7 +837,7 @@
        ink on a gold fill. */
     .h-cta {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 14px;
-      margin-top: 40px; opacity: 0;
+      margin-top: 40px;
     }
     .h-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
@@ -847,7 +859,7 @@
       -webkit-backdrop-filter: blur(16px) saturate(1.4);
     }
     .h-btn-alt:hover { border-color: var(--photo-ring-h); transform: translateY(-3px); }
-    html.hero-go .h-cta { animation: hcta-in .24s var(--out) .05s forwards; }
+    .h-cta { animation: hcta-in .24s var(--out) .05s both; }
     @media (max-width: 768px) {
       /* 86svh, not the base 100: with the copy bottom-pinned the leftover space
          all collects above the eyebrow, and moving the block cannot delete that
@@ -877,10 +889,10 @@
       .h-cta { width: 100%; }
       .h-btn { width: 100%; max-width: 340px; padding: 17px 24px; }
     }
-    @media (prefers-reduced-motion: reduce) { .h-cta, html.hero-go .h-cta { animation: none !important; opacity: 1 !important; } }
+    @media (prefers-reduced-motion: reduce) { .h-cta { animation: none !important; opacity: 1 !important; } }
     /* Restored reload: the hero is shown finished and the travel is the only
        motion, so its entrances are suppressed exactly as reduced-motion does. */
-    html.no-hero-intro :is(.h-eyebrow, .h-cta) { animation: none !important; opacity: 1 !important; }
+    html.no-hero-intro :is(.h-eyebrow, .h-title .tl-i, .h-sub, .h-cta) { animation: none !important; opacity: 1 !important; }
 
     /* ══════════════════════════════════════════
        HERO EYEBROW
@@ -2166,6 +2178,10 @@
         .exp-h2, .faq-h2, .bk-h2) {
       opacity: 1 !important; transform: none !important;
       filter: none !important; clip-path: none !important;
+      /* The hero entrances are CSS animations now, so the reveal has to stop the
+         animation as well as override its computed values — otherwise a restore
+         re-runs the transform under these !important declarations. */
+      animation: none !important;
     }
 
     /* ══════════════════════════════════════════
@@ -2179,6 +2195,7 @@
           .exp-h2, .faq-h2, .bk-h2) {
         opacity: 1 !important; transform: none !important;
         filter: none !important; clip-path: none !important;
+        animation: none !important;
       }
     }
 
@@ -3101,31 +3118,29 @@ function __boot() {
 
   /* ═══ HERO INIT ═══ */
   function initHero() {
-    /* Unlock the CSS-driven eyebrow/CTA entrances so they sequence after the loader */
-    document.documentElement.classList.add('hero-go');
-
     /* A hero entrance playing while the page travels away from it is exactly
-       the pile-up being removed, so a restore gets the finished state. */
+       the pile-up being removed, so a restore gets the finished state. The class
+       itself is added in the head SCROLL MEMORY block: the entrances are CSS and
+       start at first paint, so the decision has to be made before that paint. */
     const NO_INTRO = window.__restoreY > 0;
-    if (NO_INTRO) document.documentElement.classList.add('no-hero-intro');
 
-    /* — Char-split hero title with blur-in (different from loader's 3D flip) — */
-    document.querySelectorAll('.h-title .tl-i').forEach(el => {
-      gsap.set(el, { opacity: 1 });
-      el.innerHTML = [...el.textContent].map(ch =>
-        ch === ' ' ? '&nbsp;' : `<span class="htc">${ch}</span>`
-      ).join('');
-    });
-    const htChars = document.querySelectorAll('.h-title .htc');
-    if (NO_INTRO) {
-      gsap.set(htChars, { opacity: 1 });
-      gsap.set('.h-sub', { opacity: 1 });
-    } else {
+    /* — Char-split hero title with blur-in (different from loader's 3D flip) —
+       The stagger is a nicety; a readable headline is not. Both the split and the
+       tween are skipped when the entrance cannot play at the hero: on a restore
+       the page is travelling away from it, and on a slow load the words are
+       already on screen, so splitting them would blank text mid-read. 1200ms sits
+       well past first paint on the 2Mbps profile (FCP 724ms) and well short of
+       the 1915ms CDN GSAP arrival that produced the blanking. */
+    if (!NO_INTRO && performance.now() <= 1200) {
+      document.querySelectorAll('.h-title .tl-i').forEach(el => {
+        el.innerHTML = [...el.textContent].map(ch =>
+          ch === ' ' ? '&nbsp;' : `<span class="htc">${ch}</span>`
+        ).join('');
+      });
+      const htChars = document.querySelectorAll('.h-title .htc');
       gsap.set(htChars, { opacity: 0, scale: 1.18, y: 10, transformOrigin: '50% 100%' });
-
       gsap.timeline({ defaults: { ease: 'power3.out' } })
-        .to(htChars, { opacity: 1, scale: 1, y: 0, duration: .24, stagger: { amount: 0.07, from: 'start' } })
-        .to('.h-sub', { opacity: 1, duration: .26 }, '-=.12');
+        .to(htChars, { opacity: 1, scale: 1, y: 0, duration: .24, stagger: { amount: 0.07, from: 'start' } });
     }
 
     initScrollAnims();
@@ -3851,17 +3866,27 @@ else __boot();
 })();
 </script>
 
-<!-- Resilience watchdog: if the loader is still up after the libs should have run, force-reveal.
-     Re-arms while the tab is hidden — background tabs throttle rAF, which stalls the loader
-     animation without anything actually being broken. -->
+<!-- Resilience watchdog: if GSAP is not there once parsing is done, force-reveal.
+     Re-arms while the tab is hidden (background tabs throttle rAF, which stalls
+     the loader animation without anything actually being broken) and while the
+     document is still parsing. -->
 <script>
   (function arm() {
     setTimeout(function () {
       if (document.hidden) return arm();
-      var l = document.getElementById('loader');
-      if (l && getComputedStyle(l).display !== 'none') {
+      /* The test is whether GSAP arrived. It used to be whether #loader was
+         still up — unsatisfiable since window.__INTRO went false, so this never
+         fired once. It cannot be "a gated element is transparent" either:
+         below-fold reveals are legitimately at opacity 0 until scrolled to.
+         readyState is the guard that makes a false positive impossible: both
+         GSAP tags are `defer`, so they have executed before parsing ends. Still
+         'loading' means GSAP may yet arrive — measured DCL 1728ms on a 2Mbps
+         phone, past this 1500ms tick — so re-arm rather than judge. */
+      if (document.readyState === 'loading') return arm();
+      if (!window.gsap) {
         document.documentElement.classList.add('libs-failed');
-        l.style.display = 'none';
+        var l = document.getElementById('loader');
+        if (l) l.style.display = 'none';
         /* __boot locks the page before the loader exits, so a boot that threw
            in between would leave the page unscrollable behind a hidden loader. */
         window.__scrollLock.reset();

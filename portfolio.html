@@ -117,8 +117,6 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <!-- Display face is self-hosted: one origin fewer and font-display:swap instead of cdnfonts' 3s block -->
   <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
@@ -140,8 +138,8 @@
     })();
   </script>
 
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" onerror="__libFail()"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" onerror="__libFail()"></script>
+  <script defer src="/js/gsap.min.js" onerror="__libFail()"></script>
+  <script defer src="/js/ScrollTrigger.min.js" onerror="__libFail()"></script>
 
   <!-- No-JS fallback: reveal JS-animated content -->
   <noscript><style>
@@ -334,7 +332,7 @@
     .h-eyebrow {
       font-family: var(--mono); font-size: .74rem;
       letter-spacing: .28em; text-transform: uppercase;
-      color: var(--fg2); margin-bottom: 20px; opacity: 0;
+      color: var(--fg2); margin-bottom: 20px;
     }
     /* Gold survives at label size as a rule, never as the ink — matches index.html */
     .h-eyebrow { display: inline-flex; align-items: center; gap: 12px; }
@@ -345,14 +343,26 @@
       font-family: var(--display);
       font-size: clamp(4rem,10vw,9rem);
       font-weight: 400; line-height: .9; letter-spacing: -.02em;
-      opacity: 0;
     }
     .h-sub {
       font-family: var(--serif); font-style: italic;
       font-size: clamp(.95rem,1.7vw,1.2rem);
-      color: var(--fg2); margin-top: 24px; opacity: 0;
+      color: var(--fg2); margin-top: 24px;
       letter-spacing: .02em;
     }
+    /* Entrances run from first paint, mirroring index.html. As GSAP fromTo calls
+       these three were invisible until the CDN delivered GSAP: measured 2932ms on
+       a 390px phone over 2Mbps. Durations, delays and travel are the ones they
+       replace, and --out is the curve expo.out approximates. `both` fill: the
+       keyframe's from-state is now the only thing hiding these, so it has to
+       apply during the delay too. --hy carries each element's own travel, which
+       the three tweens set individually. */
+    @keyframes hcta-in { from { opacity: 0; transform: translateY(var(--hy, 10px)); } to { opacity: 1; transform: none; } }
+    .h-eyebrow { --hy: 10px; animation: hcta-in .8s var(--out) .15s both; }
+    .h-title   { --hy: 32px; animation: hcta-in 1s  var(--out) .3s  both; }
+    .h-sub     { --hy: 18px; animation: hcta-in .9s var(--out) .5s  both; }
+    /* Reduced motion is handled by the shared block near the end of this
+       stylesheet, which already names these three plus .pw-item. */
     @media (max-width: 768px) {
       #hero { padding: 96px var(--pad) 44px; }
     }
@@ -721,13 +731,13 @@
     /* ── Resilience: if animation libs fail, reveal content ── */
     html.libs-failed .h-eyebrow, html.libs-failed .h-title,
     html.libs-failed .h-sub, html.libs-failed .pw-item {
-      opacity: 1 !important; transform: none !important;
+      opacity: 1 !important; transform: none !important; animation: none !important;
     }
 
     /* ── Reduced motion: keep entrance-revealed content visible ── */
     @media (prefers-reduced-motion: reduce) {
       .h-eyebrow, .h-title, .h-sub, .pw-item {
-        opacity: 1 !important; transform: none !important;
+        opacity: 1 !important; transform: none !important; animation: none !important;
       }
     }
   </style>
@@ -1125,10 +1135,7 @@ function __boot() {
     }
   });
 
-  // Hero entrance
-  gsap.fromTo('.h-eyebrow', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .8, delay: .15, ease: 'expo.out' });
-  gsap.fromTo('.h-title',   { opacity: 0, y: 32 }, { opacity: 1, y: 0, duration: 1,  delay: .3,  ease: 'expo.out' });
-  gsap.fromTo('.h-sub',     { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .9, delay: .5,  ease: 'expo.out' });
+  // Hero entrance is CSS, from first paint — see @keyframes hcta-in in the head.
 
   // Grid entrance — tied to the grid entering view instead of firing for all 10 on load
   gsap.fromTo('.pw-item:not(.pw-hidden)',
@@ -1270,17 +1277,20 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 else __boot();
 </script>
 
-<!-- Resilience watchdog: if the hero is still hidden after the libs should have run, force-reveal.
-     Re-arms while the tab is hidden (background tabs throttle rAF and stall the entrance tweens). -->
+<!-- Resilience watchdog: if GSAP is not there once parsing is done, force-reveal.
+     Re-arms while the tab is hidden (background tabs throttle rAF and stall the
+     entrance tweens) and while the document is still parsing. -->
 <script>
   (function arm() {
     setTimeout(function () {
       if (document.hidden) return arm();
-      var t = document.querySelector('.h-title');
-      if (t && getComputedStyle(t).opacity === '0') {
-        document.documentElement.classList.add('libs-failed');
-      }
-    }, 4000);
+      /* Mirrors index.html: GSAP's absence is the failure, and readyState is what
+         rules out judging a load that has not finished parsing — both GSAP tags
+         are `defer`, so they have executed before parsing ends. The old test read
+         .h-title's opacity, which no longer starts at 0. */
+      if (document.readyState === 'loading') return arm();
+      if (!window.gsap) document.documentElement.classList.add('libs-failed');
+    }, 1500);
   })();
 </script>
 </body>
