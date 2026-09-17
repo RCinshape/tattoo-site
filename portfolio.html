@@ -138,16 +138,13 @@
   <!-- If any animation library fails to load, reveal content (resilience) -->
   <script>window.__libFail = function () { document.documentElement.classList.add('libs-failed'); };</script>
 
-  <!-- Scroll lock. Top-level and dependency-free: overlays must be able to lock
-       the page whether or not the CDN delivered anything. Counted, so a modal
-       opened over another one does not unlock early. -->
+  <!-- Dependency-free owner locks: duplicate acquire/release is harmless. -->
   <script>
     (function () {
-      var n = 0;
+      const owners = new Set();
       window.__scrollLock = {
-        stop:  function () { if (++n === 1) document.documentElement.classList.add('locked'); },
-        start: function () { if (n > 0 && --n === 0) document.documentElement.classList.remove('locked'); },
-        reset: function () { n = 0; document.documentElement.classList.remove('locked'); }
+        acquire(owner) { owners.add(owner); document.documentElement.classList.add('locked'); },
+        release(owner) { owners.delete(owner); document.documentElement.classList.toggle('locked', owners.size > 0); }
       };
     })();
   </script>
@@ -402,7 +399,7 @@
        still painted and keeps its compositing layer alive for the whole visit.
        The 0s-delayed visibility transition lets the fade-out finish first. */
     #mobile-menu {
-      position: fixed; inset: 0; z-index: 10000;
+      position: fixed; inset: 0;
       background: rgba(var(--panel-rgb),.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
       opacity: 0; pointer-events: none; visibility: hidden;
@@ -500,7 +497,7 @@
     @media (max-width: 768px) {
       #filter-bar { padding: 12px var(--pad); }
       .f-btn { padding: 8px 15px; }
-      .f-count { display: none; }
+      .f-count { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
     }
 
     /* ── Uniform 4-up grid ── */
@@ -843,6 +840,23 @@
         opacity: 1 !important; transform: none !important; animation: none !important;
       }
     }
+    /* Modal roots have no transform/filter/contain: fixed children use the viewport. */
+    .ui-modal[hidden], .ui-modal [hidden] { display: none !important; }
+    .ui-modal:focus-visible, .ui-modal :focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    #mobile-menu { overflow-y: auto; max-height: 100dvh; padding: 76px 24px 28px; justify-content: safe center; }
+    #mobile-menu > * { flex-shrink: 0; }
+    .viewer-status { color: var(--fg); font-family: var(--mono); font-size: .8rem; text-align: center; }
+    .viewer-status:empty { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .ui-modal, .ui-modal * { transition: none !important; animation: none !important; }
+    }
+    #lb-overlay { position: fixed; inset: 0; }
+    #lb-bg { z-index: 0; }
+    #lb { z-index: 1; }
+    #lb-close, #lb-prev, #lb-next, #lb-counter { z-index: 2; }
+    #lb-status { position: fixed; z-index: 2; top: 45%; left: 15%; right: 15%; }
+    html.libs-failed #nav { background: rgba(var(--panel-rgb),.92); border-bottom-color: var(--border); }
+    html.libs-failed .n-logo { opacity: 1; }
   </style>
 </head>
 <body>
@@ -870,15 +884,15 @@
   </div>
   <div class="n-actions">
     <a class="n-book" href="/book">Book</a>
-    <button id="nav-toggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+    <button id="nav-toggle" class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
 
 <!-- ════ MOBILE MENU ════ -->
-<div id="mobile-menu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu">
-  <button class="mm-close" id="mm-close" aria-label="Close menu">✕</button>
+<div id="mobile-menu" class="ui-modal" tabindex="-1" hidden inert aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu">
+  <button class="mm-close" id="mm-close" type="button" aria-label="Close menu">✕</button>
   <a class="mm-link" href="/book">Book</a>
   <a class="mm-link" href="/">Home</a>
   <a class="mm-link" href="/#about">About</a>
@@ -897,11 +911,11 @@
 
 <!-- ════ FILTER BAR ════ -->
 <div id="filter-bar" role="group" aria-label="Filter by style">
-  <button class="f-btn active" data-filter="all">All</button>
-  <button class="f-btn" data-filter="fine-line">Fine Line</button>
-  <button class="f-btn" data-filter="fine-art">Fine Art</button>
-  <button class="f-btn" data-filter="realism">Realism</button>
-  <button class="f-btn" data-filter="healed">Healed</button>
+  <button class="f-btn active" type="button" data-filter="all">All</button>
+  <button class="f-btn" type="button" data-filter="fine-line">Fine Line</button>
+  <button class="f-btn" type="button" data-filter="fine-art">Fine Art</button>
+  <button class="f-btn" type="button" data-filter="realism">Realism</button>
+  <button class="f-btn" type="button" data-filter="healed">Healed</button>
   <span class="f-count" id="f-count" aria-live="polite"></span>
 </div>
 
@@ -1095,42 +1109,61 @@
     return curFilter === 'all' || (item.dataset.style || '').split(/\s+/).indexOf(curFilter) !== -1;
   }
 
-  /* animate: run the entrance tween on newly revealed cards (a filter press or a
-     gate press). false on first render - the grid has its own scroll-triggered
-     entrance in __boot. Returns the first card revealed by this call, or null. */
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  let entrances = [], initialTrigger = null, interacted = false, enhanced = false;
+  function cancelEntrance() {
+    if (initialTrigger) initialTrigger.kill();
+    initialTrigger = null;
+    entrances.forEach(tween => tween.kill()); entrances = [];
+    /* CSS keeps cards at opacity:0 for the optional first entrance. Once the
+       renderer takes ownership, normalization must mean visibly settled: clearing
+       inline styles would expose that CSS zero and blank retained filter matches. */
+    items.forEach(item => { item.style.opacity = '1'; item.style.transform = 'none'; });
+  }
+  function enter(cards, initial) {
+    if (!window.gsap || motion.matches || document.hidden || !cards.length) return;
+    entrances.push(window.gsap.fromTo(cards,
+      { opacity: 0, y: initial ? 28 : 14 },
+      { opacity: 1, y: 0, stagger: .05, duration: initial ? .65 : .4, ease: 'power3.out' }));
+  }
+  /* Membership, count and focus commit synchronously. Tweens never own membership. */
   function render(animate) {
-    var gs = window.gsap;
-    var matched = items.filter(matches);
-    var visible = matched.slice(0, shown);
-    var firstNew = null, delay = 0;
-    items.forEach(function (item) {
-      var wasHidden = item.classList.contains('pw-hidden');
-      if (visible.indexOf(item) !== -1) {
-        item.classList.remove('pw-hidden');
-        if (wasHidden && !firstNew) firstNew = item;
-        if (animate && wasHidden && gs) {
-          gs.fromTo(item, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .4, delay: delay * .05, ease: 'power2.out' });
-          delay++;
-        }
-      } else if (!wasHidden) {
-        if (gs) gs.to(item, { opacity: 0, duration: .18, onComplete: function () { item.classList.add('pw-hidden'); } });
-        else item.classList.add('pw-hidden');
-      }
+    if (animate) interacted = true;
+    cancelEntrance();
+    const matched = items.filter(matches), visible = matched.slice(0, shown), wanted = new Set(visible);
+    const newlyVisible = visible.filter(item => item.classList.contains('pw-hidden'));
+    const active = filterBtns.find(button => button.dataset.filter === curFilter);
+    const focused = document.activeElement.closest('.pw-item');
+    if (focused && !wanted.has(focused)) active.focus({ preventScroll: true });
+    items.forEach(item => item.classList.toggle('pw-hidden', !wanted.has(item)));
+    filterBtns.forEach(button => {
+      const selected = button === active;
+      button.classList.toggle('active', selected); button.setAttribute('aria-pressed', String(selected));
     });
-    var rest = matched.length - visible.length;
+    const rest = matched.length - visible.length;
     gate.hidden = rest < 1;
     moreN.textContent = '· ' + rest + ' left';
     countEl.textContent = rest
       ? visible.length + ' of ' + matched.length + ' shown'
       : matched.length + ' piece' + (matched.length !== 1 ? 's' : '');
+    if (animate) enter(newlyVisible, false);
     if (window.ScrollTrigger) window.ScrollTrigger.refresh();
-    return firstNew;
+    return newlyVisible[0] || null;
   }
+  window.__portfolioGrid = {
+    enhance() {
+      if (enhanced || interacted || !window.gsap || !window.ScrollTrigger || motion.matches) return;
+      enhanced = true;
+      initialTrigger = window.ScrollTrigger.create({ trigger: '#pw-grid', start: 'top 88%', once: true,
+        onEnter() { if (!interacted) enter(items.filter(item => !item.classList.contains('pw-hidden')), true); }
+      });
+    }
+  };
+  motion.addEventListener('change', cancelEntrance);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) cancelEntrance(); });
 
   filterBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {
-      filterBtns.forEach(function (b) { b.classList.remove('active'); });
-      btn.classList.add('active');
       curFilter = btn.dataset.filter;
       shown = BATCH;
       render(true);
@@ -1140,9 +1173,7 @@
   moreBtn.addEventListener('click', function () {
     shown += BATCH;
     var first = render(true);
-    /* Keyboard users would otherwise lose the caret when the gate empties.
-       preventScroll stops the browser yanking the page to the new focus. */
-    if (first && gate.hidden) first.focus({ preventScroll: true });
+    if (first) first.focus({ preventScroll: true });
   });
 
   render(false);
@@ -1150,14 +1181,17 @@
 </script>
 
 <!-- ════ LIGHTBOX ════ -->
+<div id="lb-overlay" class="ui-modal" tabindex="-1" hidden inert role="dialog" aria-modal="true" aria-label="Image viewer" aria-hidden="true">
 <div id="lb-bg" aria-hidden="true"></div>
-<div id="lb" role="dialog" aria-modal="true" aria-label="Image viewer">
+<div id="lb">
   <img id="lb-img" src="" alt="">
 </div>
-<button id="lb-close" aria-label="Close image viewer">ESC</button>
-<button id="lb-prev" aria-label="Previous image">‹</button>
-<button id="lb-next" aria-label="Next image">›</button>
+<button id="lb-close" type="button" aria-label="Close image viewer">ESC</button>
+<button id="lb-prev" type="button" aria-label="Previous image">‹</button>
+<button id="lb-next" type="button" aria-label="Next image">›</button>
 <div id="lb-counter" aria-live="polite"></div>
+<p id="lb-status" class="viewer-status" role="status"></p>
+</div>
 
 <!-- ════ CLIENT PROOF — static; the live carousel lives on /#trust ════ -->
 <section id="pf-proof" aria-label="Client reviews">
@@ -1214,9 +1248,237 @@
 </footer>
 
 <script>
+/* Modal ownership is semantic; animation adapters own visuals only. */
+(() => {
+  const records = new Map(), stack = [], background = new Map();
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const top = () => stack[stack.length - 1];
+  const visible = el => !!(el && el.isConnected && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden' && !el.closest('[hidden], [inert]') && !el.matches(':disabled'));
+  const usable = el => visible(el) && el.tabIndex >= 0;
+  const targets = root => [...root.querySelectorAll('a[href],button,input,select,textarea,[tabindex]')].filter(usable);
+  const resolve = value => typeof value === 'function' ? value() : value;
+  const focus = el => { if (!visible(el) || document.activeElement === el) return false; el.focus({ preventScroll: true }); return document.activeElement === el; };
+  function inside(r) {
+    const initial = resolve(r.options.initialFocus);
+    focus(usable(r.lastFocus) ? r.lastFocus : usable(initial) ? initial : targets(r.root)[0] || r.root);
+  }
+  function sync() {
+    if (stack.length) {
+      [...document.body.children].forEach(el => {
+        if (records.has(el) || /^(SCRIPT|STYLE|LINK|TEMPLATE)$/.test(el.tagName)) return;
+        if (!background.has(el)) background.set(el, el.inert);
+        el.inert = true;
+      });
+    } else {
+      background.forEach((inert, el) => { el.inert = inert; }); background.clear();
+    }
+    records.forEach(r => { r.root.inert = r !== top(); });
+    stack.forEach((r, i) => { r.root.style.zIndex = String(10000 + i); });
+  }
+  function cancel(r) { ++r.generation; if (r.cancel) r.cancel(false); r.cancel = null; r.finish = null; }
+  function complete(r) {
+    const finish = r.finish; if (!finish) return;
+    if (r.cancel) r.cancel(true);
+    r.cancel = null; finish();
+  }
+  function transition(r, opening, immediate, finish) {
+    const generation = r.generation;
+    const done = () => {
+      if (r.generation !== generation) return;
+      r.cancel = null; r.finish = null; finish();
+    };
+    r.finish = done;
+    const adapter = r.options.transition;
+    if (!adapter) return done();
+    const stop = adapter(opening, done);
+    if (r.finish) r.cancel = stop;
+    if (immediate || motion.matches || document.hidden) complete(r);
+  }
+  function register(root, options = {}) {
+    if (records.has(root)) return;
+    records.set(root, { root, options, state: 'closed', generation: 0, cancel: null, finish: null, opener: null, lastFocus: null });
+    root.hidden = true; root.inert = true; root.setAttribute('aria-hidden', 'true');
+  }
+  function open(root, opener) {
+    const r = records.get(root); if (!r) return;
+    if ((r.state === 'open' || r.state === 'opening') && r === top()) return;
+    const wasClosed = r.state === 'closed';
+    cancel(r);
+    if (wasClosed) { r.opener = opener || document.activeElement; r.lastFocus = null; }
+    const previous = stack.indexOf(r); if (previous !== -1) stack.splice(previous, 1);
+    stack.push(r); r.state = 'opening';
+    root.hidden = false; root.inert = false; root.style.visibility = 'visible'; root.setAttribute('aria-hidden', 'false');
+    window.__scrollLock.acquire(root);
+    transition(r, true, false, () => { r.state = 'open'; });
+    inside(r); sync();
+  }
+  function close(root, { immediate = false, restoreFocus = true } = {}) {
+    const r = records.get(root); if (!r || r.state === 'closed') return;
+    if (r.state === 'closing') { if (immediate) complete(r); return; }
+    cancel(r); r.state = 'closing';
+    transition(r, false, immediate, () => {
+      const wasTop = r === top();
+      stack.splice(stack.indexOf(r), 1); r.state = 'closed';
+      sync();
+      if (wasTop && top()) inside(top());
+      else if (wasTop && restoreFocus) {
+        const fallback = resolve(r.options.fallbackFocus);
+        focus(usable(r.opener) ? r.opener : visible(fallback) ? fallback : [...document.querySelectorAll('#nav a, #nav button')].find(usable));
+      }
+      root.hidden = true; root.inert = true; root.style.visibility = ''; root.setAttribute('aria-hidden', 'true');
+      window.__scrollLock.release(root);
+    });
+  }
+  function settle() { records.forEach(complete); }
+  function fade(root, seconds, update) {
+    const finishVisual = () => {
+      if (!root.getAnimations) return;
+      root.getAnimations({ subtree: true }).forEach(animation => { try { animation.finish(); } catch (_) {} });
+    };
+    return (opening, done) => {
+      if (update) update(opening);
+      root.classList.toggle('open', opening);
+      if (motion.matches || !window.gsap || document.hidden) { finishVisual(); done(); return () => {}; }
+      let timer = setTimeout(done, seconds * 1000);
+      return forceFinal => { clearTimeout(timer); if (forceFinal) finishVisual(); };
+    };
+  }
+  document.addEventListener('keydown', e => {
+    const r = top(); if (!r || e.isComposing) return;
+    if (e.key === 'Escape') { e.preventDefault(); close(r.root); return; }
+    if (e.key === 'Tab') {
+      const list = targets(r.root), first = list[0], last = list[list.length - 1];
+      if (!first) { e.preventDefault(); focus(r.root); }
+      else if (e.shiftKey && (document.activeElement === first || !list.includes(document.activeElement))) { e.preventDefault(); focus(last); }
+      else if (!e.shiftKey && (document.activeElement === last || !list.includes(document.activeElement))) { e.preventDefault(); focus(first); }
+    } else if (r.options.onKey) r.options.onKey(e);
+  });
+  document.addEventListener('focusin', e => {
+    const r = top(); if (!r) return;
+    if (r.root.contains(e.target)) r.lastFocus = e.target;
+    else inside(r);
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) settle(); });
+  motion.addEventListener('change', settle);
+  addEventListener('resize', settle);
+  window.__ui = { register, open, close, isTop: root => top()?.root === root, usable, fade };
+
+  /* Ordinary menu/navigation always works, even without either animation bundle. */
+  const menu = document.getElementById('mobile-menu'), toggle = document.getElementById('nav-toggle');
+  register(menu, {
+    initialFocus: () => document.getElementById('mm-close'),
+    fallbackFocus: () => [...document.querySelectorAll('#nav a, #nav button')].find(usable),
+    transition: fade(menu, .35, opening => toggle.setAttribute('aria-expanded', String(opening)))
+  });
+  toggle.addEventListener('click', () => open(menu, toggle));
+  document.getElementById('mm-close').addEventListener('click', () => close(menu));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => close(menu, { immediate: true, restoreFocus: false })));
+  addEventListener('resize', () => { if (innerWidth > 768) close(menu, { immediate: true }); });
+  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const id = a.getAttribute('href'); if (!id || id === '#') return;
+    let target; try { target = document.querySelector(id); } catch (_) { return; }
+    if (!target) return;
+    e.preventDefault(); close(menu, { immediate: true, restoreFocus: false });
+    const destination = target.querySelector('h1,h2,h3') || target;
+    if (!destination.hasAttribute('tabindex')) destination.tabIndex = -1;
+    destination.focus({ preventScroll: true });
+    target.scrollIntoView({ block: 'start', behavior: motion.matches ? 'auto' : 'smooth' });
+    if (a.classList.contains('h-dir')) {
+      const map = document.querySelector('.loc-map-wrap');
+      if (map) { map.classList.add('map-lit'); setTimeout(() => map.classList.remove('map-lit'), 2200); }
+    }
+  }));
+
+  /* A request belongs to exactly one image generation, including cached loads. */
+  window.__viewerImage = (img, status) => {
+    let generation = 0;
+    return {
+      clear() { ++generation; img.onload = img.onerror = null; img.style.transition = 'none'; img.style.opacity = '0'; img.removeAttribute('src'); void img.offsetWidth; img.style.transition = ''; status.textContent = ''; },
+      show(src, alt) {
+        const request = ++generation;
+        img.style.opacity = '0'; status.textContent = ''; img.alt = alt || '';
+        const pending = new Image();
+        pending.onload = () => { if (request !== generation) return; img.src = pending.src; img.style.opacity = '1'; };
+        pending.onerror = () => { if (request !== generation) return; img.removeAttribute('src'); status.textContent = 'Image could not be loaded. Try another image.'; };
+        pending.src = innerWidth <= 480 ? src.replace('-1440.webp', '-960.webp') : src;
+      }
+    };
+  };
+  window.__viewerSwipe = (area, root, move) => {
+    let start = null;
+    area.addEventListener('pointerdown', e => { if (window.__ui.isTop(root) && e.isPrimary) start = { id: e.pointerId, x: e.clientX, y: e.clientY }; });
+    area.addEventListener('pointercancel', () => { start = null; });
+    area.addEventListener('pointerup', e => {
+      const from = start; start = null; if (!from || from.id !== e.pointerId || !window.__ui.isTop(root)) return;
+      const dx = e.clientX - from.x, dy = e.clientY - from.y;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) move(dx < 0 ? 1 : -1);
+    });
+  };
+  window.__outsideImage = (img, x, y) => {
+    if (!img.naturalWidth || !img.naturalHeight) return false;
+    const r = img.getBoundingClientRect(), scale = Math.min(r.width / img.naturalWidth, r.height / img.naturalHeight);
+    const width = img.naturalWidth * scale, height = img.naturalHeight * scale;
+    const left = r.left + (r.width - width) / 2, top = r.top + (r.height - height) / 2;
+    return x < left || x > left + width || y < top || y > top + height;
+  };
+})();
+/* Viewer reads the renderer's authoritative visible membership. */
+(() => {
+  const ui = window.__ui, root = document.getElementById('lb-overlay'), box = document.getElementById('lb');
+  const bg = document.getElementById('lb-bg'), img = document.getElementById('lb-img');
+  const close = document.getElementById('lb-close'), prev = document.getElementById('lb-prev'), next = document.getElementById('lb-next');
+  const counter = document.getElementById('lb-counter'), motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const image = window.__viewerImage(img, document.getElementById('lb-status'));
+  const items = [...document.querySelectorAll('.pw-item')], vis = () => items.filter(item => !item.classList.contains('pw-hidden'));
+  let index = 0, origin = null, fresh = false;
+  const full = () => Object.assign(box.style, { top: '4dvh', left: '4vw', width: '92vw', height: '92dvh', borderRadius: '10px', opacity: '1' });
+  function show(i) {
+    const visible = vis(); if (!visible.length) return;
+    index = (i + visible.length) % visible.length;
+    image.show(visible[index].dataset.src, visible[index].dataset.alt);
+    counter.textContent = (index + 1) + ' / ' + visible.length;
+    prev.hidden = next.hidden = visible.length < 2;
+  }
+  const move = direction => { if (ui.isTop(root)) show(index + direction); };
+  ui.register(root, {
+    initialFocus: () => close,
+    fallbackFocus: () => vis().find(ui.usable),
+    onKey(e) { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); move(e.key === 'ArrowLeft' ? -1 : 1); } },
+    transition(opening, done) {
+      const gs = window.gsap, rect = origin?.getBoundingClientRect();
+      box.style.display = 'block'; bg.classList.toggle('open', opening);
+      close.style.display = prev.style.display = next.style.display = 'flex'; counter.style.display = 'block';
+      const finish = () => {
+        if (bg.getAnimations) bg.getAnimations().forEach(animation => { try { animation.finish(); } catch (_) {} });
+        if (opening) full();
+        else { box.style.display = 'none'; image.clear(); }
+      };
+      if (!gs || motion.matches || document.hidden) { finish(); done(); return () => {}; }
+      if (opening && fresh && rect?.width) Object.assign(box.style, { top: rect.top+'px', left: rect.left+'px', width: rect.width+'px', height: rect.height+'px', borderRadius: '12px', opacity: '1' });
+      fresh = false;
+      const tween = gs.to(box, { ...(opening ? { top: innerHeight*.04, left: innerWidth*.04, width: innerWidth*.92, height: innerHeight*.92, opacity: 1 } : { opacity: 0 }),
+        duration: opening ? .42 : .28, ease: opening ? 'expo.out' : 'power2.in', onComplete() { finish(); done(); }
+      });
+      return settle => { tween.kill(); if (settle) finish(); };
+    }
+  });
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      if (ui.isTop(root)) return;
+      const i = vis().indexOf(item); if (i < 0) return;
+      origin = item; fresh = root.hidden; image.clear(); show(i); ui.open(root, item);
+    });
+    item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.click(); } });
+  });
+  close.addEventListener('click', () => ui.close(root)); bg.addEventListener('click', () => ui.close(root));
+  prev.addEventListener('click', () => move(-1)); next.addEventListener('click', () => move(1));
+  box.addEventListener('click', e => { if (!e.target.closest('button') && window.__outsideImage(img, e.clientX, e.clientY)) ui.close(root); });
+  window.__viewerSwipe(box, root, move);
+  addEventListener('resize', () => { if (!root.hidden) full(); });
+})();
 /* Runs after the deferred GSAP bundles, on DOMContentLoaded (see tail). */
 function __boot() {
-  if (!window.gsap) { document.documentElement.classList.add('libs-failed'); return; }
+  if (!window.gsap || !window.ScrollTrigger) { document.documentElement.classList.add('libs-failed'); return; }
 
   /* ═══ LOW-END DEVICE DETECTION ═══ (mirrors index.html) */
   const LOW_END = navigator.hardwareConcurrency <= 4
@@ -1246,12 +1508,7 @@ function __boot() {
 
   // Hero entrance is CSS, from first paint — see @keyframes hcta-in in the head.
 
-  // Grid entrance — tied to the grid entering view instead of firing for all 10 on load
-  gsap.fromTo('.pw-item:not(.pw-hidden)',
-    { opacity: 0, y: 28 },
-    { opacity: 1, y: 0, stagger: .06, duration: .65, ease: 'power3.out',
-      scrollTrigger: { trigger: '#pw-grid', start: 'top 88%', once: true } }
-  );
+  window.__portfolioGrid.enhance();
 
   // Lazy images change document height after init — recompute trigger positions
   window.addEventListener('load', () => ScrollTrigger.refresh());
@@ -1265,126 +1522,6 @@ function __boot() {
     if (document.hidden) gsap.ticker.sleep(); else gsap.ticker.wake();
   });
 
-  // ── Lightbox ──
-  /* Filtering and batching live in their own top-level script under the grid, so a
-     CDN failure cannot strand the gallery. Both read .pw-hidden off the live DOM,
-     which is all vis() below needs. */
-  const items   = [...document.querySelectorAll('.pw-item')];
-  const lbBg    = document.getElementById('lb-bg');
-  const lb      = document.getElementById('lb');
-  const lbImg   = document.getElementById('lb-img');
-  const lbClose = document.getElementById('lb-close');
-  const lbPrev  = document.getElementById('lb-prev');
-  const lbNext  = document.getElementById('lb-next');
-  const lbCount = document.getElementById('lb-counter');
-
-  let curIdx = 0;
-  const vis = () => items.filter(i => !i.classList.contains('pw-hidden'));
-  /* The viewer is a 1440 tier: 149-224KB. On a 390px screen the 960 tier is
-     still 2.4x the device pixels, so phones get that instead. data-src stays at
-     1440 — desktop uses it, and the -960 swap is derived from it. */
-  const viewSrc = (u) => window.innerWidth <= 480 ? u.replace('-1440.webp', '-960.webp') : u;
-
-  function openLb(idx) {
-    const v = vis();
-    if (!v[idx]) return;
-    curIdx = idx;
-    const item = v[idx];
-    const rect = item.getBoundingClientRect();
-
-    lb.style.cssText = `top:${rect.top}px;left:${rect.left}px;width:${rect.width}px;height:${rect.height}px;border-radius:var(--r);`;
-    /* reset any fade state left over from navigate() */
-    lbImg.onload = null;
-    gsap.set(lbImg, { clearProps: 'opacity' });
-    lbImg.src = viewSrc(item.dataset.src);
-    lbImg.alt = item.dataset.alt;
-    lb.style.display = 'block';
-    lbBg.classList.add('open');
-    [lbClose, lbPrev, lbNext].forEach(el => el.style.display = 'flex');
-    lbCount.style.display = 'block';
-    lbCount.textContent = (idx + 1) + ' / ' + v.length;
-    window.__scrollLock.stop();
-
-    gsap.to(lb, {
-      top: window.innerHeight * .04, left: window.innerWidth * .04,
-      width: window.innerWidth * .92, height: window.innerHeight * .92,
-      borderRadius: '10px', duration: .42, ease: 'expo.out'
-    });
-  }
-
-  function closeLb() {
-    lbBg.classList.remove('open');
-    gsap.to(lb, { opacity: 0, scale: .94, duration: .28, ease: 'power2.in', onComplete: () => {
-      lb.style.cssText = 'display:none;';
-      gsap.set(lb, { clearProps: 'opacity,scale' });
-      [lbClose, lbPrev, lbNext].forEach(el => el.style.display = 'none');
-      lbCount.style.display = 'none';
-      window.__scrollLock.start();
-    }});
-  }
-
-  function navigate(dir) {
-    const v = vis();
-    curIdx = (curIdx + dir + v.length) % v.length;
-    gsap.to(lbImg, { opacity: 0, duration: .15, onComplete: () => {
-      lbImg.src = viewSrc(v[curIdx].dataset.src);
-      lbImg.alt = v[curIdx].dataset.alt;
-      lbImg.onload = () => gsap.to(lbImg, { opacity: 1, duration: .22 });
-    }});
-    lbCount.textContent = (curIdx + 1) + ' / ' + v.length;
-  }
-
-  items.forEach(item => {
-    item.addEventListener('click', () => openLb(vis().indexOf(item)));
-    item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openLb(vis().indexOf(item)); });
-  });
-  lbBg.addEventListener('click', closeLb);
-  lbClose.addEventListener('click', closeLb);
-  lbPrev.addEventListener('click', () => navigate(-1));
-  lbNext.addEventListener('click', () => navigate(1));
-
-  /* Click the letterbox area (outside the visible contained image) to close */
-  function pointOutsideImg(imgEl, x, y) {
-    const r = imgEl.getBoundingClientRect();
-    const nw = imgEl.naturalWidth, nh = imgEl.naturalHeight;
-    if (!nw || !nh) return true;
-    const scale = Math.min(r.width / nw, r.height / nh);
-    const dw = nw * scale, dh = nh * scale;
-    const x0 = r.left + (r.width - dw) / 2, y0 = r.top + (r.height - dh) / 2;
-    return x < x0 || x > x0 + dw || y < y0 || y > y0 + dh;
-  }
-  lb.addEventListener('click', e => {
-    if (pointOutsideImg(lbImg, e.clientX, e.clientY)) closeLb();
-  });
-  document.addEventListener('keydown', e => {
-    if (lb.style.display === 'block') {
-      if (e.key === 'Escape') closeLb();
-      if (e.key === 'ArrowLeft') navigate(-1);
-      if (e.key === 'ArrowRight') navigate(1);
-    }
-  });
-
-  // touch swipe in lightbox
-  let lbTouchX = 0;
-  lb.addEventListener('touchstart', e => { lbTouchX = e.touches[0].clientX; }, { passive: true });
-  lb.addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - lbTouchX;
-    if (Math.abs(dx) > 40) navigate(dx < 0 ? 1 : -1);
-  });
-
-  // ── Mobile menu ──
-  (() => {
-    const toggle = document.getElementById('nav-toggle');
-    const menu   = document.getElementById('mobile-menu');
-    const close  = document.getElementById('mm-close');
-    if (!toggle || !menu) return;
-    const openMenu  = () => { menu.classList.add('open'); menu.setAttribute('aria-hidden','false'); toggle.setAttribute('aria-expanded','true'); window.__scrollLock.stop(); };
-    const closeMenu = () => { menu.classList.remove('open'); menu.setAttribute('aria-hidden','true'); toggle.setAttribute('aria-expanded','false'); window.__scrollLock.start(); };
-    toggle.addEventListener('click', openMenu);
-    if (close) close.addEventListener('click', closeMenu);
-    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) closeMenu(); });
-  })();
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', __boot);
 else __boot();
@@ -1402,7 +1539,7 @@ else __boot();
          are `defer`, so they have executed before parsing ends. The old test read
          .h-title's opacity, which no longer starts at 0. */
       if (document.readyState === 'loading') return arm();
-      if (!window.gsap) document.documentElement.classList.add('libs-failed');
+      if (!window.gsap || !window.ScrollTrigger) document.documentElement.classList.add('libs-failed');
     }, 1500);
   })();
 </script>

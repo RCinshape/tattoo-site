@@ -11,16 +11,17 @@ const fs    = require('fs');
 const SRC = path.join(__dirname, '..', 'google.reviews');
 const OUT = path.join(SRC, 'web');
 
-if (!fs.existsSync(OUT)) fs.mkdirSync(OUT);
-
 (async () => {
+  if (!fs.existsSync(OUT)) fs.mkdirSync(OUT);
   for (const file of fs.readdirSync(SRC).filter(f => /\.(jpe?g|png)$/i.test(f))) {
     const out = path.join(OUT, file.replace(/\.(jpe?g|png)$/i, '') + '-96.webp');
-    if (fs.existsSync(out)) continue;
     await sharp(path.join(SRC, file))
       .resize({ width: 96, height: 96, fit: 'cover' })
       .webp({ quality: 80 })
       .toFile(out);
     console.log(`${path.basename(out).padEnd(40)} ${(fs.statSync(out).size / 1024).toFixed(1)}KB`);
   }
-})();
+})().catch(error => {
+  console.error(`Failed generating avatar thumbnails (${SRC} -> ${OUT}):`, error);
+  process.exitCode = 1;
+});

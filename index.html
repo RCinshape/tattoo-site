@@ -182,16 +182,13 @@
   <!-- If any animation library fails to load, reveal content + dismiss the loader (resilience) -->
   <script>window.__libFail = function () { document.documentElement.classList.add('libs-failed'); };</script>
 
-  <!-- Scroll lock. Top-level and dependency-free: overlays must be able to lock
-       the page whether or not the CDN delivered anything. Counted, so a modal
-       opened over another one does not unlock early. -->
+  <!-- Dependency-free owner locks: duplicate acquire/release is harmless. -->
   <script>
     (function () {
-      var n = 0;
+      const owners = new Set();
       window.__scrollLock = {
-        stop:  function () { if (++n === 1) document.documentElement.classList.add('locked'); },
-        start: function () { if (n > 0 && --n === 0) document.documentElement.classList.remove('locked'); },
-        reset: function () { n = 0; document.documentElement.classList.remove('locked'); }
+        acquire(owner) { owners.add(owner); document.documentElement.classList.add('locked'); },
+        release(owner) { owners.delete(owner); document.documentElement.classList.toggle('locked', owners.size > 0); }
       };
     })();
   </script>
@@ -675,7 +672,7 @@
        still painted and keeps its compositing layer alive for the whole visit.
        The 0s-delayed visibility transition lets the fade-out finish first. */
     #mobile-menu {
-      position: fixed; inset: 0; z-index: 10000;
+      position: fixed; inset: 0;
       background: rgba(var(--panel-rgb),.97);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
@@ -1270,7 +1267,7 @@
 
     /* ── Skill gallery carousel modal ── */
     #sk-modal {
-      position: fixed; inset: 0; z-index: 99995;
+      position: fixed; inset: 0;
       display: flex; align-items: center; justify-content: center;
       opacity: 0; pointer-events: none; visibility: hidden;
       transition: opacity .25s, visibility 0s linear .25s;
@@ -1341,13 +1338,9 @@
     }
 
     /* Gold sweep along the row's own separator, width animated by GSAP — the same
-       shape as .fq-rule in the section below. */
-    /* TODO: dead. bottom:-1px puts this entirely outside the row's overflow:hidden
-       clip box, so it never paints — verified by pixel sample, flat #0a0a0a across
-       the row's bottom edge. The width tweens on open and hover animate nothing.
-       Either move it to bottom:0 and let it show, or delete it and its tweens. */
+       shape as .fq-rule in the section below. Keep it inside the clipped row. */
     .ei-rule {
-      position: absolute; bottom: -1px; left: 0;
+      position: absolute; bottom: 0; left: 0;
       height: 1px; width: 0;
       background: linear-gradient(90deg, var(--gold), transparent);
       opacity: .5;
@@ -1806,7 +1799,7 @@
 
     /* Review expand modal */
     #rv-modal {
-      position: fixed; inset: 0; z-index: 999998;
+      position: fixed; inset: 0;
       display: flex; align-items: center; justify-content: center;
       opacity: 0; pointer-events: none; visibility: hidden;
       transition: opacity .35s, visibility 0s linear .35s;
@@ -1887,7 +1880,6 @@
     .fq-item {
       border-top: 1px solid var(--border);
       position: relative; overflow: hidden;
-      cursor: pointer;
       isolation: isolate;
     }
     .fq-item:last-child { border-bottom: 1px solid var(--border); }
@@ -1949,13 +1941,9 @@
       transform: rotate(45deg);
     }
 
-    /* Gold sweep rule at bottom of trigger */
-    /* TODO: dead. bottom:-1px puts this entirely outside the row's overflow:hidden
-       clip box, so it never paints — verified by pixel sample, flat #0a0a0a across
-       the row's bottom edge. The width tweens on open and hover animate nothing.
-       Either move it to bottom:0 and let it show, or delete it and its tweens. */
+    /* Gold sweep rule at bottom of trigger. */
     .fq-rule {
-      position: absolute; bottom: -1px; left: 96px;
+      position: absolute; bottom: 0; left: 96px;
       height: 1px; width: 0;
       background: linear-gradient(90deg, var(--gold), transparent);
       opacity: .5;
@@ -2215,6 +2203,28 @@
       }
     }
 
+    /* Modal roots have no transform/filter/contain: fixed children use the viewport. */
+    .ui-modal[hidden], .ui-modal [hidden] { display: none !important; }
+    .ui-modal:focus-visible, .ui-modal :focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    #mobile-menu { overflow-y: auto; max-height: 100dvh; padding: 76px 24px 28px; justify-content: safe center; }
+    #mobile-menu > * { flex-shrink: 0; }
+    .viewer-status { color: var(--fg); font-family: var(--mono); font-size: .8rem; text-align: center; }
+    .viewer-status:empty { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .ui-modal, .ui-modal * { transition: none !important; animation: none !important; }
+    }
+    .ei-expand[hidden], .fq-panel[hidden] { display: none !important; }
+    #gal-overlay { position: fixed; inset: 0; }
+    #gal-modal-bg { z-index: 0; }
+    #gal-modal { z-index: 1; }
+    #gal-modal-close { position: fixed; }
+    #gal-status { position: fixed; left: 12%; right: 12%; top: 45%; }
+    #sk-modal-inner { max-height: 96dvh; overflow-y: auto; padding: 50px 0 12px; }
+    #sk-modal-img-wrap { height: min(65dvh, 800px); flex-shrink: 0; aspect-ratio: auto; }
+    #sk-modal-close { position: sticky; top: 0; align-self: flex-end; flex-shrink: 0; }
+    #sk-modal-nav, #sk-modal-label { flex-shrink: 0; }
+    .rvm-box { max-height: 92dvh; overflow-y: auto; }
+    .rvm-close { position: sticky; top: 0; display: block; margin-left: auto; background: var(--bg2); }
   </style>
 </head>
 <body>
@@ -2261,15 +2271,15 @@
   </div>
   <div class="n-actions">
     <a class="n-book" href="/book">Book</a>
-    <button id="nav-toggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+    <button id="nav-toggle" class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
 
 <!-- ════ MOBILE MENU ════ -->
-<div id="mobile-menu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu">
-  <button class="mm-close" id="mm-close" aria-label="Close menu">✕</button>
+<div id="mobile-menu" class="ui-modal" tabindex="-1" hidden inert aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu">
+  <button class="mm-close" id="mm-close" type="button" aria-label="Close menu">✕</button>
   <a class="mm-link" href="/book">Book</a>
   <a class="mm-link" href="/portfolio">Portfolio</a>
   <a class="mm-link" href="#about">About</a>
@@ -2456,12 +2466,12 @@
     <li class="ei" data-gallery='[
       {"src":"pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-1440.webp","alt":"Minimalist fine-line abstract continuous flower tattoo"}
     ]'>
-      <button class="ei-trigger" type="button" aria-expanded="false">
+      <button class="ei-trigger" id="ei-fine-line-trigger" type="button" aria-expanded="false" aria-controls="ei-fine-line-panel">
         <span class="ei-name">Fine Line</span>
         <span class="ei-toggle" aria-hidden="true">+</span>
       </button>
       <div class="ei-rule" aria-hidden="true"></div>
-      <div class="ei-expand" aria-hidden="true">
+      <div class="ei-expand" id="ei-fine-line-panel" aria-labelledby="ei-fine-line-trigger" hidden inert aria-hidden="true">
         <div class="ei-expand-inner">
           <div class="ei-expand-img">
             <img src="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp"
@@ -2471,7 +2481,7 @@
           </div>
           <div class="ei-expand-body">
             <p class="ei-expand-text">A delicate, precise style often done with thin lines.</p>
-            <button class="ei-see-more">See more</button>
+            <button class="ei-see-more" type="button">See more</button>
           </div>
         </div>
       </div>
@@ -2481,12 +2491,12 @@
       {"src":"pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-1440.webp","alt":"Flying barn owl black and grey tattoo"},
       {"src":"pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-1440.webp","alt":"Classical mythology Hermes fine art tattoo"}
     ]'>
-      <button class="ei-trigger" type="button" aria-expanded="false">
+      <button class="ei-trigger" id="ei-fine-art-trigger" type="button" aria-expanded="false" aria-controls="ei-fine-art-panel">
         <span class="ei-name">Fine Art</span>
         <span class="ei-toggle" aria-hidden="true">+</span>
       </button>
       <div class="ei-rule" aria-hidden="true"></div>
-      <div class="ei-expand" aria-hidden="true">
+      <div class="ei-expand" id="ei-fine-art-panel" aria-labelledby="ei-fine-art-trigger" hidden inert aria-hidden="true">
         <div class="ei-expand-inner">
           <div class="ei-expand-img">
             <img src="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-960.webp"
@@ -2496,7 +2506,7 @@
           </div>
           <div class="ei-expand-body">
             <p class="ei-expand-text">Illustrative work designed around your concept. Think paintings: aesthetic, passionate, really just art for art's sake.</p>
-            <button class="ei-see-more">See more</button>
+            <button class="ei-see-more" type="button">See more</button>
           </div>
         </div>
       </div>
@@ -2509,12 +2519,12 @@
       {"src":"pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-1440.webp","alt":"Thresher shark realism tattoo"},
       {"src":"pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-1440.webp","alt":"Five cat portraits — Hazel, Ocean, Wolfie, Oreo and Pumpkin"}
     ]'>
-      <button class="ei-trigger" type="button" aria-expanded="false">
+      <button class="ei-trigger" id="ei-realism-trigger" type="button" aria-expanded="false" aria-controls="ei-realism-panel">
         <span class="ei-name">Realism</span>
         <span class="ei-toggle" aria-hidden="true">+</span>
       </button>
       <div class="ei-rule" aria-hidden="true"></div>
-      <div class="ei-expand" aria-hidden="true">
+      <div class="ei-expand" id="ei-realism-panel" aria-labelledby="ei-realism-trigger" hidden inert aria-hidden="true">
         <div class="ei-expand-inner">
           <div class="ei-expand-img">
             <img src="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp"
@@ -2524,7 +2534,7 @@
           </div>
           <div class="ei-expand-body">
             <p class="ei-expand-text">A lifelike rendering of anything you want that exists in life: portraits, botanical, landscapes, still life, animals.</p>
-            <button class="ei-see-more">See more</button>
+            <button class="ei-see-more" type="button">See more</button>
           </div>
         </div>
       </div>
@@ -2542,16 +2552,16 @@
   <ul class="fq-list">
 
     <li class="fq-item">
-      <button class="fq-trigger" type="button" aria-expanded="false">
+      <button class="fq-trigger" id="faq-1-trigger" type="button" aria-expanded="false" aria-controls="faq-1-panel">
         <span class="fq-num">01</span>
-        <div class="fq-q-wrap">
+        <span class="fq-q-wrap">
           <span class="fq-question">How much does a tattoo cost?</span>
           <span class="fq-tags-row">Pricing · quotes · deposits</span>
-        </div>
+        </span>
         <span class="fq-toggle">+</span>
       </button>
       <div class="fq-rule"></div>
-      <div class="fq-panel">
+      <div class="fq-panel" id="faq-1-panel" aria-labelledby="faq-1-trigger" hidden inert aria-hidden="true">
         <div class="fq-panel-inner">
           <p class="fq-answer">The price of tattoos varies as I price by piece, not by hour. Message me via WhatsApp and I'll be able to give you a quote.<br><br>Deposits are a must and are non-refundable.</p>
         </div>
@@ -2559,16 +2569,16 @@
     </li>
 
     <li class="fq-item">
-      <button class="fq-trigger" type="button" aria-expanded="false">
+      <button class="fq-trigger" id="faq-2-trigger" type="button" aria-expanded="false" aria-controls="faq-2-panel">
         <span class="fq-num">02</span>
-        <div class="fq-q-wrap">
+        <span class="fq-q-wrap">
           <span class="fq-question">Do you do walk-ins?</span>
           <span class="fq-tags-row">Appointments · walk-ins · availability</span>
-        </div>
+        </span>
         <span class="fq-toggle">+</span>
       </button>
       <div class="fq-rule"></div>
-      <div class="fq-panel">
+      <div class="fq-panel" id="faq-2-panel" aria-labelledby="faq-2-trigger" hidden inert aria-hidden="true">
         <div class="fq-panel-inner">
           <p class="fq-answer">I tend not to do walk-ins as I am usually quite busy. I don't want to waste your time so please book in.</p>
         </div>
@@ -2576,16 +2586,16 @@
     </li>
 
     <li class="fq-item">
-      <button class="fq-trigger" type="button" aria-expanded="false">
+      <button class="fq-trigger" id="faq-3-trigger" type="button" aria-expanded="false" aria-controls="faq-3-panel">
         <span class="fq-num">03</span>
-        <div class="fq-q-wrap">
+        <span class="fq-q-wrap">
           <span class="fq-question">How do I prepare for my appointment?</span>
           <span class="fq-tags-row">Preparation · health · what to bring</span>
-        </div>
+        </span>
         <span class="fq-toggle">+</span>
       </button>
       <div class="fq-rule"></div>
-      <div class="fq-panel">
+      <div class="fq-panel" id="faq-3-panel" aria-labelledby="faq-3-trigger" hidden inert aria-hidden="true">
         <div class="fq-panel-inner">
           <ul class="fq-answer-list">
             <li>— Eat a proper meal beforehand and stay well hydrated.</li>
@@ -2602,16 +2612,16 @@
     </li>
 
     <li class="fq-item">
-      <button class="fq-trigger" type="button" aria-expanded="false">
+      <button class="fq-trigger" id="faq-4-trigger" type="button" aria-expanded="false" aria-controls="faq-4-panel">
         <span class="fq-num">04</span>
-        <div class="fq-q-wrap">
+        <span class="fq-q-wrap">
           <span class="fq-question">Does it hurt?</span>
           <span class="fq-tags-row">Pain · tolerance · placement</span>
-        </div>
+        </span>
         <span class="fq-toggle">+</span>
       </button>
       <div class="fq-rule"></div>
-      <div class="fq-panel">
+      <div class="fq-panel" id="faq-4-panel" aria-labelledby="faq-4-trigger" hidden inert aria-hidden="true">
         <div class="fq-panel-inner">
           <p class="fq-answer">Yes it hurts, however it is a manageable pain and it is different for everyone. I would say it's uncomfortable rather than unbearable, and you adjust to it quickly.<br><br>To help with this we can take breaks when and as you need, we go at your pace.<br><br>If you are worried about a longer session, let me know and we can split them up into sessions you feel more comfortable with.</p>
         </div>
@@ -2619,16 +2629,16 @@
     </li>
 
     <li class="fq-item">
-      <button class="fq-trigger" type="button" aria-expanded="false">
+      <button class="fq-trigger" id="faq-5-trigger" type="button" aria-expanded="false" aria-controls="faq-5-panel">
         <span class="fq-num">05</span>
-        <div class="fq-q-wrap">
+        <span class="fq-q-wrap">
           <span class="fq-question">What should I know before my first tattoo?</span>
           <span class="fq-tags-row">First time · expectations · nerves</span>
-        </div>
+        </span>
         <span class="fq-toggle">+</span>
       </button>
       <div class="fq-rule"></div>
-      <div class="fq-panel">
+      <div class="fq-panel" id="faq-5-panel" aria-labelledby="faq-5-trigger" hidden inert aria-hidden="true">
         <div class="fq-panel-inner">
           <p class="fq-answer">It is normal to be nervous, regardless of if it's your first tattoo or fifth. I will walk you through every step, you can take your time choosing placement, design, colours, anything you need. I like to say getting a tattoo is teamwork, we work together to make the best tattoo for you.</p>
         </div>
@@ -2636,16 +2646,16 @@
     </li>
 
     <li class="fq-item">
-      <button class="fq-trigger" type="button" aria-expanded="false">
+      <button class="fq-trigger" id="faq-6-trigger" type="button" aria-expanded="false" aria-controls="faq-6-panel">
         <span class="fq-num">06</span>
-        <div class="fq-q-wrap">
+        <span class="fq-q-wrap">
           <span class="fq-question">What's the minimum age?</span>
           <span class="fq-tags-row">Age · ID · legal</span>
-        </div>
+        </span>
         <span class="fq-toggle">+</span>
       </button>
       <div class="fq-rule"></div>
-      <div class="fq-panel">
+      <div class="fq-panel" id="faq-6-panel" aria-labelledby="faq-6-trigger" hidden inert aria-hidden="true">
         <div class="fq-panel-inner">
           <p class="fq-answer">18 years old. No exceptions regardless of parental consent. Valid photo ID is required on the day. If you can't prove your age, the session cannot go ahead. Deposit is lost.</p>
         </div>
@@ -2801,10 +2811,10 @@
 <!-- ════ OVERLAYS — kept outside #page-main so position:fixed anchors to the viewport ════ -->
 
 <!-- Review modal -->
-<div id="rv-modal" aria-hidden="true" role="dialog" aria-modal="true">
+<div id="rv-modal" class="ui-modal" tabindex="-1" hidden inert aria-hidden="true" role="dialog" aria-modal="true" aria-label="Client review">
   <div class="rvm-back"></div>
   <div class="rvm-box">
-    <button class="rvm-close" aria-label="Close review">✕ close</button>
+    <button class="rvm-close" type="button" aria-label="Close review">✕ close</button>
     <div class="rvm-stars">★★★★★</div>
     <p class="rvm-q"></p>
     <div class="rvm-author"></div>
@@ -2817,27 +2827,31 @@
 </div>
 
 <!-- ════ SKILL CAROUSEL MODAL ════ -->
-<div id="sk-modal" role="dialog" aria-modal="true" aria-label="Skill gallery" aria-hidden="true">
+<div id="sk-modal" class="ui-modal" tabindex="-1" hidden inert role="dialog" aria-modal="true" aria-label="Skill gallery" aria-hidden="true">
   <div id="sk-modal-bg"></div>
   <div id="sk-modal-inner">
-    <button id="sk-modal-close" aria-label="Close">✕</button>
+    <button id="sk-modal-close" type="button" aria-label="Close">✕</button>
     <div id="sk-modal-img-wrap">
       <img id="sk-modal-img" src="" alt="">
     </div>
+    <p id="sk-status" class="viewer-status" role="status"></p>
     <div id="sk-modal-nav">
-      <button class="sk-nav-btn" id="sk-prev" aria-label="Previous">‹</button>
+      <button class="sk-nav-btn" id="sk-prev" type="button" aria-label="Previous">‹</button>
       <span id="sk-modal-counter">1 / 1</span>
-      <button class="sk-nav-btn" id="sk-next" aria-label="Next">›</button>
+      <button class="sk-nav-btn" id="sk-next" type="button" aria-label="Next">›</button>
     </div>
     <span id="sk-modal-label"></span>
   </div>
 </div>
 
 <!-- ════ GALLERY LIGHTBOX ════ -->
+<div id="gal-overlay" class="ui-modal" tabindex="-1" hidden inert role="dialog" aria-modal="true" aria-label="Portfolio image" aria-hidden="true">
 <div id="gal-modal-bg" aria-hidden="true"></div>
-<div id="gal-modal" role="dialog" aria-modal="true" aria-label="Portfolio image" aria-hidden="true">
+<div id="gal-modal">
   <img id="gal-modal-img" src="" alt="">
-  <button id="gal-modal-close" aria-label="Close">✕</button>
+  <button id="gal-modal-close" type="button" aria-label="Close">✕</button>
+  <p id="gal-status" class="viewer-status" role="status"></p>
+</div>
 </div>
 
 <!-- ════ FOOTER ════ -->
@@ -2854,10 +2868,365 @@
 </footer>
 
 <script>
+/* Modal ownership is semantic; animation adapters own visuals only. */
+(() => {
+  const records = new Map(), stack = [], background = new Map();
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const top = () => stack[stack.length - 1];
+  const visible = el => !!(el && el.isConnected && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden' && !el.closest('[hidden], [inert]') && !el.matches(':disabled'));
+  const usable = el => visible(el) && el.tabIndex >= 0;
+  const targets = root => [...root.querySelectorAll('a[href],button,input,select,textarea,[tabindex]')].filter(usable);
+  const resolve = value => typeof value === 'function' ? value() : value;
+  const focus = el => { if (!visible(el) || document.activeElement === el) return false; el.focus({ preventScroll: true }); return document.activeElement === el; };
+  function inside(r) {
+    const initial = resolve(r.options.initialFocus);
+    focus(usable(r.lastFocus) ? r.lastFocus : usable(initial) ? initial : targets(r.root)[0] || r.root);
+  }
+  function sync() {
+    if (stack.length) {
+      [...document.body.children].forEach(el => {
+        if (records.has(el) || /^(SCRIPT|STYLE|LINK|TEMPLATE)$/.test(el.tagName)) return;
+        if (!background.has(el)) background.set(el, el.inert);
+        el.inert = true;
+      });
+    } else {
+      background.forEach((inert, el) => { el.inert = inert; }); background.clear();
+    }
+    records.forEach(r => { r.root.inert = r !== top(); });
+    stack.forEach((r, i) => { r.root.style.zIndex = String(10000 + i); });
+  }
+  function cancel(r) { ++r.generation; if (r.cancel) r.cancel(false); r.cancel = null; r.finish = null; }
+  function complete(r) {
+    const finish = r.finish; if (!finish) return;
+    if (r.cancel) r.cancel(true);
+    r.cancel = null; finish();
+  }
+  function transition(r, opening, immediate, finish) {
+    const generation = r.generation;
+    const done = () => {
+      if (r.generation !== generation) return;
+      r.cancel = null; r.finish = null; finish();
+    };
+    r.finish = done;
+    const adapter = r.options.transition;
+    if (!adapter) return done();
+    const stop = adapter(opening, done);
+    if (r.finish) r.cancel = stop;
+    if (immediate || motion.matches || document.hidden) complete(r);
+  }
+  function register(root, options = {}) {
+    if (records.has(root)) return;
+    records.set(root, { root, options, state: 'closed', generation: 0, cancel: null, finish: null, opener: null, lastFocus: null });
+    root.hidden = true; root.inert = true; root.setAttribute('aria-hidden', 'true');
+  }
+  function open(root, opener) {
+    const r = records.get(root); if (!r) return;
+    if ((r.state === 'open' || r.state === 'opening') && r === top()) return;
+    const wasClosed = r.state === 'closed';
+    cancel(r);
+    if (wasClosed) { r.opener = opener || document.activeElement; r.lastFocus = null; }
+    const previous = stack.indexOf(r); if (previous !== -1) stack.splice(previous, 1);
+    stack.push(r); r.state = 'opening';
+    root.hidden = false; root.inert = false; root.style.visibility = 'visible'; root.setAttribute('aria-hidden', 'false');
+    window.__scrollLock.acquire(root);
+    transition(r, true, false, () => { r.state = 'open'; });
+    inside(r); sync();
+  }
+  function close(root, { immediate = false, restoreFocus = true } = {}) {
+    const r = records.get(root); if (!r || r.state === 'closed') return;
+    if (r.state === 'closing') { if (immediate) complete(r); return; }
+    cancel(r); r.state = 'closing';
+    transition(r, false, immediate, () => {
+      const wasTop = r === top();
+      stack.splice(stack.indexOf(r), 1); r.state = 'closed';
+      sync();
+      if (wasTop && top()) inside(top());
+      else if (wasTop && restoreFocus) {
+        const fallback = resolve(r.options.fallbackFocus);
+        focus(usable(r.opener) ? r.opener : visible(fallback) ? fallback : [...document.querySelectorAll('#nav a, #nav button')].find(usable));
+      }
+      root.hidden = true; root.inert = true; root.style.visibility = ''; root.setAttribute('aria-hidden', 'true');
+      window.__scrollLock.release(root);
+    });
+  }
+  function settle() { records.forEach(complete); }
+  function fade(root, seconds, update, settled) {
+    const finishVisual = () => {
+      if (!root.getAnimations) return;
+      root.getAnimations({ subtree: true }).forEach(animation => { try { animation.finish(); } catch (_) {} });
+    };
+    return (opening, done) => {
+      if (update) update(opening);
+      root.classList.toggle('open', opening);
+      const finish = () => { if (settled) settled(opening); done(); };
+      if (motion.matches || !window.gsap || document.hidden) { finishVisual(); finish(); return () => {}; }
+      let timer = setTimeout(finish, seconds * 1000);
+      return forceFinal => {
+        clearTimeout(timer);
+        if (forceFinal) { finishVisual(); if (settled) settled(opening); }
+      };
+    };
+  }
+  document.addEventListener('keydown', e => {
+    const r = top(); if (!r || e.isComposing) return;
+    if (e.key === 'Escape') { e.preventDefault(); close(r.root); return; }
+    if (e.key === 'Tab') {
+      const list = targets(r.root), first = list[0], last = list[list.length - 1];
+      if (!first) { e.preventDefault(); focus(r.root); }
+      else if (e.shiftKey && (document.activeElement === first || !list.includes(document.activeElement))) { e.preventDefault(); focus(last); }
+      else if (!e.shiftKey && (document.activeElement === last || !list.includes(document.activeElement))) { e.preventDefault(); focus(first); }
+    } else if (r.options.onKey) r.options.onKey(e);
+  });
+  document.addEventListener('focusin', e => {
+    const r = top(); if (!r) return;
+    if (r.root.contains(e.target)) r.lastFocus = e.target;
+    else inside(r);
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) settle(); });
+  motion.addEventListener('change', settle);
+  addEventListener('resize', settle);
+  window.__ui = { register, open, close, isTop: root => top()?.root === root, usable, fade };
+
+  /* Ordinary menu/navigation always works, even without either animation bundle. */
+  const menu = document.getElementById('mobile-menu'), toggle = document.getElementById('nav-toggle');
+  register(menu, {
+    initialFocus: () => document.getElementById('mm-close'),
+    fallbackFocus: () => [...document.querySelectorAll('#nav a, #nav button')].find(usable),
+    transition: fade(menu, .35, opening => toggle.setAttribute('aria-expanded', String(opening)))
+  });
+  toggle.addEventListener('click', () => open(menu, toggle));
+  document.getElementById('mm-close').addEventListener('click', () => close(menu));
+  menu.querySelectorAll('a:not([href^="#"])').forEach(a => a.addEventListener('click', () => close(menu, { immediate: true, restoreFocus: false })));
+  addEventListener('resize', () => { if (innerWidth > 768) close(menu, { immediate: true }); });
+  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const id = a.getAttribute('href'); if (!id || id === '#') return;
+    let target; try { target = document.querySelector(id); } catch (_) { return; }
+    if (!target) return;
+    e.preventDefault(); close(menu, { immediate: true, restoreFocus: false });
+    const destination = target.querySelector('h1,h2,h3') || target;
+    if (!destination.hasAttribute('tabindex')) destination.tabIndex = -1;
+    destination.focus({ preventScroll: true });
+    target.scrollIntoView({ block: 'start', behavior: motion.matches ? 'auto' : 'smooth' });
+    if (a.classList.contains('h-dir')) {
+      const map = document.querySelector('.loc-map-wrap');
+      if (map) { map.classList.add('map-lit'); setTimeout(() => map.classList.remove('map-lit'), 2200); }
+    }
+  }));
+
+  /* A request belongs to exactly one image generation, including cached loads. */
+  window.__viewerImage = (img, status) => {
+    let generation = 0;
+    return {
+      invalidate() { ++generation; img.onload = img.onerror = null; },
+      clear() { this.invalidate(); img.style.transition = 'none'; img.style.opacity = '0'; img.removeAttribute('src'); void img.offsetWidth; img.style.transition = ''; status.textContent = ''; },
+      show(src, alt) {
+        const request = ++generation;
+        img.style.opacity = '0'; status.textContent = ''; img.alt = alt || '';
+        const pending = new Image();
+        pending.onload = () => { if (request !== generation) return; img.src = pending.src; img.style.opacity = '1'; };
+        pending.onerror = () => { if (request !== generation) return; img.removeAttribute('src'); status.textContent = 'Image could not be loaded. Try another image.'; };
+        pending.src = innerWidth <= 480 ? src.replace('-1440.webp', '-960.webp') : src;
+      }
+    };
+  };
+  window.__viewerSwipe = (area, root, move) => {
+    let start = null;
+    area.addEventListener('pointerdown', e => { if (window.__ui.isTop(root) && e.isPrimary) start = { id: e.pointerId, x: e.clientX, y: e.clientY }; });
+    area.addEventListener('pointercancel', () => { start = null; });
+    area.addEventListener('pointerup', e => {
+      const from = start; start = null; if (!from || from.id !== e.pointerId || !window.__ui.isTop(root)) return;
+      const dx = e.clientX - from.x, dy = e.clientY - from.y;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) move(dx < 0 ? 1 : -1);
+    });
+  };
+  window.__outsideImage = (img, x, y) => {
+    if (!img.naturalWidth || !img.naturalHeight) return false;
+    const r = img.getBoundingClientRect(), scale = Math.min(r.width / img.naturalWidth, r.height / img.naturalHeight);
+    const width = img.naturalWidth * scale, height = img.naturalHeight * scale;
+    const left = r.left + (r.width - width) / 2, top = r.top + (r.height - height) / 2;
+    return x < left || x > left + width || y < top || y > top + height;
+  };
+})();
+/* Dependency-free home controls; GSAP is an optional visual adapter. */
+(() => {
+  const ui = window.__ui, motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const refresh = () => { if (window.ScrollTrigger) window.ScrollTrigger.refresh(); };
+  const rootCS = getComputedStyle(document.documentElement);
+  const IOS_S = (parseFloat(rootCS.getPropertyValue('--ios-t')) || 560) / 1000;
+  const IOS_OUT_S = (parseFloat(rootCS.getPropertyValue('--ios-t-out')) || 400) / 1000;
+  const IOS_EASE = (() => {
+    const x1 = .32, y1 = .72, x2 = 0, y2 = 1;
+    const cx = 3*x1, bx = 3*(x2-x1)-cx, ax = 1-cx-bx;
+    const cy = 3*y1, by = 3*(y2-y1)-cy, ay = 1-cy-by;
+    return p => {
+      if (p <= 0 || p >= 1) return p;
+      let t = p;
+      for (let i = 0; i < 6; i++) {
+        const error = ((ax*t+bx)*t+cx)*t-p, derivative = (3*ax*t+2*bx)*t+cx;
+        if (Math.abs(error) < 1e-5 || Math.abs(derivative) < 1e-6) break;
+        t -= error/derivative;
+      }
+      t = Math.max(0, Math.min(1, t)); return ((ay*t+by)*t+cy)*t;
+    };
+  })();
+  const accordions = [];
+  function initAccordion({ row, trigger, panel, inner, rule }) {
+    let open = false, generation = 0, tweens = [];
+    const cancel = () => { ++generation; tweens.forEach(t => t.kill()); tweens = []; };
+    const settle = () => {
+      cancel(); panel.hidden = !open; panel.inert = !open; panel.setAttribute('aria-hidden', String(!open));
+      panel.style.height = open ? 'auto' : '0px'; panel.style.overflow = open ? 'visible' : 'hidden';
+      inner.style.opacity = '1'; inner.style.transform = ''; rule.style.width = open ? '60%' : '0';
+    };
+    accordions.push(settle);
+    trigger.addEventListener('click', () => {
+      const height = panel.getBoundingClientRect().height;
+      cancel(); const current = generation; open = !open;
+      row.classList.toggle('open', open); trigger.setAttribute('aria-expanded', String(open));
+      if (!open && panel.contains(document.activeElement)) trigger.focus({ preventScroll: true });
+      panel.inert = !open; panel.setAttribute('aria-hidden', String(!open));
+      panel.hidden = false; panel.style.height = 'auto';
+      const target = open ? panel.offsetHeight : 0;
+      panel.style.height = height + 'px'; panel.style.overflow = 'hidden';
+      if (!window.gsap || motion.matches || document.hidden) { settle(); refresh(); }
+      else {
+        tweens.push(window.gsap.to(panel, { height: target, duration: open ? IOS_S : IOS_OUT_S, ease: IOS_EASE, onComplete() {
+          if (generation !== current) return; settle(); refresh();
+        }}));
+        tweens.push(window.gsap.to(rule, { width: open ? '60%' : '0%', duration: open ? IOS_S : IOS_OUT_S, ease: IOS_EASE }));
+      }
+      if (open) {
+        const navH = parseFloat(getComputedStyle(document.getElementById('nav')).getPropertyValue('--nav-h')) || 0;
+        const rect = row.getBoundingClientRect(), expanded = trigger.offsetHeight + target;
+        if (rect.top < navH || rect.top + expanded > innerHeight) window.scrollTo({ top: Math.max(0, scrollY + rect.top - navH), behavior: motion.matches ? 'auto' : 'smooth' });
+      }
+    });
+    panel.querySelectorAll('img').forEach(img => img.addEventListener('load', () => { settle(); refresh(); }));
+    settle();
+  }
+  document.querySelectorAll('.ei, .fq-item').forEach(row => initAccordion({
+    row, trigger: row.querySelector('.ei-trigger, .fq-trigger'), panel: row.querySelector('.ei-expand, .fq-panel'),
+    inner: row.querySelector('.ei-expand-inner, .fq-panel-inner'), rule: row.querySelector('.ei-rule, .fq-rule')
+  }));
+  const settlePanels = () => { accordions.forEach(settle => settle()); refresh(); };
+  let resizeTimer;
+  addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(settlePanels, 150); });
+  motion.addEventListener('change', settlePanels);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) settlePanels(); });
+  if (document.fonts) document.fonts.ready.then(settlePanels);
+  document.querySelector('#trust h2').tabIndex = -1;
+
+  /* Work viewer preserves thumbnail geometry, without owning focus or locks. */
+  const root = document.getElementById('gal-overlay'), box = document.getElementById('gal-modal');
+  const bg = document.getElementById('gal-modal-bg'), img = document.getElementById('gal-modal-img');
+  const close = document.getElementById('gal-modal-close');
+  const image = window.__viewerImage(img, document.getElementById('gal-status'));
+  let origin = null, fresh = false;
+  const full = () => { Object.assign(box.style, { top: '0', left: '0', width: '100vw', height: '100dvh', borderRadius: '0', opacity: '1' }); };
+  ui.register(root, {
+    initialFocus: () => close,
+    fallbackFocus: () => [...document.querySelectorAll('.wc')].find(ui.usable),
+    transition(opening, done) {
+      box.style.display = 'block'; bg.classList.add('on'); close.style.opacity = '1';
+      const gs = window.gsap;
+      if (!opening) image.invalidate();
+      const rect = origin?.getBoundingClientRect();
+      const onScreen = origin?.isConnected && rect?.width > 0 && rect.top < innerHeight && rect.bottom > 0 && rect.left < innerWidth && rect.right > 0;
+      const finish = () => {
+        if (opening) { full(); bg.style.opacity = '1'; }
+        else { box.style.display = 'none'; bg.classList.remove('on'); bg.style.opacity = '0'; image.clear(); }
+      };
+      if (!gs || motion.matches || document.hidden) { finish(); done(); return () => {}; }
+      if (opening && fresh && onScreen) Object.assign(box.style, { top: rect.top+'px', left: rect.left+'px', width: rect.width+'px', height: rect.height+'px', borderRadius: '12px', opacity: '1' });
+      fresh = false;
+      const target = opening ? { top: 0, left: 0, width: innerWidth, height: innerHeight, borderRadius: 0, opacity: 1 }
+        : onScreen ? { top: rect.top, left: rect.left, width: rect.width, height: rect.height, borderRadius: 12 } : { opacity: 0 };
+      const a = gs.to(bg, { opacity: opening ? 1 : 0, duration: .25 });
+      const b = gs.to(box, { ...target, duration: opening ? .52 : .42, ease: opening ? 'expo.out' : 'expo.in', onComplete() { finish(); done(); } });
+      return settle => { a.kill(); b.kill(); if (settle) finish(); };
+    }
+  });
+  document.querySelectorAll('.wc').forEach(card => {
+    card.addEventListener('click', () => {
+      const thumbnail = card.querySelector('.wc-img'); if (!thumbnail || ui.isTop(root)) return;
+      origin = card; fresh = root.hidden; image.clear(); image.show(card.dataset.full || thumbnail.src, thumbnail.alt); ui.open(root, card);
+    });
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); } });
+  });
+  close.addEventListener('click', () => ui.close(root)); bg.addEventListener('click', () => ui.close(root));
+  box.addEventListener('click', e => { if (!e.target.closest('button') && window.__outsideImage(img, e.clientX, e.clientY)) ui.close(root); });
+  addEventListener('resize', () => { if (!root.hidden) full(); });
+
+  /* Expertise carousel: request generations survive quick next/close/reopen. */
+  const skill = document.getElementById('sk-modal'), skillImg = document.getElementById('sk-modal-img');
+  const skillImage = window.__viewerImage(skillImg, document.getElementById('sk-status'));
+  const prev = document.getElementById('sk-prev'), next = document.getElementById('sk-next');
+  let images = [], index = 0, skillOrigin = null;
+  function show(i) {
+    if (!images.length) return;
+    index = (i + images.length) % images.length;
+    skillImage.show(images[index].src, images[index].alt);
+    document.getElementById('sk-modal-counter').textContent = (index + 1) + ' / ' + images.length;
+    prev.hidden = next.hidden = images.length < 2;
+  }
+  const move = direction => { if (ui.isTop(skill)) show(index + direction); };
+  ui.register(skill, {
+    initialFocus: () => document.getElementById('sk-modal-close'),
+    fallbackFocus: () => skillOrigin?.querySelector('.ei-trigger'),
+    transition: ui.fade(skill, .25, opening => { if (!opening) skillImage.invalidate(); }, opening => { if (!opening) skillImage.clear(); }),
+    onKey(e) { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); move(e.key === 'ArrowLeft' ? -1 : 1); } }
+  });
+  document.querySelectorAll('.ei-see-more').forEach(button => {
+    const row = button.closest('.ei'), name = row.querySelector('.ei-name').textContent.trim();
+    let list; try { list = JSON.parse(row.dataset.gallery || '[]'); } catch (_) { list = []; }
+    button.textContent = list.length > 1 ? 'See all ' + list.length : 'View larger';
+    button.setAttribute('aria-label', list.length > 1 ? 'See all ' + list.length + ' ' + name + ' tattoos' : 'View this ' + name + ' tattoo larger');
+    button.addEventListener('click', () => {
+      if (!list.length || ui.isTop(skill)) return;
+      images = list; skillOrigin = row; skillImage.clear();
+      document.getElementById('sk-modal-label').textContent = name;
+      show(0); ui.open(skill, button);
+    });
+  });
+  prev.addEventListener('click', () => move(-1)); next.addEventListener('click', () => move(1));
+  document.getElementById('sk-modal-close').addEventListener('click', () => ui.close(skill));
+  document.getElementById('sk-modal-bg').addEventListener('click', () => ui.close(skill));
+  window.__viewerSwipe(document.getElementById('sk-modal-img-wrap'), skill, move);
+})();
+
+/* Loader completion and native history/hash restoration never wait for GSAP. */
+(() => {
+  let started = false;
+  const loader = document.getElementById('loader');
+  window.__startPage = () => {
+    loader.style.display = 'none'; window.__scrollLock.release('loader');
+    if (started) return; started = true;
+    const y = window.__restoreY || 0;
+    if (y > 0) {
+      const deadline = performance.now() + 1200;
+      const restore = () => {
+        const max = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+        if (max < y && performance.now() < deadline && document.readyState !== 'complete') return requestAnimationFrame(restore);
+        window.__restoreTarget = Math.min(y, max); window.__restoreBusy = true;
+        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+        window.scrollTo({ top: window.__restoreTarget, behavior: 'auto' });
+        window.__restoreBusy = false; if (window.__saveScroll) window.__saveScroll();
+      };
+      requestAnimationFrame(restore);
+    } else if (location.hash) {
+      let target; try { target = document.querySelector(location.hash); } catch (_) {}
+      if (target) target.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    }
+  };
+  let skip = !window.__INTRO || matchMedia('(prefers-reduced-motion: reduce)').matches;
+  try { skip = skip || sessionStorage.getItem('emmy-intro') === '1'; sessionStorage.setItem('emmy-intro', '1'); } catch (_) {}
+  if (skip) window.__startPage();
+  else { window.__scrollLock.acquire('loader'); setTimeout(() => { loader.classList.add('ld-out'); setTimeout(window.__startPage, 100); }, Math.max(0, 280 - performance.now())); }
+})();
 /* Runs after the deferred GSAP bundles, on DOMContentLoaded (see tail). */
 function __boot() {
   'use strict';
-  if (!window.gsap) { document.documentElement.classList.add('libs-failed'); return; }
+  if (!window.gsap || !window.ScrollTrigger) { document.documentElement.classList.add('libs-failed'); return; }
 
   /* ═══ AVAILABILITY TOGGLE ═══
      Set to false when not taking bookings — updates pill text + colour */
@@ -2875,72 +3244,6 @@ function __boot() {
      for the visitor; ordinary scrolling is the browser's business either way. */
   const SMOOTH = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 
-  /* One curve and one duration for the whole open gesture — scroll, panel, copy
-     fade and row wash — so a row reads as a single movement rather than four.
-     The evaluator is the same cubic as --ios and doubles as a GSAP ease
-     function, and both durations are read back out of CSS, so nothing here can
-     drift from the stylesheet. */
-  const rootCS    = getComputedStyle(document.documentElement);
-  const IOS_S     = (parseFloat(rootCS.getPropertyValue('--ios-t'))     || 560) / 1000;
-  const IOS_OUT_S = (parseFloat(rootCS.getPropertyValue('--ios-t-out')) || 400) / 1000;
-  const IOS_EASE = (() => {
-    const x1 = .32, y1 = .72, x2 = 0, y2 = 1;
-    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
-    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
-    const fx  = (t) => ((ax * t + bx) * t + cx) * t;
-    const dfx = (t) => (3 * ax * t + 2 * bx) * t + cx;
-    return (p) => {
-      if (p <= 0) return 0;
-      if (p >= 1) return 1;
-      let t = p;
-      for (let i = 0; i < 6; i++) {
-        const err = fx(t) - p;
-        if (Math.abs(err) < 1e-5) break;
-        const d = dfx(t);
-        if (Math.abs(d) < 1e-6) break;
-        t -= err / d;
-      }
-      t = t < 0 ? 0 : t > 1 ? 1 : t;
-      return ((ay * t + by) * t + cy) * t;
-    };
-  })();
-
-  /* ── One eased scroll, browser-independent timing ──
-     Shared by the reload restore and the accordion's reveal-on-open. The
-     browser's own smooth scroll picks its own duration, which cannot be matched
-     to --ios; this runs the same cubic as the CSS. A wheel or touch during the
-     travel hands the page straight back, and a second call cancels the first.
-     onEnd receives whether the travel actually arrived: an interrupted one must
-     not be followed by anything that moves the page again. */
-  let scrollRun = 0;
-  function glideTo(to, dur, onEnd) {
-    const from = window.scrollY;
-    if (Math.abs(to - from) < 1) { if (onEnd) onEnd(true); return; }
-    if (SMOOTH === 'auto') { window.scrollTo(0, to); if (onEnd) onEnd(true); return; }
-    const ms  = (dur || IOS_S) * 1000;
-    const run = ++scrollRun;
-    let alive = true;
-    const stop = () => { alive = false; };
-    const opts = { passive: true };
-    addEventListener('wheel', stop, opts);
-    addEventListener('touchstart', stop, opts);
-    const done = (arrived) => {
-      removeEventListener('wheel', stop, opts);
-      removeEventListener('touchstart', stop, opts);
-      if (onEnd) onEnd(arrived);
-    };
-    const t0 = performance.now();
-    requestAnimationFrame(function step(now) {
-      if (!alive || run !== scrollRun) return done(false);
-      const p = Math.min(1, (now - t0) / ms);
-      window.scrollTo(0, from + (to - from) * IOS_EASE(p));
-      if (p < 1) requestAnimationFrame(step); else done(true);
-    });
-  }
-
-  /* Scroll memory and scrollRestoration live in the SCROLL MEMORY block in
-     <head> — both have to be set before Chrome's own restore, which happens
-     before this file's DOMContentLoaded handler runs. */
 
   /* ═══ GSAP ═══ */
   gsap.registerPlugin(ScrollTrigger);
@@ -2964,13 +3267,6 @@ function __boot() {
   }
   ScrollTrigger.addEventListener('refresh', settleAbove);
 
-  /* ═══ SCROLL ═══
-     Native. Nothing drives the scroll position from JS, so Chrome keeps its
-     compositor-thread fast path and ScrollTrigger listens to real scroll events;
-     the browser's own PageUp/Home/space handling comes back with it. The lock is
-     html.locked { overflow: hidden }, defined top-level in <head> so overlays can
-     still lock the page when the CDN delivered nothing. */
-  window.__scrollLock.stop(); /* locked until loader exits */
 
   /* ── Availability pill ── */
   if (!DIARY_OPEN) {
@@ -2982,77 +3278,8 @@ function __boot() {
     if (avPill) avPill.classList.add('closed');
   }
 
-  /* ═══ LOADER ═══ */
-  const ldr = document.getElementById('loader');
-
-  /* Intro disabled by window.__INTRO; also skipped for repeat visits in a session */
-  const SKIP_INTRO = !window.__INTRO || (() => { try { return sessionStorage.getItem('emmy-intro') === '1'; } catch (e) { return false; } })();
-  try { sessionStorage.setItem('emmy-intro', '1'); } catch (e) {}
-
-  function startPage() {
-    ldr.style.display = 'none';
-    window.__scrollLock.start(); /* unlock scroll — scrollTo cannot move a locked page */
-    initHero();
-
-    /* A restored reload/back travels to where the reader left off, and the hash
-       is not consulted: they reloaded from a position, not from a deep link. */
-    if (window.__restoreY > 0) { restoreScroll(window.__restoreY); return; }
-
-    /* Honour hash deep-links (e.g. /#faq) */
-    if (location.hash) {
-      let target = null;
-      try { target = document.querySelector(location.hash); } catch (e) {}
-      if (target) target.scrollIntoView({ behavior: SMOOTH, block: 'start' });
-    }
-  }
-
-  /* The document is still growing here — lazy review photos and the embeds
-     change its height — so the travel waits for it to be tall enough to reach
-     the saved position, then clamps to whatever is reachable rather than
-     stranding the reader short of it. */
-  function restoreScroll(y) {
-    const deadline = performance.now() + 1200;
-    (function poll() {
-      const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-      if (max < y && performance.now() < deadline && document.readyState !== 'complete') {
-        return requestAnimationFrame(poll);
-      }
-      const to = Math.min(y, max);
-      if (to < 1) return;
-      window.__restoreTarget = to;
-      window.__restoreBusy   = true;
-      ScrollTrigger.refresh();   /* resolves trigger starts; fires settleAbove */
-      glideTo(to, IOS_S, (arrived) => {
-        /* Height may have grown during the travel; close the gap without a
-           second animation rather than leaving the reader above their place.
-           Only when the travel arrived — a reader who scrolled out of it keeps
-           the position they chose. */
-        if (arrived) {
-          const max2 = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-          const want = Math.min(y, max2);
-          if (want - window.scrollY > 4) window.scrollTo(0, want);
-        }
-        window.__restoreBusy = false;
-        window.__saveScroll();
-      });
-    })();
-  }
-
-  /* The intro itself is CSS (see #loader keyframes) so it plays while the libs
-     stream in; this only ends it, never earlier than INTRO_MS after navigation. */
-  const INTRO_MS = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 280;
-
-  function exitLoader() {
-    ldr.classList.add('ld-out');
-    setTimeout(startPage, 100);
-  }
-
-  if (SKIP_INTRO) {
-    ldr.style.display = 'none';
-    startPage();
-  } else {
-    setTimeout(exitLoader, Math.max(0, INTRO_MS - performance.now()));
-  }
+  /* Semantic loader completion is independent of animation enhancement. */
+  initHero();
 
   /* Background tabs get no ticker: GSAP keeps tweens live otherwise. */
   document.addEventListener('visibilitychange', () => {
@@ -3092,45 +3319,6 @@ function __boot() {
     onLeaveBack: () => navEl.classList.remove('s')
   });
 
-  /* Smooth anchor scrolling, browser-timed */
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', e => {
-      const id = a.getAttribute('href');
-      if (!id || id === '#') return;
-      const target = document.querySelector(id);
-      if (!target) return;
-      e.preventDefault();
-      target.scrollIntoView({ behavior: SMOOTH, block: 'start' });
-      /* Directions button → pulse map glow on arrival */
-      if (a.classList.contains('h-dir')) {
-        const map = document.querySelector('.loc-map-wrap');
-        if (map) setTimeout(() => {
-          map.classList.add('map-lit');
-          setTimeout(() => map.classList.remove('map-lit'), 2200);
-        }, 1650);
-      }
-    });
-  });
-
-  /* ═══ MOBILE MENU ═══ */
-  (() => {
-    const toggle = document.getElementById('nav-toggle');
-    const menu   = document.getElementById('mobile-menu');
-    const close  = document.getElementById('mm-close');
-    if (!toggle || !menu) return;
-    const openMenu = () => {
-      menu.classList.add('open'); menu.setAttribute('aria-hidden', 'false');
-      toggle.setAttribute('aria-expanded', 'true'); window.__scrollLock.stop();
-    };
-    const closeMenu = () => {
-      menu.classList.remove('open'); menu.setAttribute('aria-hidden', 'true');
-      toggle.setAttribute('aria-expanded', 'false'); window.__scrollLock.start();
-    };
-    toggle.addEventListener('click', openMenu);
-    if (close) close.addEventListener('click', closeMenu);
-    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) closeMenu(); });
-  })();
 
   /* ═══ HERO INIT ═══ */
   function initHero() {
@@ -3176,105 +3364,6 @@ function __boot() {
 
     /* Work cards entrance handled below by elastic spring */
 
-    /* ── Portfolio grid lightbox ── */
-    (() => {
-      const galModal    = document.getElementById('gal-modal');
-      const galModalImg = document.getElementById('gal-modal-img');
-      const galModalBg  = document.getElementById('gal-modal-bg');
-      const galClose    = document.getElementById('gal-modal-close');
-      if (!galModal) return;
-
-      let originCard = null;
-      const CARD_R = 12;
-      /* Same phone tier cap as the #sk-modal viewer. This scope is a separate
-         IIFE, so it needs its own copy — data-full is always the 1440 tier. */
-      const viewSrc = (u) => window.innerWidth <= 480 ? u.replace('-1440.webp', '-960.webp') : u;
-
-      function openLightbox(card) {
-        const img = card.querySelector('.wc-img');
-        if (!img) return;
-        originCard = card;
-        const rect = card.getBoundingClientRect();
-        galModalImg.src = viewSrc(card.dataset.full || img.src);
-        galModal.style.display = 'block';
-        galModal.setAttribute('aria-hidden', 'false');
-        galModalBg.classList.add('on');
-        gsap.to(galModalBg, { opacity: 1, duration: 0.22, ease: 'power1.out' });
-        gsap.set(galModal, {
-          top: rect.top, left: rect.left,
-          width: rect.width, height: rect.height,
-          borderRadius: CARD_R, opacity: 1
-        });
-        gsap.set(galClose, { opacity: 0, scale: 0.7 });
-        gsap.to(galModal, {
-          top: 0, left: 0,
-          width: window.innerWidth, height: window.innerHeight,
-          borderRadius: 0, duration: 0.52, ease: 'expo.out'
-        });
-        gsap.to(galClose, { opacity: 1, scale: 1, duration: 0.28, delay: 0.38, ease: 'back.out(2)' });
-        window.__scrollLock.stop();
-      }
-
-      function closeLightbox() {
-        if (!originCard) return;
-        const r = originCard.getBoundingClientRect();
-        gsap.to(galModalBg, { opacity: 0, duration: 0.28, ease: 'power1.in' });
-        const onscreen = r.top < window.innerHeight && r.bottom > 0
-                      && r.left < window.innerWidth && r.right > 0;
-        if (onscreen) {
-          gsap.to(galModal, {
-            top: r.top, left: r.left, width: r.width, height: r.height,
-            borderRadius: CARD_R, duration: 0.42, ease: 'expo.in',
-            onComplete() {
-              galModal.style.display = 'none';
-              galModal.setAttribute('aria-hidden', 'true');
-              galModalBg.classList.remove('on');
-              originCard = null;
-            }
-          });
-        } else {
-          gsap.to(galModal, {
-            opacity: 0, duration: 0.28, ease: 'power2.in',
-            onComplete() {
-              galModal.style.display = 'none';
-              galModal.setAttribute('aria-hidden', 'true');
-              galModalBg.classList.remove('on');
-              originCard = null;
-              gsap.set(galModal, { opacity: 1 });
-            }
-          });
-        }
-        gsap.to(galClose, { opacity: 0, scale: 0.7, duration: 0.18 });
-        window.__scrollLock.start();
-      }
-
-      document.querySelectorAll('.wc').forEach(card => {
-        card.addEventListener('click', () => { if (card.querySelector('.wc-img')) openLightbox(card); });
-        card.addEventListener('keydown', e => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
-        });
-      });
-      galModalBg.addEventListener('click', closeLightbox);
-      galClose.addEventListener('click', closeLightbox);
-
-      /* Click the letterbox area (outside the visible contained image) to close */
-      function pointOutsideImg(imgEl, x, y) {
-        const r = imgEl.getBoundingClientRect();
-        const nw = imgEl.naturalWidth, nh = imgEl.naturalHeight;
-        if (!nw || !nh) return true;
-        const scale = Math.min(r.width / nw, r.height / nh);
-        const dw = nw * scale, dh = nh * scale;
-        const x0 = r.left + (r.width - dw) / 2, y0 = r.top + (r.height - dh) / 2;
-        return x < x0 || x > x0 + dw || y < y0 || y > y0 + dh;
-      }
-      galModal.addEventListener('click', e => {
-        if (galClose.contains(e.target)) return;       /* close button has its own handler */
-        if (pointOutsideImg(galModalImg, e.clientX, e.clientY)) closeLightbox();
-      });
-
-      document.addEventListener('keydown', e => { if (e.key === 'Escape' && originCard) closeLightbox(); });
-    })();
-
 
     /* ── About — entrance (gsap.from: content stays visible if JS fails) ── */
     gsap.from('#about .ab-portrait', {
@@ -3318,225 +3407,6 @@ function __boot() {
         scrollTrigger: { trigger: '.fq-list', start: 'top 82%', once: true } }
     );
 
-    /* ── Opening a row pulls it to the top of the screen, when it needs to ──
-       Runs on every viewport, but only when the row cannot show its opened
-       panel where it stands, rather than yanking the page under someone who
-       only clicked to read. Measured expanded row heights: 489-525px on
-       desktop against 806px of room below the 94px bar, and 213-729px on a
-       390x844 phone against 766px below the 78px bar. So the size test alone
-       nearly always passes and it is the row's current position that decides:
-       tap a row low on the screen and it travels, tap one already sitting
-       under the bar and the page stays put.
-
-       The travel is tweened rather than handed to the browser's smooth scroll
-       because the browser picks its own timing, which cannot match the panel
-       opening underneath it; both run on --ios. --nav-h is read off #nav so the
-       78px mobile bar and the 94px desktop one stay one source of truth.
-       A wheel or touch during the tween hands the page straight back. */
-    function revealOnOpen(el, expandedH) {
-      const navH = parseFloat(getComputedStyle(navEl).getPropertyValue('--nav-h')) || 0;
-      const top  = el.getBoundingClientRect().top;
-
-      /* Fits below the bar as it is → nothing to do. */
-      if (top >= navH && top + expandedH <= window.innerHeight) return;
-
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      glideTo(Math.max(0, Math.min(top + window.scrollY - navH, max)));
-    }
-
-    /* ── Accordion (expertise) — same mechanic as the FAQ below ── */
-    document.querySelectorAll('.ei').forEach(row => {
-      const trigger = row.querySelector('.ei-trigger');
-      const panel   = row.querySelector('.ei-expand');
-      const inner   = row.querySelector('.ei-expand-inner');
-      const rule    = row.querySelector('.ei-rule');
-      if (!trigger || !panel) return;
-      let isOpen = false;
-
-      trigger.addEventListener('click', () => {
-        isOpen = !isOpen;
-        row.classList.toggle('open', isOpen);
-        trigger.setAttribute('aria-expanded', String(isOpen));
-        panel.setAttribute('aria-hidden', String(!isOpen));
-
-        if (isOpen) {
-          gsap.set(panel, { height: 'auto', overflow: 'visible' });
-          const h = panel.offsetHeight;
-          gsap.set(panel, { height: 0, overflow: 'hidden' });
-          const collapsedH = row.offsetHeight;
-          gsap.to(panel,
-            { height: h, duration: IOS_S, ease: IOS_EASE,
-              onComplete() { gsap.set(panel, { height: 'auto' }); } }
-          );
-          gsap.fromTo(inner,
-            { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, duration: IOS_S * .6, delay: IOS_S * .16, ease: IOS_EASE }
-          );
-          gsap.to(rule, { width: '60%', duration: 0.5, ease: 'expo.out' });
-          revealOnOpen(row, collapsedH + h);
-        } else {
-          gsap.to(panel, { height: 0, overflow: 'hidden', duration: IOS_OUT_S, ease: IOS_EASE });
-          gsap.to(inner, { opacity: 0, y: 6, duration: IOS_OUT_S * .5, ease: IOS_EASE });
-          gsap.to(rule, { width: 0, duration: 0.28, ease: 'expo.in' });
-        }
-      });
-
-      /* Hover sweeps the same rule, exactly as the FAQ rows do. */
-      row.addEventListener('mouseenter', () => {
-        if (row.classList.contains('open')) return;
-        gsap.to(rule, { width: '30%', duration: 0.35, ease: 'expo.out' });
-      });
-      row.addEventListener('mouseleave', () => {
-        if (row.classList.contains('open')) return;
-        gsap.to(rule, { width: 0, duration: 0.25, ease: 'expo.in' });
-      });
-    });
-
-    /* ── FAQ accordion ── */
-    document.querySelectorAll('.fq-item').forEach(item => {
-      const panel  = item.querySelector('.fq-panel');
-      const inner  = item.querySelector('.fq-panel-inner');
-      const rule   = item.querySelector('.fq-rule');
-      const trigger = item.querySelector('.fq-trigger');
-      if (!panel) return;
-      let isOpen = false;
-
-      item.addEventListener('click', () => {
-        isOpen = !isOpen;
-        item.classList.toggle('open', isOpen);
-        if (trigger) trigger.setAttribute('aria-expanded', String(isOpen));
-
-        if (isOpen) {
-          gsap.set(panel, { height: 'auto', overflow: 'visible' });
-          const h = panel.offsetHeight;
-          gsap.set(panel, { height: 0, overflow: 'hidden' });
-          const collapsedH = item.offsetHeight;
-          gsap.to(panel,
-            { height: h, duration: IOS_S, ease: IOS_EASE,
-              onComplete() { gsap.set(panel, { height: 'auto' }); } }
-          );
-          gsap.fromTo(inner,
-            { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, duration: IOS_S * .6, delay: IOS_S * .16, ease: IOS_EASE }
-          );
-          gsap.to(rule, { width: '60%', duration: 0.5, ease: 'expo.out' });
-          revealOnOpen(item, collapsedH + h);
-        } else {
-          gsap.to(panel, { height: 0, overflow: 'hidden', duration: IOS_OUT_S, ease: IOS_EASE });
-          gsap.to(inner, { opacity: 0, y: 6, duration: IOS_OUT_S * .5, ease: IOS_EASE });
-          gsap.to(rule, { width: 0, duration: 0.28, ease: 'expo.in' });
-        }
-      });
-    });
-
-    /* ── FAQ hover: rule sweep ── */
-    document.querySelectorAll('.fq-item').forEach(item => {
-      const rule = item.querySelector('.fq-rule');
-      if (!rule) return;
-      item.addEventListener('mouseenter', () => {
-        if (item.classList.contains('open')) return;
-        gsap.to(rule, { width: '30%', duration: 0.35, ease: 'expo.out' });
-      });
-      item.addEventListener('mouseleave', () => {
-        if (item.classList.contains('open')) return;
-        gsap.to(rule, { width: 0, duration: 0.25, ease: 'expo.in' });
-      });
-    });
-
-    /* ── Skill carousel modal ── */
-    (() => {
-      const modal   = document.getElementById('sk-modal');
-      const modalBg = document.getElementById('sk-modal-bg');
-      const img     = document.getElementById('sk-modal-img');
-      const counter = document.getElementById('sk-modal-counter');
-      const label   = document.getElementById('sk-modal-label');
-      const btnPrev = document.getElementById('sk-prev');
-      const btnNext = document.getElementById('sk-next');
-      const btnClose= document.getElementById('sk-modal-close');
-      if (!modal) return;
-
-      let images = [], idx = 0;
-
-      /* The viewer is a 1440 tier: 149-224KB. On a 390px screen the 960 tier is
-         still 2.4x the device pixels, so phones get that instead. Read per call,
-         not cached, so a rotation or a resize picks the right file. */
-      const viewSrc = (u) => window.innerWidth <= 480 ? u.replace('-1440.webp', '-960.webp') : u;
-
-      function show(i) {
-        idx = (i + images.length) % images.length;
-        const next = images[idx];
-        /* One shared <img> serves every gallery, so the reveal waits on the new
-           photo's own load event: a timer let the overlay fade in still painting
-           the last picture viewed. */
-        const reveal = () => { img.style.opacity = '1'; };
-        img.style.opacity = '0';
-        img.alt = next.alt || '';
-        const want = viewSrc(next.src);
-        if (img.getAttribute('src') === want && img.complete) reveal();
-        else { img.onload = reveal; img.onerror = reveal; img.src = want; }
-        counter.textContent = `${idx + 1} / ${images.length}`;
-        btnPrev.style.display = images.length < 2 ? 'none' : '';
-        btnNext.style.display = images.length < 2 ? 'none' : '';
-      }
-
-      function open(ei) {
-        try { images = JSON.parse(ei.dataset.gallery || '[]'); } catch(e) { images = []; }
-        if (!images.length) return;
-        label.textContent = ei.querySelector('.ei-name')?.textContent || '';
-        /* Hard reset with the opacity transition suppressed for one frame: the
-           previous photo must not be on screen at all while the overlay fades in. */
-        img.style.transition = 'none';
-        img.style.opacity = '0';
-        img.removeAttribute('src');
-        void img.offsetWidth;
-        img.style.transition = '';
-        show(0);
-        modal.classList.add('open');
-        modal.setAttribute('aria-hidden', 'false');
-        window.__scrollLock.stop();
-      }
-
-      function close() {
-        modal.classList.remove('open');
-        modal.setAttribute('aria-hidden', 'true');
-        window.__scrollLock.start();
-      }
-
-      document.querySelectorAll('.ei-see-more').forEach(btn => {
-        const row  = btn.closest('.ei');
-        const name = row.querySelector('.ei-name')?.textContent.trim() || 'work';
-        let n = 0;
-        try { n = JSON.parse(row.dataset.gallery || '[]').length; } catch (e) { n = 0; }
-        /* textContent wipes text children only, so the ::after chevron survives. */
-        btn.textContent = n > 1 ? `See all ${n}` : 'View larger';
-        btn.setAttribute('aria-label', n > 1
-          ? `See all ${n} ${name} tattoos`
-          : `View this ${name} tattoo larger`);
-        /* The accordion listens on .ei-trigger, which is not an ancestor of this
-           button, so the click cannot reach it. */
-        btn.addEventListener('click', () => open(row));
-      });
-
-      btnPrev.addEventListener('click', () => show(idx - 1));
-      btnNext.addEventListener('click', () => show(idx + 1));
-      btnClose.addEventListener('click', close);
-      modalBg.addEventListener('click', close);
-      document.addEventListener('keydown', e => {
-        if (!modal.classList.contains('open')) return;
-        if (e.key === 'Escape') close();
-        if (e.key === 'ArrowLeft')  show(idx - 1);
-        if (e.key === 'ArrowRight') show(idx + 1);
-      });
-
-      /* swipe support */
-      let swipeX = null;
-      modal.addEventListener('pointerdown', e => { swipeX = e.clientX; });
-      modal.addEventListener('pointerup',   e => {
-        if (swipeX === null) return;
-        const d = e.clientX - swipeX; swipeX = null;
-        if (Math.abs(d) > 40) show(d < 0 ? idx + 1 : idx - 1);
-      });
-    })();
 
     /* ── Flash Days ── */
     gsap.fromTo('#flash .fl-left',
@@ -3683,12 +3553,16 @@ else __boot();
       mreplyT = modal.querySelector('.rvm-reply-text');
       const mback = modal.querySelector('.rvm-back');
       const mclose = modal.querySelector('.rvm-close');
-      const closeModal = () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); if (window.__scrollLock) window.__scrollLock.start(); };
+      window.__ui.register(modal, {
+        initialFocus: () => mclose,
+        fallbackFocus: () => [...stage.querySelectorAll('.trv-more, .trv-q[tabindex]')].find(window.__ui.usable) || document.querySelector('#trust h2'),
+        transition: window.__ui.fade(modal, .45)
+      });
+      const closeModal = () => window.__ui.close(modal);
       if (mback) mback.addEventListener('click', closeModal);
       if (mclose) mclose.addEventListener('click', closeModal);
-      document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
     }
-    function openModal(r) {
+    function openModal(r, opener) {
       if (!modal) return;
       const mstars = modal.querySelector('.rvm-stars');
       if (mstars) mstars.textContent = stars(r.rating || 5);
@@ -3696,7 +3570,7 @@ else __boot();
       mauth.textContent = '— ' + r.name + ' · Google Review';
       if (r.reply) { mreplyT.textContent = r.reply; mreply.classList.add('visible'); mreply.setAttribute('aria-hidden', 'false'); }
       else { mreply.classList.remove('visible'); mreply.setAttribute('aria-hidden', 'true'); }
-      modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); if (window.__scrollLock) window.__scrollLock.stop();
+      window.__ui.open(modal, opener);
     }
 
     /* Cards are static, so there is nothing to pause: no autoplay, no off-screen
@@ -3775,10 +3649,10 @@ else __boot();
       }).join('');
 
       stage.querySelectorAll('.trv-more').forEach(btn => {
-        btn.addEventListener('click', () => openModal(SHOWN[+btn.dataset.i]));
+        btn.addEventListener('click', () => openModal(SHOWN[+btn.dataset.i], btn));
       });
       stage.querySelectorAll('.trv-q').forEach(q => {
-        q.addEventListener('click', () => { if (q.dataset.clamped) openModal(SHOWN[+q.dataset.i]); });
+        q.addEventListener('click', () => { if (q.dataset.clamped) openModal(SHOWN[+q.dataset.i], q); });
         q.addEventListener('keydown', e => {
           if (!q.dataset.clamped) return;
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); q.click(); }
@@ -3789,7 +3663,7 @@ else __boot();
 
       /* No opacity:0 in CSS and no fallback-list entry: if GSAP never runs the
          cards are simply already visible, which is the correct degraded state. */
-      if (window.gsap) gsap.fromTo(stage.querySelectorAll('.trv-card'),
+      if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion: reduce)').matches) gsap.fromTo(stage.querySelectorAll('.trv-card'),
         { opacity: 0, y: 22 },
         { opacity: 1, y: 0, duration: .7, stagger: .07, ease: 'power3.out',
           scrollTrigger: { trigger: '#trust', start: 'top 78%', once: true } }
@@ -3918,13 +3792,9 @@ else __boot();
          'loading' means GSAP may yet arrive — measured DCL 1728ms on a 2Mbps
          phone, past this 1500ms tick — so re-arm rather than judge. */
       if (document.readyState === 'loading') return arm();
-      if (!window.gsap) {
+      if (!window.gsap || !window.ScrollTrigger) {
         document.documentElement.classList.add('libs-failed');
-        var l = document.getElementById('loader');
-        if (l) l.style.display = 'none';
-        /* __boot locks the page before the loader exits, so a boot that threw
-           in between would leave the page unscrollable behind a hidden loader. */
-        window.__scrollLock.reset();
+        window.__startPage();
       }
     }, 1500);
   })();

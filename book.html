@@ -11,22 +11,6 @@
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c4a262'>✦</text></svg>">
 
-  <!-- Analytics: GA4 page views only, loaded straight away. No consent gate —
-       measurement-only GA4 is the least intrusive setup that still counts visits. -->
-  <script>
-    (function () {
-      if (/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) return;
-      var id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
-      var s = document.createElement('script');
-      s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
-      document.head.appendChild(s);
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function () { dataLayer.push(arguments); };
-      gtag('js', new Date());
-      gtag('config', id);
-    })();
-  </script>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
@@ -201,6 +185,19 @@
       width: 100%; max-width: 720px; text-align: left;
       display: grid; grid-template-columns: 1fr; gap: 18px;
     }
+    .bk-fields { border: 0; padding: 0; margin: 0; min-width: 0; width: 100%; display: grid; grid-template-columns: 1fr; gap: 18px; }
+    .bk-health { border: 0; padding: 0; margin: 0 0 24px; width: 100%; min-width: 0; text-align: left; display: grid; gap: 18px; }
+    .bk-health fieldset { border: 0; min-width: 0; padding: 0; }
+    .bk-health legend { margin-bottom: 12px; color: var(--fg); line-height: 1.6; }
+    .bk-health label { display: inline-flex; align-items: center; gap: 9px; margin-right: 24px; padding: 8px 0; cursor: pointer; }
+    .bk-health input { appearance: radio; width: 18px; height: 18px; accent-color: var(--gold); }
+    .bk-health input:focus-visible, .bk-f-chk input:focus-visible, .bk-day input:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    .bk-form[hidden], .bk-fields[hidden], .bk-health[hidden], .bk-health fieldset[hidden] { display: none; }
+    .bk-contact { margin: 0 0 24px; color: var(--fg2); line-height: 1.8; }
+    .bk-contact a, .bk-disclosure a, .bk-health a { color: var(--fg); text-underline-offset: 4px; }
+    .bk-error { color: var(--fg); font-size: .88rem; line-height: 1.6; border-left: 2px solid var(--gold); padding-left: 10px; margin-top: 8px; }
+    .bk-form [aria-invalid="true"] { border-color: var(--gold); }
+    .bk-disclosure { color: var(--fg2); font-size: .88rem; line-height: 1.8; }
     .bk-f-lbl {
       display: block; margin-bottom: 9px;
       font-family: var(--mono); font-size: .6rem;
@@ -234,8 +231,7 @@
       -webkit-appearance: none; appearance: none;
     }
     .bk-form textarea { min-height: 132px; resize: vertical; line-height: 1.7; }
-    /* Doubled cap, so the box shows six lines rather than four; #f-idea outranks
-       the shared rule above. Notes keeps 132px — 300 characters already fit. */
+    /* Give the idea room to read without changing the notes field's height. */
     #f-idea { min-height: 184px; }
     /* ── Select, and why it alone is opaque ──
        Chrome and Edge paint the native option list from this control's own used
@@ -328,8 +324,8 @@
       transition: background .38s, border-color .38s, color .38s, transform .38s var(--out);
     }
     .bk-f-go { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
-    .bk-f-go:hover { background: var(--gold-soft); transform: translateY(-3px); }
-    .bk-f-go[disabled] { opacity: .6; cursor: progress; transform: none; }
+    .bk-f-go:hover:not(:disabled) { background: var(--gold-soft); transform: translateY(-3px); }
+    .bk-f-go:disabled { opacity: .6; cursor: not-allowed; transform: none; }
     .bk-f-alt {
       background: rgba(var(--gold-rgb),.04);
       border-color: var(--gold-ring); color: var(--fg);
@@ -449,22 +445,44 @@
   <h1 class="bk-page-h1">Book a <em>session</em>.</h1>
   <p class="bk-page-sub">Start with a message. A reference, a sketch, a feeling, or nothing yet. The design is built from scratch. Consultation is free.</p>
 
-  <form class="bk-form" id="bk-form" novalidate>
+  <p class="bk-contact" id="bk-startup">The enquiry form requires JavaScript. Emmy cannot tattoo during pregnancy. Please discuss blood-thinning medication with Emmy before booking. You can <a href="https://wa.me/447405979137" target="_blank" rel="noopener">contact Emmy on WhatsApp</a> instead.</p>
+  <p class="bk-contact">Prefer a conversation? <a href="https://wa.me/447405979137" target="_blank" rel="noopener">Contact Emmy on WhatsApp</a>.</p>
+  <fieldset class="bk-health" id="bk-health" disabled inert aria-label="Before your enquiry">
+    <fieldset>
+      <legend>Are you currently pregnant?</legend>
+      <label><input type="radio" name="screen-pregnancy" value="yes" autocomplete="off">Yes</label>
+      <label><input type="radio" name="screen-pregnancy" value="no" autocomplete="off">No</label>
+    </fieldset>
+    <fieldset id="bk-blood" hidden disabled inert>
+      <legend>Are you taking blood-thinning medication?</legend>
+      <label><input type="radio" name="screen-blood-thinners" value="yes" autocomplete="off">Yes</label>
+      <label><input type="radio" name="screen-blood-thinners" value="no" autocomplete="off">No</label>
+    </fieldset>
+    <p id="bk-health-status" role="status" aria-live="polite" aria-atomic="true"></p>
+    <a id="bk-discuss" hidden target="_blank" rel="noopener">Discuss with Emmy on WhatsApp</a>
+  </fieldset>
+  <form class="bk-form" id="bk-form" method="post" action="/book" novalidate hidden>
+    <fieldset id="bk-fields" class="bk-fields" disabled inert aria-label="Enquiry details">
+    <p class="bk-hint">Fields without an optional label are required.</p>
     <div>
       <label class="bk-f-lbl" for="f-name">Your name</label>
-      <input id="f-name" name="name" type="text" autocomplete="name" maxlength="40" placeholder="Your name">
+      <input id="f-name" name="name" type="text" autocomplete="name" maxlength="40" placeholder="Your name" required aria-describedby="f-name-error">
+      <p class="bk-error" id="f-name-error" hidden></p>
     </div>
     <div>
       <label class="bk-f-lbl" for="f-email">Email <span class="bk-f-opt">— optional, a backup if WhatsApp fails</span></label>
-      <input id="f-email" name="email" type="email" autocomplete="email" maxlength="70" placeholder="you@example.com">
+      <input id="f-email" name="email" type="email" autocomplete="email" maxlength="70" placeholder="you@example.com" aria-describedby="f-email-error">
+      <p class="bk-error" id="f-email-error" hidden></p>
     </div>
     <div>
       <label class="bk-f-lbl" for="f-idea">What are you thinking?</label>
-      <textarea id="f-idea" name="idea" maxlength="600" placeholder="What you'd like, and anything behind it."></textarea>
+      <textarea id="f-idea" name="idea" maxlength="300" placeholder="What you'd like, and anything behind it." required aria-describedby="f-idea-hint f-idea-error"></textarea>
+      <p class="bk-hint" id="f-idea-hint">300 characters maximum.</p>
+      <p class="bk-error" id="f-idea-error" hidden></p>
     </div>
     <div>
       <label class="bk-f-lbl" for="f-placement">Placement</label>
-      <select id="f-placement" name="placement">
+      <select id="f-placement" name="placement" required aria-describedby="f-placement-error">
         <option value="">Choose a placement…</option>
         <option>Inner forearm</option>
         <option>Outer forearm</option>
@@ -491,10 +509,11 @@
         <option>Behind the ear</option>
         <option>Somewhere else</option>
       </select>
+      <p class="bk-error" id="f-placement-error" hidden></p>
     </div>
     <div>
       <label class="bk-f-lbl" for="f-size">Rough size</label>
-      <select id="f-size" name="size">
+      <select id="f-size" name="size" required aria-describedby="f-size-error">
         <option value="">Choose a size…</option>
         <option>Tiny — under 5 cm</option>
         <option>Small — 5 to 10 cm</option>
@@ -503,10 +522,11 @@
         <option>Extra large — 25 cm and up</option>
         <option>Full sleeve or large piece</option>
       </select>
+      <p class="bk-error" id="f-size-error" hidden></p>
     </div>
     <div>
       <label class="bk-f-lbl" for="f-budget">Rough budget <span class="bk-f-opt">— optional</span></label>
-      <select id="f-budget" name="budget">
+      <select id="f-budget" name="budget" aria-describedby="f-budget-error">
         <option>Not sure yet</option>
         <option>Up to £100</option>
         <option>£100–£200</option>
@@ -514,12 +534,13 @@
         <option>£350–£500</option>
         <option>£500+</option>
       </select>
+      <p class="bk-error" id="f-budget-error" hidden></p>
     </div>
     <div>
       <span class="bk-f-lbl" id="f-days-lbl">Availability</span>
       <details class="bk-days" id="f-days">
-        <summary class="bk-days-sum" aria-labelledby="f-days-lbl f-days-txt"><span id="f-days-txt">Choose your days…</span></summary>
-        <div class="bk-days-list" role="group" aria-labelledby="f-days-lbl">
+        <summary class="bk-days-sum" id="f-days-summary" aria-labelledby="f-days-lbl f-days-txt" aria-describedby="f-when-error"><span id="f-days-txt">Choose your days…</span></summary>
+        <div class="bk-days-list" id="f-days-group" role="group" aria-labelledby="f-days-lbl" aria-required="true" aria-describedby="f-when-error">
           <label class="bk-day bk-day-any"><input type="checkbox" id="f-day-any"><span>Any day</span></label>
           <label class="bk-day"><input type="checkbox" data-day="Mon"><span>Monday</span></label>
           <label class="bk-day"><input type="checkbox" data-day="Tue"><span>Tuesday</span></label>
@@ -531,28 +552,35 @@
         </div>
       </details>
       <input type="hidden" name="when" id="f-when">
+      <p class="bk-error" id="f-when-error" hidden></p>
     </div>
     <div>
-      <label class="bk-f-lbl" for="f-notes">Anything I should know? <span class="bk-f-opt">— optional</span></label>
-      <textarea id="f-notes" name="notes" maxlength="300" placeholder="Allergies, blood thinners, skin conditions, pregnancy — anything that affects the day."></textarea>
+      <label class="bk-f-lbl" for="f-notes">Anything else about your idea or appointment? <span class="bk-f-opt">— optional</span></label>
+      <textarea id="f-notes" name="notes" maxlength="150" placeholder="Please discuss medical information with Emmy in WhatsApp, not here." aria-describedby="f-notes-hint f-notes-error"></textarea>
+      <p class="bk-hint" id="f-notes-hint">Please discuss medical information with Emmy in WhatsApp, not here. These notes are included in your WhatsApp draft, not the website backup. 150 characters maximum.</p>
+      <p class="bk-error" id="f-notes-error" hidden></p>
     </div>
     <div>
       <label class="bk-f-lbl" for="f-refs">Reference link <span class="bk-f-opt">— optional</span></label>
-      <input id="f-refs" name="refs" type="text" maxlength="100" placeholder="instagram.com/p/…">
+      <input id="f-refs" name="refs" type="text" maxlength="100" placeholder="instagram.com/p/…" aria-describedby="f-refs-error">
+      <p class="bk-error" id="f-refs-error" hidden></p>
     </div>
 
     <label class="bk-f-chk">
-      <input id="f-age18" name="age18" type="checkbox">
+      <input id="f-age18" name="age18" type="checkbox" required aria-describedby="f-age18-note f-age18-error">
       <span>I confirm I am 18 or over.</span>
     </label>
-    <p class="bk-f-note">You must be 18 or over. No exceptions. Photo ID is checked on the day.</p>
+    <p class="bk-f-note" id="f-age18-note">You must be 18 or over. No exceptions. Photo ID is checked on the day.</p>
+    <p class="bk-error" id="f-age18-error" hidden></p>
 
     <input type="checkbox" name="botcheck" id="f-botcheck" class="bk-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <p class="bk-disclosure">Pressing Send on WhatsApp prepares your draft and attempts to save a backup of your enquiry details for 90 days. Your screening answers and optional notes are not included in that backup. You still need to press Send in WhatsApp. <a href="/legal#privacy">Privacy details</a>.</p>
 
     <div class="bk-nav">
-      <button class="bk-f-btn bk-f-go" type="submit">Send on WhatsApp</button>
+      <button class="bk-f-btn bk-f-go" id="f-submit" type="submit" disabled>Send on WhatsApp</button>
     </div>
-    <p class="bk-f-msg" id="f-msg" hidden></p>
+    </fieldset>
+    <p class="bk-f-msg" id="f-msg" role="alert" aria-atomic="true" hidden></p>
 
     <fieldset class="bk-card bk-done" id="f-done" hidden>
       <legend class="bk-q">Opening WhatsApp…</legend>
@@ -589,215 +617,278 @@
 <!-- This page loads no GSAP, no Lenis and no loader on purpose: the one thing
      that must never break is the ask, so it depends on nothing off-origin. -->
 <script>
-(function () {
-  /* ── Configure this and nothing else ──────────────────────────────────────
-     DEPOSIT  Stripe Payment Link plus the amount shown on the button. Empty
-              url = the whole deposit block stays hidden.                     */
-  var DEPOSIT = { url: '', amount: '' };
-  /* ─────────────────────────────────────────────────────────────────────────── */
+(() => {
+  const form = document.getElementById('bk-form');
+  if (!form) return;
+  let ready = false;
+  // Install the no-native-submit gate before any fallible initialization.
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (!ready) return;
+    clearCompletion();
+    if (!eligible()) { syncScreening(); return; }
+    syncDays();
+    const values = readFields(form);
+    const invalid = [];
+    FIELDS.forEach(field => {
+      const error = fieldError(field, values[field.key]);
+      setError(field.key, error);
+      if (error) invalid.push(field.key);
+    });
+    const ageError = ageEl.checked ? '' : 'Emmy can only tattoo over-18s — please confirm.';
+    setError('age18', ageError);
+    if (ageError) invalid.push('age18');
+    if (invalid.length) return fail(invalid[0]);
+    const text = waMessage(values);
+    const url = waUrl(text);
+    if (text.length > MSG_MAX || url.length > URL_MAX) {
+      say('Please shorten your message or use the plain contact link above.');
+      return;
+    }
+    // The retry link survives a blocked or throwing popup. No await may precede open.
+    openLink.href = url;
+    doneCard.hidden = false;
+    msg.hidden = true;
+    try { window.open(url, '_blank', 'noopener'); } catch (_) {}
+    backup(values);
+    openLink.focus({ preventScroll: true });
+    openLink.scrollIntoView({ block: 'center', behavior: 'auto' });
+  });
 
-  var WA_NUMBER = '447405979137';
-  var MSG_MAX   = 1600;
-
-  /* The form is novalidate, so type="email" enforces nothing — these are the
-     only format checks on the page. Both fields are optional: an empty value
-     skips the check entirely. */
-  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
-  var URL_RE   = /^(https?:\/\/)?[a-z0-9][a-z0-9.-]*\.[a-z]{2,}(\/[^\s]*)?$/i;
-
-  /* FIELDS is the single source of truth for keys, caps and labels. It drives
-     both the read off the form and the order of the lines in the message.
-     The caps are chosen so a maximally long submission still fits. Every field
-     at its cap totals 1260 characters of values plus 139 of scaffold — 1399
-     against the 1600-character MSG_MAX ceiling. Using the longest value each
-     control can actually produce, the real ceiling is 1334 (URL 1496), and the
-     shortest possible message, with all six required fields at their briefest,
-     is 137. WhatsApp accepts an 8000-character URL — the worst case here is
-     free text made entirely of non-BMP emoji, which stays 1334 characters but
-     encodes to 6986. A silently truncated enquiry is worse than a short one.
-     placement, size and budget are <select>s and when is a tick list; their
-     caps only need to clear the longest value ("Extra large — 25 cm and up",
-     26, and all seven days joined, 33). No field on this form is free text
-     except name, email, idea, notes and refs, which carry maxlength. */
-  var FIELDS = [
+  // Optional Stripe Payment Link; an empty URL keeps the deposit block hidden.
+  const DEPOSIT = { url: '', amount: '' };
+  const WA_NUMBER = '447405979137';
+  const MSG_MAX = 1000;
+  const URL_MAX = 8000;
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+  const URL_RE = /^(https?:\/\/)?[a-z0-9][a-z0-9.-]*\.[a-z]{2,}(\/[^\s]*)?$/i;
+  // UTF-16 caps total 810; the complete scaffold adds 139: at most 949 units.
+  // BMP/CJK characters expand most per UTF-16 unit. A deliberately loose URL
+  // bound is 32 + 810*9 + 139*3 = 7739, below 8000. Never truncate either.
+  const FIELDS = [
     { key: 'name',      max: 40,  label: null },
     { key: 'email',     max: 70,  label: 'Email' },
-    { key: 'idea',      max: 600, label: 'Idea' },
+    { key: 'idea',      max: 300, label: 'Idea' },
     { key: 'placement', max: 40,  label: 'Placement' },
     { key: 'size',      max: 40,  label: 'Size' },
     { key: 'budget',    max: 20,  label: 'Budget' },
     { key: 'when',      max: 50,  label: 'When suits' },
-    { key: 'notes',     max: 300, label: 'Anything to know' },
+    { key: 'notes',     max: 150, label: 'Anything to know' },
     { key: 'refs',      max: 100, label: 'Reference' }
   ];
+  const REQUIRED = {
+    name: 'Emmy needs a name to call you.',
+    idea: 'Tell Emmy the idea, even roughly.',
+    placement: 'Emmy needs to know where it goes — pick a placement.',
+    size: 'Pick a rough size, even a guess.',
+    when: 'Pick the days that suit — Any day works too.'
+  };
+  const LENGTH_LABELS = {
+    name: 'your name', email: 'your email', idea: 'your idea', placement: 'your placement',
+    size: 'your size', budget: 'your budget', when: 'your availability',
+    notes: 'your notes', refs: 'your reference link'
+  };
+  const fields = document.getElementById('bk-fields');
+  const submit = document.getElementById('f-submit');
+  const health = document.getElementById('bk-health');
+  const blood = document.getElementById('bk-blood');
+  const healthStatus = document.getElementById('bk-health-status');
+  const discuss = document.getElementById('bk-discuss');
+  const msg = document.getElementById('f-msg');
+  const doneCard = document.getElementById('f-done');
+  const openLink = document.getElementById('f-open');
+  const daysEl = document.getElementById('f-days');
+  const daysSum = document.getElementById('f-days-summary');
+  const daysGroup = document.getElementById('f-days-group');
+  const daysTxt = document.getElementById('f-days-txt');
+  const whenEl = document.getElementById('f-when');
+  const anyEl = document.getElementById('f-day-any');
+  const ageEl = document.getElementById('f-age18');
+  const dayEls = Array.from(form.querySelectorAll('[data-day]'));
+  const errors = new Set();
 
-  var form = document.getElementById('bk-form');
-  if (!form) return;
-
-  var msg      = document.getElementById('f-msg');
-  var doneCard = document.getElementById('f-done');
-  var openLink = document.getElementById('f-open');
-
-  /* ── Availability day picker ──────────────────────────────────────────────
-     The visible ticks carry no name, so readFields never sees them; the hidden
-     #f-when is the only [name="when"] in the form and is the single value both
-     the WhatsApp message and the backup POST read. "Any day" is exclusive: while
-     it is ticked the seven weekdays are disabled, not merely cleared, so the
-     contradiction of "any day, but only Tuesday" cannot be expressed at all.
-     Worst case is all seven short names — 33 characters, inside the 50 cap. */
-  var daysTxt = document.getElementById('f-days-txt');
-  var whenEl  = document.getElementById('f-when');
-  var anyEl   = document.getElementById('f-day-any');
-  var dayEls  = [].slice.call(document.querySelectorAll('#f-days [data-day]'));
-
+  function answer(name) {
+    const radio = health.querySelector('[name="' + name + '"]:checked');
+    return radio ? radio.value : '';
+  }
+  function eligible() {
+    return ready && answer('screen-pregnancy') === 'no' && answer('screen-blood-thinners') === 'no';
+  }
+  function clearCompletion() {
+    doneCard.hidden = true;
+    openLink.removeAttribute('href');
+  }
+  function syncScreening() {
+    clearCompletion();
+    const pregnancy = answer('screen-pregnancy');
+    const showBlood = ready && pregnancy === 'no';
+    if (!showBlood) blood.querySelectorAll('input').forEach(input => { input.checked = false; });
+    blood.hidden = !showBlood;
+    blood.disabled = !showBlood;
+    blood.inert = !showBlood;
+    const needsDiscussion = showBlood && answer('screen-blood-thinners') === 'yes';
+    discuss.hidden = !needsDiscussion;
+    if (needsDiscussion) {
+      discuss.href = waUrl('Hi Emmy, I’m interested in a tattoo and take blood-thinning medication. Could we discuss whether I can book?');
+    } else discuss.removeAttribute('href');
+    const active = eligible();
+    form.hidden = !active;
+    form.inert = !active;
+    fields.disabled = !active;
+    fields.inert = !active;
+    submit.disabled = !active;
+    healthStatus.textContent = pregnancy === 'yes'
+      ? 'Emmy cannot tattoo during pregnancy. Please return to enquire after your pregnancy.'
+      : needsDiscussion
+        ? 'Please discuss this with Emmy before completing a booking enquiry. Do not stop or change medication to get a tattoo.'
+        : active ? 'You can now complete your enquiry. This is not confirmation of an appointment.'
+          : showBlood ? 'Please answer the medication question before continuing.' : '';
+  }
+  function resetScreening() {
+    health.querySelectorAll('input').forEach(input => { input.checked = false; });
+    syncScreening();
+  }
   function syncDays() {
-    var any = anyEl.checked;
-    dayEls.forEach(function (el) {
-      el.disabled = any;
-      el.parentNode.classList.toggle('is-off', any);
+    const any = anyEl.checked;
+    dayEls.forEach(input => {
+      input.disabled = any;
+      input.parentElement.classList.toggle('is-off', any);
     });
-    var picked = dayEls.filter(function (el) { return el.checked; })
-                       .map(function (el) { return el.getAttribute('data-day'); });
-    var value = any ? 'Any day' : picked.join(', ');
-    whenEl.value = value;
-    daysTxt.textContent = value || 'Choose your days…';
+    whenEl.value = any ? 'Any day' : dayEls.filter(input => input.checked).map(input => input.dataset.day).join(', ');
+    daysTxt.textContent = whenEl.value || 'Choose your days…';
   }
-
-  anyEl.addEventListener('change', function () {
-    if (anyEl.checked) dayEls.forEach(function (el) { el.checked = false; });
-    syncDays();
-  });
-  dayEls.forEach(function (el) { el.addEventListener('change', syncDays); });
-  syncDays();
-
-  function say(state, text) {
-    msg.hidden = false;
-    msg.setAttribute('data-state', state);
-    msg.textContent = text;
-  }
-
-  /* Whitespace is collapsed so every field stays on one labelled line and the
-     length budget above is exact. maxlength blocks typing and pasting past the
-     cap; the slice also covers autofill and programmatic set. */
+  // Normalize once; this exact object feeds both handoff and the backup allowlist.
   function readFields(scope) {
-    var out = {};
-    FIELDS.forEach(function (f) {
-      var el = scope.querySelector('[name="' + f.key + '"]');
-      out[f.key] = el ? String(el.value || '').replace(/\s+/g, ' ').trim().slice(0, f.max) : '';
+    const values = {};
+    FIELDS.forEach(field => {
+      values[field.key] = scope.elements.namedItem(field.key).value.replace(/\s+/g, ' ').trim();
     });
-    return out;
+    return values;
   }
-
-  /* Empty optionals are dropped rather than filled with a placeholder. Only
-     email, notes and refs can actually reach here empty — placement, size and
-     when carry value="" too, but that state is rejected in the submit handler
-     before waMessage is ever called. */
-  function waMessage(v) {
-    var lines = ['Enquiry - ' + v.name, ''];
-    FIELDS.forEach(function (f) {
-      if (!f.label || !v[f.key]) return;
-      lines.push(f.label + ': ' + v[f.key]);
+  function wellFormed(value) {
+    for (let i = 0; i < value.length; i++) {
+      const unit = value.charCodeAt(i);
+      if (unit >= 0xd800 && unit <= 0xdbff) {
+        const next = value.charCodeAt(++i);
+        if (!(next >= 0xdc00 && next <= 0xdfff)) return false;
+      } else if (unit >= 0xdc00 && unit <= 0xdfff) return false;
+    }
+    return true;
+  }
+  function fieldError(field, value) {
+    if (!wellFormed(value)) return 'This field contains an unsupported character; please re-enter it.';
+    if (value.length > field.max) return 'Keep ' + LENGTH_LABELS[field.key] + ' to ' + field.max + ' characters or fewer.';
+    if (!value && REQUIRED[field.key]) return REQUIRED[field.key];
+    if (field.key === 'email' && value && !EMAIL_RE.test(value)) return "That email doesn't look right — check it, or leave it blank.";
+    if (field.key === 'refs' && value && !URL_RE.test(value)) return 'That reference should be a link — paste the full address, or leave it blank.';
+    if (['placement', 'size', 'budget'].includes(field.key) && value &&
+        !Array.from(form.elements.namedItem(field.key).options).some(option => option.value === value)) {
+      return 'Choose one of the listed options.';
+    }
+    if (field.key === 'when' && value !== 'Any day' &&
+        dayEls.filter(input => value.split(', ').includes(input.dataset.day)).map(input => input.dataset.day).join(', ') !== value) {
+      return 'Pick the days that suit — Any day works too.';
+    }
+    return '';
+  }
+  function target(key) { return key === 'when' ? daysSum : document.getElementById('f-' + key); }
+  function setError(key, text) {
+    const paragraph = document.getElementById('f-' + key + '-error');
+    paragraph.textContent = text;
+    paragraph.hidden = !text;
+    const controls = key === 'when' ? [daysSum, daysGroup] : [target(key)];
+    controls.forEach(control => {
+      if (text) control.setAttribute('aria-invalid', 'true');
+      else control.removeAttribute('aria-invalid');
+    });
+    if (text) errors.add(key);
+    else errors.delete(key);
+  }
+  function say(text) {
+    msg.textContent = text;
+    msg.dataset.state = 'err';
+    msg.hidden = false;
+  }
+  function fail(key) {
+    say('Please check the highlighted fields.');
+    if (key === 'when') daysEl.open = true;
+    const control = target(key);
+    control.focus({ preventScroll: true });
+    control.scrollIntoView({ block: 'center', behavior: 'auto' });
+  }
+  function revalidate(event) {
+    clearCompletion();
+    if (daysEl.contains(event.target)) syncDays();
+    const key = daysEl.contains(event.target) ? 'when' : event.target.name;
+    if (!errors.has(key)) return;
+    if (key === 'age18') setError(key, ageEl.checked ? '' : 'Emmy can only tattoo over-18s — please confirm.');
+    else {
+      const field = FIELDS.find(item => item.key === key);
+      setError(key, fieldError(field, readFields(form)[key]));
+    }
+    if (!errors.size) { msg.hidden = true; msg.textContent = ''; }
+  }
+  function waMessage(values) {
+    const lines = ['Enquiry - ' + values.name, ''];
+    FIELDS.forEach(field => {
+      if (field.label && values[field.key]) lines.push(field.label + ': ' + values[field.key]);
     });
     lines.push('', 'Confirmed 18+. Sent from emmytattoo.com');
-    var text = lines.join('\n');
-    /* Defensive only — the caps above already keep this under MSG_MAX. It exists
-       so adding a field without recomputing the budget degrades instead of
-       shipping a message WhatsApp cuts in half. */
-    return text.length > MSG_MAX ? text.slice(0, MSG_MAX - 1) + '…' : text;
+    return lines.join('\n');
   }
-
-  function waUrl(text) {
-    return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(text);
-  }
-
-  /* ── Send ─────────────────────────────────────────────────────────────────
-     Nothing here can fail the enquiry: the message is composed locally and
-     handed to WhatsApp. The POST is a fire-and-forget backup so an abandoned
-     submission is not lost, and its outcome is never shown to the visitor. */
-
-  function fail(el, text) {
-    say('err', text);
-    if (el) try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
-    return false;
-  }
-
-  function backup(v) {
-    var hp = form.querySelector('[name="botcheck"]');
-    var payload = {};
-    FIELDS.forEach(function (f) { payload[f.key] = v[f.key]; });
-    payload.botcheck = hp && hp.checked ? 1 : 0;
-    var body = JSON.stringify(payload);
+  function waUrl(text) { return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(text); }
+  function backup(values) {
+    const payload = {};
+    FIELDS.forEach(field => { if (field.key !== 'notes') payload[field.key] = values[field.key]; });
+    payload.age18 = true;
+    payload.botcheck = document.getElementById('f-botcheck').checked;
+    const body = JSON.stringify(payload);
     try {
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon('/api/enquiry', new Blob([body], { type: 'application/json' }));
-      } else {
-        fetch('/api/enquiry', {
-          method: 'POST', headers: { 'content-type': 'application/json' },
-          body: body, keepalive: true
-        });
-      }
-    } catch (e) {}
+      if (navigator.sendBeacon && navigator.sendBeacon('/api/enquiry', new Blob([body], { type: 'application/json' }))) return;
+    } catch (_) {}
+    try {
+      fetch('/api/enquiry', {
+        method: 'POST', headers: { 'content-type': 'application/json' }, body, keepalive: true
+      }).catch(() => {});
+    } catch (_) {}
   }
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    var nameEl  = document.getElementById('f-name');
-    var ideaEl  = document.getElementById('f-idea');
-    var placeEl = document.getElementById('f-placement');
-    var sizeEl  = document.getElementById('f-size');
-    var daysEl  = document.getElementById('f-days');
-    var daysSum = form.querySelector('.bk-days-sum');
-    var ageEl   = document.getElementById('f-age18');
-    if (!nameEl.value.trim()) return fail(nameEl, 'Emmy needs a name to call you.');
-    if (!ideaEl.value.trim()) return fail(ideaEl, 'Tell Emmy the idea, even roughly.');
-    if (!placeEl.value) return fail(placeEl, 'Emmy needs to know where it goes — pick a placement.');
-    if (!sizeEl.value) return fail(sizeEl, 'Pick a rough size, even a guess.');
-    if (!whenEl.value) {
-      /* The hidden #f-when cannot take focus and the ticks sit inside a closed
-         <details>, so open the disclosure and focus its summary instead. */
-      daysEl.open = true;
-      return fail(daysSum, 'Pick the days that suit — Any day works too.');
+  try {
+    FIELDS.forEach(field => {
+      const control = form.elements.namedItem(field.key);
+      if (control.tagName === 'TEXTAREA' || (control.tagName === 'INPUT' && control.type !== 'hidden')) control.maxLength = field.max;
+      setError(field.key, '');
+    });
+    setError('age18', '');
+    anyEl.addEventListener('change', () => {
+      if (anyEl.checked) dayEls.forEach(input => { input.checked = false; });
+      syncDays();
+    });
+    form.addEventListener('input', revalidate);
+    form.addEventListener('change', revalidate);
+    health.addEventListener('change', syncScreening);
+    window.addEventListener('pageshow', event => { if (event.persisted) resetScreening(); });
+    syncDays();
+    resetScreening();
+    if (DEPOSIT.url) {
+      const depBtn = document.getElementById('bk-dep-btn');
+      depBtn.href = DEPOSIT.url;
+      if (DEPOSIT.amount) depBtn.textContent = 'Pay ' + DEPOSIT.amount + ' deposit';
+      document.getElementById('bk-dep').hidden = false;
     }
-    /* 18+ is a legal gate, not a nicety — see FAQ 06. */
-    if (!ageEl.checked) return fail(ageEl, 'Emmy can only tattoo over-18s — please confirm.');
-
-    /* Format checks come after the required-field and legal gates so a blocker
-       is never hidden behind a typo. Both fields are optional — blank passes. */
-    var emailEl = document.getElementById('f-email');
-    var refsEl  = document.getElementById('f-refs');
-    var emailV  = emailEl.value.trim();
-    var refsV   = refsEl.value.trim();
-    if (emailV && !EMAIL_RE.test(emailV)) {
-      return fail(emailEl, 'That email doesn\'t look right — check it, or leave it blank.');
-    }
-    if (refsV && !URL_RE.test(refsV)) {
-      return fail(refsEl, 'That reference should be a link — paste the full address, or leave it blank.');
-    }
-
-    var v = readFields(form);
-    var url = waUrl(waMessage(v));
-
-    /* Backup first, but never awaited: an await here would put the open outside
-       the user gesture and the popup blocker would eat it. */
-    backup(v);
-
-    window.open(url, '_blank', 'noopener');
-
-    /* Shown whether or not the open was blocked; the link is the one-tap path
-       back for anyone whose browser refused it. */
-    openLink.href = url;
-    msg.hidden = true;
-    doneCard.hidden = false;
-    try { openLink.focus({ preventScroll: true }); } catch (err) {}
-  });
-
-  if (DEPOSIT.url) {
-    var dep = document.getElementById('bk-dep');
-    var depBtn = document.getElementById('bk-dep-btn');
-    depBtn.href = DEPOSIT.url;
-    if (DEPOSIT.amount) depBtn.textContent = 'Pay ' + DEPOSIT.amount + ' deposit';
-    dep.hidden = false;
+    // This is the sole activation boundary. Enquiry fields stay disabled until No/No.
+    health.disabled = false;
+    health.inert = false;
+    ready = true;
+    document.getElementById('bk-startup').hidden = true;
+  } catch (_) {
+    ready = false;
+    health.disabled = true;
+    health.inert = true;
+    fields.disabled = true;
+    fields.inert = true;
+    submit.disabled = true;
+    form.hidden = true;
   }
 })();
 </script>

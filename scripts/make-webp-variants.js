@@ -13,16 +13,14 @@ const WIDTHS = [480, 960, 1440];
 // grayscale-encoded source is pixel-identical on screen and materially smaller.
 const GRAYSCALE = new Set(['Emmy-Tattoo-Artist-Working-Black-and-Grey']);
 
-if (!fs.existsSync(OUT)) fs.mkdirSync(OUT);
-
 (async () => {
+  if (!fs.existsSync(OUT)) fs.mkdirSync(OUT);
   const files = fs.readdirSync(PICS).filter(f => /\.(jpe?g|png)$/i.test(f));
   for (const file of files) {
     const input = path.join(PICS, file);
     const base  = file.replace(/\.(jpe?g|png)$/i, '');
     for (const w of WIDTHS) {
       const out = path.join(OUT, `${base}-${w}.webp`);
-      if (fs.existsSync(out)) continue;
       let pipe = sharp(input).resize({ width: w, withoutEnlargement: true });
       if (GRAYSCALE.has(base)) pipe = pipe.grayscale();
       await pipe.webp({ quality: 78 }).toFile(out);
@@ -30,4 +28,7 @@ if (!fs.existsSync(OUT)) fs.mkdirSync(OUT);
       console.log(`${path.basename(out).padEnd(58)} ${kb(fs.statSync(out).size).padStart(7)}`);
     }
   }
-})();
+})().catch(error => {
+  console.error(`Failed generating responsive images (${PICS} -> ${OUT}):`, error);
+  process.exitCode = 1;
+});
