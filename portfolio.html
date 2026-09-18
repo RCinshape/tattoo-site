@@ -359,6 +359,7 @@
       color: var(--fg2); text-decoration: none; transition: color .3s;
     }
     .n-item:hover { color: var(--fg); }
+    .n-item[aria-current="page"] { color: var(--fg); box-shadow: inset 0 -1px var(--gold); }
     .n-social {
       display: inline-flex; align-items: center; justify-content: center;
       color: var(--dim); text-decoration: none;
@@ -417,8 +418,8 @@
       .nav-toggle { display: flex; }
     }
     @media (min-width: 769px) { #mobile-menu { display: none; } }
-    /* Seven links no longer fit a landscape phone at 2rem; the menu is centred
-       with no scroll, so shrink rather than clip. */
+    /* The full menu no longer fits a landscape phone at 2rem; keep it centred
+       and shrink the type rather than clipping a destination. */
     @media (max-height: 560px) {
       #mobile-menu { gap: 12px; }
       .mm-link { font-size: 1.4rem; }
@@ -867,8 +868,9 @@
 <nav id="nav" aria-label="Site navigation">
   <a href="/" class="n-logo">Emmy <em>Tattoo</em></a>
   <div class="n-links">
-    <a href="/#trust" class="n-item">Reviews</a>
-    <a href="/#faq" class="n-item">FAQ</a>
+    <a href="/portfolio" class="n-item" aria-current="page">Portfolio</a>
+    <a href="/aftercare" class="n-item">Aftercare</a>
+    <a href="/gift-cards" class="n-item">Gift cards</a>
     <div class="n-socials">
       <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="n-social n-ig" aria-label="Instagram">
         <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -895,11 +897,12 @@
   <button class="mm-close" id="mm-close" type="button" aria-label="Close menu">✕</button>
   <a class="mm-link" href="/book">Book</a>
   <a class="mm-link" href="/">Home</a>
+  <a class="mm-link" href="/portfolio" aria-current="page">Portfolio</a>
+  <a class="mm-link" href="/aftercare">Aftercare</a>
+  <a class="mm-link" href="/gift-cards">Gift cards</a>
   <a class="mm-link" href="/#about">About</a>
   <a class="mm-link" href="/#trust">Reviews</a>
   <a class="mm-link" href="/#faq">FAQ</a>
-  <a class="mm-link" href="/aftercare">Aftercare</a>
-  <a class="mm-link" href="/gift-cards">Gift cards</a>
 </div>
 
 <!-- ════ HERO ════ -->
