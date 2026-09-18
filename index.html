@@ -140,7 +140,7 @@
 
   <link rel="dns-prefetch" href="https://emmy-reviews.emmalenetattoo.workers.dev">
   <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-  <!-- Display face is self-hosted: one origin fewer and font-display:swap instead of cdnfonts' 3s block -->
+  <!-- Critical self-hosted faces are preloaded; their short block period prevents a fallback face painting and shifting before the real font arrives. -->
   <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="/fonts/dm-sans-latin.woff2" crossorigin>
   <!-- 320px on phones is a tier cap, not a layout width: at DPR3 it selects the
@@ -207,6 +207,7 @@
       if (history.scrollRestoration) history.scrollRestoration = 'manual';
       var nav  = performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
       var type = nav ? nav.type : '';
+      if (type === 'reload') document.documentElement.classList.add('is-reload', 'restoring');
       var y = 0;
       /* Only a reload or a back/forward returns you to a position. A fresh
          navigation to the homepage must start at the hero. */
@@ -216,11 +217,16 @@
       window.__restoreY      = y > 0 ? y : 0;
       window.__restoreTarget = 0;
       window.__restoreBusy   = false;
-      /* The hero entrances start at first paint now, so the decision to suppress
-         them on a restore has to be made before that paint — initHero adds this
-         class ~2.4s too late, by which time a 560ms entrance has been and gone
-         while the page was travelling away from the hero. */
-      if (window.__restoreY > 0) document.documentElement.classList.add('no-hero-intro');
+      /* Reloads remain on the dark canvas until fonts are stable; saved-position
+         restores also remain hidden until the jump has completed. */
+      if (window.__restoreY > 0) {
+        document.documentElement.classList.add('no-hero-intro', 'restoring');
+      }
+      if (document.documentElement.classList.contains('restoring')) {
+        window.__restoreWatchdog = setTimeout(function () {
+          document.documentElement.classList.remove('restoring');
+        }, 2500);
+      }
       function save() {
         /* Never record a frame of the restore travel: reloading mid-travel
            would otherwise strand the reader half way. */
@@ -263,14 +269,14 @@
        overlay — that has to delay navigation and can strand a faded-out page. */
     @view-transition { navigation: auto; }
 
-    /* Self-hosted display face. The cdnfonts copy shipped without font-display,
-       which gave the loader wordmark and hero H1 a ~3s block period. */
+    /* Self-hosted display face. The short block period avoids a visible fallback
+       swap while the preloaded 19KB face resolves. */
     @font-face {
       font-family: 'Romance Fatal Serif';
       src: url('/fonts/Rom_Ftl_Srif.woff') format('woff');
       font-weight: 400 700;
       font-style: normal;
-      font-display: swap;
+      font-display: block;
     }
 
     /* Body typography, self-hosted for the same reason as the display face
@@ -285,7 +291,7 @@
       font-family: 'DM Sans';
       font-style: normal;
       font-weight: 300;
-      font-display: swap;
+      font-display: block;
       src: url('/fonts/dm-sans-latin.woff2') format('woff2');
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
@@ -293,7 +299,7 @@
       font-family: 'DM Sans';
       font-style: normal;
       font-weight: 400;
-      font-display: swap;
+      font-display: block;
       src: url('/fonts/dm-sans-latin.woff2') format('woff2');
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
@@ -301,7 +307,7 @@
       font-family: 'DM Sans';
       font-style: normal;
       font-weight: 300;
-      font-display: swap;
+      font-display: block;
       src: url('/fonts/dm-sans-latin-ext.woff2') format('woff2');
       unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
     }
@@ -309,7 +315,7 @@
       font-family: 'DM Sans';
       font-style: normal;
       font-weight: 400;
-      font-display: swap;
+      font-display: block;
       src: url('/fonts/dm-sans-latin-ext.woff2') format('woff2');
       unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
     }
@@ -317,7 +323,7 @@
       font-family: 'DM Sans';
       font-style: italic;
       font-weight: 300;
-      font-display: swap;
+      font-display: block;
       src: url('/fonts/dm-sans-italic-latin.woff2') format('woff2');
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
@@ -325,7 +331,7 @@
       font-family: 'Cormorant Garamond';
       font-style: normal;
       font-weight: 300;
-      font-display: swap;
+      font-display: block;
       src: url('/fonts/cormorant-garamond-latin.woff2') format('woff2');
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
@@ -333,7 +339,7 @@
       font-family: 'Cormorant Garamond';
       font-style: normal;
       font-weight: 400;
-      font-display: swap;
+      font-display: block;
       src: url('/fonts/cormorant-garamond-latin.woff2') format('woff2');
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
@@ -341,7 +347,7 @@
       font-family: 'Cormorant Garamond';
       font-style: italic;
       font-weight: 300;
-      font-display: swap;
+      font-display: block;
       src: url('/fonts/cormorant-garamond-italic-latin.woff2') format('woff2');
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
@@ -349,7 +355,7 @@
       font-family: 'Cormorant Garamond';
       font-style: italic;
       font-weight: 400;
-      font-display: swap;
+      font-display: block;
       src: url('/fonts/cormorant-garamond-italic-latin.woff2') format('woff2');
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
@@ -357,7 +363,7 @@
       font-family: 'Space Mono';
       font-style: normal;
       font-weight: 400;
-      font-display: swap;
+      font-display: block;
       src: url('/fonts/space-mono-latin.woff2') format('woff2');
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
@@ -371,6 +377,8 @@
        the page behind an overlay shifts nothing — including #nav and #prog, which
        are position: fixed and would otherwise jump by the scrollbar width. */
     html.locked { overflow: hidden; }
+    html.restoring { background: var(--bg); }
+    html.restoring body { visibility: hidden; }
 
     :root {
       color-scheme: dark;
@@ -723,6 +731,7 @@
       transition: opacity .9s var(--out);
     }
     .hero-bg-photo img.is-ready { opacity: 1; }
+    html.is-reload .hero-bg-photo img { transition: none; }
     .hero-bg-photo::after {
       content: '';
       position: absolute; inset: 0;
@@ -889,9 +898,11 @@
       .h-btn { width: 100%; max-width: 340px; padding: 17px 24px; }
     }
     @media (prefers-reduced-motion: reduce) { .h-cta { animation: none !important; opacity: 1 !important; } }
-    /* Restored reload: the hero is shown finished and the travel is the only
-       motion, so its entrances are suppressed exactly as reduced-motion does. */
-    html.no-hero-intro :is(.h-eyebrow, .h-title, .h-sub, .h-cta) { animation: none !important; opacity: 1 !important; }
+    /* Reloads are continuity, not a new entrance: keep the hero in its finished
+       state instead of replaying every first-paint animation. */
+    html:is(.no-hero-intro, .is-reload) :is(.h-eyebrow, .h-title, .h-sub, .h-cta) {
+      animation: none !important; opacity: 1 !important; transform: none !important;
+    }
 
     /* ══════════════════════════════════════════
        HERO EYEBROW
@@ -3201,6 +3212,14 @@
     loader.style.display = 'none'; window.__scrollLock.release('loader');
     if (started) return; started = true;
     const y = window.__restoreY || 0;
+    const revealStablePage = () => {
+      const reveal = () => requestAnimationFrame(() => {
+        clearTimeout(window.__restoreWatchdog);
+        document.documentElement.classList.remove('restoring');
+      });
+      if (document.fonts?.ready) document.fonts.ready.then(reveal, reveal);
+      else reveal();
+    };
     if (y > 0) {
       const deadline = performance.now() + 1200;
       const restore = () => {
@@ -3210,11 +3229,15 @@
         if (window.ScrollTrigger) window.ScrollTrigger.refresh();
         window.scrollTo({ top: window.__restoreTarget, behavior: 'auto' });
         window.__restoreBusy = false; if (window.__saveScroll) window.__saveScroll();
+        revealStablePage();
       };
       requestAnimationFrame(restore);
-    } else if (location.hash) {
-      let target; try { target = document.querySelector(location.hash); } catch (_) {}
-      if (target) target.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    } else {
+      if (location.hash) {
+        let target; try { target = document.querySelector(location.hash); } catch (_) {}
+        if (target) target.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      }
+      revealStablePage();
     }
   };
   let skip = !window.__INTRO || matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -3251,6 +3274,7 @@ function __boot() {
      covered too. Scrubbed triggers are position-driven and must be left alone;
      triggers with no animation (the progress bar, the nav seam) have nothing to
      complete. */
+  const reloaded = document.documentElement.classList.contains('is-reload');
   function settleAbove() {
     const y = window.__restoreBusy
       ? Math.max(window.scrollY, window.__restoreTarget || 0)
@@ -3258,7 +3282,7 @@ function __boot() {
     ScrollTrigger.getAll().forEach(st => {
       const a = st.animation;
       if (!a || (st.vars && st.vars.scrub)) return;
-      if (st.start <= y && a.progress() < 1) a.progress(1, true);
+      if ((reloaded || st.start <= y) && a.progress() < 1) a.progress(1, true);
     });
   }
   ScrollTrigger.addEventListener('refresh', settleAbove);
