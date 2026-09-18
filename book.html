@@ -11,10 +11,9 @@
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c4a262'>✦</text></svg>">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Same-origin font preloads avoid two extra Google Fonts round trips. -->
   <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/dm-sans-latin.woff2" crossorigin>
 
   <style>
     /* Cross-document view transition — both documents must opt in. */
@@ -27,6 +26,46 @@
       font-weight: 400 700;
       font-style: normal;
       font-display: swap;
+    }
+    @font-face {
+      font-family: 'DM Sans';
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+      src: url('/fonts/dm-sans-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'DM Sans';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('/fonts/dm-sans-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Cormorant Garamond';
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+      src: url('/fonts/cormorant-garamond-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Cormorant Garamond';
+      font-style: italic;
+      font-weight: 300 400;
+      font-display: swap;
+      src: url('/fonts/cormorant-garamond-italic-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Space Mono';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('/fonts/space-mono-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -153,17 +192,14 @@
       padding: 76px 24px 110px;
       display: flex; flex-direction: column; align-items: center; text-align: center;
     }
-    .bk-eyebrow {
-      display: inline-flex; align-items: center; gap: 12px;
-      font-family: var(--mono); font-size: .74rem;
-      letter-spacing: .28em; text-transform: uppercase;
-      color: var(--fg2); margin-bottom: 18px;
+    .bk-rule {
+      width: 52px; height: 1px; flex: none;
+      background: var(--gold); margin: 0 0 24px;
     }
-    .bk-eyebrow::before { content: ''; width: 22px; height: 1px; flex: none; background: var(--gold); }
     .bk-page-h1 {
       font-family: var(--serif); font-weight: 300;
       font-size: clamp(2.8rem, 8vw, 5rem); line-height: 1.02;
-      letter-spacing: -.025em; margin-bottom: 22px;
+      letter-spacing: -.025em; margin-bottom: 18px;
     }
     .bk-page-h1 em { font-style: italic; color: var(--gold); }
     .bk-page-sub {
@@ -173,6 +209,25 @@
     @media (max-width: 768px) {
       .bk-page { padding: 56px 24px 80px; }
       .bk-page-sub { margin-bottom: 40px; }
+    }
+    /* First-paint motion is CSS-only: content never waits for JavaScript or a
+       remote font stylesheet, but it still arrives as one deliberate sequence. */
+    @keyframes bk-page-in {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes bk-screen-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+    .bk-page-h1 { animation: bk-page-in .72s var(--out) .04s both; }
+    .bk-rule { animation: bk-page-in .58s var(--out) .12s both; }
+    .bk-page-sub { animation: bk-page-in .68s var(--out) .18s both; }
+    .bk-health, .bk-contact { animation: bk-page-in .62s var(--out) .26s both; }
+    .bk-health fieldset, .bk-form { animation: bk-screen-in .42s var(--out) both; }
+    @media (prefers-reduced-motion: reduce) {
+      .bk-page-h1, .bk-rule, .bk-page-sub, .bk-health, .bk-contact,
+      .bk-health fieldset, .bk-form { animation: none !important; }
     }
 
     /* ── Enquiry form ──
@@ -186,14 +241,14 @@
       display: grid; grid-template-columns: 1fr; gap: 18px;
     }
     .bk-fields { border: 0; padding: 0; margin: 0; min-width: 0; width: 100%; display: grid; grid-template-columns: 1fr; gap: 18px; }
-    .bk-health { border: 0; padding: 0; margin: 0 0 24px; width: 100%; min-width: 0; text-align: left; display: grid; gap: 18px; }
-    .bk-health fieldset { border: 0; min-width: 0; padding: 0; }
-    .bk-health legend { margin-bottom: 12px; color: var(--fg); line-height: 1.6; }
-    .bk-health label { display: inline-flex; align-items: center; gap: 9px; margin-right: 24px; padding: 8px 0; cursor: pointer; }
+    .bk-health { border: 0; padding: 0; margin: 0 0 18px; width: 100%; min-width: 0; text-align: center; display: grid; justify-items: center; gap: 18px; }
+    .bk-health fieldset { border: 0; min-width: 0; padding: 0; width: 100%; text-align: center; }
+    .bk-health legend { width: 100%; margin-bottom: 12px; color: var(--fg); line-height: 1.6; }
+    .bk-health label { display: inline-flex; align-items: center; gap: 9px; margin: 0 12px; padding: 8px 0; cursor: pointer; }
     .bk-health input { appearance: radio; width: 18px; height: 18px; accent-color: var(--gold); }
     .bk-health input:focus-visible, .bk-f-chk input:focus-visible, .bk-day input:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
     .bk-form[hidden], .bk-fields[hidden], .bk-health[hidden], .bk-health fieldset[hidden] { display: none; }
-    .bk-contact { margin: 0 0 24px; color: var(--fg2); line-height: 1.8; }
+    .bk-contact { margin: 8px 0 30px; color: var(--fg2); line-height: 1.8; }
     .bk-contact a, .bk-disclosure a, .bk-health a { color: var(--fg); text-underline-offset: 4px; }
     .bk-error { color: var(--fg); font-size: .88rem; line-height: 1.6; border-left: 2px solid var(--gold); padding-left: 10px; margin-top: 8px; }
     .bk-form [aria-invalid="true"] { border-color: var(--gold); }
@@ -204,6 +259,7 @@
       letter-spacing: .18em; text-transform: uppercase; color: var(--fg2);
     }
     .bk-f-opt { color: var(--dim); }
+    .bk-req { color: var(--gold); margin-left: .3em; }
     /* An 18+ tick is a legal gate, not decoration — see FAQ 06.
        `.bk-form input` below has the same specificity and comes later, so it
        would win: it sets width 100%, a padded bordered box and
@@ -441,31 +497,31 @@
 </nav>
 
 <main class="bk-page">
-  <div class="bk-eyebrow">Booking</div>
   <h1 class="bk-page-h1">Book a <em>session</em>.</h1>
+  <span class="bk-rule" aria-hidden="true"></span>
   <p class="bk-page-sub">Start with a message. A reference, a sketch, a feeling, or nothing yet. The design is built from scratch. Consultation is free.</p>
 
   <p class="bk-contact" id="bk-startup">The enquiry form requires JavaScript. Emmy cannot tattoo during pregnancy. Please discuss blood-thinning medication with Emmy before booking. You can <a href="https://wa.me/447405979137" target="_blank" rel="noopener">contact Emmy on WhatsApp</a> instead.</p>
-  <p class="bk-contact">Prefer a conversation? <a href="https://wa.me/447405979137" target="_blank" rel="noopener">Contact Emmy on WhatsApp</a>.</p>
   <fieldset class="bk-health" id="bk-health" disabled inert aria-label="Before your enquiry">
-    <fieldset>
-      <legend>Are you currently pregnant?</legend>
+    <fieldset aria-required="true">
+      <legend>Are you currently pregnant?<span class="bk-req" aria-hidden="true">*</span></legend>
       <label><input type="radio" name="screen-pregnancy" value="yes" autocomplete="off">Yes</label>
       <label><input type="radio" name="screen-pregnancy" value="no" autocomplete="off">No</label>
     </fieldset>
-    <fieldset id="bk-blood" hidden disabled inert>
-      <legend>Are you taking blood-thinning medication?</legend>
+    <fieldset id="bk-blood" hidden disabled inert aria-required="true">
+      <legend>Are you taking blood-thinning medication?<span class="bk-req" aria-hidden="true">*</span></legend>
       <label><input type="radio" name="screen-blood-thinners" value="yes" autocomplete="off">Yes</label>
       <label><input type="radio" name="screen-blood-thinners" value="no" autocomplete="off">No</label>
     </fieldset>
     <p id="bk-health-status" role="status" aria-live="polite" aria-atomic="true"></p>
     <a id="bk-discuss" hidden target="_blank" rel="noopener">Discuss with Emmy on WhatsApp</a>
   </fieldset>
+  <p class="bk-contact">Prefer a conversation? <a href="https://wa.me/447405979137" target="_blank" rel="noopener">Contact Emmy on WhatsApp</a>.</p>
   <form class="bk-form" id="bk-form" method="post" action="/book" novalidate hidden>
     <fieldset id="bk-fields" class="bk-fields" disabled inert aria-label="Enquiry details">
-    <p class="bk-hint">Fields without an optional label are required.</p>
+    <p class="bk-hint">Fields marked <span class="bk-req">*</span> are required.</p>
     <div>
-      <label class="bk-f-lbl" for="f-name">Your name</label>
+      <label class="bk-f-lbl" for="f-name">Your name<span class="bk-req" aria-hidden="true">*</span></label>
       <input id="f-name" name="name" type="text" autocomplete="name" maxlength="40" placeholder="Your name" required aria-describedby="f-name-error">
       <p class="bk-error" id="f-name-error" hidden></p>
     </div>
@@ -475,13 +531,13 @@
       <p class="bk-error" id="f-email-error" hidden></p>
     </div>
     <div>
-      <label class="bk-f-lbl" for="f-idea">What are you thinking?</label>
+      <label class="bk-f-lbl" for="f-idea">What are you thinking?<span class="bk-req" aria-hidden="true">*</span></label>
       <textarea id="f-idea" name="idea" maxlength="300" placeholder="What you'd like, and anything behind it." required aria-describedby="f-idea-hint f-idea-error"></textarea>
       <p class="bk-hint" id="f-idea-hint">300 characters maximum.</p>
       <p class="bk-error" id="f-idea-error" hidden></p>
     </div>
     <div>
-      <label class="bk-f-lbl" for="f-placement">Placement</label>
+      <label class="bk-f-lbl" for="f-placement">Placement<span class="bk-req" aria-hidden="true">*</span></label>
       <select id="f-placement" name="placement" required aria-describedby="f-placement-error">
         <option value="">Choose a placement…</option>
         <option>Inner forearm</option>
@@ -512,7 +568,7 @@
       <p class="bk-error" id="f-placement-error" hidden></p>
     </div>
     <div>
-      <label class="bk-f-lbl" for="f-size">Rough size</label>
+      <label class="bk-f-lbl" for="f-size">Rough size<span class="bk-req" aria-hidden="true">*</span></label>
       <select id="f-size" name="size" required aria-describedby="f-size-error">
         <option value="">Choose a size…</option>
         <option>Tiny — under 5 cm</option>
@@ -537,7 +593,7 @@
       <p class="bk-error" id="f-budget-error" hidden></p>
     </div>
     <div>
-      <span class="bk-f-lbl" id="f-days-lbl">Availability</span>
+      <span class="bk-f-lbl" id="f-days-lbl">Availability<span class="bk-req" aria-hidden="true">*</span></span>
       <details class="bk-days" id="f-days">
         <summary class="bk-days-sum" id="f-days-summary" aria-labelledby="f-days-lbl f-days-txt" aria-describedby="f-when-error"><span id="f-days-txt">Choose your days…</span></summary>
         <div class="bk-days-list" id="f-days-group" role="group" aria-labelledby="f-days-lbl" aria-required="true" aria-describedby="f-when-error">
@@ -568,7 +624,7 @@
 
     <label class="bk-f-chk">
       <input id="f-age18" name="age18" type="checkbox" required aria-describedby="f-age18-note f-age18-error">
-      <span>I confirm I am 18 or over.</span>
+      <span>I confirm I am 18 or over.<span class="bk-req" aria-hidden="true">*</span></span>
     </label>
     <p class="bk-f-note" id="f-age18-note">You must be 18 or over. No exceptions. Photo ID is checked on the day.</p>
     <p class="bk-error" id="f-age18-error" hidden></p>

@@ -244,6 +244,7 @@
   <!-- No-JS fallback: reveal JS-animated content and remove the loader overlay -->
   <noscript><style>
     #loader { display: none !important; }
+    .hero-bg-photo img { opacity: 1 !important; }
     #nav { background: rgba(var(--panel-rgb),.92) !important; border-bottom-color: var(--border) !important; }
     #nav .n-logo { opacity: 1 !important; pointer-events: auto !important; }
     #nav .n-book { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
@@ -731,7 +732,10 @@
       object-fit: cover; object-position: center 30%;
       display: block;
       filter: var(--img-hero);
+      opacity: 0;
+      transition: opacity .9s var(--out);
     }
+    .hero-bg-photo img.is-ready { opacity: 1; }
     .hero-bg-photo::after {
       content: '';
       position: absolute; inset: 0;
@@ -779,39 +783,34 @@
       text-shadow: 0 1px 12px rgba(var(--panel-rgb),.9);
       -webkit-user-select: none; user-select: none;
     }
-    /* Entrances run from first paint. They used to be gated behind a class only
-       the GSAP boot could add, so the eyebrow, hours line and booking CTA sat at
-       opacity 0 until GSAP arrived from a CDN: measured 2643ms, 2708ms and 2660ms
-       on a 390px phone over 2Mbps. Nothing a reader needs may wait on a script.
-       `both` fill, not `forwards`: the keyframe's from-state is now the only
-       thing hiding these, so it has to apply during the delay too. */
-    .h-eyebrow { animation: hcta-in .28s var(--out) 0s both; }
-    @media (prefers-reduced-motion: reduce) { .h-eyebrow { animation: none !important; opacity: 1 !important; } }
-    /* Brand lettering, not copy: initHero splits it into per-character spans, so a
-       selection here yields character soup anyway. Opting out of selection also
-       stops it accepting a text caret, which is what a visitor with Chrome's caret
-       browsing (F7) switched on gets when they click the wordmark. Same treatment
-       as .fq-num. */
+    /* First-paint entrances are CSS-only: the visible hero never waits for
+       GSAP, while the longer shared cadence avoids a pile of abrupt arrivals. */
+    .h-eyebrow { --hy: 10px; animation: hcta-in .56s var(--out) .04s both; }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-bg-photo img { transition: none !important; }
+      .h-eyebrow { animation: none !important; opacity: 1 !important; }
+    }
+    /* Brand lettering, not copy: opting out of selection also stops it accepting
+       the blinking text caret Chrome's caret-browsing mode otherwise places in
+       the wordmark. Same treatment as .fq-num. */
     .h-title {
       font-family: var(--display);
       font-size: clamp(4rem,13.5vw,13rem);
       font-weight: 400; line-height: .87; letter-spacing: -.03em;
       -webkit-user-select: none; user-select: none;
     }
+    .h-title { --hy: 24px; animation: hcta-in .82s var(--out) .12s both; }
+    @media (prefers-reduced-motion: reduce) { .h-title { animation: none !important; opacity: 1 !important; } }
     .tl { display: block; }
     .tl em { font-style: italic; color: var(--gold); }
     .tl-i { display: block; }
-    /* .bk-h2 is a scroll reveal and stays hidden until its trigger. The hero H1
-       is not: its two .tl-i spans are in the markup, so this rule was hiding the
-       headline itself until initHero ran. It gets no CSS entrance of its own —
-       the char-split stagger is its entrance, and a second animation on the
-       parent would fight it. */
+    /* Booking's heading remains a scroll reveal. The hero title instead owns a
+       CSS first-paint entrance, so readable text never waits for a script. */
     .bk-h2 .tl-i { opacity: 0; }
-    .htc { display: inline-block; }
     .h-sub {
       margin-top: 44px;
     }
-    .h-sub { animation: hcta-in .3s var(--out) .1s both; }
+    .h-sub { --hy: 14px; animation: hcta-in .68s var(--out) .23s both; }
     @media (prefers-reduced-motion: reduce) { .h-sub { animation: none !important; opacity: 1 !important; } }
     .h-loc {
       font-family: var(--serif); font-style: italic; font-weight: 400;
@@ -842,7 +841,7 @@
     .h-dir:hover { border-color: var(--photo-ring-h); transform: translateY(-3px); }
     .h-dir svg { flex-shrink: 0; }
 
-    @keyframes hcta-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @keyframes hcta-in { from { opacity: 0; transform: translateY(var(--hy, 10px)); } to { opacity: 1; transform: none; } }
     /* The hero asks. Two buttons, one filled: Book now is the whole point of the
        page, View portfolio is the browse route for anyone not ready. Both sit over
        photography, so the outline one uses the same glass as .h-dir rather than a
@@ -872,7 +871,7 @@
       -webkit-backdrop-filter: blur(16px) saturate(1.4);
     }
     .h-btn-alt:hover { border-color: var(--photo-ring-h); transform: translateY(-3px); }
-    .h-cta { animation: hcta-in .24s var(--out) .05s both; }
+    .h-cta { --hy: 12px; animation: hcta-in .62s var(--out) .31s both; }
     @media (max-width: 768px) {
       /* 86svh, not the base 100: with the copy bottom-pinned the leftover space
          all collects above the eyebrow, and moving the block cannot delete that
@@ -905,7 +904,7 @@
     @media (prefers-reduced-motion: reduce) { .h-cta { animation: none !important; opacity: 1 !important; } }
     /* Restored reload: the hero is shown finished and the travel is the only
        motion, so its entrances are suppressed exactly as reduced-motion does. */
-    html.no-hero-intro :is(.h-eyebrow, .h-title .tl-i, .h-sub, .h-cta) { animation: none !important; opacity: 1 !important; }
+    html.no-hero-intro :is(.h-eyebrow, .h-title, .h-sub, .h-cta) { animation: none !important; opacity: 1 !important; }
 
     /* ══════════════════════════════════════════
        HERO EYEBROW
@@ -2326,6 +2325,22 @@
     </div>
   </div>
 </section>
+<script>
+(() => {
+  const image = document.querySelector('.hero-bg-photo img');
+  if (!image) return;
+  const reveal = () => {
+    const show = () => requestAnimationFrame(() => image.classList.add('is-ready'));
+    if (image.decode) image.decode().catch(() => {}).then(show);
+    else show();
+  };
+  if (image.complete) reveal();
+  else {
+    image.addEventListener('load', reveal, { once: true });
+    image.addEventListener('error', () => image.classList.add('is-ready'), { once: true });
+  }
+})();
+</script>
 
 <!-- ════ WORK ════ -->
 <div id="work-outer">
@@ -3320,33 +3335,10 @@ function __boot() {
   });
 
 
-  /* ═══ HERO INIT ═══ */
+  /* ═══ HERO INIT ═══
+     The hero entrance is CSS and begins at first paint. JavaScript only adds
+     below-the-fold enhancement, so slow script delivery cannot blank the title. */
   function initHero() {
-    /* A hero entrance playing while the page travels away from it is exactly
-       the pile-up being removed, so a restore gets the finished state. The class
-       itself is added in the head SCROLL MEMORY block: the entrances are CSS and
-       start at first paint, so the decision has to be made before that paint. */
-    const NO_INTRO = window.__restoreY > 0;
-
-    /* — Char-split hero title with blur-in (different from loader's 3D flip) —
-       The stagger is a nicety; a readable headline is not. Both the split and the
-       tween are skipped when the entrance cannot play at the hero: on a restore
-       the page is travelling away from it, and on a slow load the words are
-       already on screen, so splitting them would blank text mid-read. 1200ms sits
-       well past first paint on the 2Mbps profile (FCP 724ms) and well short of
-       the 1915ms CDN GSAP arrival that produced the blanking. */
-    if (!NO_INTRO && performance.now() <= 1200) {
-      document.querySelectorAll('.h-title .tl-i').forEach(el => {
-        el.innerHTML = [...el.textContent].map(ch =>
-          ch === ' ' ? '&nbsp;' : `<span class="htc">${ch}</span>`
-        ).join('');
-      });
-      const htChars = document.querySelectorAll('.h-title .htc');
-      gsap.set(htChars, { opacity: 0, scale: 1.18, y: 10, transformOrigin: '50% 100%' });
-      gsap.timeline({ defaults: { ease: 'power3.out' } })
-        .to(htChars, { opacity: 1, scale: 1, y: 0, duration: .24, stagger: { amount: 0.07, from: 'start' } });
-    }
-
     initScrollAnims();
   }
 
