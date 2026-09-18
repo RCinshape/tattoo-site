@@ -3112,11 +3112,7 @@
         }}));
         tweens.push(window.gsap.to(rule, { width: open ? '60%' : '0%', duration: open ? IOS_S : IOS_OUT_S, ease: IOS_EASE }));
       }
-      if (open) {
-        const navH = parseFloat(getComputedStyle(document.getElementById('nav')).getPropertyValue('--nav-h')) || 0;
-        const rect = row.getBoundingClientRect(), expanded = trigger.offsetHeight + target;
-        if (rect.top < navH || rect.top + expanded > innerHeight) window.scrollTo({ top: Math.max(0, scrollY + rect.top - navH), behavior: motion.matches ? 'auto' : 'smooth' });
-      }
+      /* Expansion keeps its trigger in place; the visitor continues with native scroll. */
     });
     panel.querySelectorAll('img').forEach(img => img.addEventListener('load', () => { settle(); refresh(); }));
     settle();
@@ -3257,9 +3253,6 @@ function __boot() {
   if (LOW_END) {
     document.documentElement.classList.add('lite'); // CSS drops heavy blur effects
   }
-  /* Honour the reduced-motion preference in the three places that scroll the page
-     for the visitor; ordinary scrolling is the browser's business either way. */
-  const SMOOTH = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 
 
   /* ═══ GSAP ═══ */

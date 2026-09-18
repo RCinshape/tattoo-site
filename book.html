@@ -230,6 +230,7 @@
     .bk-health, .bk-contact { animation: bk-page-in .62s var(--out) .26s both; }
     .bk-health fieldset, .bk-form { animation: bk-screen-in .42s var(--out) both; }
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       .bk-page-h1, .bk-rule, .bk-page-sub, .bk-health, .bk-contact,
       .bk-health fieldset, .bk-form { animation: none !important; }
     }
@@ -243,6 +244,7 @@
     .bk-form {
       width: 100%; max-width: 720px; text-align: left;
       display: grid; grid-template-columns: 1fr; gap: 18px;
+      scroll-margin-top: 112px;
     }
     .bk-fields { border: 0; padding: 0; margin: 0; min-width: 0; width: 100%; display: grid; grid-template-columns: 1fr; gap: 18px; }
     .bk-health { border: 0; padding: 0; margin: 0 0 18px; width: 100%; min-width: 0; text-align: center; display: grid; justify-items: center; gap: 18px; }
@@ -779,6 +781,18 @@
     doneCard.hidden = true;
     openLink.removeAttribute('href');
   }
+  function scrollAfterReveal(target) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!target.hidden) {
+          target.scrollIntoView({
+            block: target === form ? 'start' : 'center',
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+          });
+        }
+      });
+    });
+  }
   function syncScreening() {
     clearCompletion();
     const pregnancy = answer('screen-pregnancy');
@@ -927,7 +941,12 @@
     });
     form.addEventListener('input', revalidate);
     form.addEventListener('change', revalidate);
-    health.addEventListener('change', syncScreening);
+    health.addEventListener('change', event => {
+      syncScreening();
+      if (!event.isTrusted || event.target.value !== 'no') return;
+      const target = event.target.name === 'screen-pregnancy' ? blood : form;
+      if (!target.hidden) scrollAfterReveal(target);
+    });
     window.addEventListener('pageshow', event => { if (event.persisted) resetScreening(); });
     syncDays();
     resetScreening();

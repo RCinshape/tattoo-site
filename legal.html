@@ -84,7 +84,7 @@
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: auto; }
 
     :root {
       color-scheme: dark;
@@ -209,7 +209,7 @@
       letter-spacing: -.02em; margin-bottom: 14px;
     }
     .lg-updated { font-family: var(--mono); font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); margin-bottom: 48px; }
-    .lg-sec { padding-top: 44px; border-top: 1px solid transparent; border-image: var(--seam) 1; margin-top: 44px; }
+    .lg-sec { padding-top: 44px; border-top: 1px solid transparent; border-image: var(--seam) 1; margin-top: 44px; scroll-margin-top: 112px; }
     .lg-sec:first-of-type { border: 0; margin-top: 0; padding-top: 0; }
     .lg-h2 {
       font-family: var(--serif); font-weight: 300; font-style: italic;
@@ -292,7 +292,7 @@
 <main class="lg-main">
   <div class="lg-eyebrow">Legal</div>
   <h1 class="lg-h1">Privacy, cookies &amp; terms</h1>
-  <p class="lg-updated">Last updated: 17 September 2026</p>
+  <p class="lg-updated">Last updated: 18 September 2026</p>
 
   <section class="lg-sec" id="privacy">
     <h2 class="lg-h2">Privacy &amp; Cookies</h2>
@@ -301,46 +301,48 @@
     <p>Emmy Tattoo, a tattoo artist working from Sainthood Tattoo, 80 Princes Avenue, Hull HU5 3QJ. You can reach us on <a href="https://wa.me/447405979137" target="_blank" rel="noopener">WhatsApp (+44 7405 979137)</a> or on Instagram at <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener">@emmy.tattoo</a>.</p>
 
     <h3 class="lg-h3">What this site collects</h3>
-    <p>There is no account and no newsletter on this website. The eligibility questions on <a href="/book">/book</a> stay in the page: their answers are not saved in browser storage, sent to our website backup or used for site analytics. Pregnancy stops the web enquiry. If you take blood-thinning medication, the page offers a separate WhatsApp discussion draft mentioning that medication use; it opens only when you choose the link, you still press Send yourself, and no website backup is made for that path.</p>
-    <p>For an eligible form submission, pressing Send on WhatsApp prepares your draft and attempts to save a Cloudflare-hosted backup before you send the message in WhatsApp. The backup contains your name, email if supplied, idea, placement, size, budget if supplied, availability, reference link if supplied, a timestamp and country where available. Screening answers and optional notes are excluded. Optional notes go only in your WhatsApp draft. Other free-text fields may contain personal or sensitive information you choose to enter, so please discuss medical information directly with Emmy in WhatsApp rather than entering it in the form.</p>
-    <p>A successfully stored backup expires after 90 days; the website cannot guarantee backup delivery. Copies created before this change may contain the formerly submitted notes until their original 90-day expiry or an individual deletion request. Once handed over or sent, WhatsApp messages are governed by WhatsApp's policies; Instagram conversations are governed by Instagram's policies.</p>
+    <p>There is no account and no newsletter on this website. The eligibility questions on <a href="/book">/book</a> are used only to control whether the enquiry form can open. Their answers stay in the page while you use it, are reset when the page starts or is restored, and are not put in browser storage, analytics or the website backup. Pregnancy stops the web enquiry. If you say you take blood-thinning medication, the page offers a separate WhatsApp discussion draft; it opens only if you choose it and you still press Send yourself.</p>
+    <p>If you are eligible and submit the form, the site opens a prefilled WhatsApp draft and makes a best-effort attempt to save a Cloudflare-hosted backup. The backup can contain your name, email, tattoo idea, placement, size, budget, availability, reference link, a timestamp and country where available. It does not contain your screening answers, optional notes, age confirmation or the honeypot check. Optional notes are included only in your WhatsApp draft. Please discuss medical information directly with Emmy in WhatsApp rather than entering it in the form.</p>
+    <p>We use enquiry details to respond to and manage your tattoo enquiry. The backup is not a delivery service: it may not be stored, and opening the draft does not send a WhatsApp message. A stored backup expires after 90 days. Copies created before notes were excluded may contain formerly submitted notes until their original 90-day expiry or an individual deletion request. WhatsApp and Instagram messages are handled under those providers' own policies once you choose to contact us there.</p>
+    <p>We rely on taking steps at your request before a booking and on our legitimate interest in answering and managing enquiries. WhatsApp or Instagram conversations may be kept for as long as needed to manage an enquiry, appointment and any related legal or accounting obligation; the 90-day website-backup limit does not delete copies held in those services.</p>
 
     <h3 class="lg-h3">Cookies and analytics</h3>
-    <p>The booking page does not load site analytics. Other pages load Google Analytics 4, which sets cookies to count visits and see which pages are read. It is configured for page-view measurement only — no advertising, no remarketing and no profiling.</p>
-    <p>If you would rather not be counted, block cookies for this site in your browser settings, or read the site in a private/incognito window.</p>
+    <p>The booking page does not load site analytics. On the other pages, Google Analytics 4 can load after your first interaction or after about three seconds. There is no cookie banner or consent gate on this site. Google Analytics may set cookies and receive information about your visit, browser and device to measure site use; it does not receive the booking screening answers or enquiry backup from this site.</p>
+    <p>You can use your browser controls to block or delete cookies. Private/incognito browsing uses a separate browser session, but is not itself a guarantee that analytics will not load. Google handles its analytics service under its own policies.</p>
 
     <h3 class="lg-h3">Other things stored in your browser</h3>
-    <ul>
-      <li><code>emmy-intro</code>, in session storage, remembers that the opening animation has already played in this tab.</li>
-    </ul>
-    <p>That key is not sent anywhere; it stays on your device.</p>
+    <p>Outside third-party services, the home page uses session storage — storage that normally lasts only for the current browser tab — for <code>emmy-scroll:/</code> (restoring your place on a reload or back/forward navigation) and <code>emmy-intro</code> (recording that the opening animation has been considered in that tab). These values are not sent to us. The site does not itself use local storage.</p>
 
-    <h3 class="lg-h3">Third-party content</h3>
+    <h3 class="lg-h3">Third-party content and sharing</h3>
     <ul>
-      <li>The studio map is a Google Maps embed that only loads when you press "Load map".</li>
-      <li>Reviews are fetched from our own Cloudflare Worker, which relays public Google reviews; reviewer profile photos are served by Google.</li>
-      <li>Fonts are served by Google Fonts.</li>
+      <li>Google Analytics is loaded on pages other than <a href="/book">/book</a> as described above.</li>
+      <li>On the home page, a Google Maps iframe and Instagram profile iframe load automatically when they are near the viewport; the map also loads without JavaScript.</li>
+      <li>On the home page, public Google review data is requested through an Emmy-controlled Cloudflare Worker; Google-hosted reviewer profile photos may load with it.</li>
+      <li>Choosing a WhatsApp link or opening an Instagram, Facebook or Google Maps link sends you to that provider.</li>
     </ul>
-    <p>These providers see your IP address when their content loads.</p>
+    <p>Those providers can receive your IP address and request information when their service or link loads. The site's display fonts are served from this website, not Google Fonts.</p>
 
-    <h3 class="lg-h3">Hosting</h3>
-    <p>The site is served as static files by our hosting provider, which keeps short-lived logs (IP address, user agent) to run and protect the service.</p>
+    <h3 class="lg-h3">Hosting and security</h3>
+    <p>The site is served on Cloudflare. The enquiry backup endpoint only accepts the production site origins, or an explicitly configured protected origin. Cloudflare may process request information needed to deliver and protect the service.</p>
 
     <h3 class="lg-h3">Your rights</h3>
-    <p>Under UK GDPR you can ask what data we hold, ask for it to be corrected or deleted, and complain to the Information Commissioner's Office at <a href="https://ico.org.uk" target="_blank" rel="noopener">ico.org.uk</a>. These rights cover the website enquiry backup as well as your WhatsApp or Instagram conversations with us. Use the WhatsApp or Instagram contact routes above to request access, correction or deletion.</p>
+    <p>Under UK GDPR, depending on the circumstances, you may ask for access to your data, correction, deletion, restriction or a portable copy, and you may object to processing. You can complain to the Information Commissioner's Office at <a href="https://ico.org.uk" target="_blank" rel="noopener">ico.org.uk</a>. These rights cover the website enquiry backup as well as your WhatsApp or Instagram conversations with us. Use the WhatsApp or Instagram contact routes above to make a request; we may need to verify your identity.</p>
   </section>
 
   <section class="lg-sec" id="terms">
     <h2 class="lg-h2">Website Terms</h2>
 
     <h3 class="lg-h3">Using this site</h3>
-    <p>You may browse and share links freely. Everything else — the photographs of tattoos, the designs shown in them, the text and the layout — belongs to Emmy Tattoo and may not be copied, reproduced or used to advertise anything else without written permission.</p>
+    <p>You may browse and share links freely. Unless stated otherwise, the photographs, text and site design are owned by or licensed to Emmy Tattoo. You may not copy, reproduce or use them to advertise another person or business without written permission. Images of tattoo work do not grant permission to reproduce the tattoo design.</p>
 
     <h3 class="lg-h3">Tattoo photographs</h3>
     <p>Images are of real, completed work and are shared with the clients' permission. They are examples, not a promise that a given design can be reproduced identically on different skin.</p>
 
     <h3 class="lg-h3">No medical advice</h3>
     <p>The aftercare guidance on this site is general information from a tattoo artist, not medical advice. If a tattoo shows signs of infection, or you have a medical condition that affects healing, speak to a pharmacist or your GP.</p>
+
+    <h3 class="lg-h3">Enquiries and bookings</h3>
+    <p>Submitting the website form or sending its WhatsApp draft is an enquiry, not acceptance of a booking. An appointment is confirmed only when Emmy agrees it with you, including any price, deposit or studio terms. Tattoo appointments are for people aged 18 or over.</p>
 
     <h3 class="lg-h3">Availability and accuracy</h3>
     <p>Prices, availability and opening hours change; nothing on this site is a binding offer. We try to keep it accurate but do not guarantee the site is always available or error-free.</p>
@@ -363,5 +365,16 @@
   </nav>
   <span class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</span>
 </footer>
+<script>
+(() => {
+  const revealHash = () => {
+    const target = location.hash && document.getElementById(location.hash.slice(1));
+    if (target) requestAnimationFrame(() => target.scrollIntoView({ block: 'start', behavior: 'auto' }));
+  };
+  revealHash();
+  addEventListener('pageshow', revealHash);
+  addEventListener('hashchange', revealHash);
+})();
+</script>
 </body>
 </html>
