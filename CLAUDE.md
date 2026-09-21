@@ -111,7 +111,7 @@ Every nav icon sits on one 16px rhythm: `#nav { gap: 16px }` and `.n-actions { g
 
 One row, three tracks: `display: grid; grid-template-columns: 1fr auto 1fr` with the links `justify-self: center` and the copyright `justify-self: end`. It was `justify-content: space-between`, which centres nothing — the wordmark and the copyright have very different widths, so at 1920 the links sat 121px left of true centre. One column, centred, at ≤768px.
 
-The middle group routes to every page the visitor is not on, then the legal pages: home → `Portfolio · Privacy & Cookies · Terms`; portfolio → `Home · Privacy & Cookies · Terms`; legal → `Home · Portfolio`. Both legal links carry their in-page anchor (`/legal#privacy`, `/legal#terms`). Social and about links live in the nav, not here, and there are no buttons in the footer, so no `.ft-btn` rule exists.
+Every page except home routes to every page the visitor is not on, then the legal pages: portfolio → `Home · Aftercare · Gift cards · Privacy & Cookies · Terms`; legal → `Home · Portfolio · Aftercare · Gift cards`. Home is the deliberate exception — its footer is only `Privacy & Cookies · Terms`, by explicit instruction, because the nav already carries Portfolio, Aftercare and Gift cards; never re-add them below. Both legal links carry their in-page anchor (`/legal#privacy`, `/legal#terms`). Social and about links live in the nav, not here, and there are no buttons in the footer, so no `.ft-btn` rule exists.
 
 ## Scrolling
 
