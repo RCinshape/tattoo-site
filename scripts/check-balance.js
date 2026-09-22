@@ -1,9 +1,9 @@
-// Structural HTML validation for the six pages; independent of the caller's cwd.
+// Structural HTML validation for every page; independent of the caller's cwd.
 const fs = require('fs');
 const path = require('path');
 const { HtmlValidate, StaticConfigLoader } = require('html-validate');
 
-const pages = ['index.html', 'book.html', 'portfolio.html', 'legal.html', 'aftercare.html', 'gift-cards.html'];
+const pages = ['index.html', 'book.html', 'book2.html', 'portfolio.html', 'legal.html', 'aftercare.html', 'gift-cards.html'];
 const rules = [
   'close-order',
   'close-attr',
