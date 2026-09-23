@@ -432,8 +432,14 @@
         radial-gradient(ellipse 55% 45% at 50% 100%, rgba(var(--gold-rgb),.03)  0%, transparent 70%),
         radial-gradient(ellipse 38% 70% at 0%   50%,  rgba(var(--gold-rgb),.025) 0%, transparent 62%),
         radial-gradient(ellipse 38% 70% at 100% 50%,  rgba(var(--gold-rgb),.025) 0%, transparent 62%);
-      --cta-shadow:   0 8px 40px rgba(var(--gold-rgb),.4), 0 2px 12px rgba(0,0,0,.55);
-      --cta-shadow-a: 0 4px 20px rgba(var(--gold-rgb),.25), 0 1px 6px rgba(0,0,0,.4);
+      /* Lit gold fill. Layers: 1px top highlight, a white wash that is 0 at rest
+         and brightens the fill on hover, and a warm drop that seats the pill on
+         whatever is behind it. Every state keeps the same three layers so
+         box-shadow interpolates. Never swap a gold fill for --gold-soft on hover:
+         it composites dark and drops --on-gold contrast to ~3.3:1. */
+      --cta-shadow:   inset 0 1px 0 rgba(var(--fg-rgb),.30), inset 0 0 0 100vmax rgba(var(--fg-rgb),0),   0 12px 32px -10px rgba(var(--gold-rgb),.42);
+      --cta-shadow-h: inset 0 1px 0 rgba(var(--fg-rgb),.38), inset 0 0 0 100vmax rgba(var(--fg-rgb),.12), 0 18px 40px -12px rgba(var(--gold-rgb),.58);
+      --cta-shadow-a: inset 0 1px 0 rgba(var(--fg-rgb),.22), inset 0 0 0 100vmax rgba(var(--fg-rgb),.04), 0 6px 16px -8px rgba(var(--gold-rgb),.40);
       /* Decorative gold numerals. */
       --gold-faint: rgba(var(--gold-rgb),.25);
       --gold-soft:  rgba(var(--gold-rgb),.55);
@@ -660,17 +666,19 @@
        circle, so a pill is what makes the primary action read as primary. */
     .n-book {
       display: inline-flex; align-items: center; justify-content: center;
-      padding: 10px 20px; border-radius: 100px;
+      padding: 10px calc(20px - .18em) 10px 20px; border-radius: 100px;
       font-family: var(--mono); font-size: .68rem;
       letter-spacing: .18em; text-transform: uppercase;
       background: var(--gold); border: 1px solid var(--gold); color: var(--on-gold);
       text-decoration: none; white-space: nowrap;
-      transition: background .3s, border-color .3s, transform .3s;
+      box-shadow: var(--cta-shadow);
+      transition: background .3s, border-color .3s, box-shadow .3s, transform .3s;
     }
-    .n-book:hover { background: var(--gold-soft); border-color: var(--gold-soft); transform: translateY(-2px); }
+    .n-book:hover { box-shadow: var(--cta-shadow-h); transform: translateY(-2px); }
+    .n-book:active { box-shadow: var(--cta-shadow-a); transform: translateY(-1px); transition-duration: .12s; }
     /* On /book itself the pill is a self-link: keep the affordance, drop the fill. */
-    .n-book[aria-current="page"] { background: transparent; color: var(--gold); }
-    @media (max-width: 480px) { .n-book { padding: 9px 14px; letter-spacing: .12em; } }
+    .n-book[aria-current="page"], .n-book[aria-current="page"]:hover, .n-book[aria-current="page"]:active { background: transparent; color: var(--gold); box-shadow: none; }
+    @media (max-width: 480px) { .n-book { padding: 9px calc(14px - .12em) 9px 14px; letter-spacing: .12em; } }
     /* Full-screen mobile menu overlay */
     /* visibility, not just opacity: a full-viewport blur resting at opacity 0 is
        still painted and keeps its compositing layer alive for the whole visit.
@@ -838,35 +846,38 @@
     .h-dir svg { flex-shrink: 0; }
 
     @keyframes hcta-in { from { opacity: 0; transform: translateY(var(--hy, 10px)); } to { opacity: 1; transform: none; } }
-    /* The hero asks. Two buttons, one filled: Send an enquiry is the whole point
-       of the page; View portfolio is the browse route for anyone not ready. Both sit over
-       photography, so the outline one uses the same glass as .h-dir rather than a
-       themed surface, and the filled one uses --on-gold, the token that exists for
-       ink on a gold fill. */
+    /* The hero asks: Send an enquiry leads, View portfolio is the browse route.
+       The filled pill uses --on-gold ink and --cta-shadow* lit-gold shadows;
+       its hover brightens through the shadow wash, never through --gold-soft.
+       The glass secondary shares .h-dir's rest state, then answers with a gold
+       hairline on hover. */
     .h-cta {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 14px;
       margin-top: 40px;
     }
     .h-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-      padding: 18px 42px; border-radius: 999px;
+      padding: 18px calc(42px - .2em) 18px 42px; border-radius: 999px;
       font-family: var(--mono); font-size: .72rem;
       letter-spacing: .2em; text-transform: uppercase;
       text-decoration: none; white-space: nowrap;
       border: 1px solid transparent;
-      transition: background .38s, border-color .38s, color .38s, transform .38s var(--out);
+      transition: background .38s, border-color .38s, color .38s, box-shadow .38s, transform .38s var(--out);
     }
     .h-btn-go {
       background: var(--gold); border-color: var(--gold); color: var(--on-gold);
+      box-shadow: var(--cta-shadow);
     }
-    .h-btn-go:hover { background: var(--gold-soft); transform: translateY(-3px); }
+    .h-btn-go:hover { box-shadow: var(--cta-shadow-h); transform: translateY(-3px); }
+    .h-btn-go:active { box-shadow: var(--cta-shadow-a); transform: translateY(-1px); transition-duration: .12s; }
     .h-btn-alt {
       background: rgba(var(--fg-rgb),.10);
       border-color: var(--photo-ring); color: var(--fg);
       backdrop-filter: blur(16px) saturate(1.4);
       -webkit-backdrop-filter: blur(16px) saturate(1.4);
     }
-    .h-btn-alt:hover { border-color: var(--photo-ring-h); transform: translateY(-3px); }
+    .h-btn-alt:hover { border-color: var(--gold-ring-h); transform: translateY(-3px); }
+    .h-btn-alt:active { transform: translateY(-1px); transition-duration: .12s; }
     .h-cta { --hy: 12px; animation: hcta-in .62s var(--out) .31s both; }
     @media (max-width: 768px) {
       /* 86svh, not the base 100: with the copy bottom-pinned the leftover space
@@ -895,7 +906,7 @@
       /* Side by side the two labels are 430px of mono at 342px of gutter, so they
          wrap anyway — make them full-width thumb targets rather than two ragged pills. */
       .h-cta { width: 100%; }
-      .h-btn { width: 100%; max-width: 340px; padding: 17px 24px; }
+      .h-btn { width: 100%; max-width: 340px; padding: 17px calc(24px - .2em) 17px 24px; }
     }
     @media (prefers-reduced-motion: reduce) { .h-cta { animation: none !important; opacity: 1 !important; } }
     /* Reloads are continuity, not a new entrance: keep the hero in its finished
@@ -1506,7 +1517,7 @@
       border: 1px solid var(--gold-ring);
       padding: 15px 30px; border-radius: 100px;
       position: relative; overflow: hidden;
-      transition: border-color .4s, color .4s;
+      transition: border-color .4s, color .4s, transform .4s var(--out);
       flex-shrink: 0;
     }
     .tr-review-btn::before {
@@ -1517,6 +1528,7 @@
     .tr-review-btn > * { position: relative; z-index: 1; }
     .tr-review-btn:hover::before { transform: translateX(0); }
     .tr-review-btn:hover { color: var(--on-gold); border-color: var(--gold); }
+    .tr-review-btn:active { transform: translateY(-1px); transition-duration: .12s; }
     .tr-review-btn svg { flex-shrink: 0; }
     .tr-review-btn-fb::before { background: #1877f2; }
     .tr-review-btn-fb:hover { color: #fff; border-color: #1877f2; }
@@ -1596,15 +1608,17 @@
     .bk-cta .bk-f-note span { white-space: nowrap; }
     .bk-f-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 11px;
-      padding: 18px 38px; border-radius: 100px;
+      padding: 18px calc(38px - .2em) 18px 38px; border-radius: 100px;
       font-family: var(--mono); font-size: .72rem;
       letter-spacing: .2em; text-transform: uppercase;
       cursor: pointer; text-decoration: none;
       border: 1px solid transparent;
-      transition: background .38s, border-color .38s, color .38s, transform .38s var(--out);
+      transition: background .38s, border-color .38s, color .38s, box-shadow .38s, transform .38s var(--out);
     }
-    .bk-f-go { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
-    .bk-f-go:hover { background: var(--gold-soft); transform: translateY(-3px); }
+    .bk-f-go { background: var(--gold); border-color: var(--gold); color: var(--on-gold); box-shadow: var(--cta-shadow); }
+    .bk-f-go:hover { box-shadow: var(--cta-shadow-h); transform: translateY(-3px); }
+    .bk-f-go:active { box-shadow: var(--cta-shadow-a); transform: translateY(-1px); transition-duration: .12s; }
+    :is(.n-book, .h-btn, .bk-f-btn, .tr-review-btn):focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
     .bk-f-note {
       text-align: center;
       font-family: var(--mono); font-size: .6rem;
@@ -1640,7 +1654,7 @@
     @media (max-width: 768px) {
       #book { padding: 88px var(--pad) 80px; }
       .bk-h2 { font-size: clamp(2.6rem, 11vw, 4.2rem); }
-      .bk-f-btn { padding: 17px 24px; }
+      .bk-f-btn { padding: 17px calc(24px - .2em) 17px 24px; }
       .bk-step  { padding: 0 18px; }
       .bk-step-div { width: 28px; }
     }

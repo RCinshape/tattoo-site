@@ -87,6 +87,14 @@
       --gold:      #c4a262;
       --gold-rgb:  196,162,98;
       --gold-soft: rgba(var(--gold-rgb),.55);
+      /* Lit gold fill. Layers: 1px top highlight, a white wash that is 0 at rest
+         and brightens the fill on hover, and a warm drop that seats the pill on
+         whatever is behind it. Every state keeps the same three layers so
+         box-shadow interpolates. Never swap a gold fill for --gold-soft on hover:
+         it composites dark and drops --on-gold contrast to ~3.3:1. */
+      --cta-shadow:   inset 0 1px 0 rgba(var(--fg-rgb),.30), inset 0 0 0 100vmax rgba(var(--fg-rgb),0),   0 12px 32px -10px rgba(var(--gold-rgb),.42);
+      --cta-shadow-h: inset 0 1px 0 rgba(var(--fg-rgb),.38), inset 0 0 0 100vmax rgba(var(--fg-rgb),.12), 0 18px 40px -12px rgba(var(--gold-rgb),.58);
+      --cta-shadow-a: inset 0 1px 0 rgba(var(--fg-rgb),.22), inset 0 0 0 100vmax rgba(var(--fg-rgb),.04), 0 6px 16px -8px rgba(var(--gold-rgb),.40);
       --fg-rgb:    255,255,255;
       --panel-rgb: 10,10,10;
       --on-gold:   #0a0a0a;
@@ -172,17 +180,19 @@
        circle, so a pill is what makes the primary action read as primary. */
     .n-book {
       display: inline-flex; align-items: center; justify-content: center;
-      padding: 10px 20px; border-radius: 100px;
+      padding: 10px calc(20px - .18em) 10px 20px; border-radius: 100px;
       font-family: var(--mono); font-size: .68rem;
       letter-spacing: .18em; text-transform: uppercase;
       background: var(--gold); border: 1px solid var(--gold); color: var(--on-gold);
       text-decoration: none; white-space: nowrap;
-      transition: background .3s, border-color .3s, transform .3s;
+      box-shadow: var(--cta-shadow);
+      transition: background .3s, border-color .3s, box-shadow .3s, transform .3s;
     }
-    .n-book:hover { background: var(--gold-soft); border-color: var(--gold-soft); transform: translateY(-2px); }
+    .n-book:hover { box-shadow: var(--cta-shadow-h); transform: translateY(-2px); }
+    .n-book:active { box-shadow: var(--cta-shadow-a); transform: translateY(-1px); transition-duration: .12s; }
     /* On /book itself the pill is a self-link: keep the affordance, drop the fill. */
-    .n-book[aria-current="page"] { background: transparent; color: var(--gold); }
-    @media (max-width: 480px) { .n-book { padding: 9px 14px; letter-spacing: .12em; } }
+    .n-book[aria-current="page"], .n-book[aria-current="page"]:hover, .n-book[aria-current="page"]:active { background: transparent; color: var(--gold); box-shadow: none; }
+    @media (max-width: 480px) { .n-book { padding: 9px calc(14px - .12em) 9px 14px; letter-spacing: .12em; } }
     /* Keep destination pages directly reachable on phones instead of burying
        them in the footer. Social links yield the second row to site navigation. */
     @media (max-width: 768px) {
@@ -418,22 +428,25 @@
     .bk-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
     .bk-f-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 11px;
-      padding: 18px 38px; border-radius: 100px;
+      padding: 18px calc(38px - .2em) 18px 38px; border-radius: 100px;
       font-family: var(--mono); font-size: .72rem;
       letter-spacing: .2em; text-transform: uppercase;
       cursor: pointer; text-decoration: none;
       border: 1px solid transparent;
-      transition: background .38s, border-color .38s, color .38s, transform .38s var(--out);
+      transition: background .38s, border-color .38s, color .38s, box-shadow .38s, transform .38s var(--out);
     }
-    .bk-f-go { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
-    .bk-f-go:hover:not(:disabled) { background: var(--gold-soft); transform: translateY(-3px); }
-    .bk-f-go:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+    .bk-f-go { background: var(--gold); border-color: var(--gold); color: var(--on-gold); box-shadow: var(--cta-shadow); }
+    .bk-f-go:hover:not(:disabled) { box-shadow: var(--cta-shadow-h); transform: translateY(-3px); }
+    .bk-f-go:active:not(:disabled) { box-shadow: var(--cta-shadow-a); transform: translateY(-1px); transition-duration: .12s; }
+    .bk-f-go:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
     .bk-f-alt {
       background: rgba(var(--gold-rgb),.04);
       border-color: var(--gold-ring); color: var(--fg);
     }
     .bk-f-alt:hover { border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09); transform: translateY(-3px); }
+    .bk-f-alt:active { transform: translateY(-1px); transition-duration: .12s; }
     .bk-f-alt svg { flex-shrink: 0; color: var(--gold); }
+    :is(.n-book, .bk-f-btn):focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
     /* display: inline-flex on .bk-f-btn outranks the UA's [hidden] rule — the same
        trap #pw-gate hits on /portfolio — so restate it. */
     .bk-f-btn[hidden] { display: none; }
