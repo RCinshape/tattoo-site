@@ -10,7 +10,7 @@
       if (nav && nav.type === 'reload') document.documentElement.classList.add('is-reload');
     })();
   </script>
-  <title>Step-by-step booking | Emmy Tattoo</title>
+  <title>Step-by-step enquiry | Emmy Tattoo</title>
   <meta name="description" content="A step-by-step tattoo enquiry for Emmy at Sainthood Tattoo, Hull.">
   <meta name="robots" content="noindex, nofollow">
   <link rel="canonical" href="https://emmytattoo.com/book2">
@@ -401,7 +401,7 @@
       cursor: pointer; transition: background .2s, color .2s;
     }
     .bk-day:hover { background: rgba(var(--gold-rgb),.06); color: var(--fg); }
-    /* Any day is exclusive, so it is ruled off from the seven it locks out. */
+    /* Any day is exclusive, so it is ruled off from the five it locks out. */
     .bk-day-any { border-bottom: 1px solid var(--border); border-radius: 8px 8px 0 0; margin-bottom: 4px; }
     .bk-day.is-off { opacity: .4; cursor: not-allowed; }
     .bk-day.is-off:hover { background: none; color: var(--fg2); }
@@ -534,14 +534,14 @@
     </div>
   </div>
   <div class="n-actions">
-    <a class="n-book" href="/book">Book</a>
+    <a class="n-book" href="/book">Enquire</a>
   </div>
 </nav>
 
 <main class="bk-page">
-  <h1 class="bk-page-h1">Book a <em>session</em>.</h1>
+  <h1 class="bk-page-h1">Send an <em>enquiry</em>.</h1>
   <span class="bk-rule" aria-hidden="true"></span>
-  <p class="bk-page-sub">Tell Emmy what you have in mind. Consultation is free.</p>
+  <p class="bk-page-sub">Tell me what you have in mind. I draw every design from scratch. Consultation is free.</p>
 
   <p class="bk-contact" id="bk-startup">The enquiry form requires JavaScript. Emmy cannot tattoo during pregnancy. Please discuss blood-thinning medication with Emmy before booking. You can <a href="https://wa.me/447405979137" target="_blank" rel="noopener">contact Emmy on WhatsApp</a> instead.</p>
   <fieldset class="bk-health" id="bk-health" disabled inert aria-label="Before your enquiry">
@@ -565,10 +565,11 @@
       <span class="bk-progress-track" aria-hidden="true"><span class="bk-progress-bar" id="bk-progress-bar"></span></span>
     </div>
     <p class="bk-save-note">Enquiry details are saved on this device until you send. Screening and notes are not.</p>
+    <p class="bk-hint">Tell me what you're thinking. Rough ideas are fine, I'll ask what I need.</p>
     <fieldset id="bk-fields" class="bk-fields" disabled inert aria-label="Enquiry details">
     <div class="bk-step is-active" data-key="name">
       <label class="bk-f-lbl" for="f-name">Your name<span class="bk-req" aria-hidden="true">*</span></label>
-      <input id="f-name" name="name" type="text" autocomplete="name" maxlength="40" placeholder="What should Emmy call you?" required aria-describedby="f-name-error">
+      <input id="f-name" name="name" type="text" autocomplete="name" maxlength="40" required aria-describedby="f-name-error">
       <p class="bk-error" id="f-name-error" hidden></p>
     </div>
     <div class="bk-step" data-key="email">
@@ -643,13 +644,11 @@
         <summary class="bk-days-sum" id="f-days-summary" aria-labelledby="f-days-lbl f-days-txt" aria-describedby="f-when-error"><span id="f-days-txt">Choose your days…</span></summary>
         <div class="bk-days-list" id="f-days-group" role="group" aria-labelledby="f-days-lbl" aria-required="true" aria-describedby="f-when-error">
           <label class="bk-day bk-day-any"><input type="checkbox" id="f-day-any"><span>Any day</span></label>
-          <label class="bk-day"><input type="checkbox" data-day="Mon"><span>Monday</span></label>
           <label class="bk-day"><input type="checkbox" data-day="Tue"><span>Tuesday</span></label>
           <label class="bk-day"><input type="checkbox" data-day="Wed"><span>Wednesday</span></label>
           <label class="bk-day"><input type="checkbox" data-day="Thu"><span>Thursday</span></label>
           <label class="bk-day"><input type="checkbox" data-day="Fri"><span>Friday</span></label>
           <label class="bk-day"><input type="checkbox" data-day="Sat"><span>Saturday</span></label>
-          <label class="bk-day"><input type="checkbox" data-day="Sun"><span>Sunday</span></label>
         </div>
       </details>
       <input type="hidden" name="when" id="f-when">

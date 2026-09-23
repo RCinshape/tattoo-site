@@ -18,7 +18,7 @@ const PLACEMENTS = ['Inner forearm', 'Outer forearm', 'Upper arm', 'Shoulder',
 const SIZES = ['Tiny — under 5 cm', 'Small — 5 to 10 cm', 'Medium — 10 to 15 cm',
   'Large — 15 to 25 cm', 'Extra large — 25 cm and up', 'Full sleeve or large piece'];
 const BUDGETS = ['Not sure yet', 'Up to £100', '£100–£200', '£200–£350', '£350–£500', '£500+'];
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAYS = ['Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
 const URL_RE = /^(https?:\/\/)?[a-z0-9][a-z0-9.-]*\.[a-z]{2,}(\/[^\s]*)?$/i;
 

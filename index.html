@@ -72,7 +72,7 @@
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Fine Line Tattoos", "description": "Delicate, precise fine line tattoo work" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Realism Tattoos", "description": "Photorealistic portrait and realism tattoos" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Fine Art Tattoos", "description": "Illustrative and fine art style tattoos" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Tattoo Gift Cards", "description": "Gift card for any amount, no expiry, redeemed against any tattoo appointment" } }
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Tattoo Gift Cards", "description": "Gift card for any amount, valid for 12 months from purchase, redeemed against any tattoo appointment" } }
       ]
     },
     "founder": {
@@ -105,12 +105,12 @@
       {
         "@type": "Question",
         "name": "How much does a tattoo cost?",
-        "acceptedAnswer": { "@type": "Answer", "text": "The price of tattoos varies as I price by piece, not by hour. Message me via WhatsApp and I'll be able to give you a quote. Deposits are a must and are non-refundable." }
+        "acceptedAnswer": { "@type": "Answer", "text": "The price of tattoos varies as I price by piece, not by hour. Message me via WhatsApp and I'll be able to give you a quote. Deposits are a must and are non-refundable. Deposits are non-refundable and come off the final price; the amount depends on the size of the piece." }
       },
       {
         "@type": "Question",
         "name": "Do you do walk-ins?",
-        "acceptedAnswer": { "@type": "Answer", "text": "I tend not to do walk-ins as I am usually quite busy. I don't want to waste your time so please book in." }
+        "acceptedAnswer": { "@type": "Answer", "text": "Appointment only. Message me and we'll find a slot." }
       },
       {
         "@type": "Question",
@@ -130,7 +130,7 @@
       {
         "@type": "Question",
         "name": "What's the minimum age?",
-        "acceptedAnswer": { "@type": "Answer", "text": "18 years old. No exceptions regardless of parental consent. Valid photo ID is required on the day. If you can't prove your age, the session cannot go ahead. Deposit is lost." }
+        "acceptedAnswer": { "@type": "Answer", "text": "18 or over, no exceptions. Bring photo ID on the day. Without it I can't tattoo you and the deposit isn't refunded." }
       }
     ]
   }
@@ -702,7 +702,7 @@
       .n-item { display: none; }
       .n-links { display: none; }
       .nav-toggle { display: flex; }
-      /* The whole navigation arrives with the surface. The hero's own Book now
+      /* The whole navigation arrives with the surface. The hero's own enquiry
          button carries the booking action for the first screen. */
     }
     @media (min-width: 769px) { #mobile-menu { display: none; } }
@@ -838,8 +838,8 @@
     .h-dir svg { flex-shrink: 0; }
 
     @keyframes hcta-in { from { opacity: 0; transform: translateY(var(--hy, 10px)); } to { opacity: 1; transform: none; } }
-    /* The hero asks. Two buttons, one filled: Book now is the whole point of the
-       page, View portfolio is the browse route for anyone not ready. Both sit over
+    /* The hero asks. Two buttons, one filled: Send an enquiry is the whole point
+       of the page; View portfolio is the browse route for anyone not ready. Both sit over
        photography, so the outline one uses the same glass as .h-dir rather than a
        themed surface, and the filled one uses --on-gold, the token that exists for
        ink on a gold fill. */
@@ -2261,7 +2261,7 @@
     </div>
   </div>
   <div class="n-actions">
-    <a class="n-book" href="/book">Book</a>
+    <a class="n-book" href="/book">Enquire</a>
     <button id="nav-toggle" class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
       <span></span><span></span><span></span>
     </button>
@@ -2271,7 +2271,7 @@
 <!-- ════ MOBILE MENU ════ -->
 <div id="mobile-menu" class="ui-modal" tabindex="-1" hidden inert aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu">
   <button class="mm-close" id="mm-close" type="button" aria-label="Close menu">✕</button>
-  <a class="mm-link" href="/book">Book</a>
+  <a class="mm-link" href="/book">Enquire</a>
   <a class="mm-link" href="/portfolio">Portfolio</a>
   <a class="mm-link" href="/aftercare">Aftercare</a>
   <a class="mm-link" href="/gift-cards">Gift cards</a>
@@ -2304,6 +2304,7 @@
       <span class="tl"><em class="tl-i">Tattoo</em></span>
     </h1>
     <div class="h-sub">
+      <p class="h-hero-copy">Fine line, fine art and realism. Every piece drawn from scratch, with you.</p>
       <div class="h-loc">
         <span class="h-loc-studio">At Sainthood Tattoo · Princes Ave, Hull<a href="#location" class="h-dir" aria-label="View map for Sainthood Tattoo"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-5.686-7-11a7 7 0 0 1 14 0c.5 5.314-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span>Directions</span></a></span>
         <span class="h-loc-hours">Appointment only &nbsp;·&nbsp; Tue–Sat</span>
@@ -2312,7 +2313,7 @@
     <!-- Both are cross-document navigations that @view-transition fades exactly
          like the work gate below. -->
     <div class="h-cta">
-      <a class="h-btn h-btn-go" href="/book">Book now</a>
+      <a class="h-btn h-btn-go" href="/book">Send an enquiry</a>
       <a class="h-btn h-btn-alt" href="/portfolio">View portfolio</a>
     </div>
   </div>
@@ -2458,6 +2459,7 @@
     <h2 class="ab-h2">Hi, I'm <em>Emmy</em></h2>
     <div class="ab-bio">
       <p>A fine line, fine art and realism tattoo artist, working from Sainthood Tattoo on Princes Avenue, Hull.</p>
+      <p>It is normal to be nervous, regardless of if it's your first tattoo or fifth. I will walk you through every step, you can take your time choosing placement, design, colours, anything you need. I like to say getting a tattoo is teamwork, we work together to make the best tattoo for you.</p>
     </div>
   </div>
 </section>
@@ -2570,7 +2572,7 @@
       <div class="fq-rule"></div>
       <div class="fq-panel" id="faq-1-panel" aria-labelledby="faq-1-trigger" hidden inert aria-hidden="true">
         <div class="fq-panel-inner">
-          <p class="fq-answer">The price of tattoos varies as I price by piece, not by hour. Message me via WhatsApp and I'll be able to give you a quote.<br><br>Deposits are a must and are non-refundable.</p>
+          <p class="fq-answer">The price of tattoos varies as I price by piece, not by hour. Message me via WhatsApp and I'll be able to give you a quote.<br><br>Deposits are a must and are non-refundable.<br><br>Deposits are non-refundable and come off the final price; the amount depends on the size of the piece.</p>
         </div>
       </div>
     </li>
@@ -2587,7 +2589,7 @@
       <div class="fq-rule"></div>
       <div class="fq-panel" id="faq-2-panel" aria-labelledby="faq-2-trigger" hidden inert aria-hidden="true">
         <div class="fq-panel-inner">
-          <p class="fq-answer">I tend not to do walk-ins as I am usually quite busy. I don't want to waste your time so please book in.</p>
+          <p class="fq-answer">Appointment only. Message me and we'll find a slot.</p>
         </div>
       </div>
     </li>
@@ -2664,7 +2666,7 @@
       <div class="fq-rule"></div>
       <div class="fq-panel" id="faq-6-panel" aria-labelledby="faq-6-trigger" hidden inert aria-hidden="true">
         <div class="fq-panel-inner">
-          <p class="fq-answer">18 years old. No exceptions regardless of parental consent. Valid photo ID is required on the day. If you can't prove your age, the session cannot go ahead. Deposit is lost.</p>
+          <p class="fq-answer">18 or over, no exceptions. Bring photo ID on the day. Without it I can't tattoo you and the deposit isn't refunded.</p>
         </div>
       </div>
     </li>
@@ -2686,12 +2688,12 @@
 
     <!-- Heading -->
     <h2 class="bk-h2">
-      <span class="tl"><span class="tl-i">Book</span></span>
-      <span class="tl"><span class="tl-i">a <em>session</em>.</span></span>
+      <span class="tl"><span class="tl-i">Send</span></span>
+      <span class="tl"><span class="tl-i">an <em>enquiry</em>.</span></span>
     </h2>
 
     <!-- Body -->
-    <p class="bk-sub">Start with a message. A reference, a sketch, a feeling, or nothing yet. The design is built from scratch. Consultation is free.</p>
+    <p class="bk-sub">Start with a message. A reference, a sketch, a feeling, or nothing yet. I draw every design from scratch. Consultation is free.</p>
 
     <!-- 3-step process -->
     <div class="bk-steps">
@@ -2714,7 +2716,7 @@
     <!-- The enquiry form lives on /book. Keeping it off the homepage keeps this
          section a pitch, and keeps the ask on a page that loads no CDN libs. -->
     <div class="bk-cta">
-      <a class="bk-f-btn bk-f-go" href="/book">Book now</a>
+      <a class="bk-f-btn bk-f-go" href="/book">Send an enquiry</a>
       <p class="bk-f-note"><span>Consultation is free</span> · <span>Priced by piece, not by hour</span></p>
     </div>
 

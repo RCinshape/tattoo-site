@@ -116,8 +116,9 @@ test('field validation rejects invalid required values, formats, enums, ordering
   }
   cases.push(['email', 'not-an-email'], ['refs', 'javascript:alert(1)'],
     ['placement', 'Unlisted placement'], ['size', 'Unlisted size'], ['budget', '£1'],
-    ['when', 'Tue, Mon'], ['when', 'Mon, Mon'], ['when', 'Mon, Holiday'],
-    ['when', 'Monday'], ['when', 'Mon,Tue'], ['when', 'Any day, Mon'],
+    ['when', 'Mon'], ['when', 'Sun'], ['when', 'Tue, Mon'],
+    ['when', 'Tue, Tue'], ['when', 'Tue, Holiday'], ['when', 'Tuesday'],
+    ['when', 'Tue,Wed'], ['when', 'Any day, Tue'],
     ['age18', false]);
   for (const value of ['\ud800', '\udfff', 'good\ud800text']) cases.push(['idea', value]);
   for (const [field, value] of cases) {
@@ -139,7 +140,7 @@ test('caps reject rather than silently truncate, after whitespace normalization'
   payload.idea = 'x'.repeat(300);
   payload.email = 'a'.repeat(64) + '@ex.co';
   payload.refs = 'https://example.com/' + 'x'.repeat(80);
-  payload.when = 'Mon, Tue, Wed, Thu, Fri, Sat, Sun';
+  payload.when = 'Tue, Wed, Thu, Fri, Sat';
   const { result, writes } = await post(payload);
   assert.equal(result.stored, true);
   assert.equal(writes[0].record.name, 'x'.repeat(40));
