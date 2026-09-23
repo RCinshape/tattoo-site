@@ -119,14 +119,10 @@
       --gold-ring:   rgba(var(--gold-rgb),.32);
       --gold-ring-h: rgba(var(--gold-rgb),.65);
       --gold-soft:  rgba(var(--gold-rgb),.55);
-      /* Lit gold fill. Layers: 1px top highlight, a white wash that is 0 at rest
-         and brightens the fill on hover, and a warm drop that seats the pill on
-         whatever is behind it. Every state keeps the same three layers so
-         box-shadow interpolates. Never swap a gold fill for --gold-soft on hover:
-         it composites dark and drops --on-gold contrast to ~3.3:1. */
-      --cta-shadow:   inset 0 1px 0 rgba(var(--fg-rgb),.30), inset 0 0 0 100vmax rgba(var(--fg-rgb),0),   0 12px 32px -10px rgba(var(--gold-rgb),.42);
-      --cta-shadow-h: inset 0 1px 0 rgba(var(--fg-rgb),.38), inset 0 0 0 100vmax rgba(var(--fg-rgb),.12), 0 18px 40px -12px rgba(var(--gold-rgb),.58);
-      --cta-shadow-a: inset 0 1px 0 rgba(var(--fg-rgb),.22), inset 0 0 0 100vmax rgba(var(--fg-rgb),.04), 0 6px 16px -8px rgba(var(--gold-rgb),.40);
+      /* Hover on a solid gold button: a white wash inside the border brightens
+         the fill. Never swap the fill for --gold-soft, which composites dark and
+         drops --on-gold contrast to ~3.3:1. No drop shadow: the buttons are flat. */
+      --cta-wash: inset 0 0 0 100vmax rgba(var(--fg-rgb),.12);
       /* Exactly one gold — no display/text split. Decorative gold ink carries
          its alpha in its token, never in `opacity`: GSAP writes inline opacity
          and it outranks any CSS opacity rule.
@@ -204,22 +200,25 @@
     .n-social.n-ig:hover { color: #e1306c; border-color: rgba(225,48,108,.4); }
     .n-social.n-fb:hover { color: #1877f2; border-color: rgba(24,119,242,.4); }
     .n-actions { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
-    /* The one filled control in the bar: everything else here is a 38–42px icon
-       circle, so a pill is what makes the primary action read as primary. */
+    /* Button face for every gold call-to-action on this page: square, flat,
+       labelled in the italic serif the hero address uses. The nav one is the
+       only filled control in the bar. */
+    :is(.n-book, .gf-cta) {
+      border-radius: 0; font-family: var(--serif); font-style: italic; font-weight: 400;
+      line-height: 1.2; letter-spacing: .01em; text-transform: none;
+    }
     .n-book {
       display: inline-flex; align-items: center; justify-content: center;
-      padding: 10px calc(20px - .18em) 10px 20px; border-radius: 100px;
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .18em; text-transform: uppercase;
+      padding: 6px 18px;
+      font-size: 1.02rem;
       background: var(--gold); border: 1px solid var(--gold); color: var(--on-gold);
       text-decoration: none; white-space: nowrap;
-      box-shadow: var(--cta-shadow);
       transition: background .3s, border-color .3s, box-shadow .3s, transform .3s;
     }
-    .n-book:hover { box-shadow: var(--cta-shadow-h); transform: translateY(-2px); }
-    .n-book:active { box-shadow: var(--cta-shadow-a); transform: translateY(-1px); transition-duration: .12s; }
-    @media (max-width: 480px) { .n-book { padding: 9px calc(14px - .12em) 9px 14px; letter-spacing: .12em; } }
-    .n-book:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    .n-book:hover { box-shadow: var(--cta-wash); }
+    .n-book:active { transform: translateY(1px); transition-duration: .12s; }
+    @media (max-width: 480px) { .n-book { padding: 5px 13px; font-size: .95rem; } }
+    :is(.n-book, .gf-cta):focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
     /* Keep destination pages directly reachable on phones instead of burying
        them in the footer. Social links yield the second row to site navigation. */
     @media (max-width: 768px) {
@@ -261,12 +260,11 @@
     }
     .gf-cta {
       display: flex; align-items: center; gap: 14px;
-      font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .2em; text-transform: uppercase;
+      font-size: 1.25rem;
       color: var(--fg); text-decoration: none;
       border: 1px solid var(--gold-ring);
       background: rgba(var(--gold-rgb),.04);
-      padding: 18px 36px; border-radius: 100px;
+      padding: 14px 36px;
       position: relative; overflow: hidden;
       transition: border-color .38s, background .38s, transform .38s var(--out);
     }
@@ -280,8 +278,8 @@
     .gf-cta:hover {
       border-color: var(--gold-ring-h);
       background: rgba(var(--gold-rgb),.09);
-      transform: translateY(-3px);
     }
+    .gf-cta:active { transform: translateY(1px); transition-duration: .12s; }
     /* The voucher as a ghost: the artwork is a mask and the paint is a token,
        so one asset needs no filter and no pixels of its own. */
     .gf-card {
