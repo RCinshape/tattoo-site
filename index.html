@@ -83,19 +83,12 @@
       "knowsAbout": ["Fine line tattooing", "Realism tattooing", "Portrait tattooing", "Fine art tattooing"],
       "worksFor": { "@id": "https://emmytattoo.com/" },
       "sameAs": ["https://www.instagram.com/emmy.tattoo", "https://www.facebook.com/EmmaleneTattoo"]
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "5.0",
-      "reviewCount": 20,
-      "bestRating": "5",
-      "worstRating": "1"
     }
   }
   </script>
 
-  <!-- FAQPage — the questions and answers below must stay word-for-word identical
-       to the visible #faq copy, or Google drops the rich result. -->
+  <!-- FAQPage describes the visible questions and answers; keep their copy aligned.
+       Google retired FAQ rich results in May 2026. This is not a rich-result promise. -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -2413,10 +2406,10 @@
     </div>
     <div class="tr-head-r">
       <div class="tr-score-badge">
-        <span class="tr-score-stars">★★★★★</span>
-        <span class="tr-score-val">5.0</span>
-        <span class="tr-score-sep">·</span>
-        <span class="tr-score-meta">17 Google Reviews</span>
+        <span class="tr-score-stars" hidden>★★★★★</span>
+        <span class="tr-score-val" hidden></span>
+        <span class="tr-score-sep" hidden>·</span>
+        <span class="tr-score-meta">Selected Google reviews</span>
       </div>
     </div>
   </div>
@@ -3523,13 +3516,16 @@ else __boot();
     const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
     const initial = name => (name || '?').trim().charAt(0).toUpperCase();
 
-    /* Live score/count — the Google fetch updates these and repaints the head badge */
-    const META = { rating: '5.0', count: 17 };
+    /* Only a successful live feed may supply the listing's score and total. */
+    const META = { rating: null, count: null };
     function paintMeta() {
       const v = document.querySelector('.tr-score-val');
       const m = document.querySelector('.tr-score-meta');
-      if (v) v.textContent = META.rating;
-      if (m) m.textContent = META.count + ' Google Reviews';
+      if (v) v.textContent = META.rating || '';
+      document.querySelectorAll('.tr-score-stars, .tr-score-val, .tr-score-sep').forEach(el => {
+        el.hidden = !META.rating;
+      });
+      if (m) m.textContent = META.count ? META.count + ' Google Reviews' : 'Selected Google reviews';
     }
 
     /* Shared modal (reuses #rv-modal) */
@@ -3745,8 +3741,6 @@ else __boot();
 </script>
 
 <!-- ════ GOOGLE REVIEWS — LIVE FETCH via Cloudflare Worker proxy ════ -->
-<!-- Worker URL: replace the placeholder below with your deployed Worker URL  -->
-<!-- e.g. https://emmy-reviews.YOUR-SUBDOMAIN.workers.dev                     -->
 <script>
 (function() {
   const WORKER_URL = 'https://emmy-reviews.emmalenetattoo.workers.dev';
@@ -3763,21 +3757,20 @@ else __boot();
 
   function loadReviews() {
   fetch(WORKER_URL)
-    .then(function(res) { return res.json(); })
+    .then(function(res) {
+      if (!res.ok) throw new Error('Review feed HTTP ' + res.status);
+      return res.json();
+    })
     .then(function(data) {
-      if (data.error) { console.error('[Reviews] Worker error:', data.error); return; }
-      if (data.rating) {
-        var scoreEl = document.querySelector('.tr-score-val');
-        if (scoreEl) scoreEl.textContent = data.rating.toFixed(1);
+      if (data.error || !Array.isArray(data.reviews) || !data.reviews.length ||
+          !Number.isFinite(data.rating) || data.rating < 1 || data.rating > 5 ||
+          !Number.isInteger(data.userRatingCount) || data.userRatingCount < 1) {
+        throw new Error('Review feed unavailable or invalid');
       }
-      if (data.userRatingCount) {
-        var platEl = document.querySelector('.tr-score-meta');
-        if (platEl) platEl.textContent = data.userRatingCount + ' Google Reviews';
-      }
-      if (data.reviews && data.reviews.length && window.__refreshReviews) {
+      if (window.__refreshReviews) {
         window.__refreshReviews(data.reviews.map(buildData), {
-          rating: data.rating ? data.rating.toFixed(1) : null,
-          count: data.userRatingCount || null
+          rating: data.rating.toFixed(1),
+          count: data.userRatingCount
         });
       }
     })

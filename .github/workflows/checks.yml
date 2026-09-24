@@ -1,0 +1,41 @@
+name: Website checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 8 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright-core install --with-deps chromium
+      - name: Select installed Chromium for browser regressions
+        run: node -e "require('node:fs').appendFileSync(process.env.GITHUB_ENV, 'CHROME_BIN=' + require('playwright-core').chromium.executablePath() + '\n')"
+      - run: npm run check
+      - run: npm test
+      - run: npm audit --package-lock-only --audit-level=moderate
+
+  live-reviews:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm run check:reviews-live

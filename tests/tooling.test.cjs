@@ -8,7 +8,7 @@ const { spawnSync } = require('node:child_process');
 const sharp = require('sharp');
 
 const project = path.resolve(__dirname, '..');
-const pages = ['index.html', 'book.html', 'book2.html', 'portfolio.html', 'legal.html', 'aftercare.html', 'gift-cards.html'];
+const pages = ['index.html', 'book.html', 'portfolio.html', 'legal.html', 'aftercare.html', 'gift-cards.html'];
 const document = body => `<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8"><title>Fixture</title></head><body>\n${body}\n</body></html>`;
 
 function fixture(t, script) {

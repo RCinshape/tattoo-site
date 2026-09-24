@@ -105,3 +105,64 @@ test('actual review renderer keeps untrusted fields inert, including avatar erro
   }
   assert.deepEqual(result.ratingHandlers, [], 'Rating labels cannot create attributes');
 });
+
+test('live feed keeps the five-review sample, saved top-ups and truthful fallback metadata', async t => {
+  assert.ok(chrome, 'Install Chromium or set CHROME_BIN');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const browser = await chromium.launch({ executablePath: chrome, headless: true });
+  t.after(() => browser.close());
+  const liveNames = ['JESS DAN', 'Live Reviewer Two', 'Live Reviewer Three', 'Live Reviewer Four', 'Live Reviewer Five'];
+  const live = {
+    rating: 4.8, userRatingCount: 23,
+    reviews: liveNames.map(name => ({
+      authorAttribution: { displayName: name },
+      rating: 5, text: { text: 'Synthetic live review.' },
+    })),
+  };
+  for (const [name, status, payload, healthy] of [
+    ['five live reviews plus saved reviews', 200, live, true],
+    ['provider outage', 502, { error: 'Reviews temporarily unavailable' }, false],
+    ['legacy HTTP 200 error', 200, { error: 'Place not found' }, false],
+    ['incomplete live summary', 200, { ...live, userRatingCount: null }, false],
+  ]) {
+    await t.test(name, async t => {
+      const page = await browser.newPage();
+      t.after(() => page.close());
+      await page.route('**/*', route => {
+        const url = new URL(route.request().url());
+        if (url.hostname === '127.0.0.1') return route.fulfill({ contentType: 'text/html', body: html });
+        if (url.hostname === 'emmy-reviews.emmalenetattoo.workers.dev') {
+          return route.fulfill({ status, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(payload) });
+        }
+        return route.abort();
+      });
+      const outcome = healthy
+        ? null
+        : page.waitForEvent('console', { predicate: message => message.text().includes('[Reviews] Fetch failed'), timeout: 10000 });
+      await page.goto('http://127.0.0.1/review-fixture');
+      if (healthy) await page.waitForFunction(() => !document.querySelector('.tr-score-val').hidden);
+      else await outcome;
+      const result = await page.evaluate(() => ({
+        names: [...document.querySelectorAll('.trv-name')].map(el => el.firstChild.textContent),
+        score: document.querySelector('.tr-score-val').textContent,
+        scoreHidden: document.querySelector('.tr-score-val').hidden,
+        meta: document.querySelector('.tr-score-meta').textContent,
+        aggregate: JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent).aggregateRating,
+      }));
+      assert.equal(result.names.length, 7);
+      assert.equal(new Set(result.names.map(name => name.trim().toLowerCase())).size, 7, 'Saved/live overlap must not duplicate a reviewer');
+      assert.equal(result.aggregate, undefined, 'No unverified listing total in static structured data');
+      if (healthy) {
+        assert.deepEqual(result.names.slice(0, 5), liveNames);
+        assert.deepEqual(result.names.slice(5), ['Jaime Dale', 'Ruby Taylor']);
+        assert.equal(result.scoreHidden, false);
+        assert.equal(result.score, '4.8');
+        assert.equal(result.meta, '23 Google Reviews', 'Listing total is not the five-review sample size');
+      } else {
+        assert.equal(result.names[0], 'Jess Dan');
+        assert.equal(result.scoreHidden, true, 'A saved sample must not masquerade as a live rating');
+        assert.equal(result.meta, 'Selected Google reviews');
+      }
+    });
+  }
+});

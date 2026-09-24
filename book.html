@@ -6,6 +6,8 @@
   <meta name="theme-color" content="#0a0a0a">
   <script>
     (function () {
+      // Retired /book2 drafts must not survive a visit to the supported form.
+      try { localStorage.removeItem('emmy-book2-progress'); } catch (_) {}
       var nav = performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
       if (nav && nav.type === 'reload') document.documentElement.classList.add('is-reload');
     })();
