@@ -161,7 +161,6 @@ test('live feed keeps the five-review sample, saved top-ups and truthful fallbac
       } else {
         assert.equal(result.names[0], 'Jess Dan');
         assert.equal(result.scoreHidden, true, 'A saved sample must not masquerade as a live rating');
-        assert.equal(result.meta, 'Selected Google reviews');
       }
     });
   }

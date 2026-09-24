@@ -24,28 +24,90 @@
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c4a262'>✦</text></svg>">
 
-  <!-- Analytics stays out of the critical path on slow connections. -->
+  <!-- Optional GA4: no Google tag or analytics request before explicit acceptance. -->
   <script>
-    (function () {
-      if (/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname)) return;
-      var id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
-      var fired = false;
-      function load() {
-        if (fired) return;
-        fired = true;
-        var s = document.createElement('script');
-        s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
-        document.head.appendChild(s);
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function () { dataLayer.push(arguments); };
-        gtag('js', new Date());
-        gtag('config', id);
-      }
-      ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (eventName) {
-        addEventListener(eventName, load, { once: true, passive: true });
+  (() => {
+    const KEY = 'emmy-analytics-choice-v1';
+    const MAX_AGE = 180 * 24 * 60 * 60 * 1000;
+    const id = location.hostname.endsWith('.co.uk') ? 'G-M23QSCSBZ9' : 'G-J8X45ECTLH';
+    const local = /^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname);
+    let loaded = false;
+    const readChoice = () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(KEY));
+        if (saved && ['accepted', 'rejected'].includes(saved.choice) && Number.isFinite(saved.expires) && saved.expires > Date.now() && saved.expires <= Date.now() + MAX_AGE) return saved.choice;
+      } catch (_) {}
+      return null;
+    };
+    const clearCookies = () => {
+      const domains = ['', location.hostname, '.' + location.hostname];
+      if (location.hostname.endsWith('.emmytattoo.com')) domains.push('.emmytattoo.com');
+      if (location.hostname.endsWith('.emmytattoo.co.uk')) domains.push('.emmytattoo.co.uk');
+      document.cookie.split(';').forEach(cookie => {
+        const name = cookie.split('=')[0].trim();
+        if (!/^_ga(?:_|$)/.test(name)) return;
+        domains.forEach(domain => {
+          document.cookie = name + '=; Max-Age=0; Path=/; SameSite=Lax' + (domain ? '; Domain=' + domain : '') + (location.protocol === 'https:' ? '; Secure' : '');
+        });
       });
-      setTimeout(load, 3000);
-    })();
+    };
+    const load = () => {
+      if (loaded || local) return;
+      loaded = true;
+      window['ga-disable-' + id] = false;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+      window.gtag('js', new Date());
+      window.gtag('config', id, { allow_google_signals: false, allow_ad_personalization_signals: false, cookie_expires: MAX_AGE / 1000, cookie_update: false });
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+      document.head.appendChild(script);
+    };
+    window['ga-disable-' + id] = true;
+    document.addEventListener('DOMContentLoaded', () => {
+      const panel = document.getElementById('analytics-preferences');
+      const settings = document.querySelector('[data-analytics-settings]');
+      const status = document.getElementById('analytics-status');
+      let choice = readChoice();
+      let returnFocus = null;
+      const render = () => {
+        status.textContent = choice === 'accepted' ? 'Analytics is on.' : 'Analytics is off.';
+        panel.hidden = choice !== null;
+      };
+      const apply = () => {
+        if (choice === 'accepted') load();
+        else {
+          window['ga-disable-' + id] = true;
+          clearCookies();
+          // Unload an already accepted tag, without sending a denied-consent ping.
+          if (loaded) location.reload();
+        }
+        render();
+      };
+      settings.hidden = false;
+      settings.addEventListener('click', event => {
+        event.preventDefault();
+        returnFocus = settings;
+        panel.hidden = false;
+        panel.querySelector('[data-analytics-choice]').focus({ preventScroll: true });
+      });
+      panel.querySelectorAll('[data-analytics-choice]').forEach(button => {
+        button.addEventListener('click', () => {
+          choice = button.dataset.analyticsChoice;
+          try { localStorage.setItem(KEY, JSON.stringify({ choice, expires: Date.now() + MAX_AGE })); } catch (_) {}
+          apply();
+          if (returnFocus) returnFocus.focus({ preventScroll: true });
+          returnFocus = null;
+        });
+      });
+      const sync = () => { choice = readChoice(); apply(); };
+      addEventListener('storage', event => { if (event.key === KEY || event.key === null) sync(); });
+      addEventListener('pageshow', event => { if (event.persisted) sync(); });
+      apply();
+    }, { once: true });
+  })();
   </script>
 
   <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
@@ -346,6 +408,34 @@
       .ft-links { justify-content: center; }
       .ft-copy { justify-self: center; text-align: center; }
     }
+    /* Optional analytics: equal choices, no modal or scroll lock. */
+    .analytics-panel[hidden], .analytics-settings[hidden] { display: none; }
+    .analytics-panel {
+      position: fixed; inset: auto 0 0; z-index: 1100;
+      display: flex; align-items: center; gap: 24px;
+      padding: 20px var(--pad); border-top: 1px solid var(--border-h);
+      background: var(--bg2); color: var(--fg); text-align: left;
+      max-height: 80dvh; overflow-y: auto;
+    }
+    .analytics-copy { flex: 1; }
+    .analytics-title { font: 400 1.4rem/1.2 var(--serif); margin: 0 0 8px; }
+    .analytics-copy p { font: 400 .85rem/1.6 var(--sans); color: var(--fg2); margin: 0; }
+    .analytics-copy a { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
+    .analytics-status { margin-top: 6px !important; }
+    .analytics-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; flex-shrink: 0; }
+    .analytics-choice {
+      border: 1px solid var(--border-h); border-radius: 0; background: var(--bg2); color: var(--fg);
+      min-height: 44px; padding: 10px 12px; cursor: pointer;
+      font: italic 400 1.15rem/1.2 var(--serif); letter-spacing: .01em;
+    }
+    .analytics-choice:hover { border-color: var(--gold); }
+    .analytics-choice:focus-visible, .analytics-copy a:focus-visible, .analytics-settings:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    .analytics-choice:active { transform: translateY(1px); }
+    @media (max-width: 768px) {
+      .analytics-panel { flex-direction: column; align-items: stretch; gap: 16px; }
+      .analytics-actions { width: 100%; }
+    }
+
   </style>
 </head>
 <body>
@@ -403,8 +493,21 @@
     <a href="/aftercare" class="ft-a">Aftercare</a>
     <a href="/legal#privacy" class="ft-a">Privacy &amp; Cookies</a>
     <a href="/legal#terms" class="ft-a">Terms</a>
+    <a href="#analytics-preferences" class="ft-a analytics-settings" data-analytics-settings hidden>Cookie settings</a>
   </nav>
   <span class="ft-copy">&copy; 2026 Emmy Tattoo · Sainthood Tattoo, Hull</span>
 </footer>
+<section class="analytics-panel" id="analytics-preferences" aria-labelledby="analytics-title" hidden>
+  <div class="analytics-copy">
+    <h2 class="analytics-title" id="analytics-title">Optional analytics</h2>
+    <p>May we use Google Analytics cookies to understand visits to this website? Accept or reject; the site works either way. <a href="/legal#privacy">Privacy &amp; cookies</a></p>
+    <p class="analytics-status" id="analytics-status" aria-live="polite">Analytics is off.</p>
+  </div>
+  <div class="analytics-actions">
+    <button class="analytics-choice" type="button" data-analytics-choice="rejected">Reject analytics</button>
+    <button class="analytics-choice" type="button" data-analytics-choice="accepted">Accept analytics</button>
+  </div>
+</section>
+
 </body>
 </html>
