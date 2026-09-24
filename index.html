@@ -1598,26 +1598,21 @@
       text-align: center; display: flex; flex-direction: column; align-items: center;
     }
     .bk-av {
-      display: inline-flex; align-items: center; gap: 10px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 14px;
       margin-bottom: 40px;
-      padding: 9px 22px; border-radius: 100px;
-      background: rgba(var(--ok-rgb),.07);
-      border: 1px solid rgba(var(--ok-rgb),.2);
       opacity: 0; transform: translateY(14px);
     }
-    .bk-avdot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--ok); box-shadow: 0 0 12px rgba(var(--ok-rgb),.7);
-      animation: dp 2s ease-in-out infinite; flex-shrink: 0;
+    .bk-av::before, .bk-av::after {
+      content: ''; display: block; width: 28px; height: 1px;
+      flex: 0 0 28px; background: var(--gold);
     }
     .bk-avtxt {
-      font-family: var(--mono); font-size: .74rem;
-      letter-spacing: .22em; text-transform: uppercase; color: var(--ok-ink);
+      font-family: var(--serif); font-size: clamp(1.05rem, 1.6vw, 1.15rem);
+      font-style: italic; font-weight: 400; line-height: 1.4;
+      letter-spacing: .02em; text-transform: none; color: var(--fg); white-space: nowrap;
     }
-    /* Diary-closed state — driven by DIARY_OPEN, tokenised so it flips with the theme */
-    .bk-av.closed { background: rgba(var(--warn-rgb),.07); border-color: rgba(var(--warn-rgb),.2); }
-    .bk-avdot.closed { background: var(--warn); box-shadow: 0 0 12px rgba(var(--warn-rgb),.7); }
-    .bk-avtxt.closed { color: var(--warn); }
+    /* Diary-closed state — explicit wording with warning-colour ornament rules */
+    .bk-av.closed::before, .bk-av.closed::after { background: var(--warn); }
     .bk-h2 {
       font-family: var(--serif);
       font-size: clamp(3.2rem, 9vw, 8rem);
@@ -2208,8 +2203,8 @@
     /* Animated box-shadow on fixed / always-visible elements. */
     html.lite .loc-map-wrap { transition: none; }
     /* Infinite pulses keep the compositor awake even off-screen. */
-    html.lite .fl-dot, html.lite .bk-avdot { animation: none; }
-    @media (prefers-reduced-motion: reduce) { .fl-dot, .bk-avdot { animation: none; } }
+    html.lite .fl-dot { animation: none; }
+    @media (prefers-reduced-motion: reduce) { .fl-dot { animation: none; } }
 
     /* ══════════════════════════════════════════
        RESILIENCE — if animation libs/JS fail, reveal content + drop loader
@@ -2757,9 +2752,8 @@
 
   <div class="bk-in">
 
-    <!-- Availability pill -->
+    <!-- Availability ornament -->
     <div class="bk-av">
-      <span class="bk-avdot"></span>
       <span class="bk-avtxt">Diary open</span>
     </div>
 
@@ -3335,7 +3329,7 @@ function __boot() {
   if (!window.gsap || !window.ScrollTrigger) { document.documentElement.classList.add('libs-failed'); return; }
 
   /* ═══ AVAILABILITY TOGGLE ═══
-     Set to false when not taking bookings — updates pill text + colour */
+     Set to false when not taking bookings — updates availability wording + ornament rules */
   const DIARY_OPEN = true;
 
   /* ═══ LOW-END DEVICE DETECTION ═══ */
@@ -3372,14 +3366,12 @@ function __boot() {
   ScrollTrigger.addEventListener('refresh', settleAbove);
 
 
-  /* ── Availability pill ── */
+  /* ── Availability wording and ornament rules ── */
   if (!DIARY_OPEN) {
-    const avTxt  = document.querySelector('.bk-avtxt');
-    const avDot  = document.querySelector('.bk-avdot');
-    const avPill = document.querySelector('.bk-av');
-    if (avTxt) { avTxt.textContent = 'Diary closed'; avTxt.classList.add('closed'); }
-    if (avDot)  avDot.classList.add('closed');
-    if (avPill) avPill.classList.add('closed');
+    const avTxt = document.querySelector('.bk-avtxt');
+    const avOrnament = document.querySelector('.bk-av');
+    if (avTxt) avTxt.textContent = 'Diary closed';
+    if (avOrnament) avOrnament.classList.add('closed');
   }
 
   /* Semantic loader completion is independent of animation enhancement. */
