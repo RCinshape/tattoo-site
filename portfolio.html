@@ -1107,6 +1107,9 @@
       font-family: var(--display);
       font-size: clamp(4rem,10vw,9rem);
       font-weight: 400; line-height: .9; letter-spacing: -.02em;
+      /* The display face has no italic, so the synthesized slant pushes Work's
+         top right and the plain space reads as a double gap. */
+      word-spacing: -.2em;
     }
     .h-title em { font-style: italic; color: var(--gold); }
     .h-sub {
@@ -1386,6 +1389,7 @@
       font-size: clamp(2.2rem,5vw,4rem);
       font-weight: 300; letter-spacing: -.02em; line-height: 1;
     }
+    .bc-h2 em { font-style: italic; color: var(--gold); }
     .bc-sub {
       font-size: 1rem; color: var(--fg2); max-width: 520px; line-height: 1.8;
     }
@@ -2539,7 +2543,7 @@
 
 <!-- ════ BOOK CTA ════ -->
 <section id="book-cta" aria-label="Booking call to action">
-  <h2 class="bc-h2">Get in touch.</h2>
+  <h2 class="bc-h2">Enquire about your <em>piece</em>.</h2>
   <p class="bc-sub">Send a reference, a rough sketch, or just the idea in your head. You'll get an honest answer on whether it works and what it costs, and the consultation is free.</p>
   <div class="bc-btns">
     <a href="/book" class="bc-btn bc-btn-go">
