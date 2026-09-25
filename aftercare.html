@@ -289,19 +289,22 @@
       padding: 80px var(--pad) 100px;
       background: var(--bg);
     }
+    /* Its own page now, so the title block is a centred masthead; the three
+       phase columns stay left-aligned because centred lists are unreadable. */
     .ac-hd {
-      max-width: 680px; margin-bottom: 64px;
+      max-width: 680px; margin: 0 auto 64px;
+      text-align: center;
     }
     .ac-h2 {
       font-family: var(--serif);
-      font-size: clamp(2rem,4.5vw,3.8rem);
-      font-weight: 300; letter-spacing: -.02em; line-height: 1.1;
+      font-size: clamp(2.6rem,6vw,4.6rem);
+      font-weight: 300; letter-spacing: -.02em; line-height: 1.05;
       margin-bottom: 20px;
     }
     .ac-h2 em { font-style: italic; color: var(--gold); }
     .ac-sub {
       font-family: var(--sans); font-size: 1rem;
-      color: var(--fg2); line-height: 1.8; max-width: 520px;
+      color: var(--fg2); line-height: 1.8; max-width: 520px; margin: 0 auto;
     }
     .ac-phases {
       display: grid;
@@ -341,7 +344,7 @@
       font-size: .85rem;
     }
     .ac-note {
-      margin-top: 56px;
+      margin: 56px auto 0;
       padding: 28px 32px;
       border: 1px solid var(--border);
       border-radius: var(--r);
@@ -474,7 +477,7 @@
 
       <div class="ac-phase">
         <span class="ac-phase-tag">First 24 hours</span>
-        <div class="ac-phase-title">Immediate care</div>
+        <h2 class="ac-phase-title">Immediate care</h2>
         <ul class="ac-phase-list">
           <li>Leave the wrap on for as long as specified</li>
           <li>When removing, wash gently with unscented soap and warm water</li>
@@ -485,7 +488,7 @@
 
       <div class="ac-phase">
         <span class="ac-phase-tag">24 – 72 hours</span>
-        <div class="ac-phase-title">The healing window</div>
+        <h2 class="ac-phase-title">The healing window</h2>
         <ul class="ac-phase-list">
           <li>Moisturise 2–3× daily with Palmer's Cocoa Butter</li>
           <li>Don't scratch, pick, or peel. Let it flake naturally.</li>
@@ -496,18 +499,18 @@
 
       <div class="ac-phase">
         <span class="ac-phase-tag">Long term</span>
-        <div class="ac-phase-title">Keeping it sharp</div>
+        <h2 class="ac-phase-title">Keeping it sharp</h2>
         <ul class="ac-phase-list">
           <li>SPF 30+ on healed tattoos whenever you're in the sun</li>
           <li>Keep skin moisturised. Dry skin dulls the contrast.</li>
           <li>Sunbeds and UV degrade ink faster than anything else</li>
-          <li>First touch-up is free. Get in touch when fully healed.</li>
+          <li>First touch-up is free. Message me once it's fully healed.</li>
         </ul>
       </div>
 
     </div>
-    <div class="ac-note" style="margin-left:auto;margin-right:auto;">
-      <svg class="ac-note-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <div class="ac-note">
+      <svg class="ac-note-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       <p class="ac-note-text">If you're ever unsure about how your tattoo is healing, <strong>message me directly</strong>. Don't wait, it's always better to ask early. Reach me on <a href="https://wa.me/447405979137">WhatsApp</a>.</p>
     </div>
   </section>
