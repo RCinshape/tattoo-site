@@ -3448,10 +3448,13 @@ function __boot() {
       scrollTrigger: { trigger: '#about', start: 'top 78%', once: true }
     });
 
-    /* ── Expertise — Framer clip-path wipe ── */
+    /* ── Expertise — Framer clip-path wipe ──
+       Every heading wipe keeps negative insets on the axes it does not animate
+       and clears clip-path when done: a 0 inset clips at the border box, and
+       these italic serif descenders (Q, y, p) hang below a line-height-1 box. */
     gsap.fromTo('.exp-h2',
-      { clipPath: 'inset(0 100% 0 0)' },
-      { clipPath: 'inset(0 0% 0 0)', duration: 1.3, ease: 'expo.out',
+      { clipPath: 'inset(-50% 100% -50% 0%)' },
+      { clipPath: 'inset(-50% -10% -50% 0%)', duration: 1.3, ease: 'expo.out', clearProps: 'clipPath',
         scrollTrigger: { trigger: '#exp', start: 'top 84%', once: true } }
     );
     // Rows — blur+slide on mobile
@@ -3463,8 +3466,8 @@ function __boot() {
     );
     // FAQ heading — clip-path wipe
     gsap.fromTo('.faq-h2',
-      { clipPath: 'inset(0 100% 0 0)' },
-      { clipPath: 'inset(0 0% 0 0)', duration: 1.3, ease: 'expo.out',
+      { clipPath: 'inset(-50% 100% -50% 0%)' },
+      { clipPath: 'inset(-50% -10% -50% 0%)', duration: 1.3, ease: 'expo.out', clearProps: 'clipPath',
         scrollTrigger: { trigger: '#faq', start: 'top 84%', once: true } }
     );
     // FAQ items scroll-in: slide from left
@@ -3514,15 +3517,15 @@ function __boot() {
 
     /* ── Framer: clip-path wipe on booking heading ── */
     gsap.fromTo('.bk-h2',
-      { clipPath: 'inset(0 0 100% 0)' },
-      { clipPath: 'inset(0 0 0% 0)', duration: 1.4, ease: 'expo.out',
+      { clipPath: 'inset(-25% -10% 100% -10%)' },
+      { clipPath: 'inset(-25% -10% -25% -10%)', duration: 1.4, ease: 'expo.out', clearProps: 'clipPath',
         scrollTrigger: { trigger: '#book', start: 'top 82%', once: true } }
     );
 
     /* ── Framer: trust heading clip reveal ── */
     gsap.fromTo('#trust .tr-h2',
-      { clipPath: 'inset(0 100% 0 0)' },
-      { clipPath: 'inset(0 0% 0 0)', duration: 1.3, ease: 'expo.out',
+      { clipPath: 'inset(-50% 100% -50% 0%)' },
+      { clipPath: 'inset(-50% -10% -50% 0%)', duration: 1.3, ease: 'expo.out', clearProps: 'clipPath',
         scrollTrigger: { trigger: '#trust', start: 'top 84%', once: true } }
     );
 
