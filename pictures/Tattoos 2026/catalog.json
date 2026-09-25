@@ -1,0 +1,703 @@
+[
+  {
+    "original": "IMG_0062.HEIC",
+    "file": "Abstract-Flowing-Flower-Upper-Arm-Tattoo.heic",
+    "styles": [
+      "fine-line"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Fine-Line-Abstract-Continuous-Flower-Tattoo",
+    "alt": "Fine-line abstract flower with a long flowing stem on the upper arm."
+  },
+  {
+    "original": "IMG_0481.HEIC",
+    "file": "Red-And-Black-Abstract-Back-Tattoo.heic",
+    "styles": [
+      "fine-line",
+      "ornamental"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Red-And-Black-Abstract-Back-Tattoo",
+    "alt": "Flowing red and black abstract linework across the back."
+  },
+  {
+    "original": "IMG_0500.HEIC",
+    "file": "Floral-Horse-Head-Forearm-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Floral-Horse-Head-Forearm-Tattoo",
+    "alt": "Fine-line horse head outlined with small flowers on the forearm."
+  },
+  {
+    "original": "IMG_0594.HEIC",
+    "file": "Spotted-Shark-Upper-Arm-Tattoo.heic",
+    "styles": [
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "fine-line-spotted-shark-arm-tattoo-emmy-tattoo",
+    "alt": "Spotted shark with a long curved tail and dotwork shading on the upper arm."
+  },
+  {
+    "original": "IMG_0881.HEIC",
+    "file": "Floral-Paw-Print-Forearm-Tattoo.heic",
+    "styles": [
+      "fine-line",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Floral-Paw-Print-Forearm-Tattoo",
+    "alt": "Paw-print outline formed from small flowers and leaves on the forearm."
+  },
+  {
+    "original": "IMG_1186.JPG",
+    "file": "Dragon-Wave-Geometric-Arm-Tattoo.jpg",
+    "styles": [
+      "illustrative",
+      "ornamental"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Dragon-Wave-Geometric-Arm-Tattoo",
+    "alt": "Black and grey coiled dragon with a wave vignette and geometric details along the arm."
+  },
+  {
+    "original": "IMG_1261.png",
+    "file": "Romantic-Kiss-Colour-Painting-Calf-Tattoo.jpg",
+    "styles": [
+      "fine-art",
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Romantic-Kiss-Colour-Painting-Calf-Tattoo",
+    "alt": "Small colour painting of an embracing couple kissing, set in a rectangular panel on the calf."
+  },
+  {
+    "original": "IMG_1300.png",
+    "file": "Lotus-Ornamental-Spine-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "ornamental"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Lotus-Ornamental-Spine-Tattoo",
+    "alt": "Fine-line lotus centred on a long vertical chain of ornamental marks along the spine."
+  },
+  {
+    "original": "IMG_1349.JPG",
+    "file": "Snake-Red-Flowers-Thigh-Tattoo.jpg",
+    "styles": [
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Snake-Red-Flowers-Thigh-Tattoo",
+    "alt": "Black snake winding among red and black outlined flowers on the thigh."
+  },
+  {
+    "original": "IMG_1494.JPG",
+    "file": "Fallen-Angel-Eyes-Colour-Arm-Tattoo.jpg",
+    "styles": [
+      "fine-art",
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Fallen-Angel-Eyes-Colour-Arm-Tattoo",
+    "alt": "Colour painting detail of the Fallen Angel's eyes above a bent arm, tattooed in a rectangular panel."
+  },
+  {
+    "original": "IMG_1609.JPG",
+    "file": "Astronaut-Planets-Rib-Tattoo.jpg",
+    "styles": [
+      "illustrative",
+      "ornamental"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Astronaut-Planets-Rib-Tattoo",
+    "alt": "Shaded astronaut surrounded by planets, orbital lines and a ringed planet along the ribs."
+  },
+  {
+    "original": "IMG_1651.JPG",
+    "file": "Abstract-Flower-Shoulder-Blade-Tattoo.jpg",
+    "styles": [
+      "fine-line"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Abstract-Flower-Shoulder-Blade-Tattoo",
+    "alt": "Large fine-line abstract flower with elongated petals across the shoulder blade."
+  },
+  {
+    "original": "IMG_1678.JPG",
+    "file": "Flowing-Flower-Ornamental-Spine-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "ornamental"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Flowing-Flower-Ornamental-Spine-Tattoo",
+    "alt": "Fine-line flower woven into flowing ornamental lines down the upper spine."
+  },
+  {
+    "original": "IMG_1701.JPG",
+    "file": "Two-Penguins-Forearm-Tattoo.jpg",
+    "styles": [
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Two-Penguins-Forearm-Tattoo",
+    "alt": "Two small black and grey penguins in different poses on the forearm."
+  },
+  {
+    "original": "IMG_1791.JPG",
+    "file": "Surreal-Face-Snake-Hand-Tattoo.jpg",
+    "styles": [
+      "realism",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "surreal-face-snake-hand-tattoo-emmy-tattoo",
+    "alt": "Black and grey woman's face with blank eyes and a snake winding across the mouth on the back of the hand."
+  },
+  {
+    "original": "IMG_1802.JPG",
+    "file": "Paw-Print-Animal-Eyes-Upper-Arm-Tattoo.jpg",
+    "styles": [
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Paw-Print-Animal-Eyes-Upper-Arm-Tattoo",
+    "alt": "Textured paw print incorporating two green animal eyes on the upper arm."
+  },
+  {
+    "original": "IMG_1819.JPG",
+    "file": "Fine-Line-Folding-Fan-Forearm-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Fine-Line-Folding-Fan-Forearm-Tattoo",
+    "alt": "Delicate outline of an open folding hand fan near the elbow."
+  },
+  {
+    "original": "IMG_1930.JPG",
+    "file": "Gold-Framed-Woman-Flowers-Calf-Tattoo.jpg",
+    "styles": [
+      "fine-art",
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Gold-Framed-Woman-Flowers-Calf-Tattoo",
+    "alt": "Colour portrait detail of a woman holding flowers inside an ornate gold oval frame on the calf."
+  },
+  {
+    "original": "IMG_2031.JPG",
+    "file": "Fox-Wildflowers-Forearm-Tattoo.jpg",
+    "styles": [
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Fox-Wildflowers-Forearm-Tattoo",
+    "alt": "Illustrative fox surrounded by outlined wildflowers and leaves along the forearm."
+  },
+  {
+    "original": "IMG_2174.JPG",
+    "file": "Illustrated-Bird-Ring-Forearm-Tattoo.jpg",
+    "styles": [
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Illustrated-Bird-Ring-Forearm-Tattoo",
+    "alt": "Black etched-style bird holding a ring on a cord in a small scene on the forearm."
+  },
+  {
+    "original": "IMG_2203.JPG",
+    "file": "Shaded-Abstract-Flower-Upper-Arm-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Shaded-Abstract-Flower-Upper-Arm-Tattoo",
+    "alt": "Large shaded flower with translucent-looking petals and flowing fine-line leaves on the upper arm."
+  },
+  {
+    "original": "IMG_2221.JPG",
+    "file": "Classical-Warrior-Spear-Shield-Arm-Tattoo.jpg",
+    "styles": [
+      "fine-art",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Classical-Warrior-Spear-Shield-Arm-Tattoo",
+    "alt": "Classical helmeted warrior with a spear and decorated shield over geometric linework on the upper arm."
+  },
+  {
+    "original": "IMG_2278.JPG",
+    "file": "Ellie-The-Last-Of-Us-Portrait-Calf-Tattoo.jpg",
+    "styles": [
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Ellie-The-Last-Of-Us-Portrait-Calf-Tattoo",
+    "alt": "Black and grey Ellie portrait with the Firefly symbol and two figures in a forest scene on the calf."
+  },
+  {
+    "original": "IMG_2330.JPG",
+    "file": "Framed-Water-Lily-Pond-Calf-Tattoo-Wide-View.jpg",
+    "styles": [
+      "fine-art"
+    ],
+    "healing": "fresh-looking",
+    "publish": false,
+    "assetBase": null,
+    "alt": "Wide view of a colour water-lily pond painting inside an ornate gold oval frame on the calf."
+  },
+  {
+    "original": "IMG_2338.JPG",
+    "file": "Framed-Water-Lily-Pond-Calf-Tattoo.jpg",
+    "styles": [
+      "fine-art"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Framed-Water-Lily-Pond-Calf-Tattoo",
+    "alt": "Colour water-lily pond painting inside an ornate gold oval frame on the calf."
+  },
+  {
+    "original": "IMG_2394.JPG",
+    "file": "Dragon-Pink-Blossoms-Forearm-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Dragon-Pink-Blossoms-Forearm-Tattoo",
+    "alt": "Slender outlined dragon winding among pink blossoms down the forearm."
+  },
+  {
+    "original": "IMG_2468.JPG",
+    "file": "Matching-Insect-Chains-Forearm-Tattoos.jpg",
+    "styles": [
+      "fine-line",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Matching-Insect-Chains-Forearm-Tattoos",
+    "alt": "Matching chains of small insect motifs and star-like marks across two forearms."
+  },
+  {
+    "original": "IMG_2473.JPG",
+    "file": "Insect-Chain-Moth-Forearm-Tattoo-Detail.jpg",
+    "styles": [
+      "fine-line",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": false,
+    "assetBase": null,
+    "alt": "Close view of the moth and small insect motifs in one matching forearm chain."
+  },
+  {
+    "original": "IMG_2474.JPG",
+    "file": "Insect-Chain-Beetle-Forearm-Tattoo-Detail.jpg",
+    "styles": [
+      "fine-line",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": false,
+    "assetBase": null,
+    "alt": "Close view of beetle motifs and star-like marks in the other matching forearm chain."
+  },
+  {
+    "original": "IMG_2582.JPG",
+    "file": "Symbolic-Geometric-Upper-Arm-Tattoo.jpg",
+    "styles": [
+      "illustrative",
+      "ornamental"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Symbolic-Geometric-Upper-Arm-Tattoo",
+    "alt": "Symbolic upper-arm composition with a horned figure, radiant eye, geometric patterns, tree and crystals."
+  },
+  {
+    "original": "IMG_2596.JPG",
+    "file": "Crescent-Moon-Stars-Date-Forearm-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "ornamental",
+      "lettering"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Crescent-Moon-Stars-Date-Forearm-Tattoo",
+    "alt": "Fine-line crescent moon with small stars, dots and a date on the forearm."
+  },
+  {
+    "original": "IMG_2600.JPG",
+    "file": "Baby-Footprint-Name-Moon-Forearm-Tattoo.jpg",
+    "styles": [
+      "realism",
+      "lettering"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Baby-Footprint-Name-Moon-Forearm-Tattoo",
+    "alt": "Shaded baby footprint above a name and date, with a small crescent moon on the forearm."
+  },
+  {
+    "original": "IMG_2668.JPG",
+    "file": "Curled-Fantasy-Creature-Forearm-Tattoo.jpg",
+    "styles": [
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Curled-Fantasy-Creature-Forearm-Tattoo",
+    "alt": "Small curled fantasy creature rendered with etched-style hatching on the lower forearm."
+  },
+  {
+    "original": "IMG_2686.JPG",
+    "file": "Antlered-Fantasy-Creatures-Forearm-Band-Tattoo.jpg",
+    "styles": [
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Antlered-Fantasy-Creatures-Forearm-Band-Tattoo",
+    "alt": "Band of antlered fantasy creatures with patterned legs and small plants around the forearm."
+  },
+  {
+    "original": "IMG_2755.JPG",
+    "file": "Woman-Smelling-Roses-Colour-Arm-Tattoo.jpg",
+    "styles": [
+      "fine-art",
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Woman-Smelling-Roses-Colour-Arm-Tattoo",
+    "alt": "Colour profile of a woman smelling red roses against a dark oval background on the arm."
+  },
+  {
+    "original": "IMG_7572.HEIC",
+    "file": "Classical-Facing-Portraits-Oval-Leg-Tattoo.heic",
+    "styles": [
+      "fine-art",
+      "realism"
+    ],
+    "healing": "uncertain",
+    "publish": true,
+    "assetBase": "Classical-Facing-Portraits-Oval-Leg-Tattoo",
+    "alt": "Two facing classical sculptural portraits inside a dark oval on the leg."
+  },
+  {
+    "original": "IMG_7607.HEIC",
+    "file": "Handwritten-Numbers-Forearm-Tattoo.heic",
+    "styles": [
+      "fine-line",
+      "lettering"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Handwritten-Numbers-Forearm-Tattoo",
+    "alt": "Small handwritten numerals just below the inner elbow."
+  },
+  {
+    "original": "IMG_7857.HEIC",
+    "file": "Heart-Pocket-Watch-Roses-Forearm-Tattoo.heic",
+    "styles": [
+      "illustrative"
+    ],
+    "healing": "uncertain",
+    "publish": true,
+    "assetBase": "Heart-Pocket-Watch-Roses-Forearm-Tattoo",
+    "alt": "Heart-shaped pocket watch with Roman numerals, roses, a flower and a looping chain on the forearm."
+  },
+  {
+    "original": "IMG_7973.HEIC",
+    "file": "Flowers-Face-Outline-Script-Spine-Tattoo.heic",
+    "styles": [
+      "fine-line",
+      "lettering"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Flowers-Face-Outline-Script-Spine-Tattoo",
+    "alt": "Fine-line flowers flowing into a face outline and script down the spine."
+  },
+  {
+    "original": "IMG_8008.HEIC",
+    "file": "Flowing-Floral-Stems-Shoulder-Tattoo.heic",
+    "styles": [
+      "fine-line",
+      "ornamental"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Flowing-Floral-Stems-Shoulder-Tattoo",
+    "alt": "Fine-line flowers on long looping stems across the upper back and shoulder."
+  },
+  {
+    "original": "IMG_8083.HEIC",
+    "file": "Bearded-Classical-Figure-Waves-Forearm-Tattoo.jpg",
+    "styles": [
+      "fine-art",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Bearded-Classical-Figure-Waves-Forearm-Tattoo",
+    "alt": "Bearded classical figure surrounded by curling waves, celestial marks and script on the forearm."
+  },
+  {
+    "original": "IMG_8125.HEIC",
+    "file": "Cherub-Painting-Script-Collarbone-Tattoo.heic",
+    "styles": [
+      "fine-art",
+      "lettering"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Cherub-Painting-Script-Collarbone-Tattoo",
+    "alt": "Small black and grey cherub painting with cursive lettering beneath it near the collarbone."
+  },
+  {
+    "original": "IMG_8466.HEIC",
+    "file": "Bonnie-Pug-Portrait-Flowers-Thigh-Tattoo.heic",
+    "styles": [
+      "realism"
+    ],
+    "healing": "uncertain",
+    "publish": true,
+    "assetBase": "Pug-Dog-Portrait-Floral-Thigh-Tattoo",
+    "alt": "Realistic pug portrait with flowers, hearts and the name Bonnie on the thigh."
+  },
+  {
+    "original": "IMG_8539.HEIC",
+    "file": "Tiger-Portrait-Claws-Hand-Wrist-Tattoo.jpg",
+    "styles": [
+      "realism"
+    ],
+    "healing": "healed-looking",
+    "publish": true,
+    "assetBase": "Tiger-Portrait-Claws-Hand-Wrist-Tattoo",
+    "alt": "Black and grey tiger face across the wrist with a clawed paw on the back of the hand."
+  },
+  {
+    "original": "IMG_8620.HEIC",
+    "file": "Barn-Owl-Spread-Wings-Upper-Back-Tattoo.heic",
+    "styles": [
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Barn-Owl-Spread-Wings-Upper-Back-Tattoo",
+    "alt": "Black and grey barn owl with wings spread across the upper back."
+  },
+  {
+    "original": "IMG_8757.png",
+    "file": "Hermes-Classical-Geometric-Forearm-Tattoo.png",
+    "styles": [
+      "fine-art",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Classical-Mythology-Hermes-Fine-Art-Tattoo",
+    "alt": "Classical Hermes figure with a winged cap, geometric lines and script on the forearm."
+  },
+  {
+    "original": "IMG_8844_SnapseedCopy.heic",
+    "file": "Wolf-Clock-Forest-Forearm-Tattoo-Alternate-Encoding.heic",
+    "styles": [
+      "realism"
+    ],
+    "healing": "uncertain",
+    "publish": false,
+    "assetBase": null,
+    "alt": "Wolf portrait above a forest, howling wolf and moon, with a broken Roman numeral clock on the forearm."
+  },
+  {
+    "original": "IMG_8844_SnapseedCopy.png",
+    "file": "Wolf-Clock-Forest-Forearm-Tattoo.jpg",
+    "styles": [
+      "realism"
+    ],
+    "healing": "uncertain",
+    "publish": true,
+    "assetBase": "Wolf-Portrait-Clock-Forest-Forearm-Tattoo",
+    "alt": "Wolf portrait above a forest, howling wolf and moon, with a broken Roman numeral clock on the forearm."
+  },
+  {
+    "original": "IMG_9286.HEIC",
+    "file": "Five-Cat-Portraits-Upper-Arm-Tattoo.heic",
+    "styles": [
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo",
+    "alt": "Five shaded cat portraits with their names arranged down the upper arm."
+  },
+  {
+    "original": "IMG_9387.HEIC",
+    "file": "Flowing-Lilies-Shoulder-Blade-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "ornamental"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Flowing-Lilies-Shoulder-Blade-Tattoo",
+    "alt": "Three fine-line lilies with long curling petals and stems across the shoulder blade."
+  },
+  {
+    "original": "IMG_9398.HEIC",
+    "file": "Small-Handwritten-Word-Arm-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "lettering"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Small-Handwritten-Word-Arm-Tattoo",
+    "alt": "Small handwritten word above the inner elbow, with a floral tattoo visible below."
+  },
+  {
+    "original": "IMG_9451.HEIC",
+    "file": "Marley-Black-Pug-Flowers-Thigh-Tattoo.jpg",
+    "styles": [
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Black-Pug-Portrait-Tattoo-With-Daisies",
+    "alt": "Realistic black pug portrait with daisies, a rose and the name Marley on the thigh."
+  },
+  {
+    "original": "IMG_9530.HEIC",
+    "file": "Thresher-Shark-Upper-Arm-Tattoo.jpg",
+    "styles": [
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Realistic-Thresher-Shark-Tattoo-Marine-Life",
+    "alt": "Shaded thresher shark swimming down the upper arm with its long tail curving upward."
+  },
+  {
+    "original": "IMG_9539.HEIC",
+    "file": "Flying-Barn-Owl-Upper-Arm-Tattoo.jpg",
+    "styles": [
+      "realism"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Flying-Barn-Owl-Black-and-Grey-Tattoo",
+    "alt": "Black and grey barn owl in flight on the upper arm."
+  },
+  {
+    "original": "IMG_9691.HEIC",
+    "file": "Floral-Heart-Moon-Stars-Script-Forearm-Tattoo.heic",
+    "styles": [
+      "fine-line",
+      "ornamental",
+      "lettering"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Floral-Heart-Moon-Stars-Script-Forearm-Tattoo",
+    "alt": "Floral heart surrounding script, with hanging stars and a crescent moon on the forearm."
+  },
+  {
+    "original": "IMG_9701.HEIC",
+    "file": "Wildflowers-Bats-Forearm-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Wildflowers-Bats-Forearm-Tattoo",
+    "alt": "Fine-line wildflowers and tall stems with small flying bats along the forearm."
+  },
+  {
+    "original": "IMG_9716.HEIC",
+    "file": "Wildflowers-Bats-Thigh-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "illustrative"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Wildflowers-Bats-Thigh-Tattoo",
+    "alt": "Fine-line wildflowers and tall stems with small flying bats on the thigh."
+  },
+  {
+    "original": "IMG_9772.png",
+    "file": "Lotus-Script-Ornamental-Spine-Tattoo.jpg",
+    "styles": [
+      "fine-line",
+      "ornamental",
+      "lettering"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Lotus-Script-Ornamental-Spine-Tattoo",
+    "alt": "Fine-line lotus above vertical script and delicate ornamental marks down the spine."
+  },
+  {
+    "original": "IMG_9781.HEIC",
+    "file": "Lotus-Script-Ornamental-Spine-Tattoo-Alternate-View.heic",
+    "styles": [
+      "fine-line",
+      "ornamental",
+      "lettering"
+    ],
+    "healing": "fresh-looking",
+    "publish": false,
+    "assetBase": null,
+    "alt": "Alternate view of a fine-line lotus above vertical script and ornamental marks down the spine."
+  },
+  {
+    "original": "IMG_9816.HEIC",
+    "file": "Lion-Tree-Geometric-Lower-Leg-Tattoo.jpg",
+    "styles": [
+      "realism",
+      "ornamental"
+    ],
+    "healing": "fresh-looking",
+    "publish": true,
+    "assetBase": "Lion-Tree-Geometric-Lower-Leg-Tattoo",
+    "alt": "Lion portrait with a rooted tree, script, a key and geometric details along the lower leg."
+  }
+]

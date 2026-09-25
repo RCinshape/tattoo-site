@@ -179,6 +179,60 @@ test('responsive generator replaces stale variants, preserves originals and gray
   }
 });
 
+test('catalog selects the curated source, preserves alternates and applies EXIF orientation', async t => {
+  const script = 'make-webp-variants.js';
+  const root = fixture(t, script);
+  const pictures = path.join(root, 'pictures');
+  const intake = path.join(pictures, 'Tattoos 2026');
+  fs.mkdirSync(intake, { recursive: true });
+  const base = 'Fine-Line-Abstract-Continuous-Flower-Tattoo';
+  const flat = path.join(pictures, `${base}.png`);
+  const selected = path.join(intake, 'Selected.jpg');
+  const alternate = path.join(intake, 'Alternate.png');
+  await solid(flat, 80, 40, '#0000ff');
+  const red = await sharp({ create: { width: 40, height: 40, channels: 3, background: '#ff0000' } }).png().toBuffer();
+  await sharp({ create: { width: 80, height: 40, channels: 3, background: '#00ff00' } })
+    .composite([{ input: red, left: 0, top: 0 }]).withMetadata({ orientation: 6 }).jpeg().toFile(selected);
+  await solid(alternate, 20, 20, '#0000ff');
+  const row = { original: 'Old.jpg', file: 'Selected.jpg', styles: ['fine-line'], healing: 'uncertain', publish: true, assetBase: base, alt: 'Selected photograph.' };
+  fs.writeFileSync(path.join(intake, 'catalog.json'), JSON.stringify([
+    row, { ...row, file: 'Alternate.png', publish: false, assetBase: null }
+  ]));
+  const before = [flat, selected, alternate].map(hash);
+  const result = run(root, script);
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual([flat, selected, alternate].map(hash), before);
+  for (const width of [480, 960, 1440]) {
+    const output = path.join(pictures, 'web', `${base}-${width}.webp`);
+    const image = await decoded(output);
+    assert.equal(image.info.width, 40);
+    assert.equal(image.info.height, 80);
+    dominant(pixel(image, 20, 10), 0);
+    dominant(pixel(image, 20, 70), 1);
+    assert.equal((await sharp(fs.readFileSync(output)).metadata()).exif, undefined);
+    assert.equal(fs.existsSync(path.join(pictures, 'web', `Alternate-${width}.webp`)), false);
+  }
+});
+
+test('catalog rejects missing selected sources and ambiguous output bases before writing', async t => {
+  for (const kind of ['missing', 'duplicate', 'collision']) {
+    await t.test(kind, async t => {
+      const script = 'make-webp-variants.js';
+      const root = fixture(t, script);
+      const pictures = path.join(root, 'pictures');
+      const intake = path.join(pictures, 'Tattoos 2026');
+      fs.mkdirSync(intake, { recursive: true });
+      const row = { original: 'Old.png', file: 'Selected.png', styles: ['realism'], healing: 'uncertain', publish: true, assetBase: 'Selected', alt: 'Selected photograph.' };
+      if (kind !== 'missing') await solid(path.join(intake, row.file), 20, 20, '#ff0000');
+      if (kind === 'collision') await solid(path.join(pictures, 'Selected.png'), 20, 20, '#0000ff');
+      const rows = kind === 'duplicate' ? [row, { ...row, assetBase: 'SELECTED' }] : [row];
+      fs.writeFileSync(path.join(intake, 'catalog.json'), JSON.stringify(rows));
+      assert.notEqual(run(root, script).status, 0);
+      assert.equal(fs.existsSync(path.join(pictures, 'web')), false);
+    });
+  }
+});
+
 test('avatar generator regenerates a centred cover crop without modifying sources or unrelated files', async t => {
   const script = 'make-avatar-thumbs.js';
   const root = fixture(t, script);
