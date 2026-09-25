@@ -19,8 +19,8 @@ function fixture(t, script) {
   return root;
 }
 
-function run(root, script) {
-  const result = spawnSync(process.execPath, [path.join(root, 'scripts', script)], {
+function run(root, script, ...args) {
+  const result = spawnSync(process.execPath, [path.join(root, 'scripts', script), ...args], {
     // Deliberately not the fixture root: scripts must resolve their own inputs.
     cwd: os.tmpdir(),
     env: { ...process.env, NODE_PATH: path.join(project, 'node_modules') },
@@ -298,6 +298,79 @@ test('image generators fail on bad input and inaccessible output instead of repo
       assert.notEqual(run(root, script).status, 0);
       assert.equal(hash(source), before);
       assert.equal(fs.readFileSync(path.join(sourceDir, 'web'), 'utf8'), 'not a directory');
+    });
+  }
+});
+
+const scored = (assetBase, complexity, colour, extra = {}) => ({
+  file: 'x.jpg', styles: ['realism'], healing: 'uncertain', complexity, colour, publish: true, assetBase, alt: 'x', ...extra,
+});
+
+function portfolioFixture(t, rows, cardBases, mediaBases = cardBases) {
+  const root = fixture(t, 'order-portfolio.js');
+  fs.mkdirSync(path.join(root, 'pictures', 'Tattoos 2026'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'pictures', 'Tattoos 2026', 'catalog.json'), JSON.stringify(rows));
+  const url = b => `https://emmytattoo.com/pictures/web/${b}-1440.webp`;
+  const gallery = { '@context': 'https://schema.org', '@type': 'ImageGallery', associatedMedia: mediaBases.map(b => ({ '@type': 'ImageObject', contentUrl: url(b) })) };
+  const cards = cardBases.map((b, i) => `  <div class="pw-item" data-src="pictures/web/${b}-1440.webp">\n    <img alt="${b}"${i ? ' loading="lazy"' : ' fetchpriority="high"'} decoding="async">\n  </div>`);
+  fs.writeFileSync(path.join(root, 'portfolio.html'), '<head>\n  <script type="application/ld+json">\n'
+    + JSON.stringify(gallery, null, 2).split('\n').map(l => '  ' + l).join('\n')
+    + '\n  </script>\n</head>\n<main id="pw-grid" aria-label="Portfolio">\n\n  <!-- prefix -->\n'
+    + cards.join('\n\n') + '\n\n  <div id="pw-gate" hidden></div>\n</main>\n');
+  fs.writeFileSync(path.join(root, 'sitemap.xml'), '<urlset>\n  <url>\n    <loc>https://emmytattoo.com/portfolio</loc>\n    <priority>0.8</priority>\n'
+    + mediaBases.map(b => `    <image:image>\n      <image:loc>${url(b)}</image:loc>\n    </image:image>\n`).join('')
+    + '  </url>\n</urlset>\n');
+  return root;
+}
+
+function portfolioOrder(root) {
+  const html = fs.readFileSync(path.join(root, 'portfolio.html'), 'utf8');
+  const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
+  const gallery = JSON.parse(html.match(/<script type="application\/ld\+json">\n([\s\S]*?)\n  <\/script>/)[1]);
+  return {
+    html,
+    cards: [...html.matchAll(/data-src="pictures\/web\/([^"]+)-1440\.webp"/g)].map(m => m[1]),
+    media: gallery.associatedMedia.map(item => item.contentUrl.match(/web\/(.+)-1440\.webp$/)[1]),
+    sitemap: [...sitemap.matchAll(/<image:loc>[^<]*\/web\/([^<]+)-1440\.webp<\/image:loc>/g)].map(m => m[1]),
+  };
+}
+
+test('portfolio order ranks by complexity plus colour, then complexity, then catalog position', t => {
+  const rows = [scored('A', 2, 2), scored('B', 1, 3), { file: 'y.jpg', publish: false, assetBase: 'Hidden' }, scored('C', 3, 1), scored('D', 4, 4)];
+  const root = portfolioFixture(t, rows, ['A', 'B', 'C', 'D']);
+  assert.notEqual(run(root, 'order-portfolio.js', '--check').status, 0);
+  const result = run(root, 'order-portfolio.js');
+  assert.equal(result.status, 0, result.stderr);
+  const ordered = portfolioOrder(root);
+  const expected = ['D', 'C', 'A', 'B'];
+  assert.deepEqual(ordered.cards, expected);
+  assert.deepEqual(ordered.media, expected);
+  assert.deepEqual(ordered.sitemap, expected);
+  assert.equal(ordered.html.split('fetchpriority="high"').length, 2);
+  assert.match(ordered.html, /D-1440\.webp">\n    <img alt="D" fetchpriority="high" decoding="async">/);
+  assert.match(ordered.html, /A-1440\.webp">\n    <img alt="A" loading="lazy" decoding="async">/);
+  const check = run(root, 'order-portfolio.js', '--check');
+  assert.equal(check.status, 0, check.stderr);
+  const before = [hash(path.join(root, 'portfolio.html')), hash(path.join(root, 'sitemap.xml'))];
+  assert.equal(run(root, 'order-portfolio.js').status, 0);
+  assert.deepEqual([hash(path.join(root, 'portfolio.html')), hash(path.join(root, 'sitemap.xml'))], before);
+});
+
+test('portfolio order rejects unscored or mismatched pieces without writing', async t => {
+  for (const [name, rows, cards, reason] of [
+    ['published row missing colour', [scored('A', 2, 2), scored('B', 3, undefined)], ['A', 'B'], /invalid portfolio score.*: B/],
+    ['complexity above 5', [scored('A', 2, 2), scored('B', 6, 1)], ['A', 'B'], /invalid portfolio score.*: B/],
+    ['card without a published row', [scored('A', 2, 2), scored('B', 3, 1, { publish: false })], ['A', 'B'], /Portfolio cards .*unexpected \[B\]/],
+    ['published row without a card', [scored('A', 2, 2), scored('B', 3, 1)], ['A'], /Portfolio cards .*missing \[B\]/],
+  ]) {
+    await t.test(name, t => {
+      const root = portfolioFixture(t, rows, cards, ['A', 'B']);
+      const files = ['portfolio.html', 'sitemap.xml'].map(f => path.join(root, f));
+      const before = files.map(hash);
+      const result = run(root, 'order-portfolio.js');
+      assert.notEqual(result.status, 0);
+      assert.match(result.stderr, reason);
+      assert.deepEqual(files.map(hash), before);
     });
   }
 });

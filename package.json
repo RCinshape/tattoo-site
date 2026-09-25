@@ -1,7 +1,8 @@
 {
   "scripts": {
     "build:images": "node scripts/make-webp-variants.js",
-    "check": "node scripts/check-balance.js && node scripts/check-inline-js.js && node scripts/make-security-headers.js --check",
+    "check": "node scripts/check-balance.js && node scripts/check-inline-js.js && node scripts/make-security-headers.js --check && node scripts/order-portfolio.js --check",
+    "order:portfolio": "node scripts/order-portfolio.js",
     "test": "node --test tests/*.test.cjs tests/*.test.mjs",
     "check:reviews-live": "node scripts/check-review-feed.js",
     "serve": "npx serve ."
