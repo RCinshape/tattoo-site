@@ -304,11 +304,11 @@
     .hero-bg-photo img { opacity: 1 !important; }
     #nav { background: rgba(var(--panel-rgb),.92) !important; border-bottom-color: var(--border) !important; }
     #nav :is(.n-logo, .n-links, .n-actions) { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
-    :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
+    :is(.h-eyebrow, .tl-i, .h-sub, .h-cta,
         .bk-av, .bk-sub, .bk-cta, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .fl-left,
-        .exp-h2, .faq-h2, .bk-h2) {
+        .faq-h2, .bk-h2) {
       opacity: 1 !important; transform: none !important;
       filter: none !important; clip-path: none !important;
     }
@@ -501,8 +501,6 @@
       --img-hero:     grayscale(1) brightness(.42) contrast(1.08);
       --img-card:     brightness(.9) saturate(.75);
       --img-card-h:   brightness(1) saturate(.9);
-      --img-exp:      brightness(.8) saturate(.6);
-      --img-exp-open: brightness(.92) saturate(.8);
       --img-avatar:   grayscale(.5);
       --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22' viewBox='0 0 18 22'%3E%3Cpath d='M0 0L0 18L5 13L8 20L11 18.5L8 11.5L14 11.5Z' fill='%23c4a262' stroke='%23080705' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
       --r:        12px;
@@ -1181,225 +1179,6 @@
     }
 
     /* ══════════════════════════════════════════
-       EXPERTISE
-    ══════════════════════════════════════════ */
-    #exp {
-      padding: 44px var(--pad) 100px;
-      background: var(--bg);
-      border-top: 1px solid transparent;
-      border-image: var(--seam) 1;
-    }
-    .exp-hd { margin-bottom: 48px; }
-    .exp-h2 {
-      font-size: clamp(1.9rem,4.5vw,3.8rem);
-    }
-    /* ── Expertise — same accordion mechanic as the FAQ further down ── */
-    .exp-list { list-style: none; }
-    .ei {
-      position: relative; overflow: hidden;
-      border-top: 1px solid var(--border);
-      opacity: 0;
-      isolation: isolate;
-    }
-    .ei:last-child { border-bottom: 1px solid var(--border); }
-    /* Opening a row lights it with a wash that dissolves before the gutters, so
-       the highlight reads as leaking off both sides rather than ending on a hard
-       edge. Shared with .fq-item in the FAQ block below — one rule, because the
-       two accordions must light identically. --fg-rgb is the token for faint
-       washes; --panel-rgb would paint a visible grey shape over the page. */
-    .ei::before,
-    .fq-item::before {
-      content: ''; position: absolute; inset: 0; z-index: -1;
-      opacity: 0; pointer-events: none;
-      background: linear-gradient(90deg,
-        rgba(var(--fg-rgb),0)    0%,
-        rgba(var(--fg-rgb),.045) 20%,
-        rgba(var(--fg-rgb),.045) 80%,
-        rgba(var(--fg-rgb),0)   100%);
-      transition: opacity var(--ios-t-out) var(--ios);
-    }
-    .ei.open::before,
-    .fq-item.open::before {
-      opacity: 1;
-      transition-duration: var(--ios-t);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .ei::before, .fq-item::before,
-      .ei.open::before, .fq-item.open::before { transition: none; }
-    }
-    /* Two-column copy of .fq-trigger, minus the numeral: numbering three styles
-       would read as a ranking of them. */
-    .ei-trigger {
-      display: grid; grid-template-columns: 1fr auto;
-      align-items: center; gap: 0 2.5rem;
-      padding: 30px 0; width: 100%;
-      background: none; border: none; color: inherit; font: inherit;
-      text-align: left; cursor: pointer;
-    }
-    .ei-name {
-      display: block;
-      font-family: var(--serif);
-      font-size: clamp(2rem, 4.2vw, 3.8rem);
-      font-weight: 300; font-style: italic;
-      color: var(--fg); line-height: 1;
-    }
-
-    /* The +/x spin is CSS, like the FAQ's — no GSAP tween, so nothing inline can
-       strand across a theme flip. */
-    .ei-toggle {
-      width: 38px; height: 38px; flex-shrink: 0;
-      border: 1px solid var(--border); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.25rem; line-height: 1; color: var(--dim);
-      transition: border-color .35s, color .35s, background .35s,
-                  transform .5s cubic-bezier(.34,1.56,.64,1);
-    }
-    .ei:hover .ei-toggle { border-color: rgba(var(--gold-rgb),.45); color: var(--gold); }
-    .ei.open  .ei-toggle {
-      border-color: var(--gold); color: var(--gold);
-      background: rgba(var(--gold-rgb),.08); transform: rotate(45deg);
-    }
-
-    /* Expand panel */
-    .ei-expand {
-      height: 0; overflow: hidden;
-    }
-    .ei-expand-inner {
-      display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
-      gap: 44px; align-items: stretch;
-      padding: 4px 0 44px;
-    }
-    .ei-expand-text {
-      font-family: var(--sans);
-      font-size: 1.05rem; color: var(--fg2);
-      /* 50ch, not 56 — DM Sans's `0` advance is 11.5px at this size (~1.4x its
-         average lowercase width), so 56ch measured 645px / 76 characters a line.
-         50ch lands at 576px, the measure this was specced for. */
-      line-height: 1.9; max-width: 50ch;
-    }
-    /* Copy at the top, CTA pushed to the bottom, so the text column brackets the
-       image's full height instead of leaving a void under one short sentence. */
-    .ei-expand-body {
-      display: flex; flex-direction: column; align-items: flex-start;
-    }
-    /* align-self:start against the grid's align-items:stretch keeps the image at
-       exactly 240×320 while the body stretches to the row height — otherwise a
-       taller body would stretch the box and object-fit:cover would crop art. */
-    .ei-expand-img {
-      width: 100%; aspect-ratio: 3/4; border-radius: var(--r);
-      overflow: hidden; border: 1px solid var(--border);
-      align-self: start;
-    }
-    .ei-expand-img img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-      filter: var(--img-exp);
-      transition: filter .8s var(--out);
-    }
-    .ei.open .ei-expand-img img { filter: var(--img-exp-open); }
-
-    .ei-see-more {
-      display: inline-flex; align-items: center; gap: 6px;
-      margin-top: auto; padding: 28px 0 0;
-      font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--fg); text-decoration: none;
-      cursor: pointer; background: none; border: none;
-      width: fit-content;
-      transition: opacity .2s;
-    }
-    .ei-see-more::after { content: '\203A'; }
-    .ei-see-more:hover { opacity: .7; }
-
-    /* ── Skill gallery carousel modal ── */
-    #sk-modal {
-      position: fixed; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none; visibility: hidden;
-      transition: opacity .25s, visibility 0s linear .25s;
-    }
-    #sk-modal.open { opacity: 1; pointer-events: all; visibility: visible; transition: opacity .25s, visibility 0s; }
-    #sk-modal-bg {
-      position: absolute; inset: 0;
-      background: rgba(var(--panel-rgb),.88);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    }
-    #sk-modal-inner {
-      position: relative; z-index: 1;
-      width: min(92vw, 600px);
-      display: flex; flex-direction: column; align-items: center; gap: 20px;
-    }
-    #sk-modal-img-wrap {
-      width: 100%; aspect-ratio: 3/4;
-      border-radius: var(--r); overflow: hidden;
-      background: rgba(var(--fg-rgb),.03);
-    }
-    #sk-modal-img {
-      width: 100%; height: 100%; object-fit: contain;
-      display: block;
-      transition: opacity .22s;
-    }
-    #sk-modal-nav {
-      display: flex; align-items: center; gap: 24px;
-    }
-    .sk-nav-btn {
-      width: 44px; height: 44px; border-radius: 50%;
-      border: 1px solid var(--border-h);
-      background: rgba(var(--panel-rgb),.6);
-      color: var(--fg); font-size: 1.1rem;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: border-color .2s, background .2s;
-    }
-    .sk-nav-btn:hover { border-color: var(--gold); color: var(--gold); }
-    #sk-modal-counter {
-      font-family: var(--mono); font-size: .72rem;
-      letter-spacing: .18em; color: var(--fg2);
-      min-width: 52px; text-align: center;
-    }
-    #sk-modal-close {
-      position: absolute; top: -14px; right: -14px;
-      width: 38px; height: 38px; border-radius: 50%;
-      border: 1px solid var(--border-h);
-      background: rgba(var(--panel-rgb),.8);
-      color: var(--fg); font-size: .68rem; font-family: var(--mono);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: background .2s;
-    }
-    #sk-modal-close:hover { background: rgba(var(--gold-rgb),.15); color: var(--gold); }
-    #sk-modal-label {
-      font-family: var(--mono); font-size: .68rem;
-      letter-spacing: .16em; text-transform: uppercase; color: var(--fg2);
-    }
-
-    @media (max-width: 768px) {
-      .ei-expand-inner {
-        grid-template-columns: 1fr;
-        gap: 22px; padding: 22px 0 24px;
-      }
-      .ei-expand-img { align-self: stretch; }
-      /* Single column: the body is content-height, so margin-top:auto is inert
-         and the CTA needs an explicit gap instead. */
-      .ei-see-more { margin-top: 0; padding-top: 16px; }
-      #sk-modal-img-wrap { aspect-ratio: 4/5; }
-    }
-
-    /* Gold sweep along the row's own separator, width animated by GSAP — the same
-       shape as .fq-rule in the section below. Keep it inside the clipped row. */
-    .ei-rule {
-      position: absolute; bottom: 0; left: 0;
-      height: 1px; width: 0;
-      background: linear-gradient(90deg, var(--gold), transparent);
-      opacity: .5;
-    }
-
-    @media (max-width: 768px) {
-      #exp { padding: 64px var(--pad) 80px; }
-      .ei-name { font-size: clamp(1.7rem,6vw,2.5rem); }
-      .ei-trigger { padding: 22px 0; gap: 0 1.25rem; }
-      .ei-toggle { width: 30px; height: 30px; font-size: 1rem; }
-    }
-
-    /* ══════════════════════════════════════════
        SOCIAL / FOLLOW SECTION  (was Flash Days)
     ══════════════════════════════════════════ */
     #flash {
@@ -1766,14 +1545,14 @@
        margins — the sizes are per-section by design and are not part of "the
        same font". The accent <em> is the same --gold token as the hero
        wordmark. */
-    .ab-h2, .exp-h2, .faq-h2, .fl-h2 {
+    .ab-h2, .faq-h2, .fl-h2 {
       font-family: var(--serif);
       font-weight: 300;
       font-style: italic;
       line-height: 1;
       letter-spacing: normal;
     }
-    .ab-h2 em, .exp-h2 em, .faq-h2 em, .fl-h2 em {
+    .ab-h2 em, .faq-h2 em, .fl-h2 em {
       color: var(--gold);
       font-style: italic;
     }
@@ -1972,6 +1751,27 @@
       isolation: isolate;
     }
     .fq-item:last-child { border-bottom: 1px solid var(--border); }
+    /* Opening a row lights it with a wash that dissolves before the gutters, so
+       the highlight reads as leaking off both sides rather than ending on a hard
+       edge. --fg-rgb is the token for faint washes; --panel-rgb would paint a
+       visible grey shape over the page. */
+    .fq-item::before {
+      content: ''; position: absolute; inset: 0; z-index: -1;
+      opacity: 0; pointer-events: none;
+      background: linear-gradient(90deg,
+        rgba(var(--fg-rgb),0)    0%,
+        rgba(var(--fg-rgb),.045) 20%,
+        rgba(var(--fg-rgb),.045) 80%,
+        rgba(var(--fg-rgb),0)   100%);
+      transition: opacity var(--ios-t-out) var(--ios);
+    }
+    .fq-item.open::before {
+      opacity: 1;
+      transition-duration: var(--ios-t);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .fq-item::before, .fq-item.open::before { transition: none; }
+    }
 
     /* Header row — a <button> for keyboard access; grid: [number] [question+tags] [toggle] */
     .fq-trigger {
@@ -2219,7 +2019,6 @@
     .wc          { transition: border-color .4s, transform .22s cubic-bezier(.175,.885,.32,1.275); }
     .wc:active   { transform: scale(0.95) !important; }
     .bk-f-btn:active, .w-more:active .w-more-ring { transform: scale(0.96) translateY(0) !important; transition-duration: .1s !important; }
-    .ei:active   { background: rgba(var(--fg-rgb),.02); }
     .fq-item:active { background: rgba(var(--fg-rgb),.02); }
 
     /* — Ken Burns overflow hide — */
@@ -2236,12 +2035,9 @@
       background: rgba(var(--panel-rgb),.96);
     }
     html.lite #gal-modal-bg,
-    html.lite #sk-modal-bg,
     html.lite .rvm-back,
-    html.lite #gal-modal-close,
-    html.lite #sk-modal-close { backdrop-filter: none; -webkit-backdrop-filter: none; }
+    html.lite #gal-modal-close { backdrop-filter: none; -webkit-backdrop-filter: none; }
     html.lite #gal-modal-bg { background: rgba(var(--panel-rgb),.82); }
-    html.lite #sk-modal-bg  { background: rgba(var(--panel-rgb),.95); }
     html.lite .rvm-back     { background: rgba(var(--panel-rgb),.94); }
     /* A fixed full-viewport gradient forces a compositing layer over the whole
        page for a purely decorative effect. */
@@ -2252,7 +2048,6 @@
     }
     /* Transitioning `filter` re-rasterises the image on every frame of the hover. */
     html.lite .wc-img { transition: transform .6s var(--out); }
-    html.lite .ei-expand-img img { transition: none; }
     /* Animated box-shadow on fixed / always-visible elements. */
     html.lite .loc-map-wrap { transition: none; }
     /* Infinite pulses keep the compositor awake even off-screen. */
@@ -2263,11 +2058,11 @@
        RESILIENCE — if animation libs/JS fail, reveal content + drop loader
     ══════════════════════════════════════════ */
     html.libs-failed #loader { display: none !important; }
-    html.libs-failed :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
+    html.libs-failed :is(.h-eyebrow, .tl-i, .h-sub, .h-cta,
         .bk-av, .bk-sub, .bk-cta, .bk-steps, .loc-map-wrap, .loc-photo,
         .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
         .fl-left,
-        .exp-h2, .faq-h2, .bk-h2) {
+        .faq-h2, .bk-h2) {
       opacity: 1 !important; transform: none !important;
       filter: none !important; clip-path: none !important;
       /* The hero entrances are CSS animations now, so the reveal has to stop the
@@ -2280,11 +2075,11 @@
        REDUCED MOTION — keep entrance-revealed content visible + static
     ══════════════════════════════════════════ */
     @media (prefers-reduced-motion: reduce) {
-      :is(.h-eyebrow, .tl-i, .h-sub, .h-cta, .ei,
+      :is(.h-eyebrow, .tl-i, .h-sub, .h-cta,
           .bk-av, .bk-sub, .bk-cta, .bk-steps, .loc-map-wrap, .loc-photo,
           .wc, .fq-item, .fq-num, .tr-head, .ab-portrait, .ab-h2, .ab-bio p,
           .fl-left,
-          .exp-h2, .faq-h2, .bk-h2) {
+          .faq-h2, .bk-h2) {
         opacity: 1 !important; transform: none !important;
         filter: none !important; clip-path: none !important;
         animation: none !important;
@@ -2301,16 +2096,12 @@
     @media (prefers-reduced-motion: reduce) {
       .ui-modal, .ui-modal * { transition: none !important; animation: none !important; }
     }
-    .ei-expand[hidden], .fq-panel[hidden] { display: none !important; }
+    .fq-panel[hidden] { display: none !important; }
     #gal-overlay { position: fixed; inset: 0; }
     #gal-modal-bg { z-index: 0; }
     #gal-modal { z-index: 1; }
     #gal-modal-close { position: fixed; }
     #gal-status { position: fixed; left: 12%; right: 12%; top: 45%; }
-    #sk-modal-inner { max-height: 96dvh; overflow-y: auto; padding: 50px 0 12px; }
-    #sk-modal-img-wrap { height: min(65dvh, 800px); flex-shrink: 0; aspect-ratio: auto; }
-    #sk-modal-close { position: sticky; top: 0; align-self: flex-end; flex-shrink: 0; }
-    #sk-modal-nav, #sk-modal-label { flex-shrink: 0; }
     .rvm-box { max-height: 92dvh; overflow-y: auto; }
     .rvm-close { position: sticky; top: 0; display: block; margin-left: auto; background: var(--bg2); }
     /* Optional analytics: equal choices, no modal or scroll lock. */
@@ -2587,95 +2378,6 @@
       <p>It is normal to be nervous, regardless of if it's your first tattoo or fifth. I will walk you through every step, you can take your time choosing placement, design, colours, anything you need. I like to say getting a tattoo is teamwork, we work together to make the best tattoo for you.</p>
     </div>
   </div>
-</section>
-
-<!-- ════ EXPERTISE ════ -->
-<section id="exp">
-  <div class="exp-hd">
-
-    <h2 class="exp-h2"><span class="tl"><span class="tl-i">Areas of <em>Expertise</em></span></span></h2>
-  </div>
-  <ul class="exp-list">
-
-    <li class="ei" data-gallery='[
-      {"src":"pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-1440.webp","alt":"Fine-line abstract flower with a long flowing stem on the upper arm."}
-    ]'>
-      <button class="ei-trigger" id="ei-fine-line-trigger" type="button" aria-expanded="false" aria-controls="ei-fine-line-panel">
-        <span class="ei-name">Fine Line</span>
-        <span class="ei-toggle" aria-hidden="true">+</span>
-      </button>
-      <div class="ei-rule" aria-hidden="true"></div>
-      <div class="ei-expand" id="ei-fine-line-panel" aria-labelledby="ei-fine-line-trigger" hidden inert aria-hidden="true">
-        <div class="ei-expand-inner">
-          <div class="ei-expand-img">
-            <img src="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp"
-                 srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w, pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp 960w"
-                 sizes="(max-width: 768px) 100vw, 240px"
-           alt="Fine-line abstract flower with a long flowing stem on the upper arm." loading="lazy" decoding="async">
-          </div>
-          <div class="ei-expand-body">
-            <p class="ei-expand-text">A delicate, precise style often done with thin lines.</p>
-            <button class="ei-see-more" type="button">See more</button>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei" data-gallery='[
-      {"src":"pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-1440.webp","alt":"Classical Hermes figure with a winged cap, geometric lines and script on the forearm."}
-    ]'>
-      <button class="ei-trigger" id="ei-fine-art-trigger" type="button" aria-expanded="false" aria-controls="ei-fine-art-panel">
-        <span class="ei-name">Fine Art</span>
-        <span class="ei-toggle" aria-hidden="true">+</span>
-      </button>
-      <div class="ei-rule" aria-hidden="true"></div>
-      <div class="ei-expand" id="ei-fine-art-panel" aria-labelledby="ei-fine-art-trigger" hidden inert aria-hidden="true">
-        <div class="ei-expand-inner">
-          <div class="ei-expand-img">
-            <img src="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp"
-                 srcset="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-480.webp 480w, pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp 960w"
-                 sizes="(max-width: 768px) 100vw, 240px"
-                 alt="Classical Hermes figure with a winged cap, geometric lines and script on the forearm." loading="lazy" decoding="async">
-          </div>
-          <div class="ei-expand-body">
-            <p class="ei-expand-text">Illustrative work. Think paintings: aesthetic, passionate, really just art for art's sake.</p>
-            <button class="ei-see-more" type="button">See more</button>
-          </div>
-        </div>
-      </div>
-    </li>
-
-    <li class="ei" data-gallery='[
-      {"src":"pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-1440.webp","alt":"Wolf portrait above a forest, howling wolf and moon, with a broken Roman numeral clock on the forearm."},
-      {"src":"pictures/web/Pug-Dog-Portrait-Floral-Thigh-Tattoo-1440.webp","alt":"Realistic pug portrait with flowers, hearts and the name Bonnie on the thigh."},
-      {"src":"pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-1440.webp","alt":"Realistic black pug portrait with daisies, a rose and the name Marley on the thigh."},
-      {"src":"pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-1440.webp","alt":"Shaded thresher shark swimming down the upper arm with its long tail curving upward."},
-      {"src":"pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-1440.webp","alt":"Five shaded cat portraits with their names arranged down the upper arm."},
-      {"src":"pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-1440.webp","alt":"Black and grey barn owl in flight on the upper arm."}
-    ]'>
-      <button class="ei-trigger" id="ei-realism-trigger" type="button" aria-expanded="false" aria-controls="ei-realism-panel">
-        <span class="ei-name">Realism</span>
-        <span class="ei-toggle" aria-hidden="true">+</span>
-      </button>
-      <div class="ei-rule" aria-hidden="true"></div>
-      <div class="ei-expand" id="ei-realism-panel" aria-labelledby="ei-realism-trigger" hidden inert aria-hidden="true">
-        <div class="ei-expand-inner">
-          <div class="ei-expand-img">
-            <img src="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp"
-                 srcset="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-480.webp 480w, pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp 960w"
-                 sizes="(max-width: 768px) 100vw, 240px"
-           alt="Wolf portrait above a forest, howling wolf and moon, with a broken Roman numeral clock on the forearm." loading="lazy" decoding="async">
-          </div>
-          <div class="ei-expand-body">
-            <p class="ei-expand-text">A lifelike rendering of anything you want that exists in life: portraits, botanical, landscapes, still life, animals.</p>
-            <button class="ei-see-more" type="button">See more</button>
-          </div>
-        </div>
-      </div>
-    </li>
-
-
-  </ul>
 </section>
 
 <!-- ════ FAQ ════ -->
@@ -3002,24 +2704,6 @@
   </div>
 </div>
 
-<!-- ════ SKILL CAROUSEL MODAL ════ -->
-<div id="sk-modal" class="ui-modal" tabindex="-1" hidden inert role="dialog" aria-modal="true" aria-label="Skill gallery" aria-hidden="true">
-  <div id="sk-modal-bg"></div>
-  <div id="sk-modal-inner">
-    <button id="sk-modal-close" type="button" aria-label="Close">✕</button>
-    <div id="sk-modal-img-wrap">
-      <img id="sk-modal-img" src="" alt="">
-    </div>
-    <p id="sk-status" class="viewer-status" role="status"></p>
-    <div id="sk-modal-nav">
-      <button class="sk-nav-btn" id="sk-prev" type="button" aria-label="Previous">‹</button>
-      <span id="sk-modal-counter">1 / 1</span>
-      <button class="sk-nav-btn" id="sk-next" type="button" aria-label="Next">›</button>
-    </div>
-    <span id="sk-modal-label"></span>
-  </div>
-</div>
-
 <!-- ════ GALLERY LIGHTBOX ════ -->
 <div id="gal-overlay" class="ui-modal" tabindex="-1" hidden inert role="dialog" aria-modal="true" aria-label="Portfolio image" aria-hidden="true">
 <div id="gal-modal-bg" aria-hidden="true"></div>
@@ -3283,12 +2967,11 @@
       }
       /* Expansion keeps its trigger in place; the visitor continues with native scroll. */
     });
-    panel.querySelectorAll('img').forEach(img => img.addEventListener('load', () => { settle(); refresh(); }));
     settle();
   }
-  document.querySelectorAll('.ei, .fq-item').forEach(row => initAccordion({
-    row, trigger: row.querySelector('.ei-trigger, .fq-trigger'), panel: row.querySelector('.ei-expand, .fq-panel'),
-    inner: row.querySelector('.ei-expand-inner, .fq-panel-inner'), rule: row.querySelector('.ei-rule, .fq-rule')
+  document.querySelectorAll('.fq-item').forEach(row => initAccordion({
+    row, trigger: row.querySelector('.fq-trigger'), panel: row.querySelector('.fq-panel'),
+    inner: row.querySelector('.fq-panel-inner'), rule: row.querySelector('.fq-rule')
   }));
   const settlePanels = () => { accordions.forEach(settle => settle()); refresh(); };
   let resizeTimer;
@@ -3338,42 +3021,6 @@
   close.addEventListener('click', () => ui.close(root)); bg.addEventListener('click', () => ui.close(root));
   box.addEventListener('click', e => { if (!e.target.closest('button') && window.__outsideImage(img, e.clientX, e.clientY)) ui.close(root); });
   addEventListener('resize', () => { if (!root.hidden) full(); });
-
-  /* Expertise carousel: request generations survive quick next/close/reopen. */
-  const skill = document.getElementById('sk-modal'), skillImg = document.getElementById('sk-modal-img');
-  const skillImage = window.__viewerImage(skillImg, document.getElementById('sk-status'));
-  const prev = document.getElementById('sk-prev'), next = document.getElementById('sk-next');
-  let images = [], index = 0, skillOrigin = null;
-  function show(i) {
-    if (!images.length) return;
-    index = (i + images.length) % images.length;
-    skillImage.show(images[index].src, images[index].alt);
-    document.getElementById('sk-modal-counter').textContent = (index + 1) + ' / ' + images.length;
-    prev.hidden = next.hidden = images.length < 2;
-  }
-  const move = direction => { if (ui.isTop(skill)) show(index + direction); };
-  ui.register(skill, {
-    initialFocus: () => document.getElementById('sk-modal-close'),
-    fallbackFocus: () => skillOrigin?.querySelector('.ei-trigger'),
-    transition: ui.fade(skill, .25, opening => { if (!opening) skillImage.invalidate(); }, opening => { if (!opening) skillImage.clear(); }),
-    onKey(e) { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); move(e.key === 'ArrowLeft' ? -1 : 1); } }
-  });
-  document.querySelectorAll('.ei-see-more').forEach(button => {
-    const row = button.closest('.ei'), name = row.querySelector('.ei-name').textContent.trim();
-    let list; try { list = JSON.parse(row.dataset.gallery || '[]'); } catch (_) { list = []; }
-    button.textContent = list.length > 1 ? 'See all ' + list.length : 'View larger';
-    button.setAttribute('aria-label', list.length > 1 ? 'See all ' + list.length + ' ' + name + ' tattoos' : 'View this ' + name + ' tattoo larger');
-    button.addEventListener('click', () => {
-      if (!list.length || ui.isTop(skill)) return;
-      images = list; skillOrigin = row; skillImage.clear();
-      document.getElementById('sk-modal-label').textContent = name;
-      show(0); ui.open(skill, button);
-    });
-  });
-  prev.addEventListener('click', () => move(-1)); next.addEventListener('click', () => move(1));
-  document.getElementById('sk-modal-close').addEventListener('click', () => ui.close(skill));
-  document.getElementById('sk-modal-bg').addEventListener('click', () => ui.close(skill));
-  window.__viewerSwipe(document.getElementById('sk-modal-img-wrap'), skill, move);
 })();
 
 /* Loader completion and native history/hash restoration never wait for GSAP. */
@@ -3542,23 +3189,10 @@ function __boot() {
       scrollTrigger: { trigger: '#about', start: 'top 78%', once: true }
     });
 
-    /* ── Expertise — Framer clip-path wipe ──
+    /* ── FAQ heading — Framer clip-path wipe ──
        Every heading wipe keeps negative insets on the axes it does not animate
        and clears clip-path when done: a 0 inset clips at the border box, and
        these italic serif descenders (Q, y, p) hang below a line-height-1 box. */
-    gsap.fromTo('.exp-h2',
-      { clipPath: 'inset(-50% 100% -50% 0%)' },
-      { clipPath: 'inset(-50% -10% -50% 0%)', duration: 1.3, ease: 'expo.out', clearProps: 'clipPath',
-        scrollTrigger: { trigger: '#exp', start: 'top 84%', once: true } }
-    );
-    // Rows — blur+slide on mobile
-    /* Blur costs a re-raster per frame; weak hardware gets slide-only. */
-    gsap.fromTo('.ei',
-      LOW_END ? { opacity: 0, x: -18 } : { opacity: 0, x: -18, filter: 'blur(6px)' },
-      { opacity: 1, x: 0, filter: 'blur(0px)', stagger: .1, duration: .9, ease: 'expo.out',
-        scrollTrigger: { trigger: '.exp-list', start: 'top 82%', once: true } }
-    );
-    // FAQ heading — clip-path wipe
     gsap.fromTo('.faq-h2',
       { clipPath: 'inset(-50% 100% -50% 0%)' },
       { clipPath: 'inset(-50% -10% -50% 0%)', duration: 1.3, ease: 'expo.out', clearProps: 'clipPath',
