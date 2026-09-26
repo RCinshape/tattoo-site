@@ -68,16 +68,14 @@ function validDays(value) {
 export async function onRequestOptions({ request, env }) {
   const { error, cors } = gate(request, env);
   if (error) return error;
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'vary': 'Origin',
-      'access-control-allow-origin': cors || '*',
-      'access-control-allow-headers': 'content-type',
-      'access-control-allow-methods': 'POST, OPTIONS',
-      'access-control-max-age': '86400'
-    }
-  });
+  const headers = {
+    'vary': 'Origin',
+    'access-control-allow-headers': 'content-type',
+    'access-control-allow-methods': 'POST, OPTIONS',
+    'access-control-max-age': '86400'
+  };
+  if (cors) headers['access-control-allow-origin'] = cors;
+  return new Response(null, { status: 204, headers });
 }
 
 export async function onRequestPost({ request, env }) {

@@ -6,3 +6,4 @@ _stub-out/
 .wrangler/
 token.txt
 .dev.vars
+dist/

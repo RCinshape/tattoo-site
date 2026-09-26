@@ -1,5 +1,5 @@
 const headers = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://emmytattoo.com',
   'Content-Type': 'application/json',
   'Cache-Control': 'no-store',
 };

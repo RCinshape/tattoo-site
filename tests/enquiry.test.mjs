@@ -241,7 +241,7 @@ test('OPTIONS enforces the same host and origin gates', async () => {
     if (code) assert.deepEqual(await response.json(), { ok: false, code });
     else {
       assert.equal(await response.text(), '');
-      assert.equal(response.headers.get('access-control-allow-origin'), origin || '*');
+      assert.equal(response.headers.get('access-control-allow-origin'), origin || null);
       assert.equal(response.headers.get('access-control-allow-methods'), 'POST, OPTIONS');
     }
   }
