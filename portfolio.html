@@ -2741,13 +2741,19 @@
     let generation = 0;
     return {
       clear() { ++generation; img.onload = img.onerror = null; img.style.transition = 'none'; img.style.opacity = '0'; img.removeAttribute('src'); void img.offsetWidth; img.style.transition = ''; status.textContent = ''; },
-      show(src, alt) {
+      show(src, alt, preview) {
         const request = ++generation;
-        img.style.opacity = '0'; status.textContent = ''; img.alt = alt || '';
+        status.textContent = ''; img.alt = alt || '';
+        /* The already-loaded thumbnail stands in at once; the sharper file replaces it on arrival. */
+        const standIn = preview?.complete && preview.naturalWidth ? preview.currentSrc || preview.src : '';
+        if (standIn) { img.src = standIn; img.style.opacity = '1'; } else img.style.opacity = '0';
         const pending = new Image();
         pending.onload = () => { if (request !== generation) return; img.src = pending.src; img.style.opacity = '1'; };
-        pending.onerror = () => { if (request !== generation) return; img.removeAttribute('src'); status.textContent = 'Image could not be loaded. Try another image.'; };
-        pending.src = innerWidth <= 480 ? src.replace('-1440.webp', '-960.webp') : src;
+        pending.onerror = () => { if (request !== generation || standIn) return; img.removeAttribute('src'); status.textContent = 'Image could not be loaded. Try another image.'; };
+        /* 1440 only when the viewer spans more than 960 device pixels; density is capped at 2x. */
+        const ratio = standIn ? preview.naturalWidth / preview.naturalHeight : 3 / 4;
+        const across = Math.min(innerWidth, innerHeight * ratio) * Math.min(devicePixelRatio || 1, 2);
+        pending.src = across > 960 ? src : src.replace('-1440.webp', '-960.webp');
       }
     };
   };
@@ -2782,7 +2788,7 @@
   function show(i) {
     const visible = vis(); if (!visible.length) return;
     index = (i + visible.length) % visible.length;
-    image.show(visible[index].dataset.src, visible[index].dataset.alt);
+    image.show(visible[index].dataset.src, visible[index].dataset.alt, visible[index].querySelector('img'));
     counter.textContent = (index + 1) + ' / ' + visible.length;
     prev.hidden = next.hidden = visible.length < 2;
   }

@@ -1363,15 +1363,19 @@
     .tr-review-btn:hover { color: var(--on-gold); border-color: var(--gold); }
     .tr-review-btn:active { transform: translateY(1px); transition-duration: .12s; }
     @media (max-width: 1024px) {
-      #flash { flex-direction: column; align-items: stretch; gap: 56px; }
-      .fl-left { max-width: 100%; }
-      .fl-ig { flex: none; width: 100%; max-width: 460px; align-self: center; }
+      #flash { flex-direction: column; align-items: stretch; gap: 48px; }
+      /* flex: none — in a column the 460px basis becomes a height and strands the
+         form above dead space. Stacked, the card sits on the rail under the copy. */
+      .fl-left { flex: none; max-width: 100%; }
+      .fl-ig { flex: none; width: 100%; max-width: 460px; align-self: flex-start; }
     }
     @media (max-width: 768px) {
       #flash { padding: 56px var(--pad) 64px; }
       .tr-review-cta { padding: 32px var(--pad); }
       .tr-review-btn { justify-content: center; width: 100%; max-width: 340px; }
     }
+    /* One line at 375: the full-tracked label needs ~243px beside the icon and arrow. */
+    @media (max-width: 480px) { .fl-ig-cap { letter-spacing: .1em; } }
 
     /* ══════════════════════════════════════════
        BOOKING
@@ -2195,40 +2199,42 @@
 <!-- ════ WORK ════ -->
 <div id="work-outer">
 <section id="work">
+  <!-- The cards and the peek are /portfolio's first two rows, written by
+       scripts/order-portfolio.js; edit the catalog scores, not this markup. -->
   <div class="w-grid">
 
-      <article class="wc" tabindex="0" role="button" aria-label="Realism — Thresher shark" data-full="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-1440.webp">
-        <img class="wc-img" src="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-960.webp" width="960" height="1280"
-             srcset="pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-480.webp 480w, pictures/web/Realistic-Thresher-Shark-Tattoo-Marine-Life-960.webp 960w"
+      <article class="wc" tabindex="0" role="button" aria-label="View Romantic Kiss Colour Painting Calf Tattoo" data-full="pictures/web/Romantic-Kiss-Colour-Painting-Calf-Tattoo-1440.webp">
+        <img class="wc-img" src="pictures/web/Romantic-Kiss-Colour-Painting-Calf-Tattoo-960.webp" width="960" height="1280"
+             srcset="pictures/web/Romantic-Kiss-Colour-Painting-Calf-Tattoo-480.webp 480w, pictures/web/Romantic-Kiss-Colour-Painting-Calf-Tattoo-960.webp 960w"
              sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
-             alt="Shaded thresher shark swimming down the upper arm with its long tail curving upward." loading="lazy" decoding="async">
+             alt="Small colour painting of an embracing couple kissing, set in a rectangular panel on the calf." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
       </article>
 
-      <article class="wc" tabindex="0" role="button" aria-label="Realism — Wolf portrait forearm" data-full="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-1440.webp">
-        <img class="wc-img" src="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp" width="960" height="1280"
-             srcset="pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-480.webp 480w, pictures/web/Wolf-Portrait-Clock-Forest-Forearm-Tattoo-960.webp 960w"
+      <article class="wc" tabindex="0" role="button" aria-label="View Fallen Angel Eyes Colour Arm Tattoo" data-full="pictures/web/Fallen-Angel-Eyes-Colour-Arm-Tattoo-1440.webp">
+        <img class="wc-img" src="pictures/web/Fallen-Angel-Eyes-Colour-Arm-Tattoo-960.webp" width="960" height="1280"
+             srcset="pictures/web/Fallen-Angel-Eyes-Colour-Arm-Tattoo-480.webp 480w, pictures/web/Fallen-Angel-Eyes-Colour-Arm-Tattoo-960.webp 960w"
              sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
-             alt="Wolf portrait above a forest, howling wolf and moon, with a broken Roman numeral clock on the forearm." loading="lazy" decoding="async">
+             alt="Colour painting detail of the Fallen Angel&#39;s eyes above a bent arm, tattooed in a rectangular panel." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-sub">Realism</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
       </article>
 
-      <article class="wc" tabindex="0" role="button" aria-label="Fine line — Abstract flower" data-full="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-1440.webp">
-        <img class="wc-img" src="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp" width="960" height="1336"
-             srcset="pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-480.webp 480w, pictures/web/Fine-Line-Abstract-Continuous-Flower-Tattoo-960.webp 960w"
+      <article class="wc" tabindex="0" role="button" aria-label="View Gold Framed Woman Flowers Calf Tattoo" data-full="pictures/web/Gold-Framed-Woman-Flowers-Calf-Tattoo-1440.webp">
+        <img class="wc-img" src="pictures/web/Gold-Framed-Woman-Flowers-Calf-Tattoo-960.webp" width="960" height="1280"
+             srcset="pictures/web/Gold-Framed-Woman-Flowers-Calf-Tattoo-480.webp 480w, pictures/web/Gold-Framed-Woman-Flowers-Calf-Tattoo-960.webp 960w"
              sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
-             alt="Fine-line abstract flower with a long flowing stem on the upper arm." loading="lazy" decoding="async">
+             alt="Colour portrait detail of a woman holding flowers inside an ornate gold oval frame on the calf." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
-        <div class="wc-lbl"><div class="wc-sub">Fine Line</div></div>
+        <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
       </article>
 
-      <article class="wc" tabindex="0" role="button" aria-label="Fine art — Hermes" data-full="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-1440.webp">
-        <img class="wc-img" src="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp" width="960" height="1280"
-             srcset="pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-480.webp 480w, pictures/web/Classical-Mythology-Hermes-Fine-Art-Tattoo-960.webp 960w"
+      <article class="wc" tabindex="0" role="button" aria-label="View Framed Water Lily Pond Calf Tattoo" data-full="pictures/web/Framed-Water-Lily-Pond-Calf-Tattoo-1440.webp">
+        <img class="wc-img" src="pictures/web/Framed-Water-Lily-Pond-Calf-Tattoo-960.webp" width="960" height="1280"
+             srcset="pictures/web/Framed-Water-Lily-Pond-Calf-Tattoo-480.webp 480w, pictures/web/Framed-Water-Lily-Pond-Calf-Tattoo-960.webp 960w"
              sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
-             alt="Classical Hermes figure with a winged cap, geometric lines and script on the forearm." loading="lazy" decoding="async">
+             alt="Colour water-lily pond painting inside an ornate gold oval frame on the calf." loading="lazy" decoding="async">
         <div class="wc-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="10" y1="7.5" x2="10" y2="12.5"/></svg></div>
         <div class="wc-lbl"><div class="wc-sub">Fine Art</div></div>
       </article>
@@ -2236,22 +2242,14 @@
   </div>
   <div class="w-peek-wrap">
     <div class="w-peek">
-      <img src="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-960.webp"
-           srcset="pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-480.webp 480w, pictures/web/Flying-Barn-Owl-Black-and-Grey-Tattoo-960.webp 960w"
-           sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
-           alt="Black and grey barn owl in flight on the upper arm." loading="lazy" decoding="async">
-      <img src="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-960.webp"
-           srcset="pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-480.webp 480w, pictures/web/Realistic-Cat-Portrait-Tattoos-Emmy-Tattoo-960.webp 960w"
-           sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
-           alt="Five shaded cat portraits with their names arranged down the upper arm." loading="lazy" decoding="async">
-      <img src="pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-960.webp"
-           srcset="pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-480.webp 480w, pictures/web/Black-Pug-Portrait-Tattoo-With-Daisies-960.webp 960w"
-           sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
-           alt="Realistic black pug portrait with daisies, a rose and the name Marley on the thigh." loading="lazy" decoding="async">
-      <img src="pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-960.webp"
-           srcset="pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-480.webp 480w, pictures/web/surreal-face-snake-hand-tattoo-emmy-tattoo-960.webp 960w"
-           sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 25vw"
-           alt="Black and grey woman&#39;s face with blank eyes and a snake winding across the mouth on the back of the hand." loading="lazy" decoding="async">
+      <img src="pictures/web/Woman-Smelling-Roses-Colour-Arm-Tattoo-480.webp"
+           alt="Colour profile of a woman smelling red roses against a dark oval background on the arm." loading="lazy" decoding="async">
+      <img src="pictures/web/Snake-Red-Flowers-Thigh-Tattoo-480.webp"
+           alt="Black snake winding among red and black outlined flowers on the thigh." loading="lazy" decoding="async">
+      <img src="pictures/web/Dragon-Wave-Geometric-Arm-Tattoo-480.webp"
+           alt="Black and grey coiled dragon with a wave vignette and geometric details along the arm." loading="lazy" decoding="async">
+      <img src="pictures/web/Astronaut-Planets-Rib-Tattoo-480.webp"
+           alt="Shaded astronaut surrounded by planets, orbital lines and a ringed planet along the ribs." loading="lazy" decoding="async">
     </div>
     <a class="w-more" href="/portfolio">
       <span class="w-more-ring" aria-hidden="true">
@@ -2783,13 +2781,19 @@
     return {
       invalidate() { ++generation; img.onload = img.onerror = null; },
       clear() { this.invalidate(); img.style.transition = 'none'; img.style.opacity = '0'; img.removeAttribute('src'); void img.offsetWidth; img.style.transition = ''; status.textContent = ''; },
-      show(src, alt) {
+      show(src, alt, preview) {
         const request = ++generation;
-        img.style.opacity = '0'; status.textContent = ''; img.alt = alt || '';
+        status.textContent = ''; img.alt = alt || '';
+        /* The already-loaded thumbnail stands in at once; the sharper file replaces it on arrival. */
+        const standIn = preview?.complete && preview.naturalWidth ? preview.currentSrc || preview.src : '';
+        if (standIn) { img.src = standIn; img.style.opacity = '1'; } else img.style.opacity = '0';
         const pending = new Image();
         pending.onload = () => { if (request !== generation) return; img.src = pending.src; img.style.opacity = '1'; };
-        pending.onerror = () => { if (request !== generation) return; img.removeAttribute('src'); status.textContent = 'Image could not be loaded. Try another image.'; };
-        pending.src = innerWidth <= 480 ? src.replace('-1440.webp', '-960.webp') : src;
+        pending.onerror = () => { if (request !== generation || standIn) return; img.removeAttribute('src'); status.textContent = 'Image could not be loaded. Try another image.'; };
+        /* 1440 only when the viewer spans more than 960 device pixels; density is capped at 2x. */
+        const ratio = standIn ? preview.naturalWidth / preview.naturalHeight : 3 / 4;
+        const across = Math.min(innerWidth, innerHeight * ratio) * Math.min(devicePixelRatio || 1, 2);
+        pending.src = across > 960 ? src : src.replace('-1440.webp', '-960.webp');
       }
     };
   };
@@ -2908,7 +2912,7 @@
   document.querySelectorAll('.wc').forEach(card => {
     card.addEventListener('click', () => {
       const thumbnail = card.querySelector('.wc-img'); if (!thumbnail || ui.isTop(root)) return;
-      origin = card; fresh = root.hidden; image.clear(); image.show(card.dataset.full || thumbnail.src, thumbnail.alt); ui.open(root, card);
+      origin = card; fresh = root.hidden; image.clear(); image.show(card.dataset.full || thumbnail.src, thumbnail.alt, thumbnail); ui.open(root, card);
     });
     card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); } });
   });

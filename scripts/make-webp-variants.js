@@ -75,7 +75,9 @@ const inputs = () => {
       const out = path.join(OUT, `${base}-${w}.webp`);
       let pipe = image.clone().resize({ width: w, withoutEnlargement: true });
       if (GRAYSCALE.has(base)) pipe = pipe.grayscale();
-      await pipe.webp({ quality: 78 }).toFile(out);
+      // q72 at effort 6 is ~25% smaller than the old q78 and indistinguishable
+      // at 100% on tattoo linework and skin texture; galleries are bandwidth-bound on mobile.
+      await pipe.webp({ quality: 72, effort: 6 }).toFile(out);
       const kb = n => (n / 1024).toFixed(0) + 'KB';
       console.log(`${path.basename(out).padEnd(58)} ${kb(fs.statSync(out).size).padStart(7)}`);
     }

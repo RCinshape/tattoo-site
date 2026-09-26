@@ -312,7 +312,7 @@ function portfolioFixture(t, rows, cardBases, mediaBases = cardBases) {
   fs.writeFileSync(path.join(root, 'pictures', 'Tattoos 2026', 'catalog.json'), JSON.stringify(rows));
   const url = b => `https://emmytattoo.com/pictures/web/${b}-1440.webp`;
   const gallery = { '@context': 'https://schema.org', '@type': 'ImageGallery', associatedMedia: mediaBases.map(b => ({ '@type': 'ImageObject', contentUrl: url(b) })) };
-  const cards = cardBases.map((b, i) => `  <div class="pw-item" data-src="pictures/web/${b}-1440.webp">\n    <img alt="${b}"${i ? ' loading="lazy"' : ' fetchpriority="high"'} decoding="async">\n  </div>`);
+  const cards = cardBases.map((b, i) => `  <div class="pw-item" aria-label="View ${b}" data-src="pictures/web/${b}-1440.webp">\n    <img alt="${b}" width="960" height="1280"${i ? ' loading="lazy"' : ' fetchpriority="high"'} decoding="async">\n    <span class="pw-tag">Realism · Lettering</span>\n  </div>`);
   fs.writeFileSync(path.join(root, 'portfolio.html'), '<head>\n  <script type="application/ld+json">\n'
     + JSON.stringify(gallery, null, 2).split('\n').map(l => '  ' + l).join('\n')
     + '\n  </script>\n</head>\n<main id="pw-grid" aria-label="Portfolio">\n\n  <!-- prefix -->\n'
@@ -320,40 +320,52 @@ function portfolioFixture(t, rows, cardBases, mediaBases = cardBases) {
   fs.writeFileSync(path.join(root, 'sitemap.xml'), '<urlset>\n  <url>\n    <loc>https://emmytattoo.com/portfolio</loc>\n    <priority>0.8</priority>\n'
     + mediaBases.map(b => `    <image:image>\n      <image:loc>${url(b)}</image:loc>\n    </image:image>\n`).join('')
     + '  </url>\n</urlset>\n');
+  fs.writeFileSync(path.join(root, 'index.html'), '<section id="work">\n  <div class="w-grid">\n  </div>\n  <div class="w-peek-wrap">\n    <div class="w-peek">\n    </div>\n    <a class="w-more" href="/portfolio">View</a>\n  </div>\n</section>\n');
   return root;
 }
 
 function portfolioOrder(root) {
   const html = fs.readFileSync(path.join(root, 'portfolio.html'), 'utf8');
+  const home = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
   const gallery = JSON.parse(html.match(/<script type="application\/ld\+json">\n([\s\S]*?)\n  <\/script>/)[1]);
+  const peek = home.match(/<div class="w-peek">([\s\S]*?)<\/div>/)[1];
   return {
     html,
     cards: [...html.matchAll(/data-src="pictures\/web\/([^"]+)-1440\.webp"/g)].map(m => m[1]),
     media: gallery.associatedMedia.map(item => item.contentUrl.match(/web\/(.+)-1440\.webp$/)[1]),
     sitemap: [...sitemap.matchAll(/<image:loc>[^<]*\/web\/([^<]+)-1440\.webp<\/image:loc>/g)].map(m => m[1]),
+    homeCards: [...home.matchAll(/<article class="wc"[^>]*data-full="pictures\/web\/([^"]+)-1440\.webp"/g)].map(m => m[1]),
+    homePeek: [...peek.matchAll(/<img src="pictures\/web\/([^"]+)-480\.webp"\s+alt="([^"]*)"/g)].map(m => m[1] === m[2] && m[1]),
   };
 }
 
 test('portfolio order ranks by complexity plus colour, then complexity, then catalog position', t => {
-  const rows = [scored('A', 2, 2), scored('B', 1, 3), { file: 'y.jpg', publish: false, assetBase: 'Hidden' }, scored('C', 3, 1), scored('D', 4, 4)];
-  const root = portfolioFixture(t, rows, ['A', 'B', 'C', 'D']);
+  const rows = [scored('A', 2, 2), scored('B', 1, 3), { file: 'y.jpg', publish: false, assetBase: 'Hidden' }, scored('C', 3, 1), scored('D', 4, 4), scored('E', 1, 1)];
+  const root = portfolioFixture(t, rows, ['A', 'B', 'C', 'D', 'E']);
   assert.notEqual(run(root, 'order-portfolio.js', '--check').status, 0);
   const result = run(root, 'order-portfolio.js');
   assert.equal(result.status, 0, result.stderr);
   const ordered = portfolioOrder(root);
-  const expected = ['D', 'C', 'A', 'B'];
+  const expected = ['D', 'C', 'A', 'B', 'E'];
   assert.deepEqual(ordered.cards, expected);
   assert.deepEqual(ordered.media, expected);
   assert.deepEqual(ordered.sitemap, expected);
+  // Home shows the first row as cards and the next as the peek, alt text intact.
+  assert.deepEqual(ordered.homeCards, ['D', 'C', 'A', 'B']);
+  assert.deepEqual(ordered.homePeek, ['E']);
   assert.equal(ordered.html.split('fetchpriority="high"').length, 2);
-  assert.match(ordered.html, /D-1440\.webp">\n    <img alt="D" fetchpriority="high" decoding="async">/);
-  assert.match(ordered.html, /A-1440\.webp">\n    <img alt="A" loading="lazy" decoding="async">/);
+  assert.match(ordered.html, /D-1440\.webp">\n    <img alt="D" width="960" height="1280" fetchpriority="high" decoding="async">/);
+  assert.match(ordered.html, /A-1440\.webp">\n    <img alt="A" width="960" height="1280" loading="lazy" decoding="async">/);
   const check = run(root, 'order-portfolio.js', '--check');
   assert.equal(check.status, 0, check.stderr);
-  const before = [hash(path.join(root, 'portfolio.html')), hash(path.join(root, 'sitemap.xml'))];
+  const files = ['portfolio.html', 'index.html', 'sitemap.xml'].map(f => path.join(root, f));
+  const before = files.map(hash);
   assert.equal(run(root, 'order-portfolio.js').status, 0);
-  assert.deepEqual([hash(path.join(root, 'portfolio.html')), hash(path.join(root, 'sitemap.xml'))], before);
+  assert.deepEqual(files.map(hash), before);
+  // A hand edit to the home preview is stale even when /portfolio is in order.
+  fs.writeFileSync(files[1], fs.readFileSync(files[1], 'utf8').replace('data-full="pictures/web/D-', 'data-full="pictures/web/Z-'));
+  assert.notEqual(run(root, 'order-portfolio.js', '--check').status, 0);
 });
 
 test('portfolio order rejects unscored or mismatched pieces without writing', async t => {
@@ -365,7 +377,7 @@ test('portfolio order rejects unscored or mismatched pieces without writing', as
   ]) {
     await t.test(name, t => {
       const root = portfolioFixture(t, rows, cards, ['A', 'B']);
-      const files = ['portfolio.html', 'sitemap.xml'].map(f => path.join(root, f));
+      const files = ['portfolio.html', 'index.html', 'sitemap.xml'].map(f => path.join(root, f));
       const before = files.map(hash);
       const result = run(root, 'order-portfolio.js');
       assert.notEqual(result.status, 0);
