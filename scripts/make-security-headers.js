@@ -20,7 +20,7 @@ const policy = [
   `script-src-attr 'unsafe-hashes' ${hash('__libFail()')}`,
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self'",
-  "img-src 'self' data: https://*.googleusercontent.com https://www.googletagmanager.com https://*.google-analytics.com",
+  "img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com",
   "connect-src 'self' https://emmy-reviews.emmalenetattoo.workers.dev https://www.googletagmanager.com https://*.google-analytics.com https://*.google.com",
   'frame-src https://www.google.com https://www.instagram.com https://instagram.com',
   "object-src 'none'",

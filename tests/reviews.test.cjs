@@ -15,99 +15,52 @@ const chrome = process.env.CHROME_BIN || [
 
 async function exerciseRenderer() {
   const stage = document.getElementById('tr-stage');
-  const seeded = stage.children.length;
-  const validPhoto = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect width="1" height="1"/></svg>');
-  const brokenPhoto = 'data:image/png;base64,broken';
-  const names = [
-    'Ordinary Reviewer', 'O\'Brien "Jo" & Sons', '李小龍 · أمينة',
-    '" onerror="window.__reviewXss=1" x="',
-    '\"><img src=x onerror="window.__reviewXss=1"><svg onload="window.__reviewXss=1">',
-    '<script>window.__reviewXss=1</script>', '< & " \'',
-  ];
-  const quote = '<img src=x onerror="window.__reviewXss=1"> "Lovely" & thoughtful';
-  const results = [];
-  for (const name of names) {
-    for (const photo of [validPhoto, brokenPhoto, '', brokenPhoto + '" onerror="window.__reviewXss=1']) {
-      window.__reviewXss = 0;
-      window.__refreshReviews([{ name, photo, quote, rating: 4 }]);
-      // Display order pins saved reviews ahead of an unmatched live one, so find it by quote.
-      const card = [...stage.children].find(el => el.querySelector('.trv-q').textContent === '“' + quote + '”');
-      const image = card.querySelector('.trv-pic img');
-      let imageState = 'missing';
-      if (image) {
-        image.loading = 'eager';
-        imageState = await new Promise(resolve => {
-          const timeout = setTimeout(() => resolve('timeout'), 1000);
-          const finish = state => { clearTimeout(timeout); resolve(state); };
-          image.addEventListener('load', () => finish('loaded'), { once: true });
-          image.addEventListener('error', () => finish('broken'), { once: true });
-          if (image.complete) finish(image.naturalWidth ? 'loaded' : 'broken');
-        });
-        // Also exercise a later error on an originally valid avatar.
-        image.dispatchEvent(new Event('error'));
-      }
-      results.push({
-        name, photo, imageState,
-        executed: window.__reviewXss,
-        handlers: [...stage.querySelectorAll('*')].flatMap(el => [...el.attributes]
-          .filter(attr => /^on/i.test(attr.name)).map(attr => attr.name)),
-        injected: card.querySelectorAll('script, svg, iframe, object, embed').length,
-        images: card.querySelectorAll('img').length,
-        alt: image?.alt,
-        src: image?.getAttribute('src'),
-        displayedName: card.querySelector('.trv-name').firstChild.textContent,
-        displayedQuote: card.querySelector('.trv-q').textContent,
-        initial: card.querySelector('.trv-pic-ph')?.textContent,
-        stars: card.querySelector('.trv-stars').textContent,
-        ratingLabel: card.querySelector('.trv-stars').getAttribute('aria-label'),
-        count: stage.children.length,
-      });
-    }
-  }
-  // Quotes in the rating label used to share the HTML attribute sink too.
-  window.__refreshReviews([{ name: 'Rating', photo: '', quote, rating: '" onmouseover="window.__reviewXss=1' }]);
-  const ratingHandlers = [...stage.querySelectorAll('*')].flatMap(el => [...el.attributes]
-    .filter(attr => /^on/i.test(attr.name)).map(attr => attr.name));
-  return { seeded, quote, results, ratingHandlers };
+  const names = [...stage.querySelectorAll('.trv-name')].map(el => el.firstChild.textContent);
+  const photos = [...stage.querySelectorAll('.trv-pic img')].map(img => img.getAttribute('src'));
+  const rating = '<img src=x onerror="window.__reviewXss=1">';
+  const count = '<svg onload="window.__reviewXss=1">';
+  window.__reviewXss = 0;
+  window.__refreshReviewMeta({ rating, count });
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return {
+    names, photos, rating, count,
+    score: document.querySelector('.tr-score-val').textContent,
+    allN: document.querySelector('.tr-all-n').textContent,
+    injected: document.querySelectorAll('img:not(.trv-pic img), svg').length,
+    handlers: [...document.querySelectorAll('*')].flatMap(el => [...el.attributes]
+      .filter(attr => /^on/i.test(attr.name)).map(attr => attr.name)),
+    xss: window.__reviewXss,
+  };
 }
 
-test('actual review renderer keeps untrusted fields inert, including avatar errors', async t => {
+test('review renderer shows the three saved reviews and keeps live figures inert', async t => {
   assert.ok(chrome, 'Install Chrome/Chromium/Edge or set CHROME_BIN; this security test must not silently skip');
   const source = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const scripts = [...source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi)];
-  const renderer = scripts.find(([, body]) => body.includes('window.__refreshReviews = function'))?.[1];
+  const renderer = scripts.find(([, body]) => body.includes('window.__refreshReviewMeta = function'))?.[1];
   assert.ok(renderer, 'Actual application review renderer not found');
   const browser = await chromium.launch({ executablePath: chrome, headless: true });
   t.after(() => browser.close());
   const page = await browser.newPage();
-  // No Worker, analytics, or other network; data avatars still load/fail normally.
+  // No Worker, analytics, or other network.
   await page.route('**/*', route => route.abort());
-  await page.setContent('<!doctype html><meta charset="utf-8"><div id="tr-stage"></div>');
+  await page.setContent('<!doctype html><meta charset="utf-8"><span class="tr-score-val">5.0</span><span class="tr-score-meta">20 Google reviews</span><span class="tr-all-n">20</span><div id="tr-stage"></div>');
   await page.addScriptTag({ content: renderer });
   const result = await page.evaluate(exerciseRenderer);
-  assert.equal(result.seeded, 7, 'Fallback reviews still render without a feed');
-  for (const row of result.results) {
-    await t.test(`${JSON.stringify(row.name)} / ${row.photo ? row.imageState : 'no avatar'}`, () => {
-      assert.equal(row.executed, 0, 'Untrusted reviewer content executed');
-      assert.deepEqual(row.handlers, [], 'Untrusted content created an executable attribute');
-      assert.equal(row.injected, 0, 'Untrusted content created markup');
-      assert.equal(row.images, row.photo ? 1 : 0);
-      assert.equal(row.displayedName, row.name);
-      assert.equal(row.displayedQuote, '“' + result.quote + '”');
-      assert.equal(row.stars, '★★★★☆');
-      assert.equal(row.ratingLabel, '4 out of 5');
-      assert.equal(row.count, 7, 'Live review still tops up with fallback reviews');
-      if (row.photo) {
-        assert.equal(row.alt, row.name);
-        assert.equal(row.src, row.photo);
-        assert.equal(row.imageState, row.photo.startsWith('data:image/svg') ? 'loaded' : 'broken');
-      } else assert.equal(row.initial, row.name.trim().charAt(0).toUpperCase());
-    });
-  }
-  assert.deepEqual(result.ratingHandlers, [], 'Rating labels cannot create attributes');
+  assert.deepEqual(result.names, ['Jess Dan', 'Ruby Taylor', 'Jaime Dale']);
+  assert.deepEqual(result.photos, [
+    'google.reviews/web/Jess Dunn-96.webp',
+    'google.reviews/web/Ruby Taylor-96.webp',
+    'google.reviews/web/James Dale-96.webp',
+  ]);
+  assert.equal(result.score, result.rating, 'Live score is text, not markup');
+  assert.equal(result.allN, result.count, 'Live total is text, not markup');
+  assert.equal(result.injected, 0, 'Live figures cannot create elements');
+  assert.deepEqual(result.handlers, [], 'Live figures cannot create event-handler attributes');
+  assert.equal(result.xss, 0);
 });
 
-test('live feed keeps the five-review sample, saved top-ups, display order and fallback figures', async t => {
+test('live feed refreshes only the figures; cards stay the three saved reviews', async t => {
   assert.ok(chrome, 'Install Chromium or set CHROME_BIN');
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const browser = await chromium.launch({ executablePath: chrome, headless: true });
@@ -121,7 +74,7 @@ test('live feed keeps the five-review sample, saved top-ups, display order and f
     })),
   };
   for (const [name, status, payload, healthy] of [
-    ['five live reviews plus saved reviews', 200, live, true],
+    ['live figures', 200, live, true],
     ['provider outage', 502, { error: 'Reviews temporarily unavailable' }, false],
     ['legacy HTTP 200 error', 200, { error: 'Place not found' }, false],
     ['incomplete live summary', 200, { ...live, userRatingCount: null }, false],
@@ -150,17 +103,13 @@ test('live feed keeps the five-review sample, saved top-ups, display order and f
         readAll: document.querySelector('.tr-review-btn').textContent.trim(),
         aggregate: JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent).aggregateRating,
       }));
-      assert.equal(result.names.length, 7);
-      assert.equal(new Set(result.names.map(name => name.trim().toLowerCase())).size, 7, 'Saved/live overlap must not duplicate a reviewer');
+      assert.deepEqual(result.names, ['Jess Dan', 'Ruby Taylor', 'Jaime Dale'], 'The live feed never replaces or adds a card');
       assert.equal(result.aggregate, undefined, 'No unverified listing total in static structured data');
       if (healthy) {
-        // Selection is still live-first; only the display order changes.
-        assert.deepEqual(result.names, ['JESS DAN', 'Ruby Taylor', ...liveNames.slice(1), 'Jaime Dale']);
         assert.equal(result.score, '4.8');
         assert.equal(result.meta, '23 Google reviews', 'Listing total is not the five-review sample size');
         assert.equal(result.readAll, 'Read all 23 reviews →');
       } else {
-        assert.deepEqual(result.names.slice(0, 2), ['Jess Dan', 'Ruby Taylor']);
         assert.equal(result.score, '5.0', 'Hand-maintained fallback score');
         assert.equal(result.meta, '20 Google reviews', 'Hand-maintained fallback total');
         assert.equal(result.readAll, 'Read all 20 reviews →');

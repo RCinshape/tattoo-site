@@ -132,7 +132,6 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c4a262'>✦</text></svg>">
 
   <link rel="dns-prefetch" href="https://emmy-reviews.emmalenetattoo.workers.dev">
-  <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
   <!-- Critical self-hosted faces are preloaded; their short block period prevents a fallback face painting and shifting before the real font arrives. -->
   <link rel="preload" as="font" type="font/woff" href="/fonts/Rom_Ftl_Srif.woff" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="/fonts/dm-sans-latin.woff2" crossorigin>
@@ -717,9 +716,9 @@
     .n-actions { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
     .n-links { margin-left: auto; }
     /* Button face for every call-to-action on this page: square, flat, serif.
-       .fl-cta and .loc-btn are the neutral tier, a --border-h hairline that
-       answers in gold on hover. The nav one is the only filled control in the bar. */
-    :is(.n-book, .h-btn, .bk-f-btn, .tr-review-btn, .fl-cta, .fl-sub-btn, .loc-btn) {
+       .loc-btn is the neutral tier, a --border-h hairline that answers in brand
+       colour on hover. The nav one is the only filled control in the bar. */
+    :is(.n-book, .h-btn, .bk-f-btn, .tr-review-btn, .fl-sub-btn, .loc-btn) {
       border-radius: 0; font-family: var(--serif); font-style: italic; font-weight: 400;
       line-height: 1.2; letter-spacing: .01em; text-transform: none;
     }
@@ -1248,16 +1247,33 @@
       background-size: calc((100% - 2px) / 3 + 1px) 100%, 100% calc((100% - 1px) / 2 + 1px);
       background-repeat: repeat-x, repeat-y;
     }
+    /* The strip under the grid is the Instagram follow link: the whole band is the
+       anchor, and it answers with a gold wash, a gold seam and the arrow nudging out. */
     .fl-ig-cap {
       display: flex; align-items: center; gap: 9px;
       padding: 14px 16px; text-decoration: none;
       font-family: var(--mono); font-size: .62rem;
       letter-spacing: .16em; text-transform: uppercase;
       color: var(--fg2); border-top: 1px solid var(--border);
-      transition: color .3s, background .3s;
+      transition: color .3s, background .3s, border-color .3s;
     }
     .fl-ig-cap svg { color: var(--gold); flex-shrink: 0; }
-    .fl-ig-cap:hover { color: var(--fg); background: rgba(var(--gold-rgb),.05); }
+    .fl-ig-cap .fl-arrow { margin-left: auto; }
+    .fl-ig-cap:hover { color: var(--fg); background: rgba(var(--gold-rgb),.08); border-top-color: var(--gold-ring); }
+    /* Inside the panel's overflow clip, so the focus ring is drawn inset. */
+    .fl-ig-cap:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+    /* Secondary network, same mono label, outside the card. */
+    .fl-alt {
+      display: inline-flex; align-items: center; gap: 9px;
+      margin-top: 10px; padding: 8px 0; text-decoration: none;
+      font-family: var(--mono); font-size: .62rem;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: var(--fg2); transition: color .3s;
+    }
+    .fl-alt:hover { color: var(--fg); }
+    .fl-alt:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    .fl-arrow { color: var(--gold); transition: transform .38s var(--out); }
+    :is(.fl-ig-cap, .fl-alt):hover .fl-arrow { transform: translateX(4px); }
     .fl-badge {
       font-family: var(--mono); font-size: .62rem;
       letter-spacing: .2em; text-transform: uppercase;
@@ -1274,45 +1290,11 @@
       line-height: 1.85; max-width: 520px;
       margin-bottom: 32px;
     }
-    .fl-btns {
-      display: grid; grid-template-columns: max-content; justify-content: start; justify-items: start; gap: 12px;
-    }
-    .fl-cta {
-      display: inline-flex; align-items: center; gap: 12px;
-      font-size: 1.12rem; padding: 12px 28px;
-      color: var(--fg); text-decoration: none;
-      border: 1px solid var(--border-h);
-      position: relative; isolation: isolate; overflow: hidden;
-      transition: border-color .35s, transform .35s var(--out);
-    }
-    /* Brand colour appears on hover only: the wash fades in under the label. */
-    .fl-cta::before {
-      content: ''; position: absolute; inset: 0; z-index: -1;
-      opacity: 0; transition: opacity .4s;
-    }
-    .fl-cta:hover::before { opacity: 1; }
-    .fl-cta-ig::before {
-      background: linear-gradient(135deg,
-        rgba(253,212,99,.12) 0%, rgba(253,89,73,.12) 40%,
-        rgba(214,36,159,.12) 70%, rgba(40,90,235,.12) 100%);
-    }
-    .fl-cta-ig:hover { border-color: rgba(253,89,73,.5); }
-    .fl-cta:active { transform: translateY(1px); transition-duration: .12s; }
-    .fl-cta-handle {
-      margin-left: auto; padding-left: 10px;
-      font-family: var(--sans); font-style: normal; font-size: .8rem; color: var(--fg2);
-    }
-    /* Mailing-list signup: a third way to follow, deliberately quieter than the
-       two socials above it. A plain HTML POST to Kit — no Kit script, no cookies,
-       nothing stored by the site. The field copies the /book field declarations
-       but is square, to sit flush against the square button. */
-    .fl-sub { margin-top: 40px; max-width: 520px; }
-    .fl-sub-lead {
-      font-family: var(--serif); font-style: italic; font-weight: 300;
-      font-size: clamp(1.35rem, 2.2vw, 1.65rem); line-height: 1.25;
-      color: var(--fg); margin-bottom: 10px;
-    }
-    .fl-sub-p { font-size: .95rem; color: var(--fg2); line-height: 1.7; margin-bottom: 20px; }
+    /* Mailing-list signup: the left column's one action, directly under the copy.
+       A plain HTML POST to Kit — no Kit script, no cookies, nothing stored by the
+       site. The field copies the /book field declarations but is square, to sit
+       flush against the square button. */
+    .fl-sub { max-width: 520px; }
     .fl-sub-form[hidden] { display: none; }
     .fl-sub-row { display: flex; gap: 10px; }
     .fl-sub-lbl {
@@ -1389,11 +1371,6 @@
       #flash { padding: 56px var(--pad) 64px; }
       .tr-review-cta { padding: 32px var(--pad); }
       .tr-review-btn { justify-content: center; width: 100%; max-width: 340px; }
-      .fl-btns { grid-template-columns: 1fr; justify-items: stretch; }
-      .fl-cta { justify-content: center; }
-      .fl-btns .tx-link { justify-self: center; }
-      /* The button label already says the network; the handle is what forces the wrap. */
-      .fl-cta-handle { display: none; }
     }
 
     /* ══════════════════════════════════════════
@@ -1463,7 +1440,7 @@
     .bk-f-go { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
     .bk-f-go:hover { box-shadow: var(--cta-wash); }
     .bk-f-go:active { transform: translateY(1px); transition-duration: .12s; }
-    :is(.n-book, .h-btn, .bk-f-btn, .tr-review-btn, .fl-cta, .fl-sub-btn, .loc-btn):focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    :is(.n-book, .h-btn, .bk-f-btn, .tr-review-btn, .fl-sub-btn, .loc-btn):focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
     .bk-f-note {
       text-align: center;
       font-family: var(--mono); font-size: .6rem;
@@ -1578,13 +1555,11 @@
       .tr-head-r { text-align: center; }
     }
     /* ══════════════════════════════════════════
-       REVIEWS — seven-card grid (#tr-stage)
+       REVIEWS — three-card grid (#tr-stage)
     ══════════════════════════════════════════ */
-    /* Six at once, not one at a time. A spotlight carousel showed 1/6 of the proof
-       and auto-advanced past it; the whole point of seventeen five-star reviews is
-       the volume, so the volume has to be on screen. Phones run two-up and show a
-       seventh card as a centred tip; above 768px the seventh is hidden because six
-       fill the 3-up and 2-up grids exactly. */
+    /* Three saved reviews in one row down to 769px; phones run two-up with the
+       third centred below as a tip. Six cards cost two rows of the page for proof
+       the badge and the read-all link already carry. */
     #tr-stage {
       position: relative;
       padding: 0 var(--pad);
@@ -1627,24 +1602,21 @@
       display: inline-flex; align-items: center; justify-content: center;
     }
     .trv-pic img { width: 100%; height: 100%; object-fit: cover; filter: var(--img-avatar); }
-    .trv-pic-ph { font-family: var(--serif); color: var(--gold); font-size: 1.1rem; }
     .trv-name {
       font-family: var(--mono); font-size: .7rem;
       letter-spacing: .14em; text-transform: uppercase; color: var(--fg);
       display: flex; flex-direction: column; gap: 4px;
     }
     .trv-sub { color: var(--dim); font-size: .6rem; letter-spacing: .16em; }
-    @media (max-width: 1024px) { #tr-stage { grid-template-columns: repeat(2, 1fr); } }
-    /* Phones get two columns and an odd last card as a centred tip. Six cards
-       one-up is ~2160px of pure scroll, which is where the proof was being
+    /* Phones get two columns and an odd last card as a centred tip. Three cards
+       one-up is a long stretch of pure scroll, which is where the proof was being
        abandoned. Two-up costs about 23 characters a line, so the in-card type
        steps down with it and the 6-line clamp becomes 5 — the modal still
        carries every full quote, so nothing is lost, only deferred. */
     @media (max-width: 768px) {
       #tr-stage { grid-template-columns: repeat(2, 1fr); --tr-gap: 10px; }
-      /* Odd count: the last card spans the row but keeps one column's width, so
-         it reads as a deliberate tip and not a stretched special case. Inert on
-         an even count, so the rule is also the guard if the roster ever shrinks. */
+      /* The odd third card is the tip: it spans the row but keeps one column's
+         width, so it reads as deliberate and not a stretched special case. */
       #tr-stage > .trv-card:last-child:nth-child(odd) {
         grid-column: 1 / -1;
         width: calc(50% - var(--tr-gap) / 2);
@@ -1659,11 +1631,6 @@
       .trv-name { font-size: .56rem; letter-spacing: .06em; }
       .trv-sub { font-size: .5rem; letter-spacing: .08em; }
     }
-    /* The seventh review exists for phones only: above 768px the grid is 3-up or
-       2-up and six cards fill it exactly, where a seventh would strand one card
-       on a row of its own. display:none keeps it out of layout, out of tab order,
-       and (its avatar being loading="lazy") off the network. */
-    @media (min-width: 769px) { #tr-stage > .trv-card:nth-child(7) { display: none; } }
 
     /* Review expand modal */
     #rv-modal {
@@ -1704,20 +1671,6 @@
     .rvm-author {
       font-family: var(--mono); font-size: .6rem;
       letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
-    }
-    .rvm-reply { display: none; margin-top: 28px; }
-    .rvm-reply.visible { display: block; }
-    .rvm-reply-divider {
-      height: 1px; background: var(--border); margin-bottom: 20px;
-    }
-    .rvm-reply-label {
-      font-family: var(--mono); font-size: .6rem;
-      letter-spacing: .18em; text-transform: uppercase; color: var(--fg2);
-      margin-bottom: 10px;
-    }
-    .rvm-reply-text {
-      font-family: var(--sans); font-size: .92rem;
-      color: var(--fg2); line-height: 1.75;
     }
     @media (max-width: 768px) {
       .rvm-box { padding: 40px 28px; }
@@ -2329,7 +2282,7 @@
     </div>
   </div>
 
-  <!-- Reviews render here (Spotlight carousel) -->
+  <!-- Three saved reviews render here -->
   <div id="tr-stage"></div>
 
   <!-- Read-all strip — inside trust section -->
@@ -2518,18 +2471,8 @@
   <div class="fl-left">
     <div class="fl-badge">Not ready yet?</div>
     <h2 class="fl-h2"><em>Follow</em> the work</h2>
-    <p class="fl-p">Instagram is where new work goes first: finished pieces, available slots, flash designs. Updated when something happens, not on a schedule.</p>
-    <div class="fl-btns">
-      <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="fl-cta fl-cta-ig">
-        <svg width="18" height="18" aria-hidden="true"><use href="#i-ig"/></svg>
-        Follow on Instagram
-        <span class="fl-cta-handle">@emmy.tattoo</span>
-      </a>
-      <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="tx-link">Follow on Facebook</a>
-    </div>
+    <p class="fl-p">New pieces, flash and open slots go up on Instagram first. Or leave your email and I'll let you know when books open. A few times a year, nothing else.</p>
     <div class="fl-sub">
-      <p class="fl-sub-lead">Rather have it in your inbox?</p>
-      <p class="fl-sub-p">An email when books open and when new flash drops. A few times a year, nothing else.</p>
       <form class="fl-sub-form" id="fl-sub-form" action="https://app.kit.com/forms/9963379/subscriptions" method="post">
         <div class="fl-sub-row">
           <label class="fl-sub-lbl" for="fl-sub-email">Email address</label>
@@ -2547,11 +2490,13 @@
            data-embed="https://www.instagram.com/emmy.tattoo/embed"
            data-embed-title="Latest posts from @emmy.tattoo on Instagram"
            data-embed-scroll="no"></div>
-      <a class="fl-ig-cap" href="https://www.instagram.com/emmy.tattoo/" target="_blank" rel="noopener">
+      <a class="fl-ig-cap" href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener">
         <svg width="15" height="15" aria-hidden="true"><use href="#i-ig"/></svg>
-        <span>@emmy.tattoo on Instagram</span>
+        <span>Follow @emmy.tattoo on Instagram</span>
+        <span class="fl-arrow" aria-hidden="true">→</span>
       </a>
     </div>
+    <a class="fl-alt" href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener">Also on Facebook <span class="fl-arrow" aria-hidden="true">→</span></a>
   </div>
 </section>
 <script>
@@ -2650,11 +2595,6 @@
     <div class="rvm-stars">★★★★★</div>
     <p class="rvm-q"></p>
     <div class="rvm-author"></div>
-    <div class="rvm-reply" aria-hidden="true">
-      <div class="rvm-reply-divider"></div>
-      <div class="rvm-reply-label">Response from Emmy</div>
-      <p class="rvm-reply-text"></p>
-    </div>
   </div>
 </div>
 
@@ -3249,75 +3189,34 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 else __boot();
 </script>
 
-<!-- ════ REVIEWS — seven-card grid ════ -->
+<!-- ════ REVIEWS — three-card grid ════ -->
 <!-- Top-level, NOT inside __boot: with the reviews now sitting directly behind the
      work, a CDN failure used to leave a blank hole exactly where the social proof
      belongs, because __boot returns at its lib guard before the grid is built. -->
 <script>
 (() => {
-  /* ══ REVIEWS — seven-card grid ══ */
-  /* Google's Places API returns at most five reviews per place, so a live-only grid
-     can never fill the slots. These seven are transcribed from the same Google
-     listing and top the live five up to seven, de-duped by name — never a mix of
-     real and invented, just a longer window onto the same wall. Seven is the whole
-     seeded set: the old cap of six left one transcribed review unrendered. */
-  const SEEDED = [
-    { name: 'Jess Dan',        photo: 'google.reviews/web/Jess Dunn-96.webp',     rating: 5, quote: "Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" },
-    { name: 'Ruby Taylor',     photo: 'google.reviews/web/Ruby Taylor-96.webp',   rating: 5, quote: "Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist" },
-    { name: 'Jaime Dale',      photo: 'google.reviews/web/James Dale-96.webp',    rating: 5, quote: "Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" },
-    { name: 'Leanne Smith',    photo: 'google.reviews/web/Leanne Smith-96.webp',  rating: 5, quote: "Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻" },
-    { name: 'Matthew Wallace', photo: 'google.reviews/web/Matthew wallace-96.webp', rating: 5, quote: "I'm Matthew on a different account but Emmy did me an absolutely unbelievable full back tattoo, she did it all in one sitting and the experience was unbelievable. So kind and patient and I will be sure to go back to her next time I want a tattoo" },
-    { name: 'Sarah Andrew',    photo: 'google.reviews/web/Sarah Andrew-96.webp',  rating: 5, quote: "Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!" },
-    { name: 'Kimberley Rust',  photo: 'google.reviews/web/Kimberely Rust-96.webp', rating: 5, quote: "Always does the loveliest work, a great person to talk to as well. Time flies when we are chatting. Can't wait to get more, so happy with the three I currently have, such beautiful artwork. ❤️" }
+  /* ══ REVIEWS — three-card grid ══ */
+  /* The owner chose these three for the home page. They are transcribed from the
+     Google listing, and their order is display order (Jess Dan's first-tattoo
+     review leads). The live feed only refreshes the score and total; it never
+     replaces a card. */
+  const SHOWN = [
+    { name: 'Jess Dan',    photo: 'google.reviews/web/Jess Dunn-96.webp',   rating: 5, quote: "Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" },
+    { name: 'Ruby Taylor', photo: 'google.reviews/web/Ruby Taylor-96.webp', rating: 5, quote: "Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist" },
+    { name: 'Jaime Dale',  photo: 'google.reviews/web/James Dale-96.webp',  rating: 5, quote: "Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" }
   ];
-  let LIVE = [];
-  /* Live first, seeded only to fill the remaining slots. Names are the only key the
-     two sources share, so that is what de-dupes them. */
-  function roster() {
-    const out = LIVE.slice(0, 7);
-    const seen = new Set(out.map(r => String(r.name).trim().toLowerCase()));
-    for (const r of SEEDED) {
-      if (out.length >= 7) break;
-      const k = String(r.name).trim().toLowerCase();
-      if (seen.has(k)) continue;
-      seen.add(k); out.push(r);
-    }
-    /* Display order, not selection: Jess Dan's first-tattoo review leads, then
-       any review about first tattoos, nerves or comfort — the worries a first
-       visitor brings — then the rest in feed order (sort is stable). */
-    const rank = r => String(r.name).trim().toLowerCase() === 'jess dan' ? 0
-      : /\bfirst (?:tattoo|one|time)\b|\bnerv|\banxi|\bcomfort|\bat ease\b|\brelax/i.test(r.quote) ? 1 : 2;
-    return out.sort((a, b) => rank(a) - rank(b));
-  }
   (() => {
     const stage = document.getElementById('tr-stage');
     const modal = document.getElementById('rv-modal');
     if (!stage) return;
 
     const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
-    const initial = name => (name || '?').trim().charAt(0).toUpperCase();
-
-    /* The markup carries hand-maintained fallback figures; a successful live
-       feed replaces them with the listing's own score and total. */
-    const META = { rating: null, count: null };
-    function paintMeta() {
-      const v = document.querySelector('.tr-score-val');
-      const m = document.querySelector('.tr-score-meta');
-      const n = document.querySelector('.tr-all-n');
-      if (v && META.rating) v.textContent = META.rating;
-      if (META.count) {
-        if (m) m.textContent = META.count + ' Google reviews';
-        if (n) n.textContent = META.count;
-      }
-    }
 
     /* Shared modal (reuses #rv-modal) */
-    let mq, mauth, mreply, mreplyT;
+    let mq, mauth;
     if (modal) {
       mq = modal.querySelector('.rvm-q');
       mauth = modal.querySelector('.rvm-author');
-      mreply = modal.querySelector('.rvm-reply');
-      mreplyT = modal.querySelector('.rvm-reply-text');
       const mback = modal.querySelector('.rvm-back');
       const mclose = modal.querySelector('.rvm-close');
       window.__ui.register(modal, {
@@ -3335,38 +3234,21 @@ else __boot();
       if (mstars) mstars.textContent = stars(r.rating || 5);
       mq.textContent = '“' + r.quote + '”';
       mauth.textContent = '— ' + r.name + ' · Google Review';
-      if (r.reply) { mreplyT.textContent = r.reply; mreply.classList.add('visible'); mreply.setAttribute('aria-hidden', 'false'); }
-      else { mreply.classList.remove('visible'); mreply.setAttribute('aria-hidden', 'true'); }
       window.__ui.open(modal, opener);
     }
 
     /* Cards are static, so there is nothing to pause: no autoplay, no off-screen
        timer, no swipe. The section's only motion is the entrance stagger below. */
 
-    /* Google returns the full-resolution avatar — measured 30-35KB of PNG for a
-       32px circle. The =s<n> suffix is Google's own resize API and -rw asks for
-       WebP; s96 is 32 CSS px at DPR 3. Measured 2.3-3.0KB each. Non-Google
-       (seeded, same-origin) URLs pass through untouched. Splitting on '=' is
-       safe: the path segment (/a-/ALV-Uj…) contains none, so everything after
-       the first one is Google's option string. */
-    function avatarSrc(u) {
-      return /\/\/lh3\.googleusercontent\.com\//.test(u) ? u.split('=')[0] + '=s96-c-rw' : u;
-    }
-
     function photoEl(r, cls) {
       const photo = document.createElement('span');
       photo.className = cls;
-      if (r.photo) {
-        const img = document.createElement('img');
-        img.src = avatarSrc(r.photo);
-        img.alt = r.name;
-        img.loading = 'lazy';
-        img.decoding = 'async';
-        photo.append(img);
-      } else {
-        photo.classList.add(cls + '-ph');
-        photo.textContent = initial(r.name);
-      }
+      const img = document.createElement('img');
+      img.src = r.photo;
+      img.alt = r.name;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      photo.append(img);
       return photo;
     }
 
@@ -3393,9 +3275,6 @@ else __boot();
     }
     function prune() {
       stage.querySelectorAll('.trv-q').forEach(q => {
-        /* A card hidden by the ≥769px rule measures 0/0 — unmeasurable, not
-           unclamped — so leave its last verdict alone. */
-        if (!q.clientHeight) return;
         const btn = q.parentNode.querySelector('.trv-more');
         const clamped = q.scrollHeight > q.clientHeight + 1;
         if (btn) btn.hidden = !clamped;
@@ -3410,11 +3289,9 @@ else __boot();
       clearTimeout(_prTimer);
       _prTimer = setTimeout(prune, 150);
     });
-    let SHOWN = [];
 
-    /* ── Seven-card grid — the seventh shows on phones only ── */
+    /* ── Three-card grid ── */
     function buildGrid() {
-      SHOWN = roster();
       /* Feed fields are text/properties, never parsed as HTML or attributes. */
       stage.replaceChildren(...SHOWN.map((r, k) => {
         const card = document.createElement('article');
@@ -3470,17 +3347,17 @@ else __boot();
 
     buildGrid();
 
-    /* Live Google fetch hook — replaces data/meta + re-renders */
-    window.__refreshReviews = function (arr, meta) {
-      if (meta) {
-        if (meta.rating) META.rating = meta.rating;
-        if (meta.count)  META.count  = meta.count;
-        paintMeta();
-      }
-      if (Array.isArray(arr) && arr.length) {
-        LIVE = arr;
-        buildGrid();
-        if (window.ScrollTrigger) ScrollTrigger.refresh(); /* stage height may have changed */
+    /* The markup carries hand-maintained fallback figures; a successful live
+       feed replaces them with the listing's own score and total. */
+    /* Live Google figures: score and listing total only; the cards above are fixed. */
+    window.__refreshReviewMeta = function ({ rating, count }) {
+      const v = document.querySelector('.tr-score-val');
+      const m = document.querySelector('.tr-score-meta');
+      const n = document.querySelector('.tr-all-n');
+      if (v && rating) v.textContent = rating;
+      if (count) {
+        if (m) m.textContent = count + ' Google reviews';
+        if (n) n.textContent = count;
       }
     };
   })();
@@ -3528,16 +3405,6 @@ else __boot();
 (function() {
   const WORKER_URL = 'https://emmy-reviews.emmalenetattoo.workers.dev';
 
-  function buildData(r) {
-    return {
-      name:  r.authorAttribution?.displayName || 'Google Reviewer',
-      photo: r.authorAttribution?.photoUri || '',
-      quote: r.text?.text || '',
-      reply: r.reviewReply?.text || '',
-      rating: r.rating || 5
-    };
-  }
-
   function loadReviews() {
   fetch(WORKER_URL)
     .then(function(res) {
@@ -3545,22 +3412,18 @@ else __boot();
       return res.json();
     })
     .then(function(data) {
-      if (data.error || !Array.isArray(data.reviews) || !data.reviews.length ||
+      if (data.error ||
           !Number.isFinite(data.rating) || data.rating < 1 || data.rating > 5 ||
           !Number.isInteger(data.userRatingCount) || data.userRatingCount < 1) {
         throw new Error('Review feed unavailable or invalid');
       }
-      if (window.__refreshReviews) {
-        window.__refreshReviews(data.reviews.map(buildData), {
-          rating: data.rating.toFixed(1),
-          count: data.userRatingCount
-        });
-      }
+      if (window.__refreshReviewMeta) window.__refreshReviewMeta({ rating: data.rating.toFixed(1), count: data.userRatingCount });
     })
     .catch(function(err) { console.error('[Reviews] Fetch failed:', err); });
   }
-  /* Seeded reviews render immediately, so the live copy is only a refresh: wait
-     for load, then idle, so it never competes with the hero for bandwidth. */
+  /* The saved cards render immediately and the live figures are only a refresh,
+     so wait for load, then idle, so the fetch never competes with the hero for
+     bandwidth. */
   function schedule() {
     if ('requestIdleCallback' in window) requestIdleCallback(loadReviews, { timeout: 3000 });
     else setTimeout(loadReviews, 1200);

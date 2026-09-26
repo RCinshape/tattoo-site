@@ -2,7 +2,7 @@
 // Generates 96px square WebP thumbnails for every seeded review avatar into
 // /google.reviews/web/. Originals are untouched. The cards render these at
 // 32 CSS px, so 96 covers DPR 3; the sources are 146-165px JPEG/PNG and cost
-// 97.1KB across the seven actually used.
+// 97.1KB across the seven originals.
 // Run: node scripts/make-avatar-thumbs.js
 const sharp = require('sharp');
 const path  = require('path');
