@@ -713,7 +713,7 @@
        labelled in the italic serif the hero address uses. Gold ones lead;
        .fl-cta and .loc-btn are the neutral tier, a --border-h hairline that
        answers in gold on hover. The nav one is the only filled control in the bar. */
-    :is(.n-book, .h-btn, .bk-f-btn, .tr-review-btn, .fl-cta, .loc-btn) {
+    :is(.n-book, .h-btn, .bk-f-btn, .tr-review-btn, .fl-cta, .fl-sub-btn, .loc-btn) {
       border-radius: 0; font-family: var(--serif); font-style: italic; font-weight: 400;
       line-height: 1.2; letter-spacing: .01em; text-transform: none;
     }
@@ -1527,6 +1527,59 @@
       margin-left: auto; padding-left: 10px;
       font-family: var(--sans); font-style: normal; font-size: .8rem; color: var(--fg2);
     }
+    /* Mailing-list signup: a third way to follow, deliberately quieter than the
+       two socials above it. A plain HTML POST to Kit — no Kit script, no cookies,
+       nothing stored by the site. The field copies the /book field declarations
+       but is square, to sit flush against the square button. */
+    .fl-sub { margin-top: 56px; max-width: 520px; }
+    .fl-sub-lead {
+      font-family: var(--serif); font-style: italic; font-weight: 300;
+      font-size: clamp(1.35rem, 2.2vw, 1.65rem); line-height: 1.25;
+      color: var(--fg); margin-bottom: 10px;
+    }
+    .fl-sub-p { font-size: .95rem; color: var(--fg2); line-height: 1.7; margin-bottom: 20px; }
+    .fl-sub-form[hidden] { display: none; }
+    .fl-sub-row { display: flex; gap: 10px; }
+    .fl-sub-lbl {
+      position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+    .fl-sub-in {
+      flex: 1 1 auto; min-width: 0;
+      font-family: var(--sans); font-size: .95rem; color: var(--fg);
+      background: rgba(var(--fg-rgb),.03);
+      border: 1px solid var(--border); border-radius: 0;
+      padding: 14px 16px;
+      transition: border-color .3s, background .3s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .fl-sub-in::placeholder { color: var(--dim); }
+    .fl-sub-in:focus-visible {
+      outline: none; border-color: var(--gold-ring-h);
+      background-color: rgba(var(--gold-rgb),.05);
+    }
+    /* Gold-ring outline, never solid gold: the page's one filled ask is /book. */
+    .fl-sub-btn {
+      flex: 0 0 auto;
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 12px 26px; font-size: 1.12rem;
+      color: var(--fg); background: transparent;
+      border: 1px solid var(--gold-ring); cursor: pointer;
+      transition: border-color .38s, background .38s, transform .38s var(--out);
+    }
+    .fl-sub-btn:hover { border-color: var(--gold-ring-h); background: rgba(var(--gold-rgb),.09); }
+    .fl-sub-btn:active { transform: translateY(1px); transition-duration: .12s; }
+    .fl-sub-fine { margin-top: 12px; font-size: .8rem; color: var(--dim); }
+    .fl-sub-fine a { color: var(--fg2); text-underline-offset: 3px; }
+    .fl-sub-status {
+      font-family: var(--serif); font-style: italic; font-weight: 400;
+      font-size: 1.2rem; line-height: 1.5; color: var(--fg);
+    }
+    .fl-sub-status:empty { display: none; }
+    @media (max-width: 599px) {
+      .fl-sub-row { flex-direction: column; }
+      .fl-sub-btn { width: 100%; }
+    }
     /* Leave-a-review CTA strip */
     .tr-review-cta {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -1643,7 +1696,7 @@
     .bk-f-go { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
     .bk-f-go:hover { box-shadow: var(--cta-wash); }
     .bk-f-go:active { transform: translateY(1px); transition-duration: .12s; }
-    :is(.n-book, .h-btn, .bk-f-btn, .tr-review-btn, .fl-cta, .loc-btn):focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    :is(.n-book, .h-btn, .bk-f-btn, .tr-review-btn, .fl-cta, .fl-sub-btn, .loc-btn):focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
     .bk-f-note {
       text-align: center;
       font-family: var(--mono); font-size: .6rem;
@@ -2818,6 +2871,19 @@
         <span class="fl-cta-handle">EmmaleneTattoo</span>
       </a>
     </div>
+    <div class="fl-sub">
+      <p class="fl-sub-lead">Rather have it in your inbox?</p>
+      <p class="fl-sub-p">An email when books open and when new flash drops. A few times a year, nothing else.</p>
+      <form class="fl-sub-form" id="fl-sub-form" action="https://app.kit.com/forms/9963379/subscriptions" method="post">
+        <div class="fl-sub-row">
+          <label class="fl-sub-lbl" for="fl-sub-email">Email address</label>
+          <input class="fl-sub-in" id="fl-sub-email" type="email" name="email_address" placeholder="you@example.com" required autocomplete="email" inputmode="email" autocapitalize="off">
+          <button class="fl-sub-btn" type="submit">Keep me posted</button>
+        </div>
+        <p class="fl-sub-fine">Unsubscribe any time. <a href="/legal#privacy">Privacy</a></p>
+      </form>
+      <p class="fl-sub-status" id="fl-sub-status" role="status" aria-live="polite"></p>
+    </div>
   </div>
   <div class="fl-ig">
     <div class="fl-ig-panel">
@@ -2832,6 +2898,34 @@
     </div>
   </div>
 </section>
+<script>
+/* ══ MAILING LIST — Kit return redirects ══
+   Kit sends subscribers back to /?subscribed=1#flash and confirmers to
+   /?confirmed=1#flash. Swap the form for the matching line, drop the query
+   and keep the hash. The loader's smooth hash scroll can be cancelled by
+   ScrollTrigger's refreshes, which save and restore the scroll position
+   (measured: about half of repeat visits ended near the top), so once the page
+   has loaded, jump the message itself into view if it is not on screen. The
+   jump is instant because a smooth scroll is cancelled the same way. */
+(() => {
+  const params = new URLSearchParams(location.search);
+  const text = params.has('confirmed') ? 'You\u2019re on the list. Thank you.'
+    : params.has('subscribed') ? 'Nearly there. Check your inbox (and spam) to confirm.' : '';
+  if (!text) return;
+  const status = document.getElementById('fl-sub-status');
+  document.getElementById('fl-sub-form').hidden = true;
+  status.textContent = text;
+  history.replaceState(history.state, '', location.pathname + (location.hash || '#flash'));
+  const settle = () => requestAnimationFrame(() => {
+    const r = status.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > innerHeight) {
+      status.scrollIntoView({ block: 'center', behavior: 'auto' });
+    }
+  });
+  if (document.readyState === 'complete') settle();
+  else addEventListener('load', settle, { once: true });
+})();
+</script>
 
 <!-- ════ LOCATION ════ -->
 <section id="location" aria-labelledby="loc-addr">
