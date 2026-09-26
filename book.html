@@ -59,6 +59,15 @@
       src: url('/fonts/cormorant-garamond-latin.woff2') format('woff2');
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
+    /* Same variable file as 300/400: the upright semibold on the filled gold asks. */
+    @font-face {
+      font-family: 'Cormorant Garamond';
+      font-style: normal;
+      font-weight: 600;
+      font-display: block;
+      src: url('/fonts/cormorant-garamond-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
     @font-face {
       font-family: 'Cormorant Garamond';
       font-style: italic;
@@ -181,6 +190,9 @@
       border-radius: 0; font-family: var(--serif); font-style: italic; font-weight: 400;
       line-height: 1.2; letter-spacing: .01em; text-transform: none;
     }
+    /* Filled gold asks set upright semibold in --on-gold: the light italic on a
+       gold fill read thin. The /book self-link keeps the same face in gold. */
+    :is(.n-book, .bk-f-go) { font-style: normal; font-weight: 600; }
     .n-book {
       display: inline-flex; align-items: center; justify-content: center;
       padding: 6px 18px;
@@ -237,22 +249,16 @@
       from { opacity: 0; transform: translateY(14px); }
       to { opacity: 1; transform: none; }
     }
-    @keyframes bk-screen-in {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: none; }
-    }
     .bk-page-h1 { animation: bk-page-in .72s var(--out) .04s both; }
     .bk-rule { animation: bk-page-in .58s var(--out) .12s both; }
     .bk-page-sub { animation: bk-page-in .68s var(--out) .18s both; }
-    .bk-health, .bk-contact { animation: bk-page-in .62s var(--out) .26s both; }
-    .bk-health fieldset, .bk-form { animation: bk-screen-in .42s var(--out) both; }
-    html.is-reload :is(.bk-page-h1, .bk-rule, .bk-page-sub, .bk-health, .bk-contact) {
+    .bk-contact, .bk-form { animation: bk-page-in .62s var(--out) .26s both; }
+    html.is-reload :is(.bk-page-h1, .bk-rule, .bk-page-sub, .bk-contact, .bk-form) {
       animation: none !important;
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
-      .bk-page-h1, .bk-rule, .bk-page-sub, .bk-health, .bk-contact,
-      .bk-health fieldset, .bk-form { animation: none !important; }
+      .bk-page-h1, .bk-rule, .bk-page-sub, .bk-contact, .bk-form { animation: none !important; }
     }
 
     /* ── Enquiry form ──
@@ -267,15 +273,26 @@
       scroll-margin-top: 112px;
     }
     .bk-fields { border: 0; padding: 0; margin: 0; min-width: 0; width: 100%; display: grid; grid-template-columns: 1fr; gap: 18px; }
-    .bk-health { border: 0; padding: 0; margin: 0 0 18px; width: 100%; min-width: 0; text-align: center; display: grid; justify-items: center; gap: 18px; }
-    .bk-health fieldset { border: 0; min-width: 0; padding: 0; width: 100%; text-align: center; }
-    .bk-health legend { width: 100%; margin-bottom: 12px; color: var(--fg); line-height: 1.6; }
-    .bk-health label { display: inline-flex; align-items: center; gap: 9px; margin: 0 12px; padding: 8px 0; cursor: pointer; }
-    .bk-health input { appearance: radio; width: 18px; height: 18px; accent-color: var(--gold); }
-    .bk-health input:focus-visible, .bk-f-chk input:focus-visible, .bk-day input:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
-    .bk-form[hidden], .bk-fields[hidden], .bk-health[hidden], .bk-health fieldset[hidden] { display: none; }
+    /* Health screening: two ordinary fields at the end of the form, directly
+       above the 18+ tick, labelled like every other field. The radios belong to
+       the empty #bk-screening form, so they are never #bk-form data. Radios
+       need the same two-class escape from `.bk-form input` as .bk-f-chk below. */
+    .bk-screen { border: 0; min-width: 0; padding: 0; margin: 0; }
+    .bk-screen legend { padding: 0; }
+    .bk-screen-opts { display: flex; flex-wrap: wrap; gap: 4px 28px; }
+    .bk-screen label { display: inline-flex; align-items: center; gap: 9px; padding: 6px 0; cursor: pointer; font-size: .95rem; color: var(--fg); }
+    .bk-form .bk-screen input {
+      width: 18px; height: 18px; flex: 0 0 auto; margin: 0;
+      padding: 0; border: 0; border-radius: 0; background: none;
+      -webkit-appearance: radio; appearance: radio; accent-color: var(--gold);
+    }
+    /* Always rendered, so the live region exists before a Yes fills it. */
+    .bk-screen-msg:empty { margin: 0; padding: 0; border: 0; }
+    .bk-discuss { display: inline-block; margin-top: 10px; color: var(--fg); text-underline-offset: 4px; }
+    .bk-form :is(.bk-screen, .bk-f-chk, .bk-day) input:focus-visible, .bk-discuss:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    .bk-form[hidden], .bk-fields[hidden], .bk-discuss[hidden] { display: none; }
     .bk-contact { margin: 8px 0 30px; color: var(--fg2); line-height: 1.8; }
-    .bk-contact a, .bk-disclosure a, .bk-health a { color: var(--fg); text-underline-offset: 4px; }
+    .bk-contact a, .bk-disclosure a { color: var(--fg); text-underline-offset: 4px; }
     .bk-error { color: var(--fg); font-size: .88rem; line-height: 1.6; border-left: 2px solid var(--gold); padding-left: 10px; margin-top: 8px; }
     .bk-form [aria-invalid="true"] { border-color: var(--gold); }
     .bk-disclosure { color: var(--fg2); font-size: .88rem; line-height: 1.8; }
@@ -526,20 +543,10 @@
   <p class="bk-page-sub">Tell me what you have in mind. Consultation is free.</p>
 
   <p class="bk-contact" id="bk-startup">The enquiry form requires JavaScript. Emmy cannot tattoo during pregnancy. Please discuss blood-thinning medication with Emmy before booking. You can <a href="https://wa.me/447405979137" target="_blank" rel="noopener">contact Emmy on WhatsApp</a> instead.</p>
-  <fieldset class="bk-health" id="bk-health" disabled inert aria-label="Before your enquiry">
-    <fieldset aria-required="true">
-      <legend>Are you currently pregnant?<span class="bk-req" aria-hidden="true">*</span></legend>
-      <label><input type="radio" name="screen-pregnancy" value="yes" autocomplete="off">Yes</label>
-      <label><input type="radio" name="screen-pregnancy" value="no" autocomplete="off">No</label>
-    </fieldset>
-    <fieldset id="bk-blood" hidden disabled inert aria-required="true">
-      <legend>Are you taking blood-thinning medication?<span class="bk-req" aria-hidden="true">*</span></legend>
-      <label><input type="radio" name="screen-blood-thinners" value="yes" autocomplete="off">Yes</label>
-      <label><input type="radio" name="screen-blood-thinners" value="no" autocomplete="off">No</label>
-    </fieldset>
-    <p id="bk-health-status" role="status" aria-live="polite" aria-atomic="true"></p>
-    <a id="bk-discuss" hidden target="_blank" rel="noopener">Discuss with Emmy on WhatsApp</a>
-  </fieldset>
+  <!-- Owner of the two screening radios (form="bk-screening"). They sit inside
+       #bk-form visually but are never among its controls, so no read of the
+       enquiry form can pick the answers up. -->
+  <form id="bk-screening" hidden></form>
   <form class="bk-form" id="bk-form" method="post" action="/book" novalidate hidden>
     <p class="bk-hint">Tell me what you're thinking. Rough ideas are fine, I'll ask what I need.</p>
     <fieldset id="bk-fields" class="bk-fields" disabled inert aria-label="Enquiry details">
@@ -639,9 +646,30 @@
     </div>
     <div>
       <label class="bk-f-lbl" for="f-refs">Reference link <span class="bk-f-opt">— optional</span></label>
-      <input id="f-refs" name="refs" type="text" maxlength="100" placeholder="instagram.com/p/…" aria-describedby="f-refs-error">
+      <input id="f-refs" name="refs" type="text" maxlength="100" placeholder="instagram.com/p/…" aria-describedby="f-refs-hint f-refs-error">
+      <p class="bk-hint" id="f-refs-hint">You can attach photos in WhatsApp once it opens.</p>
       <p class="bk-error" id="f-refs-error" hidden></p>
     </div>
+
+    <fieldset class="bk-screen" aria-required="true">
+      <legend class="bk-f-lbl">Are you currently pregnant?<span class="bk-req" aria-hidden="true">*</span></legend>
+      <div class="bk-screen-opts">
+        <label><input type="radio" form="bk-screening" name="screen-pregnancy" value="yes" autocomplete="off" aria-describedby="screen-pregnancy-error">Yes</label>
+        <label><input type="radio" form="bk-screening" name="screen-pregnancy" value="no" autocomplete="off" aria-describedby="screen-pregnancy-error">No</label>
+      </div>
+      <p class="bk-error bk-screen-msg" id="screen-pregnancy-msg" role="status" aria-live="polite" aria-atomic="true"></p>
+      <p class="bk-error" id="screen-pregnancy-error" hidden></p>
+    </fieldset>
+    <fieldset class="bk-screen" aria-required="true">
+      <legend class="bk-f-lbl">Are you taking blood-thinning medication?<span class="bk-req" aria-hidden="true">*</span></legend>
+      <div class="bk-screen-opts">
+        <label><input type="radio" form="bk-screening" name="screen-blood-thinners" value="yes" autocomplete="off" aria-describedby="screen-blood-thinners-error">Yes</label>
+        <label><input type="radio" form="bk-screening" name="screen-blood-thinners" value="no" autocomplete="off" aria-describedby="screen-blood-thinners-error">No</label>
+      </div>
+      <p class="bk-error bk-screen-msg" id="screen-blood-thinners-msg" role="status" aria-live="polite" aria-atomic="true"></p>
+      <a class="bk-discuss" id="bk-discuss" hidden target="_blank" rel="noopener">Discuss with Emmy on WhatsApp</a>
+      <p class="bk-error" id="screen-blood-thinners-error" hidden></p>
+    </fieldset>
 
     <label class="bk-f-chk">
       <input id="f-age18" name="age18" type="checkbox" required aria-describedby="f-age18-error">
@@ -701,7 +729,9 @@
     event.preventDefault();
     if (!ready) return;
     clearCompletion();
-    if (!eligible()) { syncScreening(); return; }
+    syncScreening();
+    // A Yes answer already disabled the button; this also covers implicit submission.
+    if (blockers().length) return;
     syncDays();
     const values = readFields(form);
     const invalid = [];
@@ -710,10 +740,16 @@
       setError(field.key, error);
       if (error) invalid.push(field.key);
     });
+    SCREEN_KEYS.forEach(name => {
+      const missing = !answer(name);
+      screenError(name, missing ? 'Please answer this question.' : '');
+      if (missing) invalid.push(name);
+    });
     const ageError = ageEl.checked ? '' : 'Emmy can only tattoo over-18s — please confirm.';
     setError('age18', ageError);
     if (ageError) invalid.push('age18');
     if (invalid.length) return fail(invalid[0]);
+    if (!eligible()) return;
     const text = waMessage(values);
     const url = waUrl(text);
     if (text.length > MSG_MAX || url.length > URL_MAX) {
@@ -763,11 +799,16 @@
     size: 'your size', budget: 'your budget', when: 'your availability',
     notes: 'your notes', refs: 'your reference link'
   };
+  // Shown under the question when it is answered Yes; both also describe the disabled button.
+  const SCREEN = {
+    'screen-pregnancy': "Emmy can't tattoo during pregnancy, but she'd love to hear from you afterwards.",
+    'screen-blood-thinners': 'Please discuss this with Emmy before completing a booking enquiry. Do not stop or change medication to get a tattoo.'
+  };
+  const SCREEN_KEYS = Object.keys(SCREEN);
   const fields = document.getElementById('bk-fields');
   const submit = document.getElementById('f-submit');
-  const health = document.getElementById('bk-health');
-  const blood = document.getElementById('bk-blood');
-  const healthStatus = document.getElementById('bk-health-status');
+  // The radios' form owner — never #bk-form, so the answers are not enquiry data.
+  const screening = document.getElementById('bk-screening');
   const discuss = document.getElementById('bk-discuss');
   const msg = document.getElementById('f-msg');
   const doneCard = document.getElementById('f-done');
@@ -782,57 +823,46 @@
   const dayEls = Array.from(form.querySelectorAll('[data-day]'));
   const errors = new Set();
 
-  function answer(name) {
-    const radio = health.querySelector('[name="' + name + '"]:checked');
-    return radio ? radio.value : '';
-  }
+  function answer(name) { return screening.elements.namedItem(name).value; }
+  function blockers() { return SCREEN_KEYS.filter(name => answer(name) === 'yes'); }
   function eligible() {
-    return ready && answer('screen-pregnancy') === 'no' && answer('screen-blood-thinners') === 'no';
+    return ready && SCREEN_KEYS.every(name => answer(name) === 'no');
   }
   function clearCompletion() {
     doneCard.hidden = true;
     openLink.removeAttribute('href');
   }
-  function scrollAfterReveal(target) {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (!target.hidden) {
-          target.scrollIntoView({
-            block: target === form ? 'start' : 'center',
-            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
-          });
-        }
-      });
-    });
+  function screenError(name, text) {
+    const paragraph = document.getElementById(name + '-error');
+    paragraph.textContent = text;
+    paragraph.hidden = !text;
   }
   function syncScreening() {
     clearCompletion();
-    const pregnancy = answer('screen-pregnancy');
-    const showBlood = ready && pregnancy === 'no';
-    if (!showBlood) blood.querySelectorAll('input').forEach(input => { input.checked = false; });
-    blood.hidden = !showBlood;
-    blood.disabled = !showBlood;
-    blood.inert = !showBlood;
-    const needsDiscussion = showBlood && answer('screen-blood-thinners') === 'yes';
+    const blocked = blockers();
+    SCREEN_KEYS.forEach(name => {
+      const note = document.getElementById(name + '-msg');
+      const text = blocked.includes(name) ? SCREEN[name] : '';
+      if (note.textContent !== text) note.textContent = text;
+      if (answer(name)) screenError(name, '');
+    });
+    const needsDiscussion = blocked.includes('screen-blood-thinners');
     discuss.hidden = !needsDiscussion;
     if (needsDiscussion) {
       discuss.href = waUrl('Hi Emmy, I’m interested in a tattoo and take blood-thinning medication. Could we discuss whether I can book?');
     } else discuss.removeAttribute('href');
-    const active = eligible();
-    form.hidden = !active;
-    form.inert = !active;
-    fields.disabled = !active;
-    fields.inert = !active;
-    submit.disabled = !active;
-    healthStatus.textContent = pregnancy === 'yes'
-      ? 'Emmy cannot tattoo during pregnancy. Please return to enquire after your pregnancy.'
-      : needsDiscussion
-        ? 'Please discuss this with Emmy before completing a booking enquiry. Do not stop or change medication to get a tattoo.'
-        : active ? 'Continue below.'
-          : showBlood ? 'Please answer the medication question.' : '';
+    submit.disabled = !ready || blocked.length > 0;
+    if (blocked.length) {
+      submit.setAttribute('aria-disabled', 'true');
+      submit.setAttribute('aria-describedby', blocked.map(name => name + '-msg').join(' '));
+    } else {
+      submit.removeAttribute('aria-disabled');
+      submit.removeAttribute('aria-describedby');
+    }
   }
   function resetScreening() {
-    health.querySelectorAll('input').forEach(input => { input.checked = false; });
+    Array.from(screening.elements).forEach(input => { input.checked = false; });
+    SCREEN_KEYS.forEach(name => screenError(name, ''));
     syncScreening();
   }
   function syncDays() {
@@ -878,7 +908,11 @@
     }
     return '';
   }
-  function target(key) { return key === 'when' ? daysSum : document.getElementById('f-' + key); }
+  function target(key) {
+    if (key === 'when') return daysSum;
+    if (SCREEN_KEYS.includes(key)) return screening.elements.namedItem(key)[0];
+    return document.getElementById('f-' + key);
+  }
   function setError(key, text) {
     const paragraph = document.getElementById('f-' + key + '-error');
     paragraph.textContent = text;
@@ -953,30 +987,30 @@
     });
     form.addEventListener('input', revalidate);
     form.addEventListener('change', revalidate);
-    health.addEventListener('change', event => {
+    form.addEventListener('change', event => {
+      if (event.target.form !== screening) return;
       syncScreening();
-      if (!event.isTrusted || event.target.value !== 'no') return;
-      const target = event.target.name === 'screen-pregnancy' ? blood : form;
-      if (!target.hidden) scrollAfterReveal(target);
+      if (!errors.size && SCREEN_KEYS.every(name => answer(name))) { msg.hidden = true; msg.textContent = ''; }
     });
     window.addEventListener('pageshow', event => { if (event.persisted) resetScreening(); });
     syncDays();
-    resetScreening();
     if (DEPOSIT.url) {
       const depBtn = document.getElementById('bk-dep-btn');
       depBtn.href = DEPOSIT.url;
       if (DEPOSIT.amount) depBtn.textContent = 'Pay ' + DEPOSIT.amount + ' deposit';
       document.getElementById('bk-dep').hidden = false;
     }
-    // This is the sole activation boundary. Enquiry fields stay disabled until No/No.
-    health.disabled = false;
-    health.inert = false;
+    // The sole activation boundary. The form opens here; only explicit No/No
+    // answers at its end let it hand off to WhatsApp.
     ready = true;
+    form.hidden = false;
+    form.inert = false;
+    fields.disabled = false;
+    fields.inert = false;
+    resetScreening();
     document.getElementById('bk-startup').hidden = true;
   } catch (_) {
     ready = false;
-    health.disabled = true;
-    health.inert = true;
     fields.disabled = true;
     fields.inert = true;
     submit.disabled = true;

@@ -30,7 +30,8 @@ async function exerciseRenderer() {
     for (const photo of [validPhoto, brokenPhoto, '', brokenPhoto + '" onerror="window.__reviewXss=1']) {
       window.__reviewXss = 0;
       window.__refreshReviews([{ name, photo, quote, rating: 4 }]);
-      const card = stage.firstElementChild;
+      // Display order pins saved reviews ahead of an unmatched live one, so find it by quote.
+      const card = [...stage.children].find(el => el.querySelector('.trv-q').textContent === '“' + quote + '”');
       const image = card.querySelector('.trv-pic img');
       let imageState = 'missing';
       if (image) {
@@ -106,7 +107,7 @@ test('actual review renderer keeps untrusted fields inert, including avatar erro
   assert.deepEqual(result.ratingHandlers, [], 'Rating labels cannot create attributes');
 });
 
-test('live feed keeps the five-review sample, saved top-ups and truthful fallback metadata', async t => {
+test('live feed keeps the five-review sample, saved top-ups, display order and fallback figures', async t => {
   assert.ok(chrome, 'Install Chromium or set CHROME_BIN');
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const browser = await chromium.launch({ executablePath: chrome, headless: true });
@@ -140,27 +141,29 @@ test('live feed keeps the five-review sample, saved top-ups and truthful fallbac
         ? null
         : page.waitForEvent('console', { predicate: message => message.text().includes('[Reviews] Fetch failed'), timeout: 10000 });
       await page.goto('http://127.0.0.1/review-fixture');
-      if (healthy) await page.waitForFunction(() => !document.querySelector('.tr-score-val').hidden);
+      if (healthy) await page.waitForFunction(() => document.querySelector('.tr-score-meta').textContent === '23 Google reviews');
       else await outcome;
       const result = await page.evaluate(() => ({
         names: [...document.querySelectorAll('.trv-name')].map(el => el.firstChild.textContent),
         score: document.querySelector('.tr-score-val').textContent,
-        scoreHidden: document.querySelector('.tr-score-val').hidden,
         meta: document.querySelector('.tr-score-meta').textContent,
+        readAll: document.querySelector('.tr-review-btn').textContent.trim(),
         aggregate: JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent).aggregateRating,
       }));
       assert.equal(result.names.length, 7);
       assert.equal(new Set(result.names.map(name => name.trim().toLowerCase())).size, 7, 'Saved/live overlap must not duplicate a reviewer');
       assert.equal(result.aggregate, undefined, 'No unverified listing total in static structured data');
       if (healthy) {
-        assert.deepEqual(result.names.slice(0, 5), liveNames);
-        assert.deepEqual(result.names.slice(5), ['Jaime Dale', 'Ruby Taylor']);
-        assert.equal(result.scoreHidden, false);
+        // Selection is still live-first; only the display order changes.
+        assert.deepEqual(result.names, ['JESS DAN', 'Ruby Taylor', ...liveNames.slice(1), 'Jaime Dale']);
         assert.equal(result.score, '4.8');
-        assert.equal(result.meta, '23 Google Reviews', 'Listing total is not the five-review sample size');
+        assert.equal(result.meta, '23 Google reviews', 'Listing total is not the five-review sample size');
+        assert.equal(result.readAll, 'Read all 23 reviews →');
       } else {
-        assert.equal(result.names[0], 'Jess Dan');
-        assert.equal(result.scoreHidden, true, 'A saved sample must not masquerade as a live rating');
+        assert.deepEqual(result.names.slice(0, 2), ['Jess Dan', 'Ruby Taylor']);
+        assert.equal(result.score, '5.0', 'Hand-maintained fallback score');
+        assert.equal(result.meta, '20 Google reviews', 'Hand-maintained fallback total');
+        assert.equal(result.readAll, 'Read all 20 reviews →');
       }
     });
   }

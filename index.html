@@ -394,6 +394,15 @@
       src: url('/fonts/cormorant-garamond-latin.woff2') format('woff2');
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
+    /* Same variable file as 300/400: the upright semibold on the filled gold asks. */
+    @font-face {
+      font-family: 'Cormorant Garamond';
+      font-style: normal;
+      font-weight: 600;
+      font-display: block;
+      src: url('/fonts/cormorant-garamond-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
     @font-face {
       font-family: 'Cormorant Garamond';
       font-style: italic;
@@ -707,14 +716,16 @@
     /* Nav right-hand actions group — theme toggle + hamburger, last flex child at every width */
     .n-actions { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
     .n-links { margin-left: auto; }
-    /* Button face for every call-to-action on this page: square, flat,
-       labelled in the italic serif the hero address uses. Gold ones lead;
+    /* Button face for every call-to-action on this page: square, flat, serif.
        .fl-cta and .loc-btn are the neutral tier, a --border-h hairline that
        answers in gold on hover. The nav one is the only filled control in the bar. */
     :is(.n-book, .h-btn, .bk-f-btn, .tr-review-btn, .fl-cta, .fl-sub-btn, .loc-btn) {
       border-radius: 0; font-family: var(--serif); font-style: italic; font-weight: 400;
       line-height: 1.2; letter-spacing: .01em; text-transform: none;
     }
+    /* Filled gold asks set upright semibold in --on-gold: the light italic on a
+       gold fill read thin. The /book self-link keeps the same face in gold. */
+    :is(.n-book, .h-btn-go, .bk-f-go) { font-style: normal; font-weight: 600; }
     .n-book {
       display: inline-flex; align-items: center; justify-content: center;
       padding: 6px 18px;
@@ -828,7 +839,6 @@
       display: flex; flex-direction: column; align-items: center;
       width: 100%;
     }
-    @keyframes dp { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.6); opacity: .5; } }
     .h-eyebrow {
       font-family: var(--serif); font-style: italic; font-weight: 400;
       font-size: clamp(1.05rem, 1.6vw, 1.15rem); letter-spacing: .02em;
@@ -867,8 +877,8 @@
     @media (prefers-reduced-motion: reduce) { .h-sub { animation: none !important; opacity: 1 !important; } }
     .h-loc {
       font-family: var(--serif); font-style: italic; font-weight: 400;
-      font-size: clamp(1.03rem, 1.7vw, 1.1rem);
-      color: rgba(var(--fg-rgb),.86);
+      font-size: clamp(1.15rem, 1.9vw, 1.24rem);
+      color: var(--fg);
       line-height: 1.75;
       text-shadow: 0 0 28px rgba(var(--panel-rgb),1), 0 1px 6px rgba(var(--panel-rgb),.85);
       display: flex; flex-direction: column; align-items: center; gap: 0;
@@ -1009,18 +1019,18 @@
 
 
 
-    /* Hover label */
+    /* Style label: always on (touch has no hover) at 60%, full on hover/focus */
     .wc-lbl {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 4;
       padding: 52px 14px 14px;
       background: linear-gradient(to top, rgba(0,0,0,.78), transparent);
-      transform: translateY(100%); transition: transform .5s var(--out);
+      opacity: .6; transition: opacity .4s var(--out);
     }
-    .wc:hover .wc-lbl { transform: translateY(0); }
+    .wc:is(:hover, :focus-visible) .wc-lbl { opacity: 1; }
     .wc-sub {
       font-family: var(--mono); font-size: .68rem;
       letter-spacing: .12em; text-transform: uppercase;
-      color: rgba(var(--fg-rgb),.6);
+      color: var(--fg);
     }
 
     /* View circle */
@@ -1107,9 +1117,9 @@
       color: var(--gold);
       transition: border-color .38s, background .38s, transform .38s var(--out);
     }
-    /* The bob is the invitation; the label says where it goes. */
+    /* The nudge is the invitation; the label says where it goes. */
     .w-more-ring svg { animation: w-bob 2.4s ease-in-out infinite; }
-    @keyframes w-bob { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
+    @keyframes w-bob { 0%, 100% { transform: translateX(-2px); } 50% { transform: translateX(3px); } }
     .w-more-lbl {
       font-family: var(--mono); font-size: .7rem;
       letter-spacing: .18em; text-transform: uppercase;
@@ -1145,20 +1155,22 @@
     /* ══════════════════════════════════════════
        ABOUT
     ══════════════════════════════════════════ */
+    /* One centred group: a fixed-width portrait beside a text column capped at
+       60ch, vertically centred on each other, so no dead gutter opens between
+       them at wide viewports. */
     #about {
       padding: 70px var(--pad) 90px;
       background: var(--bg);
       border-top: 1px solid transparent;
       border-image: var(--seam) 1;
-      display: grid; grid-template-columns: .82fr 1.18fr;
-      gap: 64px; align-items: center;
+      display: grid; grid-template-columns: clamp(220px, 22vw, 320px) minmax(0, 60ch);
+      justify-content: center; align-items: center; gap: 64px;
     }
+    /* 4:5 and object-fit: cover, so a replacement portrait drops straight in.
+       The edges dissolve into the page — a border would redraw the hard edge. */
     .ab-portrait {
       aspect-ratio: 4/5; border-radius: var(--r);
-      overflow: hidden;
-      /* Half the previous rendered width, centred in its grid column, with the
-         edges dissolved into the page — a border would redraw the hard edge. */
-      width: 50%; justify-self: center;
+      overflow: hidden; width: 100%;
       -webkit-mask-image: radial-gradient(ellipse 92% 92% at 50% 50%, #000 62%, rgba(0,0,0,.35) 88%, transparent 100%);
               mask-image: radial-gradient(ellipse 92% 92% at 50% 50%, #000 62%, rgba(0,0,0,.35) 88%, transparent 100%);
     }
@@ -1171,8 +1183,20 @@
     }
     .ab-bio p {
       font-size: 1.05rem; color: var(--fg2); line-height: 1.9;
-      margin-bottom: 18px; max-width: 560px;
+      margin-bottom: 18px;
     }
+    /* Inline text link: the hero's .h-dir treatment — --fg italic serif on a
+       gold underline, the arrow glyph in gold. */
+    .tx-link {
+      display: inline-block; padding: 4px 0;
+      font-family: var(--serif); font-style: italic; font-size: 1.15rem;
+      color: var(--fg); text-decoration: underline; text-decoration-thickness: 1px;
+      text-underline-offset: 5px; text-decoration-color: rgba(var(--gold-rgb),.7);
+      transition: text-decoration-color .3s;
+    }
+    .tx-link:hover { text-decoration-color: var(--gold); }
+    .tx-link:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    .tx-arrow { color: var(--gold); }
     @media (max-width: 768px) {
       #about { grid-template-columns: 1fr; gap: 36px; padding: 56px var(--pad) 64px; }
       .ab-portrait { max-width: 180px; justify-self: center; }
@@ -1235,49 +1259,23 @@
     .fl-ig-cap svg { color: var(--gold); flex-shrink: 0; }
     .fl-ig-cap:hover { color: var(--fg); background: rgba(var(--gold-rgb),.05); }
     .fl-badge {
-      display: inline-flex; align-items: center; gap: 9px;
       font-family: var(--mono); font-size: .62rem;
       letter-spacing: .2em; text-transform: uppercase;
-      color: var(--fg2); margin-bottom: 22px;
+      color: var(--fg2); margin-bottom: 18px;
     }
-    /* Space Mono draws @ as a small glyph sitting entirely above the baseline
-       (ascent 6, descent 0 at this size, against cap height 7), which reads as a
-       raised blob rather than an at-sign. DM Sans's @ is ascent 7 / descent 2 —
-       cap-matched and crossing the baseline. Only this one character changes
-       font; .fl-handle is a grouping wrapper so .fl-at is not a flex item. */
-    .fl-at { font-family: var(--sans); }
-    .fl-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--gold); flex-shrink: 0;
-      box-shadow: 0 0 8px rgba(var(--gold-rgb),.6);
-      animation: dp 2.2s ease-in-out infinite;
-    }
+    /* The fallback for visitors not ready to enquire, so it reads as secondary
+       to #book: the same size as the #location heading, not a display title. */
     .fl-h2 {
-      font-size: clamp(2.8rem, 6.5vw, 5.5rem);
-      margin-bottom: 22px;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      margin-bottom: 18px;
     }
     .fl-p {
       font-size: 1rem; color: var(--fg2);
       line-height: 1.85; max-width: 520px;
       margin-bottom: 32px;
     }
-    /* Bullet list of what you get */
-    .fl-reasons {
-      list-style: none; display: flex; flex-direction: column; gap: 14px;
-      margin-bottom: 44px; max-width: 420px;
-    }
-    .fl-reason {
-      display: flex; align-items: flex-start; gap: 14px;
-      font-family: var(--sans); font-size: .95rem;
-      color: var(--fg2); line-height: 1.55;
-    }
-    .fl-reason::before {
-      content: '—'; color: var(--gold);
-      font-family: var(--serif); font-size: 1rem;
-      flex-shrink: 0; line-height: 1.55;
-    }
     .fl-btns {
-      display: grid; grid-template-columns: max-content; justify-content: start; gap: 12px;
+      display: grid; grid-template-columns: max-content; justify-content: start; justify-items: start; gap: 12px;
     }
     .fl-cta {
       display: inline-flex; align-items: center; gap: 12px;
@@ -1299,8 +1297,6 @@
         rgba(214,36,159,.12) 70%, rgba(40,90,235,.12) 100%);
     }
     .fl-cta-ig:hover { border-color: rgba(253,89,73,.5); }
-    .fl-cta-fb::before { background: rgba(24,119,242,.12); }
-    .fl-cta-fb:hover { border-color: rgba(24,119,242,.5); }
     .fl-cta:active { transform: translateY(1px); transition-duration: .12s; }
     .fl-cta-handle {
       margin-left: auto; padding-left: 10px;
@@ -1310,7 +1306,7 @@
        two socials above it. A plain HTML POST to Kit — no Kit script, no cookies,
        nothing stored by the site. The field copies the /book field declarations
        but is square, to sit flush against the square button. */
-    .fl-sub { margin-top: 56px; max-width: 520px; }
+    .fl-sub { margin-top: 40px; max-width: 520px; }
     .fl-sub-lead {
       font-family: var(--serif); font-style: italic; font-weight: 300;
       font-size: clamp(1.35rem, 2.2vw, 1.65rem); line-height: 1.25;
@@ -1359,20 +1355,12 @@
       .fl-sub-row { flex-direction: column; }
       .fl-sub-btn { width: 100%; }
     }
-    /* Leave-a-review CTA strip */
+    /* Read-all CTA strip */
     .tr-review-cta {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 20px; text-align: center;
+      text-align: center;
       padding: 36px var(--pad);
     }
-    .tr-review-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-    .tr-review-prompt {
-      font-family: var(--serif); font-style: italic;
-      font-size: clamp(1.1rem, 2.2vw, 1.6rem);
-      font-weight: 300; color: var(--fg2);
-      max-width: 520px; line-height: 1.4;
-    }
-    .tr-review-prompt em { color: var(--fg); font-style: italic; }
     .tr-review-btn {
       display: inline-flex; align-items: center; gap: 10px;
       font-size: 1.12rem;
@@ -1392,9 +1380,6 @@
     .tr-review-btn:hover::before { transform: translateX(0); }
     .tr-review-btn:hover { color: var(--on-gold); border-color: var(--gold); }
     .tr-review-btn:active { transform: translateY(1px); transition-duration: .12s; }
-    .tr-review-btn svg { flex-shrink: 0; }
-    .tr-review-btn-fb::before { background: #1877f2; }
-    .tr-review-btn-fb:hover { color: #fff; border-color: #1877f2; }
     @media (max-width: 1024px) {
       #flash { flex-direction: column; align-items: stretch; gap: 56px; }
       .fl-left { max-width: 100%; }
@@ -1403,10 +1388,10 @@
     @media (max-width: 768px) {
       #flash { padding: 56px var(--pad) 64px; }
       .tr-review-cta { padding: 32px var(--pad); }
-      .tr-review-btns { flex-direction: column; width: 100%; }
-      .tr-review-btn { justify-content: center; }
-      .fl-btns { grid-template-columns: 1fr; }
+      .tr-review-btn { justify-content: center; width: 100%; max-width: 340px; }
+      .fl-btns { grid-template-columns: 1fr; justify-items: stretch; }
       .fl-cta { justify-content: center; }
+      .fl-btns .tx-link { justify-self: center; }
       /* The button label already says the network; the handle is what forces the wrap. */
       .fl-cta-handle { display: none; }
     }
@@ -1415,7 +1400,7 @@
        BOOKING
     ══════════════════════════════════════════ */
     #book {
-      padding: 130px var(--pad) 110px;
+      padding: 86px var(--pad) 110px;
       position: relative; overflow: hidden;
       background: var(--bg);
       border-top: 1px solid transparent;
@@ -1447,11 +1432,14 @@
     .bk-av.closed::before, .bk-av.closed::after { background: var(--warn); }
     .bk-h2 {
       font-family: var(--serif);
-      font-size: clamp(3.2rem, 9vw, 8rem);
+      font-size: clamp(3.2rem, 6.5vw, 5.75rem);
       font-weight: 300; letter-spacing: -.025em;
       line-height: .97; margin-bottom: 36px;
     }
     .bk-h2 em { font-style: italic; color: var(--gold); }
+    /* One line from 1024px: the two reveal lines sit side by side, and the
+       space between the spans in the markup is the word space. */
+    @media (min-width: 1024px) { .bk-h2 :is(.tl, .tl-i) { display: inline-block; } }
     .bk-sub {
       font-size: 1.05rem; color: var(--fg2);
       line-height: 1.88; max-width: 520px;
@@ -1484,13 +1472,13 @@
 
     /* ── 3-step process ── */
     .bk-steps {
-      display: flex; align-items: center;
+      display: flex; align-items: flex-start;
       margin-bottom: 52px;
       opacity: 0; transform: translateY(14px);
     }
     .bk-step {
       display: flex; flex-direction: column; align-items: center; gap: 10px;
-      padding: 0 44px;
+      padding: 0 32px;
     }
     .bk-step-n {
       font-family: var(--serif);
@@ -1503,17 +1491,29 @@
       letter-spacing: .28em; text-transform: uppercase;
       color: var(--fg2); white-space: nowrap;
     }
+    .bk-step-d {
+      max-width: 22ch; margin-top: 2px;
+      font-size: .92rem; line-height: 1.55; color: var(--fg2);
+    }
+    /* Top-aligned steps: the rule sits on the numerals' centre line. */
     .bk-step-div {
       width: 64px; height: 1px; flex-shrink: 0;
+      margin-top: calc(clamp(1.8rem, 3.5vw, 2.8rem) / 2);
       background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb),.35), transparent);
     }
 
     @media (max-width: 768px) {
-      #book { padding: 88px var(--pad) 80px; }
+      #book { padding: 58px var(--pad) 80px; }
       .bk-h2 { font-size: clamp(2.6rem, 11vw, 4.2rem); }
       .bk-f-btn { padding: 14px 24px; }
-      .bk-step  { padding: 0 18px; }
-      .bk-step-div { width: 28px; }
+      /* Three described steps do not fit one phone row: stack them on a
+         vertical rule instead. */
+      .bk-steps { flex-direction: column; align-items: center; gap: 14px; }
+      .bk-step  { padding: 0; gap: 8px; }
+      .bk-step-div {
+        width: 1px; height: 22px; margin-top: 0;
+        background: linear-gradient(180deg, transparent, rgba(var(--gold-rgb),.35), transparent);
+      }
     }
 
 
@@ -1563,7 +1563,7 @@
       border: 1px solid var(--border);
       background: rgba(var(--fg-rgb),.018);
     }
-    .tr-score-stars { color: var(--gold); font-size: .8rem; letter-spacing: .1em; }
+    .tr-score-stars { color: var(--gold); font-size: .8rem; }
     .tr-score-val {
       font-family: var(--serif); font-size: 1.15rem;
       font-weight: 300; color: var(--fg); line-height: 1;
@@ -1592,8 +1592,8 @@
       display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--tr-gap);
     }
     .trv-card {
-      display: flex; flex-direction: column; gap: 18px;
-      padding: 30px 32px;
+      display: flex; flex-direction: column; gap: 12px;
+      padding: 20px 22px;
       border: 1px solid var(--border); border-radius: var(--r);
       background: rgba(var(--fg-rgb),.012);
       transition: border-color .4s;
@@ -1650,7 +1650,7 @@
         width: calc(50% - var(--tr-gap) / 2);
         justify-self: center;
       }
-      .trv-card { padding: 16px 15px; gap: 12px; }
+      .trv-card { padding: 11px 10px; gap: 8px; }
       .trv-stars { font-size: .7rem; }
       .trv-q { font-size: .88rem; line-height: 1.6; -webkit-line-clamp: 5; }
       .trv-more { font-size: .54rem; letter-spacing: .1em; }
@@ -1773,22 +1773,22 @@
       .fq-item::before, .fq-item.open::before { transition: none; }
     }
 
-    /* Header row — a <button> for keyboard access; grid: [number] [question+tags] [toggle] */
+    /* Header row — a <button> for keyboard access; grid: [number] [question] [toggle] */
     .fq-trigger {
       display: grid;
-      grid-template-columns: 96px 1fr auto;
+      grid-template-columns: 56px 1fr auto;
       align-items: center;
       gap: 0 2.5rem;
-      padding: 36px 0;
+      padding: 18px 0;
       width: 100%;
       background: none; border: none; color: inherit;
       font: inherit; text-align: left; cursor: pointer;
     }
 
-    /* Large italic number */
+    /* Italic number — an index mark, kept well below the question's size */
     .fq-num {
       font-family: var(--serif);
-      font-size: clamp(2.4rem,4.5vw,4rem);
+      font-size: clamp(1.35rem,2vw,1.75rem);
       font-style: italic; font-weight: 300;
       color: var(--gold-faint);
       line-height: 1; user-select: none;
@@ -1797,8 +1797,6 @@
     .fq-item:hover .fq-num { color: var(--gold-soft); }
     .fq-item.open  .fq-num { color: var(--gold); }
 
-    /* Question text + tags */
-    .fq-q-wrap { display: flex; flex-direction: column; gap: 6px; }
     .fq-question {
       font-family: var(--serif);
       font-size: clamp(1.15rem,2.2vw,1.8rem);
@@ -1806,13 +1804,6 @@
       color: var(--fg); transition: color .3s ease;
     }
     .fq-item.open .fq-question { color: var(--fg); }
-    .fq-tags-row {
-      font-family: var(--mono); font-size: .62rem;
-      color: var(--dim); letter-spacing: .1em; text-transform: uppercase;
-      transition: color .3s ease;
-    }
-    .fq-item:hover .fq-tags-row,
-    .fq-item.open  .fq-tags-row { color: var(--fg2); }
 
     /* Circular toggle (+→×) */
     .fq-toggle {
@@ -1832,7 +1823,7 @@
 
     /* Gold sweep rule at bottom of trigger. */
     .fq-rule {
-      position: absolute; bottom: 0; left: 96px;
+      position: absolute; bottom: 0; left: 56px;
       height: 1px; width: 0;
       background: linear-gradient(90deg, var(--gold), transparent);
       opacity: .5;
@@ -1841,7 +1832,7 @@
     /* Expand panel */
     .fq-panel { height: 0; overflow: hidden; }
     .fq-panel-inner {
-      padding: 0 0 44px calc(96px + 2.5rem);
+      padding: 0 0 44px calc(56px + 2.5rem);
       max-width: 800px;
     }
     .fq-answer {
@@ -1863,12 +1854,12 @@
 
     @media (max-width: 768px) {
       #faq { padding: 60px var(--pad) 80px; }
-      .fq-trigger { grid-template-columns: 52px 1fr auto; gap: 0 1.25rem; padding: 24px 0; }
-      .fq-num { font-size: 2rem; }
+      .fq-trigger { grid-template-columns: 36px 1fr auto; gap: 0 1.25rem; padding: 12px 0; }
+      .fq-num { font-size: 1.25rem; }
       .fq-question { font-size: 1.1rem; }
       .fq-toggle { width: 30px; height: 30px; font-size: 1rem; }
-      .fq-panel-inner { padding: 0 0 30px calc(52px + 1.25rem); }
-      .fq-rule { left: 52px; }
+      .fq-panel-inner { padding: 0 0 30px calc(36px + 1.25rem); }
+      .fq-rule { left: 36px; }
     }
 
     /* ══════════════════════════════════════════
@@ -2050,9 +2041,6 @@
     html.lite .wc-img { transition: transform .6s var(--out); }
     /* Animated box-shadow on fixed / always-visible elements. */
     html.lite .loc-map-wrap { transition: none; }
-    /* Infinite pulses keep the compositor awake even off-screen. */
-    html.lite .fl-dot { animation: none; }
-    @media (prefers-reduced-motion: reduce) { .fl-dot { animation: none; } }
 
     /* ══════════════════════════════════════════
        RESILIENCE — if animation libs/JS fail, reveal content + drop loader
@@ -2314,9 +2302,9 @@
     </div>
     <a class="w-more" href="/portfolio">
       <span class="w-more-ring" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v13"/><path d="M6 12.5l6 6 6-6"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13"/><path d="M12.5 6l6 6-6 6"/></svg>
       </span>
-      <span class="w-more-lbl">View portfolio</span>
+      <span class="w-more-lbl">View full portfolio</span>
     </a>
   </div>
 </section>
@@ -2330,11 +2318,13 @@
       <h2 class="tr-h2">What clients <em>say</em></h2>
     </div>
     <div class="tr-head-r">
+      <!-- Fallback figures, shown until the live review feed answers: update
+           5.0 and 20 here and in .tr-all-n below by hand as the listing grows. -->
       <div class="tr-score-badge">
-        <span class="tr-score-stars">★★★★★</span>
-        <span class="tr-score-val" hidden></span>
-        <span class="tr-score-sep" hidden>·</span>
-        <span class="tr-score-meta">5-star Google reviews</span>
+        <span class="tr-score-stars" aria-hidden="true">★</span>
+        <span class="tr-score-val">5.0</span>
+        <span class="tr-score-sep" aria-hidden="true">·</span>
+        <span class="tr-score-meta">20 Google reviews</span>
       </div>
     </div>
   </div>
@@ -2342,23 +2332,11 @@
   <!-- Reviews render here (Spotlight carousel) -->
   <div id="tr-stage"></div>
 
-  <!-- View-all + leave-a-review strip — inside trust section -->
+  <!-- Read-all strip — inside trust section -->
   <div class="tr-review-cta">
-    <p class="tr-review-prompt">Reviews are genuinely appreciated. <em>They help people find their way here.</em></p>
-    <div class="tr-review-btns">
-      <a href="https://g.page/r/CVRweODDPiBwEAI/review" target="_blank" rel="noopener" class="tr-review-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        <span>Leave a Google review</span>
-      </a>
-      <a href="https://www.facebook.com/EmmaleneTattoo/reviews" target="_blank" rel="noopener" class="tr-review-btn tr-review-btn-fb">
-        <svg width="16" height="16" aria-hidden="true"><use href="#i-fb"/></svg>
-        <span>Recommend on Facebook</span>
-      </a>
-      <a href="https://g.page/r/CVRweODDPiBwEAI" target="_blank" rel="noopener" class="tr-review-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span>See all Google reviews</span>
-      </a>
-    </div>
+    <a href="https://g.page/r/CVRweODDPiBwEAI" target="_blank" rel="noopener" class="tr-review-btn">
+      <span>Read all <span class="tr-all-n">20</span> reviews →</span>
+    </a>
   </div>
 
 </section>
@@ -2377,23 +2355,21 @@
       <p>A fine line, fine art and realism tattoo artist, working from Sainthood Tattoo on Princes Avenue, Hull.</p>
       <p>It is normal to be nervous, regardless of if it's your first tattoo or fifth. I will walk you through every step, you can take your time choosing placement, design, colours, anything you need. I like to say getting a tattoo is teamwork, we work together to make the best tattoo for you.</p>
     </div>
+    <a class="tx-link" href="/book">Send me a message <span class="tx-arrow" aria-hidden="true">→</span></a>
   </div>
 </section>
 
 <!-- ════ FAQ ════ -->
 <section id="faq">
   <div class="faq-hd">
-    <h2 class="faq-h2"><span class="tl"><span class="tl-i"><em>Frequently Asked</em> Questions</span></span></h2>
+    <h2 class="faq-h2"><span class="tl"><span class="tl-i">Frequently asked <em>questions</em></span></span></h2>
   </div>
   <ul class="fq-list">
 
     <li class="fq-item">
       <button class="fq-trigger" id="faq-1-trigger" type="button" aria-expanded="false" aria-controls="faq-1-panel">
         <span class="fq-num">01</span>
-        <span class="fq-q-wrap">
-          <span class="fq-question">How much does a tattoo cost?</span>
-          <span class="fq-tags-row">Pricing · quotes · deposits</span>
-        </span>
+        <span class="fq-question">How much does a tattoo cost?</span>
         <span class="fq-toggle">+</span>
       </button>
       <div class="fq-rule"></div>
@@ -2407,16 +2383,13 @@
     <li class="fq-item">
       <button class="fq-trigger" id="faq-2-trigger" type="button" aria-expanded="false" aria-controls="faq-2-panel">
         <span class="fq-num">02</span>
-        <span class="fq-q-wrap">
-          <span class="fq-question">Do you do walk-ins?</span>
-          <span class="fq-tags-row">Appointments · walk-ins · availability</span>
-        </span>
+        <span class="fq-question">What should I know before my first tattoo?</span>
         <span class="fq-toggle">+</span>
       </button>
       <div class="fq-rule"></div>
       <div class="fq-panel" id="faq-2-panel" aria-labelledby="faq-2-trigger" hidden inert aria-hidden="true">
         <div class="fq-panel-inner">
-          <p class="fq-answer">Appointment only. Message me and we'll find a slot.</p>
+          <p class="fq-answer">It is normal to be nervous, regardless of if it's your first tattoo or fifth. I will walk you through every step, you can take your time choosing placement, design, colours, anything you need. I like to say getting a tattoo is teamwork, we work together to make the best tattoo for you.</p>
         </div>
       </div>
     </li>
@@ -2424,14 +2397,39 @@
     <li class="fq-item">
       <button class="fq-trigger" id="faq-3-trigger" type="button" aria-expanded="false" aria-controls="faq-3-panel">
         <span class="fq-num">03</span>
-        <span class="fq-q-wrap">
-          <span class="fq-question">How do I prepare for my appointment?</span>
-          <span class="fq-tags-row">Preparation · health · what to bring</span>
-        </span>
+        <span class="fq-question">Does it hurt?</span>
         <span class="fq-toggle">+</span>
       </button>
       <div class="fq-rule"></div>
       <div class="fq-panel" id="faq-3-panel" aria-labelledby="faq-3-trigger" hidden inert aria-hidden="true">
+        <div class="fq-panel-inner">
+          <p class="fq-answer">Yes it hurts, however it is a manageable pain and it is different for everyone. I would say it's uncomfortable rather than unbearable, and you adjust to it quickly.<br><br>To help with this we can take breaks when and as you need, we go at your pace.<br><br>If you are worried about a longer session, let me know and we can split them up into sessions you feel more comfortable with.</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="fq-item">
+      <button class="fq-trigger" id="faq-4-trigger" type="button" aria-expanded="false" aria-controls="faq-4-panel">
+        <span class="fq-num">04</span>
+        <span class="fq-question">Do you do walk-ins?</span>
+        <span class="fq-toggle">+</span>
+      </button>
+      <div class="fq-rule"></div>
+      <div class="fq-panel" id="faq-4-panel" aria-labelledby="faq-4-trigger" hidden inert aria-hidden="true">
+        <div class="fq-panel-inner">
+          <p class="fq-answer">Appointment only. Message me and we'll find a slot.</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="fq-item">
+      <button class="fq-trigger" id="faq-5-trigger" type="button" aria-expanded="false" aria-controls="faq-5-panel">
+        <span class="fq-num">05</span>
+        <span class="fq-question">How do I prepare for my appointment?</span>
+        <span class="fq-toggle">+</span>
+      </button>
+      <div class="fq-rule"></div>
+      <div class="fq-panel" id="faq-5-panel" aria-labelledby="faq-5-trigger" hidden inert aria-hidden="true">
         <div class="fq-panel-inner">
           <ul class="fq-answer-list">
             <li>— Eat a proper meal beforehand and stay well hydrated.</li>
@@ -2448,46 +2446,9 @@
     </li>
 
     <li class="fq-item">
-      <button class="fq-trigger" id="faq-4-trigger" type="button" aria-expanded="false" aria-controls="faq-4-panel">
-        <span class="fq-num">04</span>
-        <span class="fq-q-wrap">
-          <span class="fq-question">Does it hurt?</span>
-          <span class="fq-tags-row">Pain · tolerance · placement</span>
-        </span>
-        <span class="fq-toggle">+</span>
-      </button>
-      <div class="fq-rule"></div>
-      <div class="fq-panel" id="faq-4-panel" aria-labelledby="faq-4-trigger" hidden inert aria-hidden="true">
-        <div class="fq-panel-inner">
-          <p class="fq-answer">Yes it hurts, however it is a manageable pain and it is different for everyone. I would say it's uncomfortable rather than unbearable, and you adjust to it quickly.<br><br>To help with this we can take breaks when and as you need, we go at your pace.<br><br>If you are worried about a longer session, let me know and we can split them up into sessions you feel more comfortable with.</p>
-        </div>
-      </div>
-    </li>
-
-    <li class="fq-item">
-      <button class="fq-trigger" id="faq-5-trigger" type="button" aria-expanded="false" aria-controls="faq-5-panel">
-        <span class="fq-num">05</span>
-        <span class="fq-q-wrap">
-          <span class="fq-question">What should I know before my first tattoo?</span>
-          <span class="fq-tags-row">First time · expectations · nerves</span>
-        </span>
-        <span class="fq-toggle">+</span>
-      </button>
-      <div class="fq-rule"></div>
-      <div class="fq-panel" id="faq-5-panel" aria-labelledby="faq-5-trigger" hidden inert aria-hidden="true">
-        <div class="fq-panel-inner">
-          <p class="fq-answer">It is normal to be nervous, regardless of if it's your first tattoo or fifth. I will walk you through every step, you can take your time choosing placement, design, colours, anything you need. I like to say getting a tattoo is teamwork, we work together to make the best tattoo for you.</p>
-        </div>
-      </div>
-    </li>
-
-    <li class="fq-item">
       <button class="fq-trigger" id="faq-6-trigger" type="button" aria-expanded="false" aria-controls="faq-6-panel">
         <span class="fq-num">06</span>
-        <span class="fq-q-wrap">
-          <span class="fq-question">What's the minimum age?</span>
-          <span class="fq-tags-row">Age · ID · legal</span>
-        </span>
+        <span class="fq-question">What's the minimum age?</span>
         <span class="fq-toggle">+</span>
       </button>
       <div class="fq-rule"></div>
@@ -2526,16 +2487,19 @@
       <div class="bk-step">
         <span class="bk-step-n">01</span>
         <span class="bk-step-l">Message</span>
+        <span class="bk-step-d">Send your idea: a photo, a sketch, or just a feeling.</span>
       </div>
       <div class="bk-step-div" aria-hidden="true"></div>
       <div class="bk-step">
         <span class="bk-step-n">02</span>
         <span class="bk-step-l">Consult</span>
+        <span class="bk-step-d">A free chat about design, size and placement.</span>
       </div>
       <div class="bk-step-div" aria-hidden="true"></div>
       <div class="bk-step">
         <span class="bk-step-n">03</span>
         <span class="bk-step-l">Create</span>
+        <span class="bk-step-d">Tattoo day. We finalise everything together first.</span>
       </div>
     </div>
 
@@ -2552,26 +2516,16 @@
 <!-- ════ SOCIAL / FOLLOW ════ -->
 <section id="flash">
   <div class="fl-left">
-    <div class="fl-badge"><span class="fl-dot"></span> <span class="fl-handle"><span class="fl-at">@</span>emmy.tattoo</span></div>
+    <div class="fl-badge">Not ready yet?</div>
     <h2 class="fl-h2"><em>Follow</em> the work</h2>
     <p class="fl-p">Instagram is where new work goes first: finished pieces, available slots, flash designs. Updated when something happens, not on a schedule.</p>
-    <ul class="fl-reasons">
-      <li class="fl-reason">New pieces posted as they're completed</li>
-      <li class="fl-reason">Available slots and same-day cancellations when they open</li>
-      <li class="fl-reason">Flash designs as they come up</li>
-      <li class="fl-reason">Healed results alongside fresh work</li>
-    </ul>
     <div class="fl-btns">
       <a href="https://instagram.com/emmy.tattoo" target="_blank" rel="noopener" class="fl-cta fl-cta-ig">
         <svg width="18" height="18" aria-hidden="true"><use href="#i-ig"/></svg>
         Follow on Instagram
         <span class="fl-cta-handle">@emmy.tattoo</span>
       </a>
-      <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="fl-cta fl-cta-fb">
-        <svg width="18" height="18" aria-hidden="true"><use href="#i-fb"/></svg>
-        Follow on Facebook
-        <span class="fl-cta-handle">EmmaleneTattoo</span>
-      </a>
+      <a href="https://www.facebook.com/EmmaleneTattoo" target="_blank" rel="noopener" class="tx-link">Follow on Facebook</a>
     </div>
     <div class="fl-sub">
       <p class="fl-sub-lead">Rather have it in your inbox?</p>
@@ -3309,8 +3263,8 @@ else __boot();
      seeded set: the old cap of six left one transcribed review unrendered. */
   const SEEDED = [
     { name: 'Jess Dan',        photo: 'google.reviews/web/Jess Dunn-96.webp',     rating: 5, quote: "Had my first tattoo with Emmy, she was so lovely and helpful. Looking forward to getting more tattoos with her 🥰" },
-    { name: 'Jaime Dale',      photo: 'google.reviews/web/James Dale-96.webp',    rating: 5, quote: "Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" },
     { name: 'Ruby Taylor',     photo: 'google.reviews/web/Ruby Taylor-96.webp',   rating: 5, quote: "Extremely talented and always makes sure I'm as comfortable as possible and she is also great to chat to!! Couldn't ask for a better tattoo artist" },
+    { name: 'Jaime Dale',      photo: 'google.reviews/web/James Dale-96.webp',    rating: 5, quote: "Absolutely brilliant tattoo artist. Love every tattoo she's done for me. Definitely would recommend! :)" },
     { name: 'Leanne Smith',    photo: 'google.reviews/web/Leanne Smith-96.webp',  rating: 5, quote: "Emmy is great at what she does, really takes her time to make sure everything is perfect... highly recommended 👌🏻" },
     { name: 'Matthew Wallace', photo: 'google.reviews/web/Matthew wallace-96.webp', rating: 5, quote: "I'm Matthew on a different account but Emmy did me an absolutely unbelievable full back tattoo, she did it all in one sitting and the experience was unbelievable. So kind and patient and I will be sure to go back to her next time I want a tattoo" },
     { name: 'Sarah Andrew',    photo: 'google.reviews/web/Sarah Andrew-96.webp',  rating: 5, quote: "Emmy is an amazing artist and really listens to everything you say she takes your ideas and puts in a beautiful design !! I wouldn't trust anyone else !!" },
@@ -3328,7 +3282,12 @@ else __boot();
       if (seen.has(k)) continue;
       seen.add(k); out.push(r);
     }
-    return out;
+    /* Display order, not selection: Jess Dan's first-tattoo review leads, then
+       any review about first tattoos, nerves or comfort — the worries a first
+       visitor brings — then the rest in feed order (sort is stable). */
+    const rank = r => String(r.name).trim().toLowerCase() === 'jess dan' ? 0
+      : /\bfirst (?:tattoo|one|time)\b|\bnerv|\banxi|\bcomfort|\bat ease\b|\brelax/i.test(r.quote) ? 1 : 2;
+    return out.sort((a, b) => rank(a) - rank(b));
   }
   (() => {
     const stage = document.getElementById('tr-stage');
@@ -3338,16 +3297,18 @@ else __boot();
     const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
     const initial = name => (name || '?').trim().charAt(0).toUpperCase();
 
-    /* Only a successful live feed may supply the listing's score and total. */
+    /* The markup carries hand-maintained fallback figures; a successful live
+       feed replaces them with the listing's own score and total. */
     const META = { rating: null, count: null };
     function paintMeta() {
       const v = document.querySelector('.tr-score-val');
       const m = document.querySelector('.tr-score-meta');
-      if (v) v.textContent = META.rating || '';
-      document.querySelectorAll('.tr-score-val, .tr-score-sep').forEach(el => {
-        el.hidden = !META.rating;
-      });
-      if (m) m.textContent = META.count ? META.count + ' Google Reviews' : '5-star Google reviews';
+      const n = document.querySelector('.tr-all-n');
+      if (v && META.rating) v.textContent = META.rating;
+      if (META.count) {
+        if (m) m.textContent = META.count + ' Google reviews';
+        if (n) n.textContent = META.count;
+      }
     }
 
     /* Shared modal (reuses #rv-modal) */

@@ -33,17 +33,21 @@ test('supported booking removes only retired drafts without persisting a replace
         }
       }, blockedStorage);
       await page.goto('http://127.0.0.1/book');
-      assert.equal(await page.locator('#bk-form').isVisible(), false);
+      // The form opens at once; the screening questions sit at its end, unanswered.
+      assert.equal(await page.locator('#bk-form').isVisible(), true);
+      assert.equal(await page.isChecked('input[name="screen-pregnancy"][value="no"]'), false);
       await page.check('input[name="screen-pregnancy"][value="no"]');
       await page.check('input[name="screen-blood-thinners"][value="no"]');
-      assert.equal(await page.locator('#bk-form').isVisible(), true);
+      assert.equal(await page.isEnabled('#f-submit'), true);
       assert.equal(await page.inputValue('#f-name'), '');
       await page.fill('#f-name', 'Synthetic current visitor');
       if (!blockedStorage) {
         assert.deepEqual(await page.evaluate(() => Object.entries(localStorage)), [['unrelated-fixture', 'preserve']]);
       }
       await page.reload();
-      assert.equal(await page.locator('#bk-form').isVisible(), false, 'Screening must reset on a fresh visit');
+      for (const name of ['screen-pregnancy', 'screen-blood-thinners']) {
+        assert.equal(await page.locator(`input[name="${name}"]:checked`).count(), 0, 'Screening must reset on a fresh visit');
+      }
       assert.equal(await page.inputValue('#f-name'), '', 'The replacement form must not restore a draft');
       if (!blockedStorage) assert.deepEqual(await page.evaluate(() => Object.entries(localStorage)), [['unrelated-fixture', 'preserve']]);
     });
