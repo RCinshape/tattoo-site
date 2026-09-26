@@ -201,3 +201,7 @@ Every iframe on the site is injected by one loader — the standalone `<script>`
 - Minimal UI — let artwork breathe
 - Smooth, deliberate animations — nothing snappy or bouncy
 - Monochrome or desaturated palette with one accent color
+
+## Infrastructure
+
+- **`/review` is a Cloudflare Redirect Rule, not a page.** It 302s to the Google review form and is printed as a QR code on aftercare cards, so it must never break. Change the destination in Cloudflare → Rules → Redirect Rules ("Review QR → Google review form"). Never create a `/review` page or folder in this repo: the rule runs first, so the page would never be seen and would only cause confusion.
